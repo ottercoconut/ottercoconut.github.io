@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+
+<html class="article-header-style-default">
+<head>
+	
+	<title>Redis - 边个濑椰のBlog</title>
+	<meta charset="utf-8">
+	
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<meta name="description" content="Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis">
+<meta property="og:url" content="https://ottercoconut.github.io/2025/03/18/Redis/index.html">
+<meta property="og:site_name" content="边个濑椰のBlog">
+<meta property="og:description" content="Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-03-18T07:41:00.000Z">
+<meta property="article:modified_time" content="2025-03-18T13:00:03.253Z">
+<meta property="article:author" content="Kawauso">
+<meta name="twitter:card" content="summary">
+
+	<meta name="theme-color" content="#5e72e4">
+	<meta name="theme-color-rgb" content="94,114,228">
+	<meta name="theme-color-origin" content="#5e72e4">
+	<meta name="argon-enable-custom-theme-color" content="true">
+	<meta name="theme-card-radius" content="4">
+	<meta name="theme-version" content="1.0.2">
+	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+
+	
+<link rel="stylesheet" href="/assets/argon_css_merged.css">
+
+	
+<link rel="stylesheet" href="/style.css">
+
+	
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+
+	
+<script src="/assets/argon_js_merged.js"></script>
+
+	
+<script src="/assets/js/argon.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+	
+
+	<script>
+		var argonConfig = {
+			language: "zh_CN",
+			
+				zoomify: {
+					duration: 200,
+					easing: "cubic-bezier(0.4,0,0,1)",
+					scale: 0.9
+				},
+			
+			pangu: "false",
+			
+				lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+			
+			disable_pjax: false,
+			headroom: false
+		}
+	</script>
+	<script>
+		var darkmodeAutoSwitch = "false";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+	<script>
+		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}
+	</script>
+
+	
+		
+<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<style id="themecolor_css">
+	
+	:root{
+		--themecolor: #5e72e4;
+		--themecolor-dark0: #5368E2;
+		--themecolor-dark: #485FE0;
+		--themecolor-dark2: #324CDD;
+		--themecolor-dark3: #233DD2;
+		--themecolor-light: #8A98EB;
+		--themecolor-rgbstr: 94,114,228;
+		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
+
+	}
+</style>
+<style id="theme_cardradius_css">
+	:root{
+		--card-radius: 4px;
+	}
+</style>
+
+<body>
+<div id="toolbar">
+	<header class="header-global">
+		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+			<div class="container">
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="/">边个濑椰のBlog</a>
+				<div class="navbar-collapse collapse" id="navbar_global">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand"></div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+									<span></span>
+									<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+					
+							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
+								
+										<li class='nav-item'>
+											<a href='/' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>首页</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item dropdown'>
+											<a href='' class='nav-link' onclick='return false;' data-toggle='dropdown' no-pjax>
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>二级菜单</span>
+											</a>
+											
+													<div class="dropdown-menu">
+														
+															<a href='/' class='dropdown-item'>归档</a>
+														
+													</div>
+												
+										</li>
+									
+							</ul>
+						
+					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+			</div>
+		</nav>
+	</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">搜索</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- TODO -->
+<div class="form-group mb-3">
+	<div class="input-group input-group-alternative">
+		<div class="input-group-prepend">
+			<span class="input-group-text"><i class="fa fa-search"></i></span>
+		</div>
+		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
+	</div>
+	<div id="local-search-result"></div>
+</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!--Banner-->
+<section id="banner" class="banner section section-lg section-shaped">
+	<div class="shape shape-style-1 shape-primary">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	
+	<div id="banner_container" class="banner-container container text-center">
+		
+			<div class="banner-title text-white"><span class="banner-title-inner">边个濑椰のBlog</span>
+		
+		</div>
+	</div>
+	
+		<style>
+			section.banner{
+				background-image: url(/assets/img/banner.jpg) !important;
+			}
+		</style>
+	
+</section>
+
+
+	<style>
+		#content:before {
+			content: '';
+			display: block;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: -2;
+			background: url(/assets/img/banner.jpg);
+			background-position: center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			opacity: 0.8;
+			transition: opacity .5s ease;
+		}
+		html.darkmode #content:before{
+			filter: brightness(0.65);
+		}
+		
+			#content:after {
+				content: '';
+				display: block;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: -2;
+				background: url(/assets/img/banner.jpg);
+				background-position: center;
+				background-size: cover;
+				background-repeat: no-repeat;
+				opacity: 0;
+				transition: opacity .5s ease;
+			}
+			html.darkmode #content:after {
+				opacity: 0.8;
+			}
+			html.darkmode #content:before {
+				opacity: 0;
+			}
+		
+		
+			#banner, #banner .shape {
+				background: transparent !important;
+			}
+		
+	</style>
+
+
+
+
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+	</button>
+	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+	</button>
+	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" style='display: none;'  aria-label="Comment" tooltip="评论">
+		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+	</button>
+	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style='display: none;'  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
+	</button>
+	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button"  aria-label="Open Blog Settings Menu" tooltip="设置">
+		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+	</button>
+	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+		<div class="blog-setting-item mt-3">
+			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
+			<div style="flex: 1;"></div>
+			<label id="blog_setting_darkmode_switch" class="custom-toggle">
+				<span class="custom-toggle-slider rounded-circle"></span>
+			</label>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">字体</div>
+			<div>
+				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">阴影</div>
+			<div>
+				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3 mb-3">
+			<div style="flex: 1;">滤镜</div>
+			<div id="blog_setting_filters" class="ml-3">
+				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mb-3">
+			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+				<div id="blog_setting_card_radius"></div>
+			</div>
+		</div>
+		
+			<div class="blog-setting-item mt-1 mb-3">
+				<div style="flex: 1;">主题色</div>
+				<div id="theme-color-picker" class="ml-3"></div>
+			</div>
+		
+	</div>
+	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
+		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+	</button>
+	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+		<span id="fabtn_reading_progress_details">0%</span>
+	</button>
+</div>
+
+<div id="content" class="site-content">
+
+
+
+
+
+
+
+
+
+<div class="page-information-card-container">
+	
+</div>
+
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+		
+		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+			<div class="leftbar-banner card-body">
+				<span class="leftbar-banner-title text-white">边个濑椰のBlog</span>
+				
+				
+			</div>
+			
+			
+				<ul id='leftbar_part1_menu' class='leftbar-menu'>
+					<li class='leftbar-menu-item'><a href='/'>首页</a></li><li class='leftbar-menu-item'><a href='/archives'>归档</a></li><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>二级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>三级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item'><a href='/'>首页</a></li></ul></li></ul></li>
+				</ul>
+			
+			<div class="card-body text-center leftbar-search-button">
+				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
+					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
+				</button>
+			</div>
+		</div>
+		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+			<div id="leftbar_part2_inner" class="card-body">
+				
+				<div class="nav-wrapper" style="padding-top: 5px;">
+	                <ul class="nav nav-pills nav-fill" role="tablist">
+						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
+						<li class="nav-item sidebar-tab-switcher">
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+						</li>
+	                </ul>
+				</div>
+				<div>
+					<div class="tab-content" style="padding: 10px 10px 0 10px;">
+						
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+							<h6 id="leftbar_overview_author_name">边个濑椰</h6>
+							<nav class="site-state">
+								<div class="site-state-item site-state-posts">
+									<a href="/archives">
+										<span class="site-state-item-count">4</span>
+										<span class="site-state-item-name">文章</span>
+									</a>
+								</div>
+								<div class="site-state-item site-state-categories">
+									<a data-toggle="modal" data-target="#blog_categories">
+										<span class="site-state-item-count">0</span>
+										<span class="site-state-item-name">分类</span>
+									</a>
+								</div>      
+								<div class="site-state-item site-state-tags">
+									<a data-toggle="modal" data-target="#blog_tags">
+										<span class="site-state-item-count">0</span>
+										<span class="site-state-item-name">标签</span>
+									</a>
+								</div>
+							</nav>
+							
+									<div class="site-author-links">
+										
+											<div class='site-author-links-item'>
+												<a href="https://blog.csdn.net/byn200?spm=1000.2115.3001.5343" rel='noopener' target='_blank'>CSDN</a>
+											</div>
+										
+											<div class='site-author-links-item'>
+												<a href="https://www.zhihu.com/people/byn200" rel='noopener' target='_blank'>知乎</a>
+											</div>
+										
+									</div>
+								
+							
+									<div class='site-friend-links'>
+										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
+										<ul class='site-friend-links-ul'>
+											
+										</ul>
+									</div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">分类</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">标签</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		
+		
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
+	<header class="post-header text-center">
+		
+		<a class="post-title" href="/2025/03/18/Redis/">Redis</a>
+		<div class="post-meta">
+			
+						
+						<div class="post-meta-detail post-meta-detail-time">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2025-3-18 15:41:00 | 编辑于 2025-3-18 21:00:03">2025-3-18 15:41
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa fa-book" aria-hidden="true"></i>
+							<span id="busuanzi_container_page_pv">
+								阅读<span id="busuanzi_value_page_pv"></span>次
+							</span>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							2.4k 字
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-readingtime">
+							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+							9 分钟
+						</div>
+					
+		</div>
+		
+	</header>
+
+	<div class="post-content" id="post_content">
+		<p>Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内置功能还包括事务、发布&#x2F;订阅模式以及Lua脚本支持，使其应用场景广泛，从实时分析到会话管理均表现出色。此外，Redis支持主从复制和集群模式，具有良好的扩展性。</p>
+<h3 id="参考网站"><a href="#参考网站" class="headerlink" title="参考网站"></a>参考网站</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/411888708">知乎 超强、超详细Redis入门教程</a>  </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wenwenaier/article/details/121878831">CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）—第一集</a></p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>Redis包含五大数据类型：字符串(<code>string</code>), 列表(<code>list</code>), 哈希(<code>hash</code>), 集合(<code>set</code>), 集合(<code>zset</code>)  </p>
+<h3 id="string"><a href="#string" class="headerlink" title="string"></a>string</h3><p>Redis 最基本的数据类型，每个键对应一个值，值可以是文本、数字或二进制数据，最大存储 512MB。支持字符串拼接、截取、递增递减等操作，适用于缓存数据、计数器（如访问量统计）、分布式锁等场景。  </p>
+<h4 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set key value</span><br><span class="line">get key</span><br><span class="line">del key </span><br></pre></td></tr></table></figure>
+
+<h5 id="添加修改多个数据"><a href="#添加修改多个数据" class="headerlink" title="添加修改多个数据"></a>添加修改多个数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mset key1 value1 key2 value2...</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取多个数据"><a href="#获取多个数据" class="headerlink" title="获取多个数据"></a>获取多个数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mget key1 key2...</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取数据的字符个数"><a href="#获取数据的字符个数" class="headerlink" title="获取数据的字符个数"></a>获取数据的字符个数</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">strlen key</span><br><span class="line">//例如</span><br><span class="line">set name1 nosql</span><br><span class="line">strlen name1</span><br><span class="line">//输出为: 5</span><br></pre></td></tr></table></figure>
+
+<h5 id="追加信息"><a href="#追加信息" class="headerlink" title="追加信息"></a>追加信息</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">append key value</span><br><span class="line">//例如</span><br><span class="line">append name1 name</span><br><span class="line">get name1</span><br><span class="line">/*输出为: nosqlname*/</span><br></pre></td></tr></table></figure>
+
+<h5 id="多数据操作与单数据操作"><a href="#多数据操作与单数据操作" class="headerlink" title="多数据操作与单数据操作"></a>多数据操作与单数据操作</h5><ul>
+<li>单指令执行 n 条指令需要 n次发送 + n次处理 + n次返回</li>
+<li>多指令执行 n 条指令需要 1次发送 + n次处理 + 1次返回</li>
+<li>数据量较大时，多指令消耗的时间远远少于单指令</li>
+</ul>
+<h4 id="扩展操作"><a href="#扩展操作" class="headerlink" title="扩展操作"></a>扩展操作</h4><h5 id="设置数值数据增加-减少指定范围的值"><a href="#设置数值数据增加-减少指定范围的值" class="headerlink" title="设置数值数据增加&#x2F;减少指定范围的值"></a>设置数值数据增加&#x2F;减少指定范围的值</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incrby key increment</span><br><span class="line">decrby key increment</span><br></pre></td></tr></table></figure>
+
+<h5 id="对字符串类型进行数值操作"><a href="#对字符串类型进行数值操作" class="headerlink" title="对字符串类型进行数值操作"></a>对字符串类型进行数值操作</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set mynum &quot;2&quot;</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get mynum</span><br><span class="line">&quot;2&quot;</span><br><span class="line">127.0.0.1:6379&gt; incr mynum</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; get mynum</span><br><span class="line">&quot;3&quot;</span><br></pre></td></tr></table></figure>
+
+<p>遇到数值操作，redis会自动将字符串类型转换成数值  </p>
+<h5 id="string类型数值操作的注意事项"><a href="#string类型数值操作的注意事项" class="headerlink" title="string类型数值操作的注意事项"></a>string类型数值操作的注意事项</h5><ul>
+<li>数据操作不成功的反馈与数据正常操作之间的差异<ul>
+<li>表示运行结果是否成功<ul>
+<li>（integer）0-&gt;false 失败</li>
+<li>（integer）1-&gt;true 成功</li>
+</ul>
+</li>
+<li>表示运行结果值<ul>
+<li>（integer）3-&gt;3      3个</li>
+<li>（integer）1-&gt;1      1个</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据未获取到<ul>
+<li>（’’nil’’）等同于’’null’’</li>
+</ul>
+</li>
+<li>数据最大存储量<ul>
+<li>512MB</li>
+</ul>
+</li>
+<li>数值计算最大范围（’’java’’中的’’long’’的最大值）<ul>
+<li>9223372036854775807</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h3><p>类似于小型的键值存储，适用于存储结构化数据，如用户信息（ID、姓名、邮箱等），相比 <code>String</code> 类型更节省内存，因为多个字段共享同一个键。可以对字段进行单独操作，避免整体读取修改，适用于存储对象、会话信息等。  </p>
+<h4 id="基础操作-1"><a href="#基础操作-1" class="headerlink" title="基础操作"></a>基础操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hset key field value //添加/修改数据</span><br><span class="line">hget key field //获取数据</span><br><span class="line">hgetall key</span><br><span class="line">hdel key field1 [field2]</span><br></pre></td></tr></table></figure>
+
+<h5 id="添加-修改多个数据"><a href="#添加-修改多个数据" class="headerlink" title="添加&#x2F;修改多个数据"></a>添加&#x2F;修改多个数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmset key field1 value1 field2 value2</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取多个数据-1"><a href="#获取多个数据-1" class="headerlink" title="获取多个数据"></a>获取多个数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hmget key field1 field2...</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取哈希表中字段的数量"><a href="#获取哈希表中字段的数量" class="headerlink" title="获取哈希表中字段的数量"></a>获取哈希表中字段的数量</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hlen key</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取哈希表中是否存在指定的字段"><a href="#获取哈希表中是否存在指定的字段" class="headerlink" title="获取哈希表中是否存在指定的字段"></a>获取哈希表中是否存在指定的字段</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexists key field</span><br></pre></td></tr></table></figure>
+
+<h5 id="综合示例"><a href="#综合示例" class="headerlink" title="综合示例"></a>综合示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">// 1. 创建用户信息</span><br><span class="line">HSET user:1001 name &quot;Alice&quot; email &quot;alice@example.com&quot; age &quot;25&quot;</span><br><span class="line"></span><br><span class="line">// 2. 获取用户的姓名</span><br><span class="line">HGET user:1001 name  # 输出: &quot;Alice&quot;</span><br><span class="line"></span><br><span class="line">// 3. 获取整个用户信息</span><br><span class="line">HGETALL user:1001  </span><br><span class="line">// 输出:</span><br><span class="line">// 1) &quot;name&quot;</span><br><span class="line">// 2) &quot;Alice&quot;</span><br><span class="line">// 3) &quot;email&quot;</span><br><span class="line">// 4) &quot;alice@example.com&quot;</span><br><span class="line">// 5) &quot;age&quot;</span><br><span class="line">// 6) &quot;25&quot;</span><br><span class="line"></span><br><span class="line">// 4. 添加/修改多个字段（比如更新用户的电话和地址）</span><br><span class="line">HMSET user:1001 phone &quot;123-456-7890&quot; address &quot;123 Street, City&quot;</span><br><span class="line"></span><br><span class="line">// 5. 获取多个字段的值</span><br><span class="line">HMGET user:1001 name email phone  </span><br><span class="line">// 输出: [&quot;Alice&quot;, &quot;alice@example.com&quot;, &quot;123-456-7890&quot;]</span><br><span class="line"></span><br><span class="line">// 6. 获取哈希表中字段的数量</span><br><span class="line">HLEN user:1001  # 输出: 5</span><br><span class="line"></span><br><span class="line">// 7. 检查字段是否存在</span><br><span class="line">HEXISTS user:1001 email  # 输出: 1 (表示存在)</span><br><span class="line">HEXISTS user:1001 gender  # 输出: 0 (表示不存在)</span><br><span class="line"></span><br><span class="line">// 8. 删除某个字段（如删除用户的电话）</span><br><span class="line">HDEL user:1001 phone</span><br><span class="line"></span><br><span class="line">// 9. 再次获取整个用户信息，确认 phone 字段已删除</span><br><span class="line">HGETALL user:1001  </span><br><span class="line">// 输出:</span><br><span class="line">// 1) &quot;name&quot;</span><br><span class="line">// 2) &quot;Alice&quot;</span><br><span class="line">// 3) &quot;email&quot;</span><br><span class="line">// 4) &quot;alice@example.com&quot;</span><br><span class="line">// 5) &quot;age&quot;</span><br><span class="line">// 6) &quot;25&quot;</span><br><span class="line">// 7) &quot;address&quot;</span><br><span class="line">/* 8) &quot;123 Street, City&quot;*/</span><br></pre></td></tr></table></figure>
+
+<h4 id="扩展操作-1"><a href="#扩展操作-1" class="headerlink" title="扩展操作"></a>扩展操作</h4><h5 id="获取哈希表中所有字段名或字段值"><a href="#获取哈希表中所有字段名或字段值" class="headerlink" title="获取哈希表中所有字段名或字段值"></a>获取哈希表中所有字段名或字段值</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hkeys key</span><br><span class="line">hvals key</span><br></pre></td></tr></table></figure>
+
+<h5 id="设置指定字段的数值数据增加指定范围的值"><a href="#设置指定字段的数值数据增加指定范围的值" class="headerlink" title="设置指定字段的数值数据增加指定范围的值"></a>设置指定字段的数值数据增加指定范围的值</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hincrby key field increment</span><br></pre></td></tr></table></figure>
+
+<h5 id="hash类型数据操作的注意事项"><a href="#hash类型数据操作的注意事项" class="headerlink" title="hash类型数据操作的注意事项"></a>hash类型数据操作的注意事项</h5><ul>
+<li>1.<code>hash</code>类型下的<code>value</code><strong>只能存储字符串</strong>，不允许存储其他数据类型，不存在嵌套现象。如果数据未获取到，对应的值为（<code>nil</code>）</li>
+<li>2.每个<code>hash</code>可以存储2^23-1个键值对</li>
+<li>3.<code>hash</code>类型十分贴近对象的数据存储形式，并且可以灵活添加对象属性。但hash设计初衷不是为了存储大量对象而设计的，切记不可滥用，<strong>更不可以将hash作为对象列表使用</strong></li>
+<li>4.<code>hgetall</code>操作可以获取全部属性，如果内部<code>field</code>过多，遍历整体数据效率就会很低，有可能成为数据访问瓶颈</li>
+</ul>
+<hr>
+<h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3><p>基于双向链表实现，可以从头部（左侧）或尾部（右侧）快速插入和删除元素，同时支持指定范围的索引读取。适合实现消息队列、时间轴（如微博动态）、任务调度等应用，尤其适用于需要按照插入顺序处理数据的场景。</p>
+<h4 id="基础操作-2"><a href="#基础操作-2" class="headerlink" title="基础操作"></a>基础操作</h4><h5 id="添加-修改数据"><a href="#添加-修改数据" class="headerlink" title="添加&#x2F;修改数据"></a>添加&#x2F;修改数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lpush key value1 [value2]... //从左边进</span><br><span class="line">rpush key value1 [value2]... /*从右边进*/</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h5><p>关于<code>lrange</code>:  </p>
+<ul>
+<li>lrange用来获取指定范围的元素  </li>
+<li>-1 代表倒数第一个元素  </li>
+<li>列表元素索引从位置0开始</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lrange key start stop</span><br><span class="line">lindex key index</span><br><span class="line">lien key</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取并移除数据"><a href="#获取并移除数据" class="headerlink" title="获取并移除数据"></a>获取并移除数据</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lpop key</span><br><span class="line">rpop key</span><br></pre></td></tr></table></figure>
+
+<h5 id="移除指定数据"><a href="#移除指定数据" class="headerlink" title="移除指定数据"></a>移除指定数据</h5><p>关于<code>lrem</code>:  </p>
+<ul>
+<li>参数<code>count</code><ul>
+<li><code>count &gt; 0</code> → 从头（左侧）开始删除<code>count</code>个匹配的<code>value</code></li>
+<li><code>count &lt; 0</code> → 从尾（右侧）开始删除<code>count</code>个匹配的<code>value</code></li>
+<li><code>count = 0</code> → 删除**所有匹配的<code>value</code>**（等价于删除列表中所有该值的元素）</li>
+</ul>
+</li>
+<li>如果<code>key</code>不存在<ul>
+<li>返回 0</li>
+</ul>
+</li>
+<li>常用于<strong>去除列表中的重复元素或清理数据</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrem key count value</span><br></pre></td></tr></table></figure>
+
+<h5 id="综合示例-1"><a href="#综合示例-1" class="headerlink" title="综合示例"></a>综合示例</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">// 清空列表（确保从头开始）</span><br><span class="line">DEL todo_list</span><br><span class="line"></span><br><span class="line">// 添加待办事项</span><br><span class="line">LPUSH todo_list &quot;写报告&quot; &quot;开会&quot;        // 从左侧添加高优先级任务</span><br><span class="line">RPUSH todo_list &quot;整理文件&quot; &quot;发邮件&quot;     // 从右侧添加普通任务</span><br><span class="line"></span><br><span class="line">// 查看全部待办事项</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">// 输出: [&quot;开会&quot;, &quot;写报告&quot;, &quot;整理文件&quot;, &quot;发邮件&quot;]</span><br><span class="line"></span><br><span class="line">// 查看列表长度</span><br><span class="line">LLEN todo_list</span><br><span class="line">// 输出: 4</span><br><span class="line"></span><br><span class="line">// 查看第 2 个待办事项（索引从 0 开始）</span><br><span class="line">LINDEX todo_list 1</span><br><span class="line">// 输出: &quot;写报告&quot;</span><br><span class="line"></span><br><span class="line">// 获取并处理高优先级任务（从左侧移除）</span><br><span class="line">LPOP todo_list</span><br><span class="line">// 输出: &quot;开会&quot;</span><br><span class="line"></span><br><span class="line">// 获取并处理普通任务（从右侧移除）</span><br><span class="line">RPOP todo_list</span><br><span class="line">// 输出: &quot;发邮件&quot;</span><br><span class="line"></span><br><span class="line">// 查看剩余待办事项</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">// 输出: [&quot;写报告&quot;, &quot;整理文件&quot;]</span><br><span class="line"></span><br><span class="line">// 添加一个重复的待办事项</span><br><span class="line">RPUSH todo_list &quot;整理文件&quot;</span><br><span class="line"></span><br><span class="line">// 查看当前列表（有重复）</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">// 输出: [&quot;写报告&quot;, &quot;整理文件&quot;, &quot;整理文件&quot;]</span><br><span class="line"></span><br><span class="line">// 移除 1 个重复的 &quot;整理文件&quot;（从左侧开始）</span><br><span class="line">LREM todo_list 1 &quot;整理文件&quot;</span><br><span class="line">// 输出: 1（表示移除了 1 个匹配项）</span><br><span class="line"></span><br><span class="line">// 查看清理后的列表</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">// 输出: [&quot;写报告&quot;, &quot;整理文件&quot;]</span><br><span class="line"></span><br><span class="line">// 再添加一个重复项并移除所有 &quot;整理文件&quot;</span><br><span class="line">RPUSH todo_list &quot;整理文件&quot;</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">// 输出: [&quot;写报告&quot;, &quot;整理文件&quot;, &quot;整理文件&quot;]</span><br><span class="line"></span><br><span class="line">LREM todo_list 0 &quot;整理文件&quot;</span><br><span class="line">// 输出: 2（表示移除了 2 个匹配项）</span><br><span class="line"></span><br><span class="line">// 查看最终列表</span><br><span class="line">LRANGE todo_list 0 -1</span><br><span class="line">/* 输出: [&quot;写报告&quot;] */</span><br></pre></td></tr></table></figure>
+
+<h4 id="扩展操作-2"><a href="#扩展操作-2" class="headerlink" title="扩展操作"></a>扩展操作</h4><h5 id="在规定时间内获取并移除数据"><a href="#在规定时间内获取并移除数据" class="headerlink" title="在规定时间内获取并移除数据"></a>在规定时间内获取并移除数据</h5><p>关于<code>blpop</code>:  </p>
+<ul>
+<li>参数<code>key1 [key2...]</code><ul>
+<li>可以提供多个列表的键名，<code>Redis</code> 会按照顺序依次检查这些列表</li>
+</ul>
+</li>
+<li>参数<code>timeout</code><ul>
+<li>timeout &gt; 0 → 如果列表为空，则最多等待 <code>timeout</code> 秒</li>
+<li>timeout &lt; 0 → 永远<strong>阻塞</strong>，直到有数据可用</li>
+</ul>
+</li>
+<li>适用于<strong>任务队列、生产者-消费者模型</strong>等场景</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">blpop key1 [key2] timeout</span><br><span class="line">brpop key1 [key2] timeout</span><br></pre></td></tr></table></figure>
+
+<p>示例  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">RPUSH list1 &quot;a&quot; &quot;b&quot; &quot;c&quot;    // 列表内容：[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</span><br><span class="line">BLPOP list1 10             // 取出 &quot;a&quot;，返回 [&quot;list1&quot;, &quot;a&quot;]</span><br><span class="line">BLPOP list1 10             // 取出 &quot;b&quot;，返回 [&quot;list1&quot;, &quot;b&quot;]</span><br><span class="line">BLPOP list1 10             // 取出 &quot;c&quot;，返回 [&quot;list1&quot;, &quot;c&quot;]</span><br><span class="line">BLPOP list1 10             /* 列表为空，阻塞最多 10 秒，若无新元素，则返回 nil */</span><br></pre></td></tr></table></figure>
+
+<h5 id="list类型数据操作注意事项"><a href="#list类型数据操作注意事项" class="headerlink" title="list类型数据操作注意事项"></a>list类型数据操作注意事项</h5><ul>
+<li>1.<code>list</code>中保存的数据都是<code>string</code>类型的，数据总容量是有限的，最多2^32-1个元素  </li>
+<li>2.<code>list</code>具有’’索引’’的概念，但是操作数据时通常以’’队列’’的形式进行入队出队操作，或以’’栈’’的形式进行入栈出栈操作  </li>
+<li>3.获取全部数据操作结束索引设置为-1  </li>
+<li>4.<code>list</code>可以对数据进行<code>分页</code>操作，通常第1页的信息来自于<code>list</code>，第2页及更多的信息通过’’数据库’’的形式加载</li>
+</ul>
+<hr>
+
+	</div>
+
+	
+
+	
+
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2025/03/18/Redis/&text=Redis" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : 'Redis',
+	    description : `Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统...`,
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://ottercoconut.github.io/2025/03/18/Redis/'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
+
+
+
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2025/03/19/Minecraft-server/" rel="prev"> 在Linux(CentOS)系统上部署Minecraft服务器</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2025/03/17/MySQL/" rel="next"> MySQL</a></div></div>
+
+
+
+
+		
+		
+		
+		
+
+					<footer id="footer" class="site-footer card shadow-sm border-0">
+						
+						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
+						</span>
+					</footer>
+				</main>
+			</div>
+		</div>
+		
+<script src="/argontheme.js"></script>
+
+		
+		
+		
+
+		
+			<script>
+				var argonEnableCodeHighlight = true;
+			</script>
+			
+<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
+
+		
+
+	</div>
+</div>
+<noscript>
+	<style>
+		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
+		.comment-item-text .comment-sticker.lazyload{display: none;}
+	</style>
+</noscript>
+</body>
+
+
+
+</html>
+
