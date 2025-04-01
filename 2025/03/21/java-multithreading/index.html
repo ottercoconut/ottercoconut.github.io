@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://ottercoconut.github.io/2025/03/21/java-multithreading/thread-status-2.png">
 <meta property="og:image" content="https://ottercoconut.github.io/2025/03/21/java-multithreading/thread-status-3.png">
 <meta property="article:published_time" content="2025-03-21T06:50:07.000Z">
-<meta property="article:modified_time" content="2025-03-26T12:25:49.457Z">
+<meta property="article:modified_time" content="2025-04-01T06:44:34.094Z">
 <meta property="article:author" content="Kawauso">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://ottercoconut.github.io/2025/03/21/java-multithreading/thread-status-1.png">
@@ -596,7 +596,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-3-26 20:25:49">2025-3-21 14:50
+							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-4-1 14:44:34">2025-3-21 14:50
 							</time>
 						</div>
 					
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-edittime">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-3-26 20:25:49">2025-3-26 20:25
+							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-4-1 14:44:34">2025-4-1 14:44
 							</time>
 						</div>
 					
@@ -614,7 +614,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.5k 字
+							15.2k 字
 						</div>
 					
 						
@@ -622,7 +622,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							54 分钟
+							61 分钟
 						</div>
 					
 		</div>
@@ -1297,10 +1297,99 @@
 
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">AwaitSignal</span> <span class="variable">awaitSignal</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AwaitSignal</span>(<span class="number">5</span>);</span><br><span class="line">        <span class="comment">// 构建三个条件变量</span></span><br><span class="line">        <span class="type">Condition</span> <span class="variable">a</span> <span class="operator">=</span> awaitSignal.newCondition();</span><br><span class="line">        <span class="type">Condition</span> <span class="variable">b</span> <span class="operator">=</span> awaitSignal.newCondition();</span><br><span class="line">        <span class="type">Condition</span> <span class="variable">c</span> <span class="operator">=</span> awaitSignal.newCondition();</span><br><span class="line">        <span class="comment">// 开启三个线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            awaitSignal.print(<span class="string">&quot;a&quot;</span>, a, b);</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            awaitSignal.print(<span class="string">&quot;b&quot;</span>, b, c);</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            awaitSignal.print(<span class="string">&quot;c&quot;</span>, c, a);</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        awaitSignal.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 先唤醒a</span></span><br><span class="line">            a.signal();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            awaitSignal.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AwaitSignal</span> <span class="keyword">extends</span> <span class="title class_">ReentrantLock</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 循环次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> loopNumber;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AwaitSignal</span><span class="params">(<span class="type">int</span> loopNumber)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.loopNumber = loopNumber;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> print   输出的字符</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> current 当前条件变量</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> next    下一个条件变量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(String print, Condition current, Condition next)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; loopNumber; i++) &#123;</span><br><span class="line">            lock();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// 获取锁之后等待</span></span><br><span class="line">                    current.await();</span><br><span class="line">                    System.out.print(print);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    </span><br><span class="line">                &#125;</span><br><span class="line">                next.signal();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
+<p>流程分析：</p>
+<ul>
+<li><strong>初始化</strong> ：</li>
+<li>主线程创建了 <code>AwaitSignal</code> 对象，设置循环次数为 5。</li>
+<li>创建了三个 <code>Condition</code> 对象：a、b、c，分别对应三个线程。</li>
+<li>三个线程启动，分别调用 <code>print(&quot;a&quot;, a, b)</code> 、 <code>print(&quot;b&quot;, b, c)</code> 、 <code>print(&quot;c&quot;, c, a)</code> 。</li>
+<li>主线程休眠 1 秒后，获取锁并通过 <code>a.signal()</code>  唤醒线程 A。</li>
+<li><strong>线程启动后</strong> ：</li>
+<li>每个线程进入 <code>print</code> 方法，执行 <code>lock()</code> 获取锁。由于 <code>ReentrantLock</code> 是互斥锁，同一时刻只有一个线程能持有锁。</li>
+<li>假设线程 A 先获取锁，它调用 <code>a.await()</code> ，释放锁并进入等待状态（等待 <code>Condition a</code> 的信号）。</li>
+<li>其他线程（B 和 C）尝试 <code>lock()</code> ，但锁被占用，它们会阻塞在 <code>lock()</code> 上。</li>
+<li><strong>主线程唤醒线程A</strong> ：</li>
+<li>主线程在 <code>try &#123; Thread.sleep(1000); &#125;</code> 后执行 <code>awaitSignal.lock()</code> ，获取锁。</li>
+<li>调用 <code>a.signal()</code> ，唤醒等待在 <code>Condition a</code> 上的线程 A。</li>
+<li>主线程执行 <code>unlock()</code> ，释放锁。</li>
+<li><strong>线程A被唤醒后</strong> ：</li>
+<li>线程 A 从 <code>a.await()</code> 返回，但它需要重新获取锁才能继续执行。</li>
+<li>因为主线程已经释放锁（ <code>unlock()</code> ），线程 A 成功重新获取锁。</li>
+<li>线程 A 打印 “a”，然后调用 <code>b.signal()</code> 唤醒线程 B。</li>
+<li>线程 A 执行 <code>unlock()</code> ，释放锁。</li>
+<li><strong>线程B被唤醒后</strong> ：</li>
+<li>线程 B 在 <code>b.await()</code> 上等待，收到 <code>b.signal()</code> 后被唤醒。</li>
+<li>线程 B 尝试重新获取锁。由于线程 A 已释放锁，线程 B 获取锁成功。</li>
+<li>线程 B 打印 “b”，调用 <code>c.signal()</code> 唤醒线程 C，然后释放锁。</li>
+</ul>
 <h4 id="小结-9"><a href="#小结-9" class="headerlink" title="小结"></a>小结</h4><p><code>ReentrantLock</code>可以替代<code>synchronized</code>进行同步；</p>
 <p><code>ReentrantLock</code>获取锁更安全；</p>
 <p>必须先获取到锁，再进入<code>try &#123;...&#125;</code>代码块，最后使用<code>finally</code>保证释放锁；</p>
 <p>可以使用<code>tryLock()</code>尝试获取锁。</p>
+<hr>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><p>（线程池感觉都写的不是很明白）</p>
+<p>Java语言虽然内置了多线程支持，启动一个新线程非常方便，但是，创建线程需要操作系统资源（线程资源，栈空间等），频繁创建和销毁大量线程需要消耗大量时间。</p>
+<p>如果可以复用一组线程：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌─────┐ execute  ┌──────────────────┐</span><br><span class="line">│Task1│─────────▶│ThreadPool        │</span><br><span class="line">├─────┤          │┌───────┐┌───────┐│</span><br><span class="line">│Task2│          ││Thread1││Thread2││</span><br><span class="line">├─────┤          │└───────┘└───────┘│</span><br><span class="line">│Task3│          │┌───────┐┌───────┐│</span><br><span class="line">├─────┤          ││Thread3││Thread4││</span><br><span class="line">│Task4│          │└───────┘└───────┘│</span><br><span class="line">├─────┤          └──────────────────┘</span><br><span class="line">│Task5│</span><br><span class="line">├─────┤</span><br><span class="line">│Task6│</span><br><span class="line">└─────┘</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>那么我们就可以把很多小任务让一组线程来执行，而不是一个任务对应一个新线程。这种能接收大量小任务并进行分发处理的就是线程池。</p>
+<p>简单地说，线程池内部维护了若干个线程，没有任务的时候，这些线程都处于等待状态。如果有新任务，就分配一个空闲线程执行。如果所有线程都处于忙碌状态，新任务要么放入队列等待，要么增加一个新线程进行处理。</p>
+<p>Java标准库提供了<code>ExecutorService</code>接口表示线程池，它的典型用法如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建固定大小的线程池:</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line"><span class="comment">// 提交任务:</span></span><br><span class="line">executor.submit(task1);</span><br><span class="line">executor.submit(task2);</span><br><span class="line">executor.submit(task3);</span><br><span class="line">executor.submit(task4);</span><br><span class="line">executor.submit(task5);</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>ExecutorService</code>只是接口，Java标准库提供的几个常用实现类有：</p>
+<ul>
+<li>FixedThreadPool：线程数固定的线程池；</li>
+<li>CachedThreadPool：线程数根据任务动态调整的线程池；</li>
+<li>SingleThreadExecutor：仅单线程执行的线程池。</li>
+</ul>
+<p>创建这些线程池的方法都被封装到<code>Executors</code>这个类中。我们以<code>FixedThreadPool</code>为例，看看线程池的执行逻辑：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// thread-pool</span></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建一个固定大小的线程池:</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">es</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">4</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">            es.submit(<span class="keyword">new</span> <span class="title class_">Task</span>(<span class="string">&quot;&quot;</span> + i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 关闭线程池:</span></span><br><span class="line">        es.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Task</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;start task &quot;</span> + name);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;end task &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们观察执行结果，一次性放入6个任务，由于线程池只有固定的4个线程，因此，前4个任务会同时执行，等到有线程空闲后，才会执行后面的两个任务。</p>
+<p>线程池在程序结束的时候要关闭。使用<code>shutdown()</code>方法关闭线程池的时候，它会等待正在执行的任务先完成，然后再关闭。<code>shutdownNow()</code>会立刻停止正在执行的任务，<code>awaitTermination()</code>则会等待指定的时间让线程池关闭。</p>
+<p>如果我们把线程池改为<code>CachedThreadPool</code>，由于这个线程池的实现会根据任务数量动态调整线程池的大小，所以6个任务可一次性全部同时执行。</p>
+<p>如果我们想把线程池的大小限制在4～10个之间动态调整怎么办？我们查看<code>Executors.newCachedThreadPool()</code>方法的源码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title function_">newCachedThreadPool</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">            <span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">            <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">SynchronousQueue</span>&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，想创建指定动态范围的线程池，可以这么写：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">min</span> <span class="operator">=</span> <span class="number">4</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">es</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">        min, max,</span><br><span class="line">        <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">SynchronousQueue</span>&lt;Runnable&gt;());</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ScheduledThreadPool"><a href="#ScheduledThreadPool" class="headerlink" title="ScheduledThreadPool"></a>ScheduledThreadPool</h4><p>还有一种任务，需要定期反复执行，例如，每秒刷新证券价格。这种任务本身固定，需要反复执行的，可以使用<code>ScheduledThreadPool</code>。放入<code>ScheduledThreadPool</code>的任务可以定期反复执行。</p>
+<p>创建一个<code>ScheduledThreadPool</code>仍然是通过<code>Executors</code>类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ScheduledExecutorService</span> <span class="variable">ses</span> <span class="operator">=</span> Executors.newScheduledThreadPool(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以提交一次性任务，它会在指定延迟后只执行一次：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 1秒后执行一次性任务:</span></span><br><span class="line">ses.schedule(<span class="keyword">new</span> <span class="title class_">Task</span>(<span class="string">&quot;one-time&quot;</span>), <span class="number">1</span>, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure>
+
+<p>如果任务以固定的每3秒执行，我们可以这样写：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 2秒后开始执行定时任务，每3秒执行:</span></span><br><span class="line">ses.scheduleAtFixedRate(<span class="keyword">new</span> <span class="title class_">Task</span>(<span class="string">&quot;fixed-rate&quot;</span>), <span class="number">2</span>, <span class="number">3</span>, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure>
+
+<p>如果任务以固定的3秒为间隔执行，我们可以这样写：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 2秒后开始执行定时任务，以3秒为间隔执行:</span></span><br><span class="line">ses.scheduleWithFixedDelay(<span class="keyword">new</span> <span class="title class_">Task</span>(<span class="string">&quot;fixed-delay&quot;</span>), <span class="number">2</span>, <span class="number">3</span>, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure>
+
+<p>注意FixedRate和FixedDelay的区别。FixedRate是指任务总是以固定时间间隔触发，不管任务执行多长时间：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">│░░░░   │░░░░░░ │░░░    │░░░░░  │░░░  </span><br><span class="line">├───────┼───────┼───────┼───────┼────▶</span><br><span class="line">│◀─────▶│◀─────▶│◀─────▶│◀─────▶│</span><br></pre></td></tr></table></figure>
+
+<p>而FixedDelay是指，上一次任务执行完毕后，等待固定的时间间隔，再执行下一次任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">│░░░│       │░░░░░│       │░░│       │░</span><br><span class="line">└───┼───────┼─────┼───────┼──┼───────┼──▶</span><br><span class="line">    │◀─────▶│     │◀─────▶│  │◀─────▶│</span><br></pre></td></tr></table></figure>
+
+<p>因此，使用<code>ScheduledThreadPool</code>时，我们要根据需要选择执行一次、FixedRate执行还是FixedDelay执行。</p>
+<p>细心的童鞋还可以思考下面的问题：</p>
+<ul>
+<li>在FixedRate模式下，假设每秒触发，如果某次任务执行时间超过1秒，后续任务会不会并发执行？</li>
+<li>如果任务抛出了异常，后续任务是否继续执行？</li>
+</ul>
+<p>Java标准库还提供了一个<code>java.util.Timer</code>类，这个类也可以定期执行任务，但是，一个<code>Timer</code>会对应一个<code>Thread</code>，所以，一个<code>Timer</code>只能定期执行一个任务，多个定时任务必须启动多个<code>Timer</code>，而一个<code>ScheduledThreadPool</code>就可以调度多个定时任务，所以，我们完全可以用<code>ScheduledThreadPool</code>取代旧的<code>Timer</code>。</p>
+<h4 id="小结-10"><a href="#小结-10" class="headerlink" title="小结"></a>小结</h4><p>JDK提供了<code>ExecutorService</code>实现了线程池功能：</p>
+<ul>
+<li>线程池内部维护一组线程，可以高效执行大量小任务；</li>
+<li><code>Executors</code>提供了静态方法创建不同类型的<code>ExecutorService</code>；</li>
+<li>必须调用<code>shutdown()</code>关闭<code>ExecutorService</code>；</li>
+<li><code>ScheduledThreadPool</code>可以定期调度多个任务。</li>
+</ul>
 <hr>
 
 	</div>
