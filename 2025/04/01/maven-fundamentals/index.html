@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+<html class="article-header-style-default">
+<head>
+	
+	<title>maven 基础 - 边个濑椰のBlog</title>
+	<meta charset="utf-8">
+	
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<meta name="description" content="参考网站 Maven基础 - Java教程 - 廖雪峰的官方网站 Maven 基础 maven介绍 在了解Maven之前，我们先来看看一个Java项目需要的东西。首先，我们需要确定引入哪些依赖包。例如，如果我们需要用到commons logging，我们就必须把commons logging的jar包放入classpath。如果我们还需要log4j，就需要把log4j相关的jar包都放到class">
+<meta property="og:type" content="article">
+<meta property="og:title" content="maven 基础">
+<meta property="og:url" content="https://ottercoconut.github.io/2025/04/01/maven-fundamentals/index.html">
+<meta property="og:site_name" content="边个濑椰のBlog">
+<meta property="og:description" content="参考网站 Maven基础 - Java教程 - 廖雪峰的官方网站 Maven 基础 maven介绍 在了解Maven之前，我们先来看看一个Java项目需要的东西。首先，我们需要确定引入哪些依赖包。例如，如果我们需要用到commons logging，我们就必须把commons logging的jar包放入classpath。如果我们还需要log4j，就需要把log4j相关的jar包都放到class">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-04-01T06:49:00.000Z">
+<meta property="article:modified_time" content="2025-04-01T10:55:21.820Z">
+<meta property="article:author" content="Kawauso">
+<meta name="twitter:card" content="summary">
+
+	<meta name="theme-color" content="#5e72e4">
+	<meta name="theme-color-rgb" content="94,114,228">
+	<meta name="theme-color-origin" content="#5e72e4">
+	<meta name="argon-enable-custom-theme-color" content="true">
+	<meta name="theme-card-radius" content="4">
+	<meta name="theme-version" content="1.0.2">
+	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+
+	
+<link rel="stylesheet" href="/assets/argon_css_merged.css">
+
+	
+<link rel="stylesheet" href="/style.css">
+
+	
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+
+	
+<script src="/assets/argon_js_merged.js"></script>
+
+	
+<script src="/assets/js/argon.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+	
+
+	<script>
+		var argonConfig = {
+			language: "zh_CN",
+			
+				zoomify: {
+					duration: 200,
+					easing: "cubic-bezier(0.4,0,0,1)",
+					scale: 0.9
+				},
+			
+			pangu: "false",
+			
+				lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+			
+			disable_pjax: false,
+			headroom: false
+		}
+	</script>
+	<script>
+		var darkmodeAutoSwitch = "false";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+	<script>
+		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}
+	</script>
+
+	
+		
+<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+
+	
+<meta name="generator" content="Hexo 7.3.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+
+
+
+<style id="themecolor_css">
+	
+	:root{
+		--themecolor: #5e72e4;
+		--themecolor-dark0: #5368E2;
+		--themecolor-dark: #485FE0;
+		--themecolor-dark2: #324CDD;
+		--themecolor-dark3: #233DD2;
+		--themecolor-light: #8A98EB;
+		--themecolor-rgbstr: 94,114,228;
+		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
+
+	}
+</style>
+<style id="theme_cardradius_css">
+	:root{
+		--card-radius: 4px;
+	}
+</style>
+
+<body>
+<div id="toolbar">
+	<header class="header-global">
+		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+			<div class="container">
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="/">边个濑椰のBlog</a>
+				<div class="navbar-collapse collapse" id="navbar_global">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand"></div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+									<span></span>
+									<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+					
+							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
+								
+										<li class='nav-item'>
+											<a href='/home' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>首页</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item dropdown'>
+											<a href='' class='nav-link' onclick='return false;' data-toggle='dropdown' no-pjax>
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>二级菜单</span>
+											</a>
+											
+													<div class="dropdown-menu">
+														
+															<a href='/' class='dropdown-item'>归档</a>
+														
+													</div>
+												
+										</li>
+									
+							</ul>
+						
+					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+			</div>
+		</nav>
+	</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">搜索</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- TODO -->
+<div class="form-group mb-3">
+	<div class="input-group input-group-alternative">
+		<div class="input-group-prepend">
+			<span class="input-group-text"><i class="fa fa-search"></i></span>
+		</div>
+		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
+	</div>
+	<div id="local-search-result"></div>
+</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!--Banner-->
+<section id="banner" class="banner section section-lg section-shaped">
+	<div class="shape shape-style-1 shape-primary">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	
+	<div id="banner_container" class="banner-container container text-center">
+		
+			<div class="banner-title text-white"><span class="banner-title-inner">边个濑椰のBlog</span>
+		
+		</div>
+	</div>
+	
+		<style>
+			section.banner{
+				background-image: url(/assets/img/banner.jpg) !important;
+			}
+		</style>
+	
+</section>
+
+
+	<style>
+		#content:before {
+			content: '';
+			display: block;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: -2;
+			background: url(/assets/img/banner.jpg);
+			background-position: center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			opacity: 0.8;
+			transition: opacity .5s ease;
+		}
+		html.darkmode #content:before{
+			filter: brightness(0.65);
+		}
+		
+			#content:after {
+				content: '';
+				display: block;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: -2;
+				background: url(/assets/img/banner.jpg);
+				background-position: center;
+				background-size: cover;
+				background-repeat: no-repeat;
+				opacity: 0;
+				transition: opacity .5s ease;
+			}
+			html.darkmode #content:after {
+				opacity: 0.8;
+			}
+			html.darkmode #content:before {
+				opacity: 0;
+			}
+		
+		
+			#banner, #banner .shape {
+				background: transparent !important;
+			}
+		
+	</style>
+
+
+
+
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+	</button>
+	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+	</button>
+	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" style='display: none;'  aria-label="Comment" tooltip="评论">
+		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+	</button>
+	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style='display: none;'  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
+	</button>
+	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button"  aria-label="Open Blog Settings Menu" tooltip="设置">
+		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+	</button>
+	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+		<div class="blog-setting-item mt-3">
+			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
+			<div style="flex: 1;"></div>
+			<label id="blog_setting_darkmode_switch" class="custom-toggle">
+				<span class="custom-toggle-slider rounded-circle"></span>
+			</label>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">字体</div>
+			<div>
+				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">阴影</div>
+			<div>
+				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3 mb-3">
+			<div style="flex: 1;">滤镜</div>
+			<div id="blog_setting_filters" class="ml-3">
+				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mb-3">
+			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+				<div id="blog_setting_card_radius"></div>
+			</div>
+		</div>
+		
+			<div class="blog-setting-item mt-1 mb-3">
+				<div style="flex: 1;">主题色</div>
+				<div id="theme-color-picker" class="ml-3"></div>
+			</div>
+		
+	</div>
+	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
+		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+	</button>
+	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+		<span id="fabtn_reading_progress_details">0%</span>
+	</button>
+</div>
+
+<div id="content" class="site-content">
+
+
+
+
+
+
+
+
+
+<div class="page-information-card-container">
+	
+</div>
+
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+		
+		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+			<div class="leftbar-banner card-body">
+				<span class="leftbar-banner-title text-white">边个濑椰のBlog</span>
+				
+				
+			</div>
+			
+			
+				<ul id='leftbar_part1_menu' class='leftbar-menu'>
+					<li class='leftbar-menu-item'><a href='/'>首页</a></li><li class='leftbar-menu-item'><a href='/archives'>归档</a></li><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>二级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>三级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item'><a href='/'>首页</a></li></ul></li></ul></li>
+				</ul>
+			
+			<div class="card-body text-center leftbar-search-button">
+				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
+					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
+				</button>
+			</div>
+		</div>
+		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+			<div id="leftbar_part2_inner" class="card-body">
+				
+				<div class="nav-wrapper" style="padding-top: 5px;">
+	                <ul class="nav nav-pills nav-fill" role="tablist">
+						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
+						<li class="nav-item sidebar-tab-switcher">
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+						</li>
+	                </ul>
+				</div>
+				<div>
+					<div class="tab-content" style="padding: 10px 10px 0 10px;">
+						
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+							<h6 id="leftbar_overview_author_name">边个濑椰のBlog</h6>
+							<nav class="site-state">
+								<div class="site-state-item site-state-posts">
+									<a href="/archives">
+										<span class="site-state-item-count">8</span>
+										<span class="site-state-item-name">文章</span>
+									</a>
+								</div>
+								<div class="site-state-item site-state-categories">
+									<a data-toggle="modal" data-target="#blog_categories">
+										<span class="site-state-item-count">0</span>
+										<span class="site-state-item-name">分类</span>
+									</a>
+								</div>      
+								<div class="site-state-item site-state-tags">
+									<a data-toggle="modal" data-target="#blog_tags">
+										<span class="site-state-item-count">0</span>
+										<span class="site-state-item-name">标签</span>
+									</a>
+								</div>
+							</nav>
+							
+									<div class="site-author-links">
+										
+											<div class='site-author-links-item'>
+												<a href="https://blog.csdn.net/byn200?spm=1000.2115.3001.5343" rel='noopener' target='_blank'>CSDN</a>
+											</div>
+										
+											<div class='site-author-links-item'>
+												<a href="https://www.zhihu.com/people/byn200" rel='noopener' target='_blank'>知乎</a>
+											</div>
+										
+									</div>
+								
+							
+									<div class='site-friend-links'>
+										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
+										<ul class='site-friend-links-ul'>
+											
+										</ul>
+									</div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">分类</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">标签</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		
+		
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
+	<header class="post-header text-center">
+		
+		<a class="post-title" href="/2025/04/01/maven-fundamentals/">maven 基础</a>
+		<div class="post-meta">
+			
+						
+						<div class="post-meta-detail post-meta-detail-time">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2025-4-1 14:49:00 | 编辑于 2025-4-1 18:55:21">2025-4-1 14:49
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-edittime">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2025-4-1 14:49:00 | 编辑于 2025-4-1 18:55:21">2025-4-1 18:55
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							3.6k 字
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-readingtime">
+							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+							14 分钟
+						</div>
+					
+		</div>
+		
+	</header>
+
+	<div class="post-content" id="post_content">
+		<h3 id="参考网站">参考网站</h3>
+<p><a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/java/maven/index.html">Maven基础 - Java教程 - 廖雪峰的官方网站</a></p>
+<h2 id="maven-基础">Maven 基础</h2>
+<h3 id="maven介绍">maven介绍</h3>
+<p>在了解Maven之前，我们先来看看一个Java项目需要的东西。首先，我们需要确定引入哪些依赖包。例如，如果我们需要用到<a target="_blank" rel="noopener" href="https://commons.apache.org/proper/commons-logging/">commons logging</a>，我们就必须把commons logging的jar包放入classpath。如果我们还需要<a target="_blank" rel="noopener" href="https://logging.apache.org/log4j/">log4j</a>，就需要把log4j相关的jar包都放到classpath中。这些就是依赖包的管理。</p>
+<p>其次，我们要确定项目的目录结构。例如，<code>src</code>目录存放Java源码，<code>resources</code>目录存放配置文件，<code>bin</code>目录存放编译生成的<code>.class</code>文件。</p>
+<p>此外，我们还需要配置环境，例如JDK的版本，编译打包的流程，当前代码的版本号。</p>
+<p>最后，除了使用Eclipse这样的IDE进行编译外，我们还必须能通过命令行工具进行编译，才能够让项目在一个独立的服务器上编译、测试、部署。</p>
+<p>这些工作难度不大，但是非常琐碎且耗时。如果每一个项目都自己搞一套配置，肯定会一团糟。我们需要的是一个标准化的Java项目管理和构建工具。</p>
+<p>Maven就是是专门为Java项目打造的管理和构建工具，它的主要功能有：</p>
+<ul>
+<li>提供了一套标准化的项目结构；</li>
+<li>提供了一套标准化的构建流程（编译，测试，打包，发布……）；</li>
+<li>提供了一套依赖管理机制。</li>
+</ul>
+<h4 id="maven项目结构">Maven项目结构</h4>
+<p>一个使用Maven管理的普通的Java项目，它的目录结构默认如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a-maven-project</span><br><span class="line">├── pom.xml</span><br><span class="line">├── src</span><br><span class="line">│   ├── main</span><br><span class="line">│   │   ├── java</span><br><span class="line">│   │   └── resources</span><br><span class="line">│   └── test</span><br><span class="line">│       ├── java</span><br><span class="line">│       └── resources</span><br><span class="line">└── target</span><br></pre></td></tr></table></figure>
+<p>项目的根目录<code>a-maven-project</code>是项目名，它有一个项目描述文件<code>pom.xml</code>，存放Java源码的目录是<code>src/main/java</code>，存放资源文件的目录是<code>src/main/resources</code>，存放测试源码的目录是<code>src/test/java</code>，存放测试资源的目录是<code>src/test/resources</code>，最后，所有编译、打包生成的文件都放在<code>target</code>目录里。这些就是一个Maven项目的标准目录结构。</p>
+<p>所有的目录结构都是约定好的标准结构，我们千万不要随意修改目录结构。使用标准结构不需要做任何配置，Maven就可以正常使用。</p>
+<p>我们再来看最关键的一个项目描述文件<code>pom.xml</code>，它的内容长得像下面：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.itranswarp.learnjava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">maven.compiler.release</span>&gt;</span>17<span class="tag">&lt;/<span class="name">maven.compiler.release</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-simple<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>groupId</code>类似于Java的包名，通常是公司或组织名称，<code>artifactId</code>类似于Java的类名，通常是项目名称，再加上<code>version</code>，一个Maven工程就是由<code>groupId</code>，<code>artifactId</code>和<code>version</code>作为唯一标识。</p>
+<p>我们在引用其他第三方库的时候，也是通过这3个变量确定。例如，依赖<code>org.slfj4:slf4j-simple:2.0.16</code>：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-simple<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>&lt;dependency&gt;</code>声明一个依赖后，Maven就会自动下载这个依赖包并把它放到classpath中。</p>
+<p>另外，注意到<code>&lt;properties&gt;</code>定义了一些属性，常用的属性有：</p>
+<ul>
+<li><code>project.build.sourceEncoding</code>：表示项目源码的字符编码，通常应设定为<code>UTF-8</code>；</li>
+<li><code>maven.compiler.release</code>：表示使用的JDK版本，例如<code>21</code>；</li>
+<li><code>maven.compiler.source</code>：表示Java编译器读取的源码版本；</li>
+<li><code>maven.compiler.target</code>：表示Java编译器编译的Class版本。</li>
+</ul>
+<p>从Java 9开始，推荐使用<code>maven.compiler.release</code>属性，保证编译时输入的源码和编译输出版本一致。如果源码和输出版本不同，则应该分别设置<code>maven.compiler.source</code>和<code>maven.compiler.target</code>。</p>
+<p>通过<code>&lt;properties&gt;</code>定义的属性，就可以固定JDK版本，防止同一个项目的不同的开发者各自使用不同版本的JDK。</p>
+<h4 id="小结">小结</h4>
+<p>Maven是一个Java项目的管理和构建工具：</p>
+<ul>
+<li>Maven使用<code>pom.xml</code>定义项目内容，并使用预设的目录结构；</li>
+<li>在Maven中声明一个依赖项可以自动下载并导入classpath；</li>
+<li>Maven使用<code>groupId</code>，<code>artifactId</code>和<code>version</code>唯一定位一个依赖。</li>
+</ul>
+<hr>
+<h3 id="依赖管理">依赖管理</h3>
+<p>如果我们的项目依赖第三方的jar包，例如commons logging，那么问题来了：commons logging发布的jar包在哪下载？</p>
+<p>如果我们还希望依赖log4j，那么使用log4j需要哪些jar包？</p>
+<p>类似的依赖还包括：JUnit，JavaMail，MySQL驱动等等，一个可行的方法是通过搜索引擎搜索到项目的官网，然后手动下载zip包，解压，放入classpath。但是，这个过程非常繁琐。</p>
+<p>Maven解决了依赖管理问题。例如，我们的项目依赖<code>abc</code>这个jar包，而<code>abc</code>又依赖<code>xyz</code>这个jar包：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──────────────┐</span><br><span class="line">│Sample Project│</span><br><span class="line">└──────────────┘</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">┌──────────────┐</span><br><span class="line">│     abc      │</span><br><span class="line">└──────────────┘</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">┌──────────────┐</span><br><span class="line">│     xyz      │</span><br><span class="line">└──────────────┘</span><br></pre></td></tr></table></figure>
+<p>当我们声明了<code>abc</code>的依赖时，Maven自动把<code>abc</code>和<code>xyz</code>都加入了我们的项目依赖，不需要我们自己去研究<code>abc</code>是否需要依赖<code>xyz</code>。</p>
+<p>因此，Maven的第一个作用就是解决依赖管理。我们声明了自己的项目需要<code>abc</code>，Maven会自动导入<code>abc</code>的jar包，再判断出<code>abc</code>需要<code>xyz</code>，又会自动导入<code>xyz</code>的jar包，这样，最终我们的项目会依赖<code>abc</code>和<code>xyz</code>两个jar包。</p>
+<p>我们来看一个复杂依赖示例：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.2.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当我们声明一个<code>spring-boot-starter-web</code>依赖时，Maven会自动解析并判断最终需要大概二三十个其他依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">spring-boot-starter-web</span><br><span class="line">  spring-boot-starter</span><br><span class="line">    spring-boot</span><br><span class="line">    sprint-boot-autoconfigure</span><br><span class="line">    spring-boot-starter-logging</span><br><span class="line">      logback-classic</span><br><span class="line">        logback-core</span><br><span class="line">        slf4j-api</span><br><span class="line">      jcl-over-slf4j</span><br><span class="line">        slf4j-api</span><br><span class="line">      jul-to-slf4j</span><br><span class="line">        slf4j-api</span><br><span class="line">      log4j-over-slf4j</span><br><span class="line">        slf4j-api</span><br><span class="line">    spring-core</span><br><span class="line">    snakeyaml</span><br><span class="line">  spring-boot-starter-tomcat</span><br><span class="line">    tomcat-embed-core</span><br><span class="line">    tomcat-embed-el</span><br><span class="line">    tomcat-embed-websocket</span><br><span class="line">      tomcat-embed-core</span><br><span class="line">  jackson-databind</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+<p>如果我们自己去手动管理这些依赖是非常费时费力的，而且出错的概率很大。</p>
+<h3 id="依赖关系">依赖关系</h3>
+<p>Maven定义了几种依赖关系，分别是<code>compile</code>、<code>test</code>、<code>runtime</code>和<code>provided</code>：</p>
+<table>
+<thead>
+<tr>
+<th>scope</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>compile</td>
+<td>编译时需要用到该jar包（默认）</td>
+<td>commons-logging</td>
+</tr>
+<tr>
+<td>test</td>
+<td>编译Test时需要用到该jar包</td>
+<td>junit</td>
+</tr>
+<tr>
+<td>runtime</td>
+<td>编译时不需要，但运行时需要用到</td>
+<td>mysql</td>
+</tr>
+<tr>
+<td>provided</td>
+<td>编译时需要用到，但运行时由JDK或某个服务器提供</td>
+<td>servlet-api</td>
+</tr>
+</tbody>
+</table>
+<p>其中，默认的<code>compile</code>是最常用的，Maven会把这种类型的依赖直接放入classpath。</p>
+<p><code>test</code>依赖表示仅在测试时使用，正常运行时并不需要。最常用的<code>test</code>依赖就是JUnit：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.jupiter<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-jupiter-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.3.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>runtime</code>依赖表示编译时不需要，但运行时需要。最典型的<code>runtime</code>依赖是JDBC驱动，例如MySQL驱动：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.48<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>provided</code>依赖表示编译时需要，但运行时不需要。最典型的<code>provided</code>依赖是Servlet API，编译的时候需要，但是运行时，Servlet服务器内置了相关的jar，所以运行期不需要：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jakarta.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jakarta.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最后一个问题是，Maven如何知道从何处下载所需的依赖？也就是相关的jar包？答案是Maven维护了一个中央仓库（<a target="_blank" rel="noopener" href="https://repo1.maven.org/">repo1.maven.org</a>），所有第三方库将自身的jar以及相关信息上传至中央仓库，Maven就可以从中央仓库把所需依赖下载到本地。</p>
+<p>Maven并不会每次都从中央仓库下载jar包。一个jar包一旦被下载过，就会被Maven自动缓存在本地目录（用户主目录的<code>.m2</code>目录），所以，除了第一次编译时因为下载需要时间会比较慢，后续过程因为有本地缓存，并不会重复下载相同的jar包。</p>
+<h4 id="唯一id">唯一ID</h4>
+<p>对于某个依赖，Maven只需要3个变量即可唯一确定某个jar包：</p>
+<ul>
+<li>groupId：属于组织的名称，类似Java的包名；</li>
+<li>artifactId：该jar包自身的名称，类似Java的类名；</li>
+<li>version：该jar包的版本。</li>
+</ul>
+<p>通过上述3个变量，即可唯一确定某个jar包。Maven通过对jar包进行PGP签名确保任何一个jar包一经发布就无法修改。修改已发布jar包的唯一方法是发布一个新版本。</p>
+<p>因此，某个jar包一旦被Maven下载过，即可永久地安全缓存在本地。</p>
+<p>注：只有以<code>-SNAPSHOT</code>结尾的版本号会被Maven视为开发版本，开发版本每次都会重复下载，这种SNAPSHOT版本只能用于内部私有的Maven repo，公开发布的版本不允许出现SNAPSHOT。</p>
+<blockquote>
+<p>后续我们在表示Maven依赖时，使用简写形式groupId:artifactId:version，例如：org.slf4j:slf4j-api:2.0.4。</p>
+</blockquote>
+<h4 id="maven镜像">Maven镜像</h4>
+<p>除了可以从Maven的中央仓库下载外，还可以从Maven的镜像仓库下载。如果访问Maven的中央仓库非常慢，我们可以选择一个速度较快的Maven的镜像仓库。Maven镜像仓库定期从中央仓库同步：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">           slow    ┌───────────────────┐</span><br><span class="line">    ┌─────────────▶│Maven Central Repo.│</span><br><span class="line">    │              └───────────────────┘</span><br><span class="line">    │                        │</span><br><span class="line">    │                        │sync</span><br><span class="line">    │                        ▼</span><br><span class="line">┌───────┐  fast    ┌───────────────────┐</span><br><span class="line">│ User  │─────────▶│Maven Mirror Repo. │</span><br><span class="line">└───────┘          └───────────────────┘</span><br></pre></td></tr></table></figure>
+<p>中国区用户可以使用阿里云提供的Maven镜像仓库。使用Maven镜像仓库需要一个配置，在用户主目录下进入<code>.m2</code>目录，创建一个<code>settings.xml</code>配置文件，内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mirrors</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mirror</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>aliyun<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">name</span>&gt;</span>aliyun<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>central<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 国内推荐阿里云的Maven镜像 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://maven.aliyun.com/repository/central<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mirrors</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>配置镜像仓库后，Maven的下载速度就会非常快。</p>
+<h4 id="搜索第三方组件">搜索第三方组件</h4>
+<p>最后一个问题：如果我们要引用一个第三方组件，比如<code>okhttp</code>，如何确切地获得它的<code>groupId</code>、<code>artifactId</code>和<code>version</code>？方法是通过<a target="_blank" rel="noopener" href="https://search.maven.org/">search.maven.org</a>搜索关键字，找到对应的组件后，直接复制</p>
+<h4 id="命令行编译">命令行编译</h4>
+<p>在命令中，进入到<code>pom.xml</code>所在目录，输入以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ mvn clean package</span><br></pre></td></tr></table></figure>
+<p>如果一切顺利，即可在<code>target</code>目录下获得编译后自动打包的jar。</p>
+<h4 id="在ide中使用maven">在IDE中使用Maven</h4>
+<p>几乎所有的IDE都内置了对Maven的支持。在Eclipse中，可以直接创建或导入Maven项目。如果导入后的Maven项目有错误，可以尝试选择项目后点击右键，选择Maven - Update Project…更新</p>
+<h4 id="小结">小结</h4>
+<p>Maven通过解析依赖关系确定项目所需的jar包，常用的4种<code>scope</code>有：<code>compile</code>（默认），<code>test</code>，<code>runtime</code>和<code>provided</code>；</p>
+<p>Maven从中央仓库下载所需的jar包并缓存在本地；</p>
+<p>可以通过镜像仓库加速下载。</p>
+<hr>
+<h3 id="构建流程">构建流程</h3>
+<p>Maven不但有标准化的项目结构，而且还有一套标准化的构建流程，可以自动化实现编译，打包，发布，等等。</p>
+<h4 id="lifecycle和phase">Lifecycle和Phase</h4>
+<p>使用Maven时，我们首先要了解什么是Maven的生命周期（lifecycle）。</p>
+<p>Maven的生命周期由一系列阶段（phase）构成，以内置的生命周期<code>default</code>为例，它包含以下phase：</p>
+<ul>
+<li>validate 校验</li>
+<li>initialize 初始化</li>
+<li>generate-sources 生成源码</li>
+<li>process-sources 处理源码</li>
+<li>generate-resources 生成资源</li>
+<li>process-resources 处理资源</li>
+<li>compile 编译</li>
+<li>process-classes 处理-classes</li>
+<li>generate-test-sources 生成测试源码</li>
+<li>process-test-sources 处理测试源码</li>
+<li>generate-test-resources 生成测试资源</li>
+<li>process-test-resources 处理测试资源</li>
+<li>test-compile 测试编译</li>
+<li>process-test-classes 处理测试-classes</li>
+<li>test 测试</li>
+<li>prepare-package 准备打包</li>
+<li>package 打包</li>
+<li>pre-integration-test 预综合测试</li>
+<li>integration-test 综合测试</li>
+<li>post-integration-test 综合测试之后</li>
+<li>verify 核实</li>
+<li>install 安装</li>
+<li>deploy 部署</li>
+</ul>
+<p>如果我们运行<code>mvn package</code>，Maven就会执行<code>default</code>生命周期，它会从开始一直运行到<code>package</code>这个phase为止：</p>
+<ul>
+<li>validate</li>
+<li>initialize</li>
+<li>…</li>
+<li>prepare-package</li>
+<li>package</li>
+</ul>
+<p>如果我们运行<code>mvn compile</code>，Maven也会执行<code>default</code>生命周期，但这次它只会运行到<code>compile</code>，即以下几个phase：</p>
+<ul>
+<li>validate</li>
+<li>initialize</li>
+<li>…</li>
+<li>process-resources</li>
+<li>compile</li>
+</ul>
+<p>Maven另一个常用的生命周期是<code>clean</code>，它会执行3个phase：</p>
+<ul>
+<li>pre-clean</li>
+<li>clean （注意这个clean不是lifecycle而是phase）</li>
+<li>post-clean</li>
+</ul>
+<p>所以，我们使用<code>mvn</code>这个命令时，后面的参数是phase，Maven自动根据生命周期运行到指定的phase。</p>
+<p>更复杂的例子是指定多个phase，例如，运行<code>mvn clean package</code>，Maven先执行<code>clean</code>生命周期并运行到<code>clean</code>这个phase，然后执行<code>default</code>生命周期并运行到<code>package</code>这个phase，实际执行的phase如下：</p>
+<ul>
+<li>pre-clean</li>
+<li>clean （注意这个clean是phase）</li>
+<li>validate （开始执行default生命周期的第一个phase）</li>
+<li>initialize</li>
+<li>…</li>
+<li>prepare-package</li>
+<li>package</li>
+</ul>
+<p>在实际开发过程中，经常使用的命令有：</p>
+<p><code>mvn clean</code>：清理所有生成的class和jar；</p>
+<p><code>mvn clean compile</code>：先清理，再执行到<code>compile</code>；</p>
+<p><code>mvn clean test</code>：先清理，再执行到<code>test</code>，因为执行<code>test</code>前必须执行<code>compile</code>，所以这里不必指定<code>compile</code>；</p>
+<p><code>mvn clean package</code>：先清理，再执行到<code>package</code>。</p>
+<p>大多数phase在执行过程中，因为我们通常没有在<code>pom.xml</code>中配置相关的设置，所以这些phase什么事情都不做。</p>
+<p>经常用到的phase其实只有几个：</p>
+<ul>
+<li>clean：清理</li>
+<li>compile：编译</li>
+<li>test：运行测试</li>
+<li>package：打包</li>
+</ul>
+<h4 id="goal">Goal</h4>
+<p>执行一个phase又会触发一个或多个goal：</p>
+<table>
+<thead>
+<tr>
+<th>执行的Phase</th>
+<th>对应执行的Goal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>compile</td>
+<td>compiler:compile</td>
+</tr>
+<tr>
+<td>test</td>
+<td>compiler:testCompile surefire:test</td>
+</tr>
+</tbody>
+</table>
+<p>goal的命名总是<code>abc:xyz</code>这种形式。</p>
+<p>其实我们类比一下就明白了：</p>
+<ul>
+<li>lifecycle相当于Java的package，它包含一个或多个phase；</li>
+<li>phase相当于Java的class，它包含一个或多个goal；</li>
+<li>goal相当于class的method，它其实才是真正干活的。</li>
+</ul>
+<p>大多数情况，我们只要指定phase，就默认执行这些phase默认绑定的goal，只有少数情况，我们可以直接指定运行一个goal，例如，启动Tomcat服务器：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ mvn tomcat:run</span><br></pre></td></tr></table></figure>
+<h4 id="小结">小结</h4>
+<p>Maven通过lifecycle、phase和goal来提供标准的构建流程。</p>
+<p>最常用的构建命令是指定phase，然后让Maven执行到指定的phase：</p>
+<ul>
+<li>mvn clean</li>
+<li>mvn clean compile</li>
+<li>mvn clean test</li>
+<li>mvn clean package</li>
+</ul>
+<p>通常情况，我们总是执行phase默认绑定的goal，因此不必指定goal。</p>
+<hr>
+
+	</div>
+
+	
+
+	
+
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2025/04/01/maven-fundamentals/&text=maven 基础" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : 'maven 基础',
+	    description : `参考网站
+Maven基础 - Java教程 - 廖雪峰的官方网站
+Maven 基础
+maven介绍
+...`,
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://ottercoconut.github.io/2025/04/01/maven-fundamentals/'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
+
+
+
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2025/04/09/MyBatis/" rel="prev"> MyBatis</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2025/03/21/java-multithreading/" rel="next"> Java 多线程</a></div></div>
+
+
+
+
+		
+		
+		
+		
+
+					<footer id="footer" class="site-footer card shadow-sm border-0">
+						
+						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
+						</span>
+					</footer>
+				</main>
+			</div>
+		</div>
+		
+<script src="/argontheme.js"></script>
+
+		
+		
+		
+
+		
+			<script>
+				var argonEnableCodeHighlight = true;
+			</script>
+			
+<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
+
+		
+
+	</div>
+</div>
+<noscript>
+	<style>
+		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
+		.comment-item-text .comment-sticker.lazyload{display: none;}
+	</style>
+</noscript>
+</body>
+
+
+
+</html>
+
