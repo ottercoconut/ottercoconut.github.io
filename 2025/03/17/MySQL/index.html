@@ -512,7 +512,7 @@
 							<nav class="site-state">
 								<div class="site-state-item site-state-posts">
 									<a href="/archives">
-										<span class="site-state-item-count">8</span>
+										<span class="site-state-item-count">10</span>
 										<span class="site-state-item-name">文章</span>
 									</a>
 								</div>
@@ -637,12 +637,12 @@
 
 	<div class="post-content" id="post_content">
 		<p>MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如 InnoDB 和 MyISAM），允许用户根据需求灵活选择。此外，MySQL 提供主从复制、分区和集群（如 MySQL Cluster）等功能，适用于高可用性和分布式场景。从 Web 应用后台到企业级数据仓库，MySQL 的应用范围广泛。</p>
-<h3 id="参考网站">参考网站</h3>
+<h3 id="参考网站"><a class="markdownIt-Anchor" href="#参考网站"></a> 参考网站</h3>
 <p><a target="_blank" rel="noopener" href="http://xuesql.cn/">自学SQL网(教程 视频 练习全套)</a></p>
 <blockquote>
 <p>学完知识就有题做</p>
 </blockquote>
-<hr>
+<hr />
 <p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/30357711"></a></p>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-tutorial.html">MySQL 教程 | 菜鸟教程</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43896929/article/details/120750965">MySQL总结_sq连表-CSDN博客</a></p>
@@ -650,11 +650,11 @@
 <blockquote>
 <p>观感最好的教程</p>
 </blockquote>
-<h2 id="关系模型">关系模型</h2>
+<h2 id="关系模型"><a class="markdownIt-Anchor" href="#关系模型"></a> 关系模型</h2>
 <blockquote>
 <p>引用自 <a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/sql/relational/index.html">关系模型 - SQL教程 - 廖雪峰的官方网站</a></p>
 </blockquote>
-<h3 id="主键">主键</h3>
+<h3 id="主键"><a class="markdownIt-Anchor" href="#主键"></a> 主键</h3>
 <p>在关系数据库中，一张表中的每一行数据被称为一条记录。一条记录就是由多个字段组成的。例如，<code>students</code>表的两行记录：</p>
 <table>
 <thead>
@@ -698,10 +698,10 @@
 <blockquote>
 <p>如果使用INT自增类型，那么当一张表的记录数超过2147483647（约21亿）时，会达到上限而出错。使用BIGINT自增类型则可以最多约922亿亿条记录。</p>
 </blockquote>
-<h4 id="小结">小结</h4>
+<h4 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h4>
 <p>主键是关系表中记录的唯一标识。主键的选取非常重要：主键不要带有业务含义，而应该使用BIGINT自增或者GUID类型。主键也不应该允许<code>NULL</code>。</p>
 <p>可以使用多个列作为联合主键，但联合主键并不常用。</p>
-<h3 id="外键">外键</h3>
+<h3 id="外键"><a class="markdownIt-Anchor" href="#外键"></a> 外键</h3>
 <p>当我们用主键唯一标识记录时，我们就可以在<code>students</code>表中确定任意一个学生的记录：</p>
 <table>
 <thead>
@@ -794,7 +794,7 @@
 <p>要删除一个外键约束，也是通过<code>ALTER TABLE</code>实现的：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE students</span><br><span class="line">DROP FOREIGN KEY fk_class_id;</span><br></pre></td></tr></table></figure>
 <p>注意：删除外键约束并没有删除外键这一列。删除列是通过<code>DROP COLUMN ...</code>实现的。</p>
-<h4 id="多对多">多对多</h4>
+<h4 id="多对多"><a class="markdownIt-Anchor" href="#多对多"></a> 多对多</h4>
 <p>通过一个表的外键关联到另一个表，我们可以定义出一对多关系。有些时候，还需要定义“多对多”关系。例如，一个老师可以对应多个班级，一个班级也可以对应多个老师，因此，班级表和老师表存在多对多关系。</p>
 <p>多对多关系实际上是通过两个一对多关系实现的，即通过一个中间表，关联两个一对多关系，就形成了多对多关系：</p>
 <p><code>teachers</code>表：</p>
@@ -898,7 +898,7 @@
 <li><code>id=2</code>的二班对应<code>id=1,2,4</code>的张老师、王老师和赵老师；</li>
 </ul>
 <p>因此，通过中间表，我们就定义了一个“多对多”关系。</p>
-<h4 id="一对一">一对一</h4>
+<h4 id="一对一"><a class="markdownIt-Anchor" href="#一对一"></a> 一对一</h4>
 <p>一对一关系是指，一个表的记录对应到另一个表的唯一一个记录。</p>
 <p>例如，<code>students</code>表的每个学生可以有自己的联系方式，如果把联系方式存入另一个表<code>contacts</code>，我们就可以得到一个“一对一”关系：</p>
 <table>
@@ -930,9 +930,9 @@
 <p>有细心的童鞋会问，既然是一对一关系，那为啥不给<code>students</code>表增加一个<code>mobile</code>列，这样就能合二为一了？</p>
 <p>如果业务允许，完全可以把两个表合为一个表。但是，有些时候，如果某个学生没有手机号，那么，<code>contacts</code>表就不存在对应的记录。实际上，一对一关系准确地说，是<code>contacts</code>表一对一对应<code>students</code>表。</p>
 <p>还有一些应用会把一个大表拆成两个一对一的表，目的是把经常读取和不经常读取的字段分开，以获得更高的性能。例如，把一个大的用户表分拆为用户基本信息表<code>user_info</code>和用户详细信息表<code>user_profiles</code>，大部分时候，只需要查询<code>user_info</code>表，并不需要查询<code>user_profiles</code>表，这样就提高了查询速度。</p>
-<h4 id="小结">小结</h4>
+<h4 id="小结-2"><a class="markdownIt-Anchor" href="#小结-2"></a> 小结</h4>
 <p>关系数据库通过外键可以实现一对多、多对多和一对一的关系。外键既可以通过数据库来约束，也可以不设置约束，仅依靠应用程序的逻辑来保证。</p>
-<h3 id="索引">索引</h3>
+<h3 id="索引"><a class="markdownIt-Anchor" href="#索引"></a> 索引</h3>
 <p>在关系数据库中，如果有上万甚至上亿条记录，在查找记录的时候，想要获得非常快的速度，就需要使用索引。</p>
 <p>索引是关系数据库中对某一列或多个列的值进行预排序的数据结构。通过使用索引，可以让数据库系统不必扫描整个表，而是直接定位到符合条件的记录，这样就大大加快了查询速度。</p>
 <p>例如，对于<code>students</code>表：</p>
@@ -977,7 +977,7 @@
 <p>索引的效率取决于索引列的值是否散列，即该列的值如果越互不相同，那么索引效率越高。反过来，如果记录的列存在大量相同的值，例如<code>gender</code>列，大约一半的记录值是<code>M</code>，另一半是<code>F</code>，因此，对该列创建索引就没有意义。</p>
 <p>可以对一张表创建多个索引。索引的优点是提高了查询效率，缺点是在插入、更新和删除记录时，需要同时修改索引，因此，索引越多，插入、更新和删除记录的速度就越慢。</p>
 <p>对于主键，关系数据库会自动对其创建主键索引。使用主键索引的效率是最高的，因为主键会保证绝对唯一。</p>
-<h4 id="唯一索引">唯一索引</h4>
+<h4 id="唯一索引"><a class="markdownIt-Anchor" href="#唯一索引"></a> 唯一索引</h4>
 <p>在设计关系数据表的时候，看上去唯一的列，例如身份证号、邮箱地址等，因为他们具有业务含义，因此不宜作为主键。</p>
 <p>但是，这些列根据业务要求，又具有唯一性约束：即不能出现两条记录存储了同一个身份证号。这个时候，就可以给该列添加一个唯一索引。例如，我们假设<code>students</code>表的<code>name</code>不能重复：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> students</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">UNIQUE</span> INDEX uni_name (name);</span><br></pre></td></tr></table></figure>
@@ -986,13 +986,13 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> students</span><br><span class="line"><span class="keyword">ADD CONSTRAINT</span> uni_name <span class="keyword">UNIQUE</span> (name);</span><br></pre></td></tr></table></figure>
 <p>这种情况下，<code>name</code>列没有索引，但仍然具有唯一性保证。</p>
 <p>无论是否创建索引，对于用户和应用程序来说，使用关系数据库不会有任何区别。这里的意思是说，当我们在数据库中查询时，如果有相应的索引可用，数据库系统就会自动使用索引来提高查询效率，如果没有索引，查询也能正常执行，只是速度会变慢。因此，索引可以在使用数据库的过程中逐步优化。</p>
-<h4 id="小结">小结</h4>
+<h4 id="小结-3"><a class="markdownIt-Anchor" href="#小结-3"></a> 小结</h4>
 <p>通过对数据库表创建索引，可以提高查询速度；</p>
 <p>通过创建唯一索引，可以保证某一列的值具有唯一性；</p>
 <p>数据库索引对于用户和应用程序来说都是透明的。</p>
-<h2 id="select-查询">SELECT 查询</h2>
+<h2 id="select-查询"><a class="markdownIt-Anchor" href="#select-查询"></a> SELECT 查询</h2>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span></span><br><span class="line">    <span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> another_condition</span><br><span class="line">    <span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> …;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> movies </span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">year</span><span class="operator">&gt;=</span><span class="number">2010</span> <span class="keyword">AND</span> length_minutes<span class="operator">&lt;</span><span class="number">120</span>;</span><br></pre></td></tr></table></figure>
-<h3 id="筛选数字属性列"><strong>筛选数字属性列</strong></h3>
+<h3 id="筛选数字属性列"><a class="markdownIt-Anchor" href="#筛选数字属性列"></a> <strong>筛选数字属性列</strong></h3>
 <table>
 <thead>
 <tr>
@@ -1029,7 +1029,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="筛选字符串属性列"><strong>筛选字符串属性列</strong></h3>
+<h3 id="筛选字符串属性列"><a class="markdownIt-Anchor" href="#筛选字符串属性列"></a> <strong>筛选字符串属性列</strong></h3>
 <table>
 <thead>
 <tr>
@@ -1072,25 +1072,25 @@
 </tbody>
 </table>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*通配符*/</span></span><br><span class="line">col_name <span class="keyword">LIKE</span> &quot;%AT%&quot;;</span><br><span class="line"><span class="comment">/*&quot;AT&quot;&quot;AT*...&quot;&quot;...*AT&quot;&quot;...*AT*...&quot;均满足条件</span></span><br><span class="line"><span class="comment"> &quot;AT&quot;前后可以有任意字符*/</span></span><br><span class="line">col_name <span class="keyword">LIKE</span> &quot;AN_&quot;;</span><br><span class="line"><span class="comment">/*&quot;AND&quot;可以 &quot;AN&quot;&quot;ANDD&quot;均不行</span></span><br><span class="line"><span class="comment"> 与&#x27;%&#x27;相似 但只代表一个字符*/</span></span><br></pre></td></tr></table></figure>
-<h3 id="过滤-排序">过滤/排序</h3>
+<h3 id="过滤排序"><a class="markdownIt-Anchor" href="#过滤排序"></a> 过滤/排序</h3>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*用DISTINCT关键字来指定某个或某些属性列唯一返回*/</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s);</span><br></pre></td></tr></table></figure>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*让结果按一个或多个属性列做排序*/</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="comment">/* ASC 升序或 DESC 降序*/</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span> <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line"><span class="comment">/*LIMIT来指定只返回多少行结果 </span></span><br><span class="line"><span class="comment"> 用OFFSET来指定从哪一行开始返回*/</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br><span class="line"><span class="comment">/*关于OFFSET 若要输出第N行(及之后)</span></span><br><span class="line"><span class="comment">  则OFFSET的参数须为N-1 */</span></span><br></pre></td></tr></table></figure>
-<h4 id="例题">例题</h4>
+<h4 id="例题"><a class="markdownIt-Anchor" href="#例题"></a> 例题</h4>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_132438.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题1">
 
-<hr>
-<h3 id="select复习题">SELECT复习题</h3>
+<hr />
+<h3 id="select复习题"><a class="markdownIt-Anchor" href="#select复习题"></a> SELECT复习题</h3>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_134213.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题2">
 
-<hr>
-<h3 id="在查询中使用表达式"><strong>在查询中使用表达式</strong></h3>
+<hr />
+<h3 id="在查询中使用表达式"><a class="markdownIt-Anchor" href="#在查询中使用表达式"></a> <strong>在查询中使用表达式</strong></h3>
 <p>实际上AS不仅用在表达式别名上，普通的属性列甚至是表（table）都可以取一个别名，这让SQL更容易理解</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--属性列和表取别名的例子</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span> <span class="keyword">AS</span> better_column_name, …</span><br><span class="line"><span class="keyword">FROM</span> a_long_widgets_table_name <span class="keyword">AS</span> mywidgets</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> widget_sales</span><br><span class="line">  <span class="keyword">ON</span> mywidgets.id <span class="operator">=</span> widget_sales.widget_id;</span><br></pre></td></tr></table></figure>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--包含表达式的例子</span></span><br><span class="line"><span class="keyword">SELECT</span>  particle_speed <span class="operator">/</span> <span class="number">2.0</span> <span class="keyword">AS</span> half_particle_speed <span class="comment">--对结果做了一个除2</span></span><br><span class="line"><span class="keyword">FROM</span> physics_data</span><br><span class="line"><span class="keyword">WHERE</span> <span class="built_in">ABS</span>(particle_position) <span class="operator">*</span> <span class="number">10.0</span> <span class="operator">&gt;</span><span class="number">500</span></span><br><span class="line">            <span class="comment">--（条件要求这个属性绝对值乘以10大于500）;</span></span><br></pre></td></tr></table></figure>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-13_164705.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题3">
 
-<hr>
-<h3 id="在查询中进行统计"><strong>在查询中进行统计</strong></h3>
+<hr />
+<h3 id="在查询中进行统计"><a class="markdownIt-Anchor" href="#在查询中进行统计"></a> <strong>在查询中进行统计</strong></h3>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="样图1">
 
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> AGG_FUNC(column_or_expression) <span class="keyword">AS</span> aggregate_description, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> constraint_expression;</span><br></pre></td></tr></table></figure>
@@ -1125,65 +1125,65 @@
 </tr>
 </tbody>
 </table>
-<hr>
-<h3 id="分组统计">分组统计</h3>
-<p><code>GROUP BY</code> 数据分组语法可以按某个<code>col_name</code>对数据进行分组，如：<code>GROUP BY Year</code>指对数据按年份分组， 相同年份的分到一个组里。如果把统计函数和<code>GROUP BY</code>结合，那统计结果就是对分组内的数据统计了<br>
+<hr />
+<h3 id="分组统计"><a class="markdownIt-Anchor" href="#分组统计"></a> 分组统计</h3>
+<p><code>GROUP BY</code> 数据分组语法可以按某个<code>col_name</code>对数据进行分组，如：<code>GROUP BY Year</code>指对数据按年份分组， 相同年份的分到一个组里。如果把统计函数和<code>GROUP BY</code>结合，那统计结果就是对分组内的数据统计了<br />
 <code>GROUP BY</code> 分组结果的数据条数，就是分组数量，比如：<code>GROUP BY Year</code>，全部数据里有几年，就返回几条数据， 不管是否应用了统计函数</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用分组的方式统计</span></span><br><span class="line"><span class="keyword">SELECT</span> AGG_FUNC(column_or_expression) <span class="keyword">AS</span> aggregate_description, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> constraint_expression</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">column</span>;</span><br></pre></td></tr></table></figure>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-13_170736.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题4">
 
-<p>在 <strong><code>GROUP BY</code></strong> 分组语法中，我们知道数据库是先对数据做 <strong><code>WHERE</code></strong> ，然后对结果做分组，如果我们要对分组完的数据再筛选出几条如何办？<br>
+<p>在 <strong><code>GROUP BY</code></strong> 分组语法中，我们知道数据库是先对数据做 <strong><code>WHERE</code></strong> ，然后对结果做分组，如果我们要对分组完的数据再筛选出几条如何办？<br />
 一个不常用的语法 <strong><code>HAVING</code></strong> 语法将用来解决这个问题，他可以对分组之后的数据再做<code>SELECT</code>筛选</p>
 <p><strong><code>HAVING</code></strong> 和 <strong><code>WHERE</code></strong> 语法一样，只不过作用的结果集不一样. 在我们例子数据表数据量小的情况下可能感觉 <strong><code>HAVING</code></strong> 没有什么用，但当你的数据量成千上万属性又很多时也许能帮上大忙</p>
-<hr>
-<h3 id="join-连接">JOIN 连接</h3>
-<h4 id="数据库范式">数据库范式</h4>
+<hr />
+<h3 id="join-连接"><a class="markdownIt-Anchor" href="#join-连接"></a> JOIN 连接</h3>
+<h4 id="数据库范式"><a class="markdownIt-Anchor" href="#数据库范式"></a> 数据库范式</h4>
 <p>数据库范式是数据表设计的规范，在范式规范下，数据库里每个表存储的重复数据降到最少(这有助于数据的一致性维护)同时在数据库范式下，表和表之间不再有很强的数据耦合，可以独立的增长(ie. 比如汽车引擎的增长和汽车的增长是完全独立的)</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_table_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable <span class="comment">--主表</span></span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> another_table <span class="comment">--要连接的表</span></span><br><span class="line">    <span class="keyword">ON</span> mytable.id <span class="operator">=</span> another_table.id </span><br><span class="line">    <span class="comment">--想象一下刚才讲的主键连接，两个相同的连成1条</span></span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span>, … <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br></pre></td></tr></table></figure>
 <p>本例中<code>ON</code>条件描述的关联关系:</p>
-<h4 id="inner-join-内-连接"><strong><code>INNER JOIN</code></strong> (内)连接</h4>
-<p>先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)<br>
+<h4 id="inner-join-内连接"><a class="markdownIt-Anchor" href="#inner-join-内连接"></a> <strong><code>INNER JOIN</code></strong> (内)连接</h4>
+<p>先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)<br />
 还有一个理解 <strong><code>INNER JOIN</code></strong> 的方式，就是把 <strong><code>INNER JOIN</code></strong> 想成两个集合的交集。</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题5"></p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题5" /></p>
 
-<h4 id="outer-join外连接"><code>OUTER JOIN</code>外连接</h4>
+<h4 id="outer-join外连接"><a class="markdownIt-Anchor" href="#outer-join外连接"></a> <code>OUTER JOIN</code>外连接</h4>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用LEFT/RIGHT/FULL JOINs 做多表查询</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">INNER</span><span class="operator">/</span><span class="keyword">LEFT</span><span class="operator">/</span><span class="keyword">RIGHT</span><span class="operator">/</span><span class="keyword">FULL</span> <span class="keyword">JOIN</span> another_table</span><br><span class="line">    <span class="keyword">ON</span> mytable.id <span class="operator">=</span> another_table.matching_id</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span>, … <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br></pre></td></tr></table></figure>
 <p>在表A 连接 B， <strong><code>LEFT JOIN</code></strong> 保留A的所有行，不管有没有能匹配上B，反过来 <strong><code>RIGHT JOIN</code><strong>则保留所有B里的行。最后</strong><code>FULL JOIN</code></strong> 不管有没有匹配上，同时保留A和B里的所有行</p>
 <p>将两个表数据1-1连接，保留A或B的原有行，如果某一行在另一个表不存在，会用 <code>NULL</code>来填充结果数据。</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题6"></p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题6" /></p>
 
-<hr>
-<h3 id="查询执行顺序">查询执行顺序</h3>
+<hr />
+<h3 id="查询执行顺序"><a class="markdownIt-Anchor" href="#查询执行顺序"></a> 查询执行顺序</h3>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="样图2">
 
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--这才是完整的SELECT查询</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> <span class="keyword">column</span>, AGG_FUNC(column_or_expression), …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line">    <span class="keyword">JOIN</span> another_table</span><br><span class="line">      <span class="keyword">ON</span> mytable.column <span class="operator">=</span> another_table.column</span><br><span class="line">    <span class="keyword">WHERE</span> constraint_expression</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">column</span></span><br><span class="line">    <span class="keyword">HAVING</span> constraint_expression</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span> <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">    LIMIT count <span class="keyword">OFFSET</span> COUNT;</span><br></pre></td></tr></table></figure>
-<h4 id="1-from-和-join">1. <code>FROM</code> 和 <code>JOIN</code></h4>
+<h4 id="1-from-和-join"><a class="markdownIt-Anchor" href="#1-from-和-join"></a> 1. <code>FROM</code> 和 <code>JOIN</code></h4>
 <p><strong><code>FROM</code></strong> 或  <strong><code>JOIN</code></strong> 会第一个执行，确定一个整体的数据范围. 如果要JOIN不同表，可能会生成一个临时Table来用于 下面的过程。总之第一步可以简单理解为确定一个数据源表（含临时表）</p>
-<h4 id="2-where"><strong>2. <code>WHERE</code></strong></h4>
+<h4 id="2-where"><a class="markdownIt-Anchor" href="#2-where"></a> <strong>2. <code>WHERE</code></strong></h4>
 <p>我们确定了数据来源 <strong><code>WHERE</code></strong> 语句就将在这个数据源中按要求进行数据筛选，并丢弃不符合要求的数据行，所有的筛选col属性 只能来自 <strong><code>FROM</code></strong> 圈定的表. <code>AS</code>别名还不能在这个阶段使用，因为可能别名是一个还没执行的表达式</p>
-<h4 id="3-group-by"><strong>3. <code>GROUP BY</code></strong></h4>
+<h4 id="3-group-by"><a class="markdownIt-Anchor" href="#3-group-by"></a> <strong>3. <code>GROUP BY</code></strong></h4>
 <p>如果你用了 <strong><code>GROUP BY</code></strong> 分组，那 <strong><code>GROUP BY</code></strong> 将对之前的数据进行分组，统计等，并将是结果集缩小为分组数.这意味着 其他的数据在分组后丢弃.</p>
-<h4 id="4-having"><strong>4. <code>HAVING</code></strong></h4>
+<h4 id="4-having"><a class="markdownIt-Anchor" href="#4-having"></a> <strong>4. <code>HAVING</code></strong></h4>
 <p>如果你用了 <strong><code>GROUP BY</code></strong> 分组, <strong><code>HAVING</code></strong> 会在分组完成后对结果集再次筛选。<code>AS</code>别名也不能在这个阶段使用.</p>
-<h4 id="5-select"><strong>5. <code>SELECT</code></strong></h4>
+<h4 id="5-select"><a class="markdownIt-Anchor" href="#5-select"></a> <strong>5. <code>SELECT</code></strong></h4>
 <p>确定结果之后， <strong><code>SELECT</code></strong> 用来对结果col简单筛选或计算，决定输出什么数据.</p>
-<h4 id="6-distinct"><strong>6. <code>DISTINCT</code></strong></h4>
+<h4 id="6-distinct"><a class="markdownIt-Anchor" href="#6-distinct"></a> <strong>6. <code>DISTINCT</code></strong></h4>
 <p>如果数据行有重复 <strong><code>DISTINCT</code></strong> 将负责排重.</p>
-<h4 id="7-order-by"><strong>7. <code>ORDER BY</code></strong></h4>
+<h4 id="7-order-by"><a class="markdownIt-Anchor" href="#7-order-by"></a> <strong>7. <code>ORDER BY</code></strong></h4>
 <p>在结果集确定的情况下， <strong><code>ORDER BY</code></strong> 对结果做排序。因为 <strong><code>SELECT</code></strong> 中的表达式已经执行完了。此时可以用<code>AS</code>别名.</p>
-<h4 id="8-limit-offset"><strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></h4>
+<h4 id="8-limit-offset"><a class="markdownIt-Anchor" href="#8-limit-offset"></a> <strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></h4>
 <p>最后 <strong><code>LIMIT</code></strong> 和 <strong><code>OFFSET</code></strong> 从排序的结果中截取部分数据.</p>
-<h4 id="结论"><strong>结论</strong></h4>
+<h4 id="结论"><a class="markdownIt-Anchor" href="#结论"></a> <strong>结论</strong></h4>
 <p>不是每一个SQL语句都要用到所有的句法，但灵活运用以上的句法组合和深刻理解SQL执行原理将能在SQL层面更好的解决数据问题，而不用把问题 都抛给程序逻辑.</p>
-<hr>
-<h2 id="null">NULL</h2>
+<hr />
+<h2 id="null"><a class="markdownIt-Anchor" href="#null"></a> NULL</h2>
 <p>如果某个字段你没有填写到数据库，很可能就会出现 <strong><code>NULL</code></strong>  。所有一个常见的方式就是为字段设置 <strong><code>默认值</code></strong> ,比如 数字的默认值设置为0，字符串设置为  <code>&quot;&quot;</code> 字符串. 但是在一些 <strong><code>NULL</code></strong> 表示它本来含义的场景，需要注意是否设置默认值还是保持 <strong><code>NULL</code></strong> 。 (比如, 当你计算一些行的平均值的时候，如果是0会参与计算导致平均值差错，是  <strong><code>NULL</code></strong> 则不会参与计算).</p>
 <p>还有一些情况很难避免 <strong><code>NULL</code></strong> 的出现, 比如之前说的 outer-joining 多表连接，A和B有数据差异时，必须用 <strong><code>NULL</code></strong> 来填充。这种情况，可以用 <strong><code>IS NULL</code></strong> 和 <strong><code>IS NOT NULL</code></strong> 来选在某个字段是否等于 <strong><code>NULL</code></strong>.</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">column</span> <span class="keyword">IS</span><span class="operator">/</span><span class="keyword">IS</span> <span class="keyword">NOT NULL</span></span><br><span class="line"><span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> another_condition</span><br><span class="line"><span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> …;</span><br></pre></td></tr></table></figure>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_203039.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题7">
 
-<hr>
-<h2 id="修改数据">修改数据</h2>
+<hr />
+<h2 id="修改数据"><a class="markdownIt-Anchor" href="#修改数据"></a> 修改数据</h2>
 <blockquote>
 <p>部分引用自 <a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/sql/manipulation/index.html">修改数据 - SQL教程 - 廖雪峰的官方网站</a></p>
 </blockquote>
@@ -1195,7 +1195,7 @@
 <li>DELETE：删除已有记录。</li>
 </ul>
 <p>我们将分别讨论这三种修改数据的语句的使用方法。</p>
-<h4 id="insert-插入">INSERT 插入</h4>
+<h4 id="insert-插入"><a class="markdownIt-Anchor" href="#insert-插入"></a> INSERT 插入</h4>
 <p>引用于 <a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-insert-query.html">MySQL 插入数据 | 菜鸟教程</a></p>
 <p>例如，我们向<code>user</code>表插入一条新记录，先列举出需要插入的字段名称，然后在<code>VALUES</code>子句中依次写出对应字段的值：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> table_name (column1, column2, column3, ...)</span><br><span class="line"><span class="keyword">VALUES</span> (value1, value2, value3, ...);</span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> users (username, email, birthdate, is_active)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;test@runoob.com&#x27;</span>, <span class="string">&#x27;1990-01-01&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
@@ -1203,8 +1203,8 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> users</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="keyword">NULL</span>,<span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;test@runoob.com&#x27;</span>, <span class="string">&#x27;1990-01-01&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
 <p>还可以一次性添加多条记录，只需要在<code>VALUES</code>子句中指定多个记录值，每个记录是由<code>(...)</code>包含的一组值，每组值用逗号<code>,</code>分隔：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> users (username, email, birthdate, is_active)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="string">&#x27;test1&#x27;</span>, <span class="string">&#x27;test1@runoob.com&#x27;</span>, <span class="string">&#x27;1985-07-10&#x27;</span>, <span class="literal">true</span>),</span><br><span class="line">    (<span class="string">&#x27;test2&#x27;</span>, <span class="string">&#x27;test2@runoob.com&#x27;</span>, <span class="string">&#x27;1988-11-25&#x27;</span>, <span class="literal">false</span>),</span><br><span class="line">    (<span class="string">&#x27;test3&#x27;</span>, <span class="string">&#x27;test3@runoob.com&#x27;</span>, <span class="string">&#x27;1993-05-03&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="update-更新">UPDATE 更新</h3>
+<hr />
+<h3 id="update-更新"><a class="markdownIt-Anchor" href="#update-更新"></a> UPDATE 更新</h3>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-update-query.html">MySQL UPDATE 更新 | 菜鸟教程</a></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> table_name</span><br><span class="line"><span class="keyword">SET</span> column1 <span class="operator">=</span> value1, column2 <span class="operator">=</span> value2, ...</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>;</span><br></pre></td></tr></table></figure>
 <p><strong>参数说明：</strong></p>
@@ -1232,8 +1232,8 @@
 <p>当更新<code>id=999</code>的记录时：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; UPDATE students SET name=&#x27;大宝&#x27; WHERE id=999;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line">Rows matched: 0  Changed: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
 <p>MySQL会返回<code>0</code>，可以从打印的结果<code>Rows matched: 0 Changed: 0</code>看到。</p>
-<hr>
-<h3 id="delete-删除">DELETE 删除</h3>
+<hr />
+<h3 id="delete-删除"><a class="markdownIt-Anchor" href="#delete-删除"></a> DELETE 删除</h3>
 <p><code>DELETE</code>语句的基本语法是：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> <span class="operator">&lt;</span>表名<span class="operator">&gt;</span> <span class="keyword">WHERE</span> ...;</span><br></pre></td></tr></table></figure>
 <p>例如，我们想删除<code>students</code>表中<code>id=1</code>的记录，就需要这么写：</p>
@@ -1248,8 +1248,8 @@
 <p>在使用MySQL这类真正的关系数据库时，<code>DELETE</code>语句也会返回删除的行数以及<code>WHERE</code>条件匹配的行数。</p>
 <p>例如，分别执行删除<code>id=1</code>和<code>id=999</code>的记录：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; DELETE FROM students WHERE id=1;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DELETE FROM students WHERE id=999;</span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="create-创建">CREATE 创建</h2>
+<hr />
+<h2 id="create-创建"><a class="markdownIt-Anchor" href="#create-创建"></a> CREATE 创建</h2>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-create-tables.html">MySQL 创建数据表 | 菜鸟教程</a></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用户表实例</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> users (</span><br><span class="line">    id <span class="type">INT</span> AUTO_INCREMENT <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    username <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    birthdate <span class="type">DATE</span>,</span><br><span class="line">    is_active <span class="type">BOOLEAN</span> <span class="keyword">DEFAULT</span> <span class="literal">TRUE</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <p>实例解析：</p>
