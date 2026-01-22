@@ -3,16 +3,20 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>归档 : 2025/3 - 边个濑椰のBlog</title>
+	<title>Pytorch入门学习 - 边个濑椰のBlog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta property="og:type" content="website">
-<meta property="og:title" content="边个濑椰のBlog">
-<meta property="og:url" content="https://ottercoconut.github.io/archives/2025/03/index.html">
+	<meta name="description" content="Dataset An abstract class representing a Dataset. All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite __getitem__, supporting fetching a da">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch入门学习">
+<meta property="og:url" content="https://ottercoconut.github.io/2026/01/22/pytorch/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
+<meta property="og:description" content="Dataset An abstract class representing a Dataset. All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite __getitem__, supporting fetching a da">
 <meta property="og:locale">
+<meta property="article:published_time" content="2026-01-22T02:49:28.000Z">
+<meta property="article:modified_time" content="2026-01-22T14:27:01.223Z">
 <meta property="article:author" content="Kawauso">
 <meta name="twitter:card" content="summary">
 
@@ -434,15 +438,6 @@
 
 <div class="page-information-card-container">
 	
-		
-<div class="page-information-card card bg-gradient-secondary shadow-lg border-0">
-	<div class="card-body">
-		<h3 class="text-black">归档 : 2025/3 </h3>
-		
-	</div>
-</div>
-
-	
 </div>
 
 <div id="sidebar_mask"></div>
@@ -469,18 +464,39 @@
 		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
 			<div id="leftbar_part2_inner" class="card-body">
 				
-				<div class="nav-wrapper" style="padding-top: 5px; display:none; ">
+				<div class="nav-wrapper" style="padding-top: 5px;">
 	                <ul class="nav nav-pills nav-fill" role="tablist">
 						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
 						<li class="nav-item sidebar-tab-switcher">
-							<a class="active show" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
 						</li>
 	                </ul>
 				</div>
 				<div>
 					<div class="tab-content" style="padding: 10px 10px 0 10px;">
 						
-						<div class="tab-pane fade text-center active show" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
 							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
 							<h6 id="leftbar_overview_author_name">边个濑椰のBlog</h6>
 							<nav class="site-state">
@@ -566,18 +582,17 @@
 	<main id="main" class="site-main" role="main">
 		
 		
-		
-				
-	<article class="post card bg-white shadow-sm border-0 ">
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2025/03/21/java-multithreading/">Java 多线程</a>
+		<a class="post-title" href="/2026/01/22/pytorch/">Pytorch入门学习</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-4-1 14:44:34">2025-3-21 14:50
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-22 22:27:01">2026-1-22 10:49
 							</time>
 						</div>
 					
@@ -586,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-edittime">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-21 14:50:07 | 编辑于 2025-4-1 14:44:34">2025-4-1 14:44
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-22 22:27:01">2026-1-22 22:27
 							</time>
 						</div>
 					
@@ -595,7 +610,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.2k 字
+							1.2k 字
 						</div>
 					
 						
@@ -603,261 +618,221 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							61 分钟
+							5 分钟
 						</div>
 					
 		</div>
 		
 	</header>
 
-	<div class="post-content">
-		
-			
-				 参考网站
-多线程 - Java教程 - 廖雪峰的官方网站
+	<div class="post-content" id="post_content">
+		<h2 id="dataset"><a class="markdownIt-Anchor" href="#dataset"></a> Dataset</h2>
+<p>An abstract class representing a <code>Dataset</code>.</p>
+<p>All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite <code>__getitem__</code>, supporting fetching a data sample for a given key. Subclasses could also optionally overwrite <code>__len__</code>, which is expected to return the size of the dataset by many <code>~torch.utils.data.Sampler</code> implementations and the default options of <code>~torch.utils.data.DataLoader</code>. Subclasses could also optionally implement <code>__getitems__</code>, for speedup batched samples loading. This method accepts list of indices of samples of batch and returns list of samples.</p>
+<p><strong>note</strong></p>
+<ul>
+<li><code>~torch.utils.data.DataLoader</code> by default constructs an index sampler that yields integral indices. To make it work with a map-style dataset with non-integral indices/keys, a custom sampler must be provided.</li>
+</ul>
+<blockquote>
+<p>一个表示数据集的抽象类。</p>
+<p>所有实现从键（keys）到数据样本（data samples）映射的数据集都应该继承这个类。所有子类都必须重写 <code>__getitem__</code> 方法，以支持根据给定的键获取数据样本。子类也可以选择性地重写 <code>__len__</code> 方法，许多 <code>~torch.utils.data.Sampler</code> 实现和 <code>~torch.utils.data.DataLoader</code> 的默认选项都需要通过这个方法返回数据集的大小。子类还可以选择性地实现 <code>__getitems__</code> 方法，以加速批量样本的加载。此方法接受批处理样本的索引列表，并返回样本列表。</p>
+<p>注意</p>
+<p>默认情况下，<code>~torch.utils.data.DataLoader</code> 会构造一个生成整数索引的采样器。要让其与非整数索引/键的映射式数据集一起工作，必须提供自定义的采样器。</p>
+</blockquote>
+<h3 id="自定义dataset"><a class="markdownIt-Anchor" href="#自定义dataset"></a> 自定义Dataset</h3>
+<p>那么在实际的使用中，比如有一个数据集（我们拿之前用过的fer2013来举例）：</p>
+<ul>
+<li>
+<p>先定义一个数据类继承<code>Dataset</code>，定义<code>__init__()</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyData</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, root_dir, label_dir</span>):</span><br><span class="line">        <span class="variable language_">self</span>.root_dir = root_dir <span class="comment"># 如 fer2013/test</span></span><br><span class="line">        <span class="variable language_">self</span>.label_dir = label_dir <span class="comment"># 如 angry</span></span><br><span class="line">        <span class="variable language_">self</span>.path = os.path.join(<span class="variable language_">self</span>.root_dir, <span class="variable language_">self</span>.label_dir) <span class="comment"># 路径合并函数 解决跨系统的文件路径问题</span></span><br><span class="line">        <span class="variable language_">self</span>.img_path = os.listdir(<span class="variable language_">self</span>.path) <span class="comment"># 如angry文件夹下，所有图片名的string list</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>重写<code>__getitem()</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        img_name = <span class="variable language_">self</span>.img_path[index]</span><br><span class="line">        img_item_path = os.path.join(<span class="variable language_">self</span>.root_dir, <span class="variable language_">self</span>.label_dir, img_name) <span class="comment"># 拼接出具体的某一个图片的路径</span></span><br><span class="line">        img = Image.<span class="built_in">open</span>(img_item_path)</span><br><span class="line">        label = <span class="variable language_">self</span>.label_dir</span><br><span class="line">        <span class="keyword">return</span> img, label <span class="comment"># 返回数据集中的一个对象（图片）及其类型</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>重写<code>__len()__</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(<span class="variable language_">self</span>.img_path)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>定义示例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">root_dir = <span class="string">&quot;fer2013/train&quot;</span></span><br><span class="line">angry_label_dir = <span class="string">&quot;angry&quot;</span></span><br><span class="line">angry_dataset = MyData(root_dir, angry_label_dir)</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>Dataset合并</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">disguest_label_dir = <span class="string">&quot;disguest&quot;</span></span><br><span class="line">disgust_dataset = MyData(root_dir, disguest_label_dir)</span><br><span class="line"></span><br><span class="line">train_dataset = angry_dataset + disgust_dataset <span class="comment"># &#x27;+&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr />
+<h2 id="tensorboard"><a class="markdownIt-Anchor" href="#tensorboard"></a> TensorBoard</h2>
+<h3 id="summarywriter"><a class="markdownIt-Anchor" href="#summarywriter"></a> SummaryWriter</h3>
+<ul>
+<li>创建日志目录</li>
+<li>初始化<code>Writer</code>对象</li>
+<li>生成事件文件
+<ul>
+<li><strong>这个文件才是真正的数据库</strong>(events.out…)当后续调用 <code>writer.add_scalar</code> 时，数据并不是直接画在屏幕上，而是被追加写进这个文件里。</li>
+<li>当你运行 <code>tensorboard --logdir=logs</code> 时，TensorBoard 的后端服务器就会去读取这个文件里的内容，并在浏览器里渲染成图表。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"></span><br><span class="line">writer  = SummaryWriter(<span class="string">&quot;logs&quot;</span>) <span class="comment"># 这行代码会在你的项目根目录下创建一个名为&quot;logs&quot;的文件夹</span></span><br></pre></td></tr></table></figure>
+<p>需注意，每次实验可以用不同的文件夹来记录数据，比如<code>writer = SummaryWriter(&quot;logs/lr0.01_batch32&quot;)</code>修改了学习率后<code>writer = SummaryWriter(&quot;logs/lr0.001_batch32&quot;)</code></p>
+<h4 id="add_scalar"><a class="markdownIt-Anchor" href="#add_scalar"></a> add_scalar</h4>
+<ul>
+<li>绘图函数<code>add_scalar</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(method) <span class="keyword">def</span> <span class="title function_">add_scalar</span>(<span class="params"></span></span><br><span class="line"><span class="params">    tag: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    scalar_value: <span class="type">Any</span>, <span class="comment"># 对应图像的y轴</span></span></span><br><span class="line"><span class="params">    global_step: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>, <span class="comment"># 对应图像的x轴</span></span></span><br><span class="line"><span class="params">    walltime: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    new_style: <span class="built_in">bool</span> = <span class="literal">False</span>,</span></span><br><span class="line"><span class="params">    double_precision: <span class="built_in">bool</span> = <span class="literal">False</span></span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">​``` 例 ```</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    writer.add_scalar(<span class="string">&quot;y=2x&quot;</span>, <span class="number">2</span>*i, i)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<h4 id="add_image"><a class="markdownIt-Anchor" href="#add_image"></a> add_image</h4>
+<ul>
+<li>查看图片函数<code>add_image</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(method) <span class="keyword">def</span> <span class="title function_">add_image</span>(<span class="params"></span></span><br><span class="line"><span class="params">    tag: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    img_tensor: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    global_step: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    walltime: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    dataformats: <span class="built_in">str</span> = <span class="string">&quot;CHW&quot;</span></span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>要注意参数的类型要求：<code>img_tensor (torch.Tensor, numpy.ndarray, or string/blobname): Image data</code>，所以要将PIL类型的图片进行转换，比如用numpy来转换。以及数据的shape要求： Tensor with :math:<code>(1, H, W)</code>, :math:<code>(H, W)</code>, :math:<code>(H, W, 3)</code> is also suitable as long as corresponding <code>dataformats</code> argument is passed, e.g. <code>CHW</code>, <code>HWC</code>, <code>HW</code>. 即三种图片数据的格式，其通道数、高度、宽度的顺序不同。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">img = Image.<span class="built_in">open</span>(image_path)</span><br><span class="line">img_array = np.array(img)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;图像形状: <span class="subst">&#123;img_array.shape&#125;</span>&quot;</span>)</span><br><span class="line">writer.add_image(<span class="string">&quot;test&quot;</span>,img_array,<span class="number">1</span>,dataformats=<span class="string">&#x27;HW&#x27;</span>) <span class="comment"># 由.shape可得</span></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="常见的transforms"><a class="markdownIt-Anchor" href="#常见的transforms"></a> 常见的Transforms</h2>
+<h3 id="totensor"><a class="markdownIt-Anchor" href="#totensor"></a> ToTensor</h3>
+<p>Convert a PIL Image or ndarray to tensor and scale the values accordingly.</p>
+<p>This transform does not support torchscript.</p>
+<p>Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0] if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1) or if the numpy.ndarray has dtype = np.uint8</p>
+<p>In the other cases, tensors are returned without scaling.</p>
+<p><strong>note</strong></p>
+<ul>
+<li>
+<p>Because the input image is scaled to [0.0, 1.0], this transformation should not be used when transforming target image masks. See the [references](vscode-file://vscode-app/d:/Microsoft VS Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html) for implementing the transforms for image masks.</p>
+</li>
+<li>
+<p>将PIL图片转为torch类型，如<code>torch.Size([1, 48, 48])</code></p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans_totensor = transforms.ToTensor()</span><br><span class="line">img_tensor = trans_totensor(img)</span><br><span class="line"><span class="built_in">print</span>(img_tensor.shape)</span><br><span class="line">writer.add_image(<span class="string">&quot;ToTensor&quot;</span>,img_tensor)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<h3 id="normalize"><a class="markdownIt-Anchor" href="#normalize"></a> Normalize</h3>
 
-多数参考了廖老师的博客 非常好教程
-
-万字图解Java多线程 - 个人文章 - SegmentFault 思否
-
-相对没那么详细，就讲到同步锁和线程池，简洁清晰
-也补充了一些知识，例如线程状态，同步锁，生产者消费者模型…
-
- Java 多线程
- 进程/线程
-进程和线程的关系： 一个进程可...
-			
-		
 	</div>
+
+	
+
+	
 
 	
 </article>
 
-
-	<article class="post card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
-		
-		<a class="post-title" href="/2025/03/19/Minecraft-server/">在Linux(CentOS)系统上部署Minecraft服务器</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-19 18:48:59 | 编辑于 2025-9-11 13:05:13">2025-3-19 18:48
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-19 18:48:59 | 编辑于 2025-9-11 13:05:13">2025-9-11 13:05
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							1.6k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							6 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content">
-		
-			
-				笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)
- 参考网站
-在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation
-SakuraFrp 启动器安装 / 使用指南 | S...
-			
-		
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2026/01/22/pytorch/&text=Pytorch入门学习" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
 	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : 'Pytorch入门学习',
+	    description : ` Dataset
+An abstract class representing a Dataset....`,
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://ottercoconut.github.io/2026/01/22/pytorch/'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
 
-	
-</article>
 
 
-	<article class="post card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2026/01/15/toefl-speaking/" rel="next"> TOEFL Speaking</a></div></div>
+
+
+
+
 		
-		<a class="post-title" href="/2025/03/18/Redis/">Redis</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-18 15:41:00 | 编辑于 2025-3-20 19:24:23">2025-3-18 15:41
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-18 15:41:00 | 编辑于 2025-3-20 19:24:23">2025-3-20 19:24
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							3.1k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							12 分钟
-						</div>
-					
-		</div>
 		
-	</header>
-
-	<div class="post-content">
-		
-			
-				Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化...
-			
-		
-	</div>
-
-	
-</article>
-
-
-	<article class="post card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
-		
-		<a class="post-title" href="/2025/03/17/MySQL/">MySQL</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 20:06:34 | 编辑于 2025-3-20 16:05:51">2025-3-17 20:06
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 20:06:34 | 编辑于 2025-3-20 16:05:51">2025-3-20 16:05
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							6.5k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							25 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content">
-		
-			
-				MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以...
-			
-		
-	</div>
-
-	
-</article>
-
-
-	<article class="post card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
-		
-		<a class="post-title" href="/2025/03/17/hello-world/">Hello World</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 17:16:03 | 编辑于 2025-3-17 17:00:28">2025-3-17 17:16
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 17:16:03 | 编辑于 2025-3-17 17:00:28">2025-3-17 17:00
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							76 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							1 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content">
-		
-			
-				Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you ca...
-			
-		
-	</div>
-
-	
-</article>
-
-
-
-
-
-
-			
 		
 		
 
