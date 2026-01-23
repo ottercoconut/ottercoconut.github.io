@@ -16,7 +16,7 @@
 <meta property="og:description" content="Dataset An abstract class representing a Dataset. All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite __getitem__, supporting fetching a da">
 <meta property="og:locale">
 <meta property="article:published_time" content="2026-01-22T02:49:28.000Z">
-<meta property="article:modified_time" content="2026-01-22T14:27:01.223Z">
+<meta property="article:modified_time" content="2026-01-23T09:25:24.535Z">
 <meta property="article:author" content="Kawauso">
 <meta name="twitter:card" content="summary">
 
@@ -592,7 +592,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-22 22:27:01">2026-1-22 10:49
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-23 17:25:24">2026-1-22 10:49
 							</time>
 						</div>
 					
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-edittime">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-22 22:27:01">2026-1-22 22:27
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-23 17:25:24">2026-1-23 17:25
 							</time>
 						</div>
 					
@@ -610,7 +610,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							1.2k 字
+							2.9k 字
 						</div>
 					
 						
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							5 分钟
+							13 分钟
 						</div>
 					
 		</div>
@@ -672,26 +672,27 @@
 <li>生成事件文件
 <ul>
 <li><strong>这个文件才是真正的数据库</strong>(events.out…)当后续调用 <code>writer.add_scalar</code> 时，数据并不是直接画在屏幕上，而是被追加写进这个文件里。</li>
-<li>当你运行 <code>tensorboard --logdir=logs</code> 时，TensorBoard 的后端服务器就会去读取这个文件里的内容，并在浏览器里渲染成图表。</li>
+<li>当你执行完相应代码，运行 <code>tensorboard --logdir=logs</code> 时，TensorBoard 的后端服务器就会去读取这个文件里的内容，并在浏览器里渲染成图表。</li>
 </ul>
 </li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"></span><br><span class="line">writer  = SummaryWriter(<span class="string">&quot;logs&quot;</span>) <span class="comment"># 这行代码会在你的项目根目录下创建一个名为&quot;logs&quot;的文件夹</span></span><br></pre></td></tr></table></figure>
-<p>需注意，每次实验可以用不同的文件夹来记录数据，比如<code>writer = SummaryWriter(&quot;logs/lr0.01_batch32&quot;)</code>修改了学习率后<code>writer = SummaryWriter(&quot;logs/lr0.001_batch32&quot;)</code></p>
+<p>需注意，每次实验可以用<strong>不同的文件夹来记录数据</strong>，比如<code>writer = SummaryWriter(&quot;logs/lr0.01_batch32&quot;)</code>修改了学习率后<code>writer = SummaryWriter(&quot;logs/lr0.001_batch32&quot;)</code></p>
 <h4 id="add_scalar"><a class="markdownIt-Anchor" href="#add_scalar"></a> add_scalar</h4>
 <ul>
-<li>绘图函数<code>add_scalar</code></li>
+<li>绘图函数<code>add_scalar()</code></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(method) <span class="keyword">def</span> <span class="title function_">add_scalar</span>(<span class="params"></span></span><br><span class="line"><span class="params">    tag: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    scalar_value: <span class="type">Any</span>, <span class="comment"># 对应图像的y轴</span></span></span><br><span class="line"><span class="params">    global_step: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>, <span class="comment"># 对应图像的x轴</span></span></span><br><span class="line"><span class="params">    walltime: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    new_style: <span class="built_in">bool</span> = <span class="literal">False</span>,</span></span><br><span class="line"><span class="params">    double_precision: <span class="built_in">bool</span> = <span class="literal">False</span></span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">​``` 例 ```</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    writer.add_scalar(<span class="string">&quot;y=2x&quot;</span>, <span class="number">2</span>*i, i)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
 <h4 id="add_image"><a class="markdownIt-Anchor" href="#add_image"></a> add_image</h4>
 <ul>
-<li>查看图片函数<code>add_image</code></li>
+<li>查看图片函数<code>add_image()</code></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(method) <span class="keyword">def</span> <span class="title function_">add_image</span>(<span class="params"></span></span><br><span class="line"><span class="params">    tag: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    img_tensor: <span class="type">Any</span>,</span></span><br><span class="line"><span class="params">    global_step: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    walltime: <span class="type">Any</span> | <span class="literal">None</span> = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">    dataformats: <span class="built_in">str</span> = <span class="string">&quot;CHW&quot;</span></span></span><br><span class="line"><span class="params"></span>) -&gt; <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-<p>要注意参数的类型要求：<code>img_tensor (torch.Tensor, numpy.ndarray, or string/blobname): Image data</code>，所以要将PIL类型的图片进行转换，比如用numpy来转换。以及数据的shape要求： Tensor with :math:<code>(1, H, W)</code>, :math:<code>(H, W)</code>, :math:<code>(H, W, 3)</code> is also suitable as long as corresponding <code>dataformats</code> argument is passed, e.g. <code>CHW</code>, <code>HWC</code>, <code>HW</code>. 即三种图片数据的格式，其通道数、高度、宽度的顺序不同。</p>
+<p>要注意参数的类型要求：<code>img_tensor (torch.Tensor, numpy.ndarray, or string/blobname): Image data</code>，所以要将PIL类型的图片进行转换，比如用<code>numpy</code>来转换。以及数据的shape要求： Tensor with :math:<code>(1, H, W)</code>, :math:<code>(H, W)</code>, :math:<code>(H, W, 3)</code> is also suitable as long as corresponding <code>dataformats</code> argument is passed, e.g. <code>CHW</code>, <code>HWC</code>, <code>HW</code>. 即三种图片数据的格式，其<strong>通道数、高度、宽度</strong>的顺序不同。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">img = Image.<span class="built_in">open</span>(image_path)</span><br><span class="line">img_array = np.array(img)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;图像形状: <span class="subst">&#123;img_array.shape&#125;</span>&quot;</span>)</span><br><span class="line">writer.add_image(<span class="string">&quot;test&quot;</span>,img_array,<span class="number">1</span>,dataformats=<span class="string">&#x27;HW&#x27;</span>) <span class="comment"># 由.shape可得</span></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
 <hr />
 <h2 id="常见的transforms"><a class="markdownIt-Anchor" href="#常见的transforms"></a> 常见的Transforms</h2>
+<p>下面基本都是对图像的处理方法</p>
 <h3 id="totensor"><a class="markdownIt-Anchor" href="#totensor"></a> ToTensor</h3>
 <p>Convert a PIL Image or ndarray to tensor and scale the values accordingly.</p>
 <p>This transform does not support torchscript.</p>
@@ -703,11 +704,157 @@
 <p>Because the input image is scaled to [0.0, 1.0], this transformation should not be used when transforming target image masks. See the [references](vscode-file://vscode-app/d:/Microsoft VS Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html) for implementing the transforms for image masks.</p>
 </li>
 <li>
-<p>将PIL图片转为torch类型，如<code>torch.Size([1, 48, 48])</code></p>
+<p><strong>将PIL图片转为torch类型</strong>，如<code>torch.Size([1, 48, 48])</code></p>
 </li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans_totensor = transforms.ToTensor()</span><br><span class="line">img_tensor = trans_totensor(img)</span><br><span class="line"><span class="built_in">print</span>(img_tensor.shape)</span><br><span class="line">writer.add_image(<span class="string">&quot;ToTensor&quot;</span>,img_tensor)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
 <h3 id="normalize"><a class="markdownIt-Anchor" href="#normalize"></a> Normalize</h3>
+<p>Normalize a tensor image with mean and standard deviation.</p>
+<p>​    This transform does not support PIL Image.</p>
+<p>​    Given mean: <code>(mean[1],...,mean[n])</code> and std: <code>(std[1],..,std[n])</code> for <code>n</code></p>
+<p>​    channels, this transform will normalize each channel of the input</p>
+<p>​    <code>torch.*Tensor</code> i.e.,</p>
+<p>​    <code>output[channel] = (input[channel] - mean[channel]) / std[channel]</code></p>
+<p>note:</p>
+<p>​        This transform acts out of place, i.e., it does not mutate the input tensor.</p>
+<p>Args:</p>
+<p>​        mean (sequence): Sequence of means for each channel.</p>
+<p>​        std (sequence): Sequence of standard deviations for each channel.</p>
+<p>​        inplace(bool,optional): Bool to make this operation in-place.</p>
+<ul>
+<li><code>Normailize</code> 的数学原理是：</li>
+</ul>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>o</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi><mo>=</mo><mfrac><mrow><mi>i</mi><mi>n</mi><mi>p</mi><mi>u</mi><mi>t</mi><mo>−</mo><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow><mrow><mi>s</mi><mi>t</mi><mi>d</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">output = \frac{input-mean}{std}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.80952em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">o</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mord mathnormal">p</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.02252em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3365200000000002em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="mord mathnormal">t</span><span class="mord mathnormal">d</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">i</span><span class="mord mathnormal">n</span><span class="mord mathnormal">p</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathnormal">m</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mord mathnormal">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<ul>
+<li>参数<code>mean</code>影响的是“中心位置”，在<code>ToTensor</code>之后，像素值在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span> 之间，中心大约在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn></mrow><annotation encoding="application/x-tex">0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span></span></span></span>，如<code>mean = 0.5</code>，那么减去 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn></mrow><annotation encoding="application/x-tex">0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span></span></span></span> 后，数据的中心变成了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span>。原本 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span> 的范围变成了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>0.5</mn><mo separator="true">,</mo><mn>0.5</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-0.5, 0.5]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mclose">]</span></span></span></span></li>
+<li>参数<code>std</code>影响的是“缩放幅度”，如<code>std = 0.5</code>，那么就是将数据范围再除以<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn></mrow><annotation encoding="application/x-tex">0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span></span></span></span>，最终范围从 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>0.5</mn><mo separator="true">,</mo><mn>0.5</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-0.5, 0.5]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mclose">]</span></span></span></span> 变成了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-1, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span></li>
+</ul>
+<h3 id="resize"><a class="markdownIt-Anchor" href="#resize"></a> Resize</h3>
+<p>Resize the input image to the given size.</p>
+<p>​    If the image is torch Tensor, it is expected</p>
+<p>​    to have […, H, W] shape, where … means a maximum of two leading     dimensions</p>
+<p>Args:</p>
+<p>​        size (sequence or int): Desired output size. If size is a sequence like</p>
+<p>​        (h, w), output size will be matched to this. If size is an int,</p>
+<p>​        smaller edge of the image will be matched to this number.</p>
+<p>​        i.e, if height &gt; width, then image will be rescaled to</p>
+<p>​        (size * height / width, size).</p>
+<ul>
+<li><code>resize()</code>支持PIL和Tensor两种图片格式，如果是 Tensor，期望形状为 <code>[..., H, W]</code>。这里的 <code>...</code> 表示它可以处理 <code>[C, H, W]</code>（单张图）或 <code>[B, C, H, W]</code>（一个 Batch 的图）</li>
+<li>参数<code>size</code>需注意写成序列形式，如<code>resize((512, 512))</code>，而如果只输入一个参数，如<code>resize(512)</code>，那么图片短边会变为512，而长边会按比例改变</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(img.size)</span><br><span class="line">trans_resize = transforms.Resize((<span class="number">224</span>,<span class="number">224</span>))</span><br><span class="line">img_resize = trans_resize(img)</span><br><span class="line"><span class="built_in">print</span>(img_resize)</span><br></pre></td></tr></table></figure>
+<h3 id="compse"><a class="markdownIt-Anchor" href="#compse"></a> Compse</h3>
+<p>Composes several transforms together. This transform does not support torchscript.</p>
+<p>​    Please, see the note below.</p>
+<p>Args:</p>
+<p>​    transforms (list of <code>Transform</code> objects): list of transforms to compose.</p>
+<ul>
+<li><code>compse()</code>操作是对各种<code>transforms</code>操作的流水线<strong>类</strong></li>
+<li>在深度学习中，图片通常需要经过一系列的固定步骤（比如：缩放 -&gt; 转为 Tensor -&gt; 归一化）。如果不用 <code>Compose</code>，你每一张图都要手动调用多个函数，代码会非常冗余</li>
+<li><code>compse()</code>的参数类型是一个列表，操作是按顺序执行的，所以前一个操作输出的数据类型必须能作为下一个操作的输入。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="comment"># 定义训练集的预处理</span></span><br><span class="line">train_transform = transforms.Compose([</span><br><span class="line">    transforms.Resize((<span class="number">224</span>, <span class="number">224</span>)),           <span class="comment"># VGG16标准输入是224x224</span></span><br><span class="line">    transforms.RandomHorizontalFlip(),       <span class="comment"># 数据增强：随机水平翻转</span></span><br><span class="line">    transforms.ToTensor(),                   <span class="comment"># 归一化到 [0.0, 1.0]</span></span><br><span class="line">    transforms.Normalize([<span class="number">0.5</span>], [<span class="number">0.5</span>])       <span class="comment"># 标准化到 [-1.0, 1.0]</span></span><br><span class="line">])</span><br><span class="line">img_tensor = train_transform(img)</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="pytorch数据集使用"><a class="markdownIt-Anchor" href="#pytorch数据集使用"></a> Pytorch数据集使用</h2>
+<p>例如，我们要导入视觉学习的数据集，可以直接在程序中进行数据集的下载</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"></span><br><span class="line">train_set = torchvision.datasets.CIFAR10(root=<span class="string">&quot;./dataset...&quot;</span>, train=<span class="literal">True</span>, download=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_set = torchvision.datasets.CIFAR10(root=<span class="string">&quot;./dataset...&quot;</span>, train=false, download=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>root</code>参数表示数据集存放的位置，<code>train</code>参数表示数据集是否用来训练，<code>download</code>参数表示是否下载到本地（会生成一个下载链接）</li>
+<li>具体的参数设置，每个数据集都可能有所区别…</li>
+<li>如果是下载完成到本地的数据集，可以将其复制到项目目录的dataset文件夹下，再运行程序即可节省下载的时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(test_set.classes) <span class="comment"># 可以看到测试数据集的所有类别</span></span><br><span class="line"></span><br><span class="line">img, target = test_set[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">print</span>(img)</span><br><span class="line"><span class="built_in">print</span>(target)</span><br><span class="line"><span class="built_in">print</span>(test_set.classes[target]) <span class="comment"># 输出测试集第一个元素对应的类别</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="dataloader"><a class="markdownIt-Anchor" href="#dataloader"></a> DataLoader</h2>
+<p>Data loader combines a dataset and a sampler, and provides an iterable over the given dataset.</p>
+<p>​    The :class:<code>~torch.utils.data.DataLoader</code> supports both map-style and</p>
+<p>​    iterable-style datasets with single- or multi-process loading, customizing</p>
+<p>​    loading order and optional automatic batching (collation) and memory pinning.</p>
+<p>在训练模型时，不能一次性把数据集中的大量数据塞进内存。<code>DataLoader</code>实现了：</p>
+<ul>
+<li><strong>Batching（批处理）：</strong> 把图片打包成一组组（Batch）。</li>
+<li><strong>Shuffling（打乱）：</strong> 每一轮训练（Epoch）开始时随机洗牌，防止模型死记硬背数据顺序。</li>
+<li><strong>Parallel Computing（并行加载）：</strong> 利用多核 CPU 提前准备下一批数据，不让 GPU 等待。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>参数名</strong></th>
+<th><strong>常用取值</strong></th>
+<th><strong>作用描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>dataset</strong></td>
+<td>自定义 Dataset</td>
+<td>必填。告诉 DataLoader 从哪个“仓库”取数据。</td>
+</tr>
+<tr>
+<td><strong>batch_size</strong></td>
+<td>16, 32, 64…</td>
+<td><strong>每批装载的数量。</strong> 越大训练越快，但越占显存。在 FER 表情识别中，32 或 64 是常用数值。</td>
+</tr>
+<tr>
+<td><strong>shuffle</strong></td>
+<td><code>True</code> / <code>False</code></td>
+<td><strong>是否打乱顺序。</strong> 训练集通常设为 <code>True</code>（增加随机性）；测试集通常设为 <code>False</code>。</td>
+</tr>
+<tr>
+<td><strong>num_workers</strong></td>
+<td>0, 2, 4, 8…</td>
+<td><strong>多进程加载。</strong> <code>0</code> 表示只用主进程（慢）。增加数值可以加快读取速度。<strong>建议：</strong> 设为 CPU 核心数的一半。</td>
+</tr>
+<tr>
+<td><strong>drop_last</strong></td>
+<td><code>True</code> / <code>False</code></td>
+<td><strong>丢弃最后多余的数据。</strong> 比如有 100 张图，<code>batch_size=32</code>。最后剩 4 张不够一包，设为 <code>True</code> 就会把这 4 张扔掉，确保每个 Batch 大小一致。</td>
+</tr>
+<tr>
+<td><strong>pin_memory</strong></td>
+<td><code>True</code></td>
+<td><strong>内存锁页。</strong> 如果你用 GPU 训练，设为 <code>True</code> 可以加快数据从内存传输到显存的速度。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>例如，我们用<code>DataLoader</code>处理CIFAR10中的数据</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">test_data = torchvision.datasets.CIFAR10(<span class="string">&quot;./dataset&quot;</span>, train=<span class="literal">False</span>, transform=torchvision.transforms.ToTensor(), download=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">test_loader = DataLoader(dataset=test_data, batch_size=<span class="number">4</span>, shuffle=<span class="literal">True</span>, num_workers=<span class="number">0</span>, drop_last=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结合循环和<code>tensorboard</code>，输出每一个<code>epoch</code>中每一<code>step</code>用到的图片</li>
+<li>下面代码中<code>step + epoch * len(test_loader)</code>是使用了全局步长，也可以不这样写，而是把每个<code>epoch</code>来当作一组</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">writer = SummaryWriter(<span class="string">&quot;dataloader&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    step = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> data <span class="keyword">in</span> test_loader:</span><br><span class="line">        imgs, targets = data</span><br><span class="line">        writer.add_images(<span class="string">&quot;test_data_batch&quot;</span>, imgs, step + epoch * <span class="built_in">len</span>(test_loader))</span><br><span class="line">        step = step + <span class="number">1</span></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="nnmodule"><a class="markdownIt-Anchor" href="#nnmodule"></a> nn.Module</h2>
+<p>Base class for all neural network modules.</p>
+<p>​    Your models should also subclass this class.</p>
+<p>​    Modules can also contain other Modules, allowing to nest them in a tree structure.</p>
+<ul>
+<li>在 PyTorch 中，无论是简单的线性层，还是复杂的 VGG16 或 Transformer，本质上都是一个 <code>nn.Module</code>。它是所有神经网络模块的<strong>基类</strong></li>
+<li><code>nn.Module</code> 支持嵌套，当你对大模型调用 <code>model.to(&quot;cuda&quot;)</code> 时，PyTorch 会顺着这棵“树”，自动把里面所有的子层都搬到 GPU 上。</li>
+<li>只要在 <code>__init__</code> 中把一个层赋值给 <code>self.xxx</code>，PyTorch 就会自动识别出其中的<strong>权重 (Weights)</strong> 和 <strong>偏置 (Bias)</strong>，并将它们加入到待优化的参数列表中。</li>
+</ul>
+<p>编写一个<code>nn.Module</code>子类时，必须重写<code>__init()__</code>和<code>forward()</code></p>
+<ul>
+<li><code>__init(self)__</code>
+<ul>
+<li>在这里定义网络层（卷积、池化、全连接等）。</li>
+<li>必须调用 <code>super().__init__()</code>。这行代码的作用是初始化父类的属性，如果没有它，PyTorch 就没法自动追踪定义的层，模型也就无法训练。</li>
+</ul>
+</li>
+<li><code>forward(self, x)</code>
+<ul>
+<li>定义数据的流向。图片进去后，先过哪一层，再过哪一层。</li>
+<li>不需要手动调用 <code>forward</code>，只需要运行 <code>model(input)</code>，PyTorch 会自动触发 <code>forward</code>。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">myModule</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        output = <span class="built_in">input</span> + <span class="number">1</span> <span class="comment"># 简单地将输出 +1 再输出</span></span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<hr />
 
 	</div>
 
