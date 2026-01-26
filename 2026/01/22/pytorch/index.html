@@ -3,22 +3,24 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>Pytorch入门学习 - 边个濑椰のBlog</title>
+	<title>Pytorch基础 - 边个濑椰のBlog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="Dataset An abstract class representing a Dataset. All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite __getitem__, supporting fetching a da">
+	<meta name="description" content="本篇是对Pytorch基础使用的学习，主要基于B站小土堆的https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1hE411t7RN&#x2F;以及Gemini的帮助，除实践外也包含了一些深度学习模型的原理  Dataset An abstract class representing a Dataset. All datasets that represent a map from keys">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Pytorch入门学习">
+<meta property="og:title" content="Pytorch基础">
 <meta property="og:url" content="https://ottercoconut.github.io/2026/01/22/pytorch/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
-<meta property="og:description" content="Dataset An abstract class representing a Dataset. All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite __getitem__, supporting fetching a da">
+<meta property="og:description" content="本篇是对Pytorch基础使用的学习，主要基于B站小土堆的https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1hE411t7RN&#x2F;以及Gemini的帮助，除实践外也包含了一些深度学习模型的原理  Dataset An abstract class representing a Dataset. All datasets that represent a map from keys">
 <meta property="og:locale">
+<meta property="og:image" content="https://ottercoconut.github.io/2026/01/22/pytorch/Screenshot_2026-01-26_140919.png">
 <meta property="article:published_time" content="2026-01-22T02:49:28.000Z">
-<meta property="article:modified_time" content="2026-01-23T09:25:24.535Z">
+<meta property="article:modified_time" content="2026-01-26T06:11:19.809Z">
 <meta property="article:author" content="Kawauso">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ottercoconut.github.io/2026/01/22/pytorch/Screenshot_2026-01-26_140919.png">
 
 	<meta name="theme-color" content="#5e72e4">
 	<meta name="theme-color-rgb" content="94,114,228">
@@ -586,13 +588,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2026/01/22/pytorch/">Pytorch入门学习</a>
+		<a class="post-title" href="/2026/01/22/pytorch/">Pytorch基础</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-23 17:25:24">2026-1-22 10:49
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-26 14:11:19">2026-1-22 10:49
 							</time>
 						</div>
 					
@@ -601,7 +603,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-edittime">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-23 17:25:24">2026-1-23 17:25
+							<time title="发布于 2026-1-22 10:49:28 | 编辑于 2026-1-26 14:11:19">2026-1-26 14:11
 							</time>
 						</div>
 					
@@ -610,7 +612,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2.9k 字
+							3.7k 字
 						</div>
 					
 						
@@ -618,7 +620,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							13 分钟
+							17 分钟
 						</div>
 					
 		</div>
@@ -626,7 +628,8 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h2 id="dataset"><a class="markdownIt-Anchor" href="#dataset"></a> Dataset</h2>
+		<p>本篇是对Pytorch基础使用的学习，主要基于B站小土堆的<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1hE411t7RN/%E4%BB%A5%E5%8F%8AGemini%E7%9A%84%E5%B8%AE%E5%8A%A9%EF%BC%8C%E9%99%A4%E5%AE%9E%E8%B7%B5%E5%A4%96%E4%B9%9F%E5%8C%85%E5%90%AB%E4%BA%86%E4%B8%80%E4%BA%9B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8E%9F%E7%90%86">https://www.bilibili.com/video/BV1hE411t7RN/以及Gemini的帮助，除实践外也包含了一些深度学习模型的原理</a></p>
+<h2 id="dataset"><a class="markdownIt-Anchor" href="#dataset"></a> Dataset</h2>
 <p>An abstract class representing a <code>Dataset</code>.</p>
 <p>All datasets that represent a map from keys to data samples should subclass it. All subclasses should overwrite <code>__getitem__</code>, supporting fetching a data sample for a given key. Subclasses could also optionally overwrite <code>__len__</code>, which is expected to return the size of the dataset by many <code>~torch.utils.data.Sampler</code> implementations and the default options of <code>~torch.utils.data.DataLoader</code>. Subclasses could also optionally implement <code>__getitems__</code>, for speedup batched samples loading. This method accepts list of indices of samples of batch and returns list of samples.</p>
 <p><strong>note</strong></p>
@@ -855,6 +858,110 @@
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">myModule</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        output = <span class="built_in">input</span> + <span class="number">1</span> <span class="comment"># 简单地将输出 +1 再输出</span></span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
 <hr />
+<h2 id="卷积-conv"><a class="markdownIt-Anchor" href="#卷积-conv"></a> 卷积 Conv</h2>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>out</mtext><mo stretchy="false">(</mo><msub><mi>N</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>C</mi><msub><mtext>out</mtext><mi>j</mi></msub></msub><mo stretchy="false">)</mo><mo>=</mo><mtext>bias</mtext><mo stretchy="false">(</mo><msub><mi>C</mi><msub><mtext>out</mtext><mi>j</mi></msub></msub><mo stretchy="false">)</mo><mo>+</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mrow><msub><mi>C</mi><mtext>in</mtext></msub><mo>−</mo><mn>1</mn></mrow></munderover><mtext>weight</mtext><mo stretchy="false">(</mo><msub><mi>C</mi><msub><mtext>out</mtext><mi>j</mi></msub></msub><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo><mo>⋆</mo><mtext>input</mtext><mo stretchy="false">(</mo><msub><mi>N</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{out}(N_i, C_{\text{out}_j}) = \text{bias}(C_{\text{out}_j}) +
+        \sum_{k = 0}^{C_{\text{in}} - 1} \text{weight}(C_{\text{out}_j}, k) \star \text{input}(N_i, k)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mord text"><span class="mord">out</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">out</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mord text"><span class="mord">bias</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">out</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:3.1415490000000004em;vertical-align:-1.302113em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.839436em;"><span style="top:-1.8478869999999998em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.0500049999999996em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.311105em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3340428571428572em;"><span style="top:-2.357em;margin-left:-0.07153em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">in</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.302113em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord text"><span class="mord">weight</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">out</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋆</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">input</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li>卷积动画页面：<a target="_blank" rel="noopener" href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md">conv_arithmetic/README.md at master · vdumoulin/conv_arithmetic</a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>含义</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>in_channels</strong></td>
+<td>输入通道数</td>
+<td>彩色图通常为 3 (RGB)，灰度图为 1。</td>
+</tr>
+<tr>
+<td><strong>out_channels</strong></td>
+<td>输出通道数</td>
+<td>卷积核的数量。有多少个核，输出就有多少层特征图。</td>
+</tr>
+<tr>
+<td><strong>kernel_size</strong></td>
+<td>卷积核大小</td>
+<td>提取特征的“窗口”大小。常用 3 或 5（VGG 常用 3）。</td>
+</tr>
+<tr>
+<td><strong>stride</strong></td>
+<td>步长</td>
+<td>窗口滑动的跨度。默认为 1。步长越大，输出图片越小。</td>
+</tr>
+<tr>
+<td><strong>padding</strong></td>
+<td>填充</td>
+<td>在图片四周补 0。<code>'same'</code> 保持大小不变，<code>'valid'</code> 则不补。</td>
+</tr>
+<tr>
+<td><strong>dilation</strong></td>
+<td>空洞卷积</td>
+<td>卷积核点之间的间距。用于扩大感受野（不用增加参数量）。</td>
+</tr>
+<tr>
+<td><strong>bias</strong></td>
+<td>偏置</td>
+<td>是否在结果上加一个常数偏移。默认开启。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>卷积的Padding（边界扩充）参数很重要，如果周围不补零，那么卷积会导致图像尺寸越来越小</li>
+<li>形状计算公式：</li>
+</ul>
+<p class='katex-block katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;_&#039; at position 131: …s (\text{kernel_̲size}[0] - 1) -…'>H_{out} = \left\lfloor\frac{H_{in}  + 2 \times \text{padding}[0] - \text{dilation}[0]
+                        \times (\text{kernel_size}[0] - 1) - 1}{\text{stride}[0]} + 1\right\rfloor
+</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W_{out}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>计算同理</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">dataset = torchvision.datasets.CIFAR10(<span class="string">&quot;./dataset&quot;</span>,train = <span class="literal">False</span>, transform=torchvision.transforms.ToTensor(),download=<span class="literal">True</span>)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size=<span class="number">64</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">myModule</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = Conv2d(in_channels=<span class="number">3</span>,out_channels=<span class="number">6</span>,kernel_size=<span class="number">3</span>,stride=<span class="number">1</span>,padding=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">mymodule = myModule() <span class="comment"># 模型实例化 </span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">step = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> data <span class="keyword">in</span> dataloader:</span><br><span class="line">    imgs, targets = data</span><br><span class="line">    output = mymodule(imgs)</span><br><span class="line">    <span class="built_in">print</span>(imgs.shape)</span><br><span class="line">    <span class="comment"># torch.Size([64, 3, 32, 32])</span></span><br><span class="line">    <span class="built_in">print</span>(output.shape)</span><br><span class="line">    <span class="comment"># torch.Size([64, 6, 30, 30]) channel == 6 卷积后，channel数变化，不能直接输出图像</span></span><br><span class="line"></span><br><span class="line">    step = step + <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="最大池化-maxpool"><a class="markdownIt-Anchor" href="#最大池化-maxpool"></a> （最大）池化 MaxPool</h2>
+<ul>
+<li>最大池化的逻辑非常简单：在一个窗口（Kernel）范围内，<strong>只保留最大的那个值</strong>，剩下的全部扔掉</li>
+<li>既保留输入特征，又减小了数据量，加快训练速度</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>独特之处</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>kernel_size</strong></td>
+<td>窗口大小。常见是 <code>2</code>（即将 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span></span></span></span> 的区域合并）。</td>
+</tr>
+<tr>
+<td><strong>stride</strong></td>
+<td><strong>默认值等于 kernel_size</strong>！这和卷积不同。如果 <code>kernel_size=2</code>，步长默认就是 <code>2</code>，这样窗口之间就不会重叠。</td>
+</tr>
+<tr>
+<td><strong>ceil_mode</strong></td>
+<td><strong>非常重要。</strong> 默认是 <code>False</code>（向下取整）。如果设为 <code>True</code>（向上取整），当窗口超出边界时，只要窗口内有数据，就会保留结果，而不是舍弃。</td>
+</tr>
+<tr>
+<td><strong>padding</strong></td>
+<td>填充。注意池化填充的是<strong>负无穷（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">-\infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">∞</span></span></span></span>）</strong>，这样是为了保证填充位不会被选为最大值。</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">input</span> = torch.tensor([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">1</span>],</span><br><span class="line">                     [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>],</span><br><span class="line">                     [<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">                     [<span class="number">5</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">                     [<span class="number">2</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">input</span> = torch.reshape(<span class="built_in">input</span>,(-<span class="number">1</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">input</span>.shape)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">myMoudle</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">        <span class="built_in">super</span>(myMoudle, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.maxpool1 = MaxPool2d(kernel_size=<span class="number">3</span>, ceil_mode=<span class="literal">True</span>) </span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        ceil_mode = False 就表示只有当池化核遇到的尺寸是最大尺寸（如3x3）时</span></span><br><span class="line"><span class="string">        才会取其池化的结果，否则相反</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        output = <span class="variable language_">self</span>.maxpool1(<span class="built_in">input</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">    </span><br><span class="line">mymoudle = myMoudle()</span><br><span class="line">output = mymoudle(<span class="built_in">input</span>)</span><br><span class="line"><span class="built_in">print</span>(output)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.Size([<span class="number">1</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">5</span>])</span><br><span class="line">tensor([[[[<span class="number">2.</span>, <span class="number">3.</span>],</span><br><span class="line">          [<span class="number">5.</span>, <span class="number">1.</span>]]]], dtype=torch.float64)</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="实战cifar10"><a class="markdownIt-Anchor" href="#实战cifar10"></a> 实战CIFAR10</h2>
+<ul>
+<li>针对CIFAR10图像数据集的简单分类模型实战</li>
+</ul>
+<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2026/01/22/pytorch/Screenshot_2026-01-26_140919.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
+
 
 	</div>
 
@@ -902,7 +1009,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2026/01/22/pytorch/&text=Pytorch入门学习" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2026/01/22/pytorch/&text=Pytorch基础" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -919,9 +1026,8 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : 'Pytorch入门学习',
-	    description : ` Dataset
-An abstract class representing a Dataset....`,
+	    title : 'Pytorch基础',
+	    description : `本篇是对Pytorch基础使用的学习，主要基于B站小土堆的https://www.bilibili....`,
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
 	    source : 'https://ottercoconut.github.io/2026/01/22/pytorch/'
