@@ -3,20 +3,20 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>TOEFL Speaking - 边个濑椰のBlog</title>
+	<title>如何在WSL2上使用本机代理 - 边个濑椰のBlog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="TOEFL Speaking Task 1 Template  State Your Main Point  “I agree with the idea that…” “I think it is better to…” “I think it is a great&#x2F;terrible idea to…”   Transition to the Details  “I feel this way">
+	<meta name="description" content="由于近日笔者经常用Python下载各种模型，终要解决困扰已久的wsl2与Windows主机代理不互通的问题。笔者浪费了半个下午后终于搞定，在得力助手Gemini的帮助下，主要步骤如下：  Windows的.wslconfig设置 v2rayN的核心设置 Windows的防火墙设置 wsl2的旧设置清理 wsl2的~&#x2F;.bashrc设置 wsl2的curl -v测试  参考网站： Advanced">
 <meta property="og:type" content="article">
-<meta property="og:title" content="TOEFL Speaking">
-<meta property="og:url" content="https://ottercoconut.github.io/2026/01/15/toefl-speaking/index.html">
+<meta property="og:title" content="如何在WSL2上使用本机代理">
+<meta property="og:url" content="https://ottercoconut.github.io/2026/01/30/wsl2-proxy/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
-<meta property="og:description" content="TOEFL Speaking Task 1 Template  State Your Main Point  “I agree with the idea that…” “I think it is better to…” “I think it is a great&#x2F;terrible idea to…”   Transition to the Details  “I feel this way">
+<meta property="og:description" content="由于近日笔者经常用Python下载各种模型，终要解决困扰已久的wsl2与Windows主机代理不互通的问题。笔者浪费了半个下午后终于搞定，在得力助手Gemini的帮助下，主要步骤如下：  Windows的.wslconfig设置 v2rayN的核心设置 Windows的防火墙设置 wsl2的旧设置清理 wsl2的~&#x2F;.bashrc设置 wsl2的curl -v测试  参考网站： Advanced">
 <meta property="og:locale">
-<meta property="article:published_time" content="2026-01-15T08:41:43.000Z">
-<meta property="article:modified_time" content="2026-01-16T13:11:45.386Z">
+<meta property="article:published_time" content="2026-01-30T08:31:20.000Z">
+<meta property="article:modified_time" content="2026-01-30T15:28:40.008Z">
 <meta property="article:author" content="Kawauso">
 <meta name="twitter:card" content="summary">
 
@@ -586,13 +586,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/2026/01/15/toefl-speaking/">TOEFL Speaking</a>
+		<a class="post-title" href="/2026/01/30/wsl2-proxy/">如何在WSL2上使用本机代理</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-15 16:41:43 | 编辑于 2026-1-16 21:11:45">2026-1-15 16:41
+							<time title="发布于 2026-1-30 16:31:20 | 编辑于 2026-1-30 23:28:40">2026-1-30 16:31
 							</time>
 						</div>
 					
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-edittime">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2026-1-15 16:41:43 | 编辑于 2026-1-16 21:11:45">2026-1-16 21:11
+							<time title="发布于 2026-1-30 16:31:20 | 编辑于 2026-1-30 23:28:40">2026-1-30 23:28
 							</time>
 						</div>
 					
@@ -610,7 +610,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2.6k 字
+							1k 字
 						</div>
 					
 						
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							16 分钟
+							4 分钟
 						</div>
 					
 		</div>
@@ -626,275 +626,76 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h2 id="toefl-speaking">TOEFL Speaking</h2>
-<h3 id="task-1">Task 1</h3>
-<h4 id="template">Template</h4>
+		<p>由于近日笔者经常用Python下载各种模型，终要解决困扰已久的wsl2与Windows主机代理不互通的问题。笔者浪费了半个下午后终于搞定，在得力助手Gemini的帮助下，主要步骤如下：</p>
 <ol>
-<li>State Your Main Point
-<ul>
-<li>“I agree with the idea that…”</li>
-<li>“I think it is better to…”</li>
-<li>“I think it is a great/terrible idea to…”</li>
-</ul>
+<li>Windows的<code>.wslconfig</code>设置</li>
+<li>v2rayN的核心设置</li>
+<li>Windows的防火墙设置</li>
+<li>wsl2的旧设置清理</li>
+<li>wsl2的<code>~/.bashrc</code>设置</li>
+<li>wsl2的<code>curl -v</code>测试</li>
+</ol>
+<p>参考网站：</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/wsl/wsl-config">Advanced settings configuration in WSL | Microsoft Learn</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/2dust/v2rayN/issues/2653">WSL2 使用 V2RayN 局域网 proxychains 代理方案 · Issue #2653 · 2dust/v2rayN</a></p>
+<p><a target="_blank" rel="noopener" href="https://hlog.cc/archives/210/">记一次用wsl2中共享宿主机的代理-v2rayN - 沉迷于学习，无法自拔^_^</a></p>
+<h2 id="wslconfig">.wslconfig</h2>
+<ol>
+<li>
+<p>访问Windows下的个人账户文件夹，按下 <code>Win + R</code>，输入 <code>%UserProfile%</code> 并回车</p>
 </li>
-<li>Transition to the Details
-<ul>
-<li>“I feel this way for two reasons.”</li>
-</ul>
+<li>
+<p>检查是否有 <code>.wslconfig</code> 文件。<strong>如果没有，新建一个文本文件并命名为 <code>.wslconfig</code></strong></p>
 </li>
-<li>Support your Point
-<ul>
-<li>“First…” + “For example…”</li>
-<li>“Second…” + “To be more specific…”</li>
-</ul>
+<li>
+<p>将以下内容粘贴到<code>.wslconfig</code>中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[wsl2]</span><br><span class="line"><span class="comment"># 开启镜像网络模式</span></span><br><span class="line">networkingMode=mirrored</span><br><span class="line"><span class="comment"># 允许 WSL2 访问 Windows 本地服务</span></span><br><span class="line">localhostForwarding=<span class="literal">true</span></span><br><span class="line"><span class="comment"># 自动同步代理设置（可选true/false）</span></span><br><span class="line">autoProxy=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>需注意的是：<code>autoProxy</code>这个参数决定了wsl2代理的方式，设置为<code>true</code>可以不再配置<code>~/.bashrc</code>，但是问题在于：</p>
+<ol>
+<li>当我们使用<code>env | grep -i proxy</code>命令，会看到很多奇怪的和网络有关的变量，虽然确实能成功实现代理。</li>
+<li>不能在wsl2中开关代理，导致很多流量都通过代理来走</li>
+</ol>
+<p>后面我们将其设置为<code>false</code>，以便于在wsl2内部可以方便地控制代理的开关，保证wsl2系统的清晰透明。</p>
+</li>
+<li>
+<p>在Windows终端中输入<code>wsl --shutdown</code>关闭wsl2</p>
 </li>
 </ol>
-<h4 id="agree-disagree">Agree / Disagree</h4>
-<p>Do you agree or disagree with the following statement? Children should help their parents with household chores as soon as they are old enough. Use specific reasons and examples to support your answer.</p>
-<p><strong>Main Point</strong></p>
-<ul>
-<li>I agree with the idea that kids should help with housework right away.</li>
-</ul>
-<p><strong>Transition</strong></p>
-<ul>
-<li>I feel this way for several reasons.</li>
-</ul>
-<p><strong>First Reason</strong></p>
-<ul>
-<li>First, doing household tasks teaches children really valuable skills. For example, I was required to prepare breakfast for my little brother every day before school, so when I grew up and moved away to attend college it was really easy to prepare healthy meals for myself. As a result, I have always been in great shape both physically and mentally.</li>
-</ul>
-<p><strong>Second Reason</strong></p>
-<ul>
-<li>Second, family members can bond when they share responsibilities. To be more specific, young people are sometimes shy, but if they spend a lot of time with their parents doing chores they might open up a bit. Accordingly, they will be more likely to discuss their feelings.</li>
-</ul>
-<h4 id="preference">Preference</h4>
-<p>Some people like to shop at stores that sell many different types of products, while others like to shop at stores that specialize in a single type of product. Which do you prefer? Include details and examples to support your explanation.</p>
-<p><strong>Main Point</strong></p>
-<ul>
-<li>I think it is better to go to stores that focus on one type of product.</li>
-</ul>
-<p><strong>Transition</strong></p>
-<ul>
-<li>I feel this way for several reasons.</li>
-</ul>
-<p><strong>First Reason</strong></p>
-<ul>
-<li>First, specialized stores have more knowledgeable staff. For example, last month I needed to buy a new laptop computer, so I went to a department store to look for a good deal. I asked a clerk there to recommend one, but he knew even less about computers than me. According to him, salesmen at the store sell so many different things every day that it’s impossible to gain a comprehensive understanding of any of them.</li>
-</ul>
-<p><strong>Second Reason</strong></p>
-<ul>
-<li>Second, specialty stores have a wider selection. To be more specific, a store that sells only cameras doesn’t have to waste shelf space on computers, printers or cell-phones. They can fill the whole shop with cameras, and as a result customers have a whole lot of options to choose from.</li>
-</ul>
-<h4 id="idea">Idea</h4>
-<p>Some companies have rules that forbid employees from using personal cell phones during working hours. Do you think this is a good idea? Why or why not? Use specific reasons and examples to support your answer.</p>
-<p><strong>Main Point</strong></p>
-<ul>
-<li>I think it is a terrible idea for companies to tell workers that they can’t use their phones.</li>
-</ul>
-<p><strong>Transition</strong></p>
-<ul>
-<li>I feel this way for several reasons.</li>
-</ul>
-<p><strong>First Reason</strong></p>
-<ul>
-<li>First, it is really insulting, because it makes employees feel disrespected. For example, for the past year I have worked at a supermarket that makes all staff members leave their phones in their lockers during their shifts. I feel like they don’t trust us and think we will sneak off and call our friends when no one is watching us. As a result, I plan to find a new job as soon as possible.</li>
-</ul>
-<p><strong>Second Reason</strong></p>
-<ul>
-<li>Second, people need their phones to deal with emergencies. To be more specific, if one of our family members is in a serious accident, someone will probably call us right away. Without our personal phone, we won’t hear the news. The world is more dangerous than ever nowadays, so we need to be accessible at all times.</li>
-</ul>
-<hr>
-<h3 id="task-2">Task 2</h3>
-<h4 id="common-topics">Common Topics</h4>
-<ul>
-<li>Change to a campus building (library, housing, cafeteria, etc.)</li>
-<li>Change to a class (schedule, availability, new class, etc.)</li>
-<li>Transportation change (bus service, parking, etc.)</li>
-<li>Extra-curricular activity (sports, club, etc.)</li>
-</ul>
-<p><strong>Survey Says…</strong></p>
-<ul>
-<li>50% supported the change</li>
-<li>45% opposed the change</li>
-<li>5% had a mixed opinion.</li>
-</ul>
-<h4 id="structure">Structure</h4>
-<ul>
-<li>Read an article (100 words, 45 seconds)</li>
-<li>Listen to 2 people talk about it (1.5 minute)</li>
-<li>Prepare your answer (30 seconds)</li>
-<li>Speak (1 minute)</li>
-</ul>
-<h4 id="template">Template</h4>
+<h2 id="v2rayn">v2rayN</h2>
 <ol>
-<li>State the Change
-<ul>
-<li>“According to the announcement/article/letter…”</li>
-</ul>
-</li>
-<li>State the Reasons for the Change
-<ul>
-<li>“This is because ____ and ____.”</li>
-</ul>
-</li>
-<li>State the Speaker’s Opinion
-<ul>
-<li>“The man/woman opposes this.”</li>
-<li>“The man/woman supports this.”</li>
-<li>“The man/woman has a mixed opinion about this.”</li>
-</ul>
-</li>
-<li>State the Speaker’s First Reason
-<ul>
-<li>“To begin with, he/she points out that…”</li>
-</ul>
-</li>
-<li>State the Speaker’s Second Reason
-<ul>
-<li>“Moreover, he/she argues that…”</li>
-</ul>
-</li>
+<li>在v2rayN（撰文时版本为V7.15.7）的基础设置中，启用“<strong>允许来自局域网的连接</strong>”以及“为局域网开启新的端口”（可选）</li>
+<li>在v2rayN客户端的主界面左下角能看到<strong>为互联网开放的端口</strong>，笔者这里是<code>10810</code></li>
+<li>这里系统代理是“自动配置系统代理”，路由模式是“绕过(Whitelist)”</li>
+<li>然后选好节点，保持v2rayN的进行</li>
 </ol>
-<h4 id="sample">Sample</h4>
-<p><strong>Reading</strong></p>
-<p>Dear Editor,</p>
-<p>The university has a very limited budget, and therefore I think that the campus fitness center should be closed in order to save money. Unfortunately, the building currently housing the fitness center is very old and the university can no longer afford the cost of maintaining it or providing heat and air conditioning as required. Furthermore, the popularity of the center has declined since the university formed partnerships with several private fitness centers in the city. Most of the students I know take advantage of these partnerships to go to privately owned gyms across the city at no cost.</p>
-<p>Janine Deluca</p>
-<p><strong>Listening</strong></p>
-<p>M: What do you think about this announcement?<br>
-<strong>W: To be honest, I’m completely opposed to the plan.</strong><br>
-M: Really? Why?<br>
-W: Because shutting down the fitness center isn’t really going to save much money. I mean, sure, the building is really old, but even if it isn’t used on a regular basis the school still has to maintain it. They have to make sure it is safe and that it doesn’t become a fire risk or something like that.<br>
-M: I didn’t think about that.<br>
-W: Right. And even tearing the building down will be expensive because of all the construction workers they’ll have to hire. Plus, once it’s gone, we’re going to need to replace it with something new. So we shouldn’t shut down the gym just to save money.<br>
-M: You make a good point.<br>
-W: And it is not like all students can easily use the gyms in the city. The closest one is a thirty minute drive from school. How are people who live in dorms on campus supposed to reach them if they don’t have their own car?<br>
-M: You know, I took a taxi to one of the gyms and it cost nearly twenty dollars. I can’t afford to pay that much money every time I want to exercise.<br>
-W: Exactly. And even if you can afford to pay for a taxi, it will be really challenging to get one if you want to exercise late at night. I don’t think that was really considered when the decision to close the fitness center was made.</p>
-<p><strong>Answer</strong></p>
-<ul>
-<li>According to the announcement the campus fitness center will be closed.</li>
-<li>This is because the school can’t afford to maintain it properly, and students can go to private gyms in the city for free.</li>
-<li>The woman opposes this.</li>
-<li>To begin with, she points out that they will still have to maintain the building even if the fitness center closes because it could become a dangerous fire hazard. On top of that, it will be expensive to tear down the building and replace it with something else.</li>
-<li>Moreover, she argues that all of the gyms in the city are quite far from the university, so it could be hard for students to reach them if they don’t have their own car. Additionally, it can be hard to find a taxi from campus into the city late at night.</li>
-</ul>
-<hr>
-<h3 id="task-3">Task 3</h3>
-<h4 id="common-topics">Common Topics</h4>
-<ul>
-<li>Biology/Animals – 60%</li>
-<li>Business/Marketing – 20%</li>
-<li>Psychology/Learning – 10%</li>
-<li>Art/History/Literature – 10%</li>
-</ul>
-<p><strong>Survey Says…</strong></p>
-<ul>
-<li>35% One Example</li>
-<li>65% Two Examples</li>
-</ul>
-<h4 id="structure">Structure</h4>
-<ul>
-<li>Describe what _____ is, and how the professor’s example illustrates this idea.</li>
-<li>Describe how the example of the _____ illustrates the concept of _____.</li>
-<li>Explain the concept of _____ using the examples of _____ and _____ given in the lecture.</li>
-<li>Using the examples from the lecture, explain the concept of _______.</li>
-</ul>
-<p>You will be given 30 seconds to prepare your answer, and 60 seconds to speak. You will not be able to see the reading while preparing or speaking.</p>
-<h4 id="template">Template</h4>
+<h2 id="firewall">FireWall</h2>
 <ol>
-<li>State and define the concept.
-<ul>
-<li>“According to the reading, [CONCEPT] is [DEFINITION].”</li>
-</ul>
-</li>
-<li>Transition
-<ul>
-<li>“The professor elaborates on this.”</li>
-</ul>
-</li>
-<li>State the First Example + Give Details
-<ul>
-<li>“First, he explains [summarize the example]. He says [details].”</li>
-</ul>
-</li>
-<li>State the Second Example + Give Details
-<ul>
-<li>“Next, he explains [summarize the example]. He mentions [details].”</li>
-</ul>
-</li>
+<li>在 Windows 搜索框输入“防火墙”，选择 <strong>Windows Defender 防火墙</strong></li>
+<li>点击 <strong>“允许应用或功能通过 Windows Defender 防火墙”</strong>。</li>
+<li>找到或添加 <code>v2rayN.exe</code> 和其核心程序（如 <code>v2ray.exe</code> 或 <code>xray.exe</code>），确保 <strong>专用</strong> 和 <strong>公用</strong> 都勾选上。通常路径分别在<code>v2rayN\</code>和<code>v2rayN\bin\xray</code>下</li>
+<li>在防火墙高级设置中，新建一个入站规则，允许端口 <code>10810</code> 的 TCP 流量（与v2rayN相对应）</li>
 </ol>
-<h4 id="sample">Sample</h4>
-<p><strong>Reading</strong></p>
-<p><strong>Convergent Evolution</strong></p>
-<p>Evolution is the process in which, over time, animals develop the characteristics required to survive in their natural environment. One form of this is convergent evolution, which is when animals living in completely separate geographic areas end up with many identical features. This occurs when the habitats of two creatures resemble each other in some way. Because they live in similar habitats, the animals end up needing similar specialities in order to survive and reproduce. In certain cases the animals are so alike that they may end up being mistaken for each other, while in other cases they only share a few features.</p>
-<p><strong>Listening</strong></p>
-<p>A perfect example of this concept is pronghorns and antelope. The pronghorn is found in North America, but bears a striking resemblance to the antelope, which is native to Africa. Their habitats are very far apart, but they are both flat and grassy plains with few trees. Both of these animals evolved to eat grass, obviously. And since there is nowhere to hide in their natural environments, they’ve both evolved features that let them easily notice predators and quickly run away from them. They both have slender but powerful legs suited for bursts of speed, oversized lungs, and even huge eyes that give them a vast field of vision.</p>
-<p>A different example would be, um, bats and dolphins. Clearly, no one is ever going to mix up a bat and a dolphin… they are totally different animals. But, they do have similar habitats. Consider the fact that bats live in dark caves. They also do most of their hunting late at night when, of course, it’s dark out. Now, dolphins live in the ocean… and the ocean is also a very dark place. Deep in the ocean most species can only see a few feet ahead, even in clear water. To survive without being able to see very well, both species developed a trait called echolocation. This is the ability to emit high-frequency noises which echo off of their surroundings. They both listen for the echoes of the noises to locate objects in the environment.</p>
-<p><strong>Answer</strong></p>
-<ul>
-<li>According to the reading convergent evolution is when animals living far apart from each other evolve the same features or characteristics.</li>
-<li>The professor elaborates on this.</li>
-<li>First, he explains why antelope and pronghorns look similar. He says that their habitats are distant from each other, but both are flat grasslands with few trees. They need to be able to notice predators quickly and escape from them. As a result, both species have evolved legs and lungs that help them run quickly, and huge eyes that improve their vision.</li>
-<li>Next, he explains that bats and dolphins share a unique feature. He mentions that bats live in dark caves and hunt at night and that dolphins live in the ocean, which is also very dark. To survive without being able to see well, both species have evolved to use echolocation to spot objects in their surrounding environment.</li>
-</ul>
-<hr>
-<h3 id="task-4">Task 4</h3>
-<h4 id="common-topics">Common Topics</h4>
-<ul>
-<li>Zoology/Animals – 60%</li>
-<li>Business/Marketing – 17%</li>
-<li>Psychology/Learning – 17%</li>
-<li>Art/History/Literature – 6%</li>
-</ul>
-<p><strong>Survey Says…</strong></p>
-<ul>
-<li>30% One Example</li>
-<li>70% Two Examples</li>
-</ul>
-<h4 id="structure">Structure</h4>
-<ul>
-<li>First, you will listen to a lecture about 1.5 to 2.5 minutes long. It usually talks about how something is done or accomplished. It is illustrated with one or two examples.</li>
-<li>The lecture starts with a short introduction. After the introduction the example(s) are given.</li>
-<li>You will be asked a specific question that mostly requires that you summarize the example(s).</li>
-</ul>
-<h4 id="template">Template</h4>
-<ol>
-<li>Introduce the subject
-<ul>
-<li>“The lecturer explains how _______.”</li>
-</ul>
-</li>
-<li>State the First Example or First Part
-<ul>
-<li>“First, she describes how [mini summary]” + “She notes that [details].”</li>
-</ul>
-</li>
-<li>State the Second Example or Second Part
-<ul>
-<li>&quot;Second, she describes how [mini summary] + “She says that [details].”</li>
-</ul>
-</li>
-</ol>
-<h4 id="sample">Sample</h4>
-<p>Using the points and examples from the lecture, explain how some animals survive in environments with very little light.</p>
-<p><strong>Listening</strong></p>
-<p>Let’s continue our discussion of animal adaptations by talking about special features that make it possible for certain fish to survive in the deepest part of the ocean… a place where almost no light reaches. Specifically, I’m going to talk about two very different features.</p>
-<p>Alright… um, to start with, some deep-sea fish have large tube-shaped eyes that always point upwards. One such species is known as the spook fish. These fish live thousands of meters below the surface of the ocean, in almost total darkness. However, since their unique eyes point upwards at all times, they have the ability to spot the faint outlines of fish swimming above them, in parts of the ocean where a little light can reach. Once they spot such fish they quickly swim upwards and eat them. I should also mention that their eyes are really huge, so they are even able to detect extremely tiny fish passing above.</p>
-<p>Next up is a type of fish that is able to create its own light. The lanternfish has a series of tiny organs throughout its body that give off light thanks to a chemical process called bioluminescence… actually, this is the same chemical reaction that many different sea and land animals use to produce light. Anyways, the lanternfish can make itself bright enough to attract the attention of other fish in its surrounding areas. If these fish are small enough, they become prey for the lanternfish. This makes it a very efficient hunter, despite the darkness of its natural environment. Interestingly, they can even use this special light to protect themselves from other organisms, by matching the intensity of light coming from above. This makes it much harder for potential predators to spot them from below.</p>
-<p><strong>Answer</strong></p>
-<p><strong>Introduce the Concept and Transition to the Example</strong></p>
-<ul>
-<li>The lecturer explains how two animals survive in environments without much light.</li>
-</ul>
-<p><strong>State the First Example or First Part</strong></p>
-<ul>
-<li>To begin with, she describes how the spookfish uses tube-shaped eyes to hunt its prey. She notes that it lives in almost total darkness. However, its eyes always point upwards, so it can spot the faint outlines of fish swimming above it. When this happens, it quickly swims upwards to catch and eat the fish. Its eyes are quite large, so it is able to notice even very small prey.</li>
-</ul>
-<p><strong>State the Second Example or Second Part</strong></p>
-<ul>
-<li>Second, she describes how the lanternfish is able to produce its own light both to catch prey and escape from predators. She says that it has tiny organs throughout its body that produce light through a chemical reaction called bioluminescence. As a result, it can attract the attention of other fish, which it eats. In addition, it uses the light for protection. By matching the intensity of light sources above it, it can disguise itself from potential predators.</li>
-</ul>
+<h2 id="wsl2">wsl2</h2>
+<h3 id="清理旧设置">清理旧设置</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 1. 清除旧的、混乱的代理环境变量</span><br><span class="line">unset http_proxy</span><br><span class="line">unset https_proxy</span><br><span class="line">unset no_proxy</span><br><span class="line"></span><br><span class="line"># 2. 重新设置正确的代理（指向镜像模式下的本地端口）</span><br><span class="line">export http_proxy=&quot;http://127.0.0.1:10810&quot;</span><br><span class="line">export https_proxy=&quot;http://127.0.0.1:10810&quot;</span><br></pre></td></tr></table></figure>
+<p>确保在第一步已开启镜像网络模式并重启好wsl2。当然这步也不是必须的，因为后面<code>~/.bashrc</code>会自动处理这些就变量。</p>
+<h3 id="bashrc">~/.bashrc</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 用其它的编辑器同理</span></span><br><span class="line"><span class="built_in">sudo</span> vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>在与Gemini多次实验后，得出以下内容用于添加到<code>~/.bashrc</code>底部：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">proxy_on</span></span>() &#123;</span><br><span class="line">    <span class="comment"># 彻底清理可能残留的变量（防止大小写混用冲突）</span></span><br><span class="line">    <span class="built_in">unset</span> http_proxy https_proxy ALL_PROXY NO_PROXY HTTP_PROXY HTTPS_PROXY all_proxy no_proxy</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 设置你验证成功的端口（既然 10810 测通了，就用 10810）</span></span><br><span class="line">    <span class="built_in">export</span> hostip=<span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line">    <span class="built_in">export</span> port=<span class="string">&quot;10810&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">export</span> http_proxy=<span class="string">&quot;http://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    <span class="built_in">export</span> https_proxy=<span class="string">&quot;http://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    <span class="built_in">export</span> all_proxy=<span class="string">&quot;socks5://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里的 no_proxy 只保留本地回环</span></span><br><span class="line">    <span class="built_in">export</span> no_proxy=<span class="string">&quot;localhost,127.0.0.1&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;WSL Proxy: ON (127.0.0.1:10810)&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">proxy_off</span></span>() &#123;</span><br><span class="line">    <span class="built_in">unset</span> http_proxy https_proxy ALL_PROXY NO_PROXY HTTP_PROXY HTTPS_PROXY all_proxy no_proxy</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;WSL Proxy: OFF&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>保存以上内容后，输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>然后再：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.google.com</span><br></pre></td></tr></table></figure>
+<p>应该就会出现以下内容，表示连接成功：</p>
+<p>笔者同时也用<code>ping</code>去测试了一下，虽然不成功，但不影响使用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 Connection established</span><br></pre></td></tr></table></figure>
+<p>笔者再次尝试下载模型，果然成功：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> gensim.downloader <span class="keyword">as</span> api</span><br><span class="line">wv_from_bin = api.load(<span class="string">&quot;glove-wiki-gigaword-200&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="再不成功的解决方案">再不成功的解决方案</h3>
+<p>最有效的方法的就是在完成了上面步骤后，wsl2中输入：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.google.com</span><br></pre></td></tr></table></figure>
+<p>然后把输出的结果交给AI，它会告诉你的。</p>
 
 	</div>
 
@@ -942,7 +743,7 @@ W: Exactly. And even if you can afford to pay for a taxi, it will be really chal
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2026/01/15/toefl-speaking/&text=TOEFL Speaking" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2026/01/30/wsl2-proxy/&text=如何在WSL2上使用本机代理" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -959,15 +760,11 @@ W: Exactly. And even if you can afford to pay for a taxi, it will be really chal
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : 'TOEFL Speaking',
-	    description : `TOEFL Speaking
-Task 1
-Template
-
-State Your Main Po...`,
+	    title : '如何在WSL2上使用本机代理',
+	    description : `由于近日笔者经常用Python下载各种模型，终要解决困扰已久的wsl2与Windows主机代理不互通...`,
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'https://ottercoconut.github.io/2026/01/15/toefl-speaking/'
+	    source : 'https://ottercoconut.github.io/2026/01/30/wsl2-proxy/'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -1016,7 +813,7 @@ State Your Main Po...`,
 
 
 
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2026/01/22/pytorch/" rel="prev"> Pytorch基础</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2026/01/13/toefl-writing/" rel="next"> TOEFL Writing</a></div></div>
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2026/01/28/cs224n/" rel="next"> cs224n</a></div></div>
 
 
 

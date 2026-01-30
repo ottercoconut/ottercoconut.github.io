@@ -8,12 +8,12 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)  参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Do">
+	<meta name="description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样) 参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Doc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Linux(CentOS)系统上部署Minecraft服务器">
 <meta property="og:url" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
-<meta property="og:description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)  参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Do">
+<meta property="og:description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样) 参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Doc">
 <meta property="og:locale">
 <meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png">
 <meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185204.png">
@@ -513,7 +513,7 @@
 							<nav class="site-state">
 								<div class="site-state-item site-state-posts">
 									<a href="/archives">
-										<span class="site-state-item-count">14</span>
+										<span class="site-state-item-count">16</span>
 										<span class="site-state-item-name">文章</span>
 									</a>
 								</div>
@@ -638,7 +638,7 @@
 
 	<div class="post-content" id="post_content">
 		<p>笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)</p>
-<h3 id="参考网站"><a class="markdownIt-Anchor" href="#参考网站"></a> 参考网站</h3>
+<h3 id="参考网站">参考网站</h3>
 <p><a target="_blank" rel="noopener" href="https://docs.redhat.com/zh-cn/documentation/red_hat_build_of_openjdk/21/html-single/installing_and_using_red_hat_build_of_openjdk_21_on_rhel/index#installing-jre-on-rhel-using-yum_openjdk">在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation</a></p>
 <p><a target="_blank" rel="noopener" href="https://doc.natfrp.com/launcher/usage.html">SakuraFrp 启动器安装 / 使用指南 | SakuraFrp 帮助文档</a></p>
 <p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/">CentOS | Docker Docs</a></p>
@@ -646,7 +646,7 @@
 <ul>
 <li>来自B站的UP主<code>翱翔大使</code>，是全篇的主要思路来源</li>
 </ul>
-<h2 id="java配置"><a class="markdownIt-Anchor" href="#java配置"></a> Java配置</h2>
+<h2 id="java配置">Java配置</h2>
 <p>运行我的世界需要，须对应版本的Java环境，笔者这里安装的是OpenJDK21</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> yum install java-21-openjdk</span><br><span class="line">java -version //验证是否成功安装</span><br></pre></td></tr></table></figure>
 <p>如果服务器有多个Java版本，可以用<code>alternatives</code>进行版本切换</p>
@@ -654,7 +654,7 @@
 <p>如图，我们输入<code>2</code>并回车，就切换到了需要的版本</p>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="Screenshot_2025-03-19_191616.png">
 
-<h2 id="游戏部署"><a class="markdownIt-Anchor" href="#游戏部署"></a> 游戏部署</h2>
+<h2 id="游戏部署">游戏部署</h2>
 <p>首先在下面这个网址下载Minecraft的服务器端，这里我下的是支持Fabric的Banner(1.20.1)</p>
 <p>[MohistMC](<a target="_blank" rel="noopener" href="https://www.mohistmc.com/">MohistMC - 主页</a>)</p>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185204.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
@@ -686,12 +686,12 @@
 <p>然后一路顺畅，笔者在这里没有遇到报错，最后来到<code>...EULA...</code>让我们同意EULA协议，输入<code>true</code>后回车，等待一下，游戏服务器就在<code>25565</code>端口上成功运行了</p>
 <p>若想离开Minecraft的这个<code>screen</code>按下<code>Ctrl+A+D</code>即可</p>
 <p>关于游戏规则的更改(比如”是否允许非正版玩家加入“)，需要修改<code>server.properties</code>的内容</p>
-<hr />
+<hr>
 <p>关于连接，如果是云服务器，在管理界面映射一下端口，然后在客户端的Minecraft中连接<code>域名:端口</code>即可</p>
 <p>但是像笔者这样的物理服务器，或者说安装了Linux的设备，个人PC，在没有公网IP的情况下，就要继续内网穿透了</p>
-<h2 id="内网穿透"><a class="markdownIt-Anchor" href="#内网穿透"></a> 内网穿透</h2>
+<h2 id="内网穿透">内网穿透</h2>
 <p>笔者在这里使用我的世界领域中比较有名且良心的<code>SakuraFrp</code>进行内网穿透，其它工具也大同小异</p>
-<h3 id="docker"><a class="markdownIt-Anchor" href="#docker"></a> Docker</h3>
+<h3 id="docker">Docker</h3>
 <p>Linux上的<code>SakuraFrp</code>是基于Docker运行的，所以下面我们先部署Docker，操作完全根据官方文档进行</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dnf -y install dnf-plugins-core</span><br><span class="line"><span class="built_in">sudo</span> dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
 <p>笔者在下面这遇到了安装速度十分缓慢，和下载失败的问题，重新执行命令再执行一次便解决了</p>
@@ -712,7 +712,7 @@
 <p>保存 + 退出，接下来重启docker，再执行一次测试</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
 <p>笔者到这就已经成功安装好docker了，若是测试仍不通过，请检查<code>daemon.json</code>的内容，是否少了或者多了逗号和括号</p>
-<h3 id="sakurafrp"><a class="markdownIt-Anchor" href="#sakurafrp"></a> SakuraFrp</h3>
+<h3 id="sakurafrp">SakuraFrp</h3>
 <p><code>SakuraFrp</code>在Linux上的部署，官方文档给出了详细的方案</p>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203047.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
 
@@ -738,7 +738,7 @@
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Image_146585201484185.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
 
 <p>如图的红色字符的链接，就是<code>WebUI</code>和Minecraft的远程访问链接，将Minecraft对应的复制到游戏中即可连接上</p>
-<h2 id="结语"><a class="markdownIt-Anchor" href="#结语"></a> 结语</h2>
+<h2 id="结语">结语</h2>
 <p>大功告成！(笔者服务器出生地的截图 &gt;w&lt;)</p>
 <img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
 
