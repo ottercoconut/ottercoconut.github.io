@@ -638,8 +638,8 @@
 <p>参考网站：</p>
 <p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/wsl/wsl-config">Advanced settings configuration in WSL | Microsoft Learn</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/2dust/v2rayN/issues/2653">WSL2 使用 V2RayN 局域网 proxychains 代理方案 · Issue #2653 · 2dust/v2rayN</a></p>
-<p><a target="_blank" rel="noopener" href="https://hlog.cc/archives/210/">记一次用wsl2中共享宿主机的代理-v2rayN - 沉迷于学习，无法自拔^_^</a></p>
-<h2 id="wslconfig">.wslconfig</h2>
+<p><a target="_blank" rel="noopener" href="https://hlog.cc/archives/210/">记一次用wsl2中共享宿主机的代理-v2rayN - 沉迷于学习，无法自拔<sup>_</sup></a></p>
+<h2 id="wslconfig"><a class="markdownIt-Anchor" href="#wslconfig"></a> .wslconfig</h2>
 <ol>
 <li>
 <p>访问Windows下的个人账户文件夹，按下 <code>Win + R</code>，输入 <code>%UserProfile%</code> 并回车</p>
@@ -661,25 +661,25 @@
 <p>在Windows终端中输入<code>wsl --shutdown</code>关闭wsl2</p>
 </li>
 </ol>
-<h2 id="v2rayn">v2rayN</h2>
+<h2 id="v2rayn"><a class="markdownIt-Anchor" href="#v2rayn"></a> v2rayN</h2>
 <ol>
 <li>在v2rayN（撰文时版本为V7.15.7）的基础设置中，启用“<strong>允许来自局域网的连接</strong>”以及“为局域网开启新的端口”（可选）</li>
 <li>在v2rayN客户端的主界面左下角能看到<strong>为互联网开放的端口</strong>，笔者这里是<code>10810</code></li>
 <li>这里系统代理是“自动配置系统代理”，路由模式是“绕过(Whitelist)”</li>
 <li>然后选好节点，保持v2rayN的进行</li>
 </ol>
-<h2 id="firewall">FireWall</h2>
+<h2 id="firewall"><a class="markdownIt-Anchor" href="#firewall"></a> FireWall</h2>
 <ol>
 <li>在 Windows 搜索框输入“防火墙”，选择 <strong>Windows Defender 防火墙</strong></li>
 <li>点击 <strong>“允许应用或功能通过 Windows Defender 防火墙”</strong>。</li>
 <li>找到或添加 <code>v2rayN.exe</code> 和其核心程序（如 <code>v2ray.exe</code> 或 <code>xray.exe</code>），确保 <strong>专用</strong> 和 <strong>公用</strong> 都勾选上。通常路径分别在<code>v2rayN\</code>和<code>v2rayN\bin\xray</code>下</li>
 <li>在防火墙高级设置中，新建一个入站规则，允许端口 <code>10810</code> 的 TCP 流量（与v2rayN相对应）</li>
 </ol>
-<h2 id="wsl2">wsl2</h2>
-<h3 id="清理旧设置">清理旧设置</h3>
+<h2 id="wsl2"><a class="markdownIt-Anchor" href="#wsl2"></a> wsl2</h2>
+<h3 id="清理旧设置"><a class="markdownIt-Anchor" href="#清理旧设置"></a> 清理旧设置</h3>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 1. 清除旧的、混乱的代理环境变量</span><br><span class="line">unset http_proxy</span><br><span class="line">unset https_proxy</span><br><span class="line">unset no_proxy</span><br><span class="line"></span><br><span class="line"># 2. 重新设置正确的代理（指向镜像模式下的本地端口）</span><br><span class="line">export http_proxy=&quot;http://127.0.0.1:10810&quot;</span><br><span class="line">export https_proxy=&quot;http://127.0.0.1:10810&quot;</span><br></pre></td></tr></table></figure>
 <p>确保在第一步已开启镜像网络模式并重启好wsl2。当然这步也不是必须的，因为后面<code>~/.bashrc</code>会自动处理这些就变量。</p>
-<h3 id="bashrc">~/.bashrc</h3>
+<h3 id="~bashrc"><a class="markdownIt-Anchor" href="#~bashrc"></a> ~/.bashrc</h3>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 用其它的编辑器同理</span></span><br><span class="line"><span class="built_in">sudo</span> vim ~/.bashrc</span><br></pre></td></tr></table></figure>
 <p>在与Gemini多次实验后，得出以下内容用于添加到<code>~/.bashrc</code>底部：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">proxy_on</span></span>() &#123;</span><br><span class="line">    <span class="comment"># 彻底清理可能残留的变量（防止大小写混用冲突）</span></span><br><span class="line">    <span class="built_in">unset</span> http_proxy https_proxy ALL_PROXY NO_PROXY HTTP_PROXY HTTPS_PROXY all_proxy no_proxy</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 设置你验证成功的端口（既然 10810 测通了，就用 10810）</span></span><br><span class="line">    <span class="built_in">export</span> hostip=<span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line">    <span class="built_in">export</span> port=<span class="string">&quot;10810&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">export</span> http_proxy=<span class="string">&quot;http://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    <span class="built_in">export</span> https_proxy=<span class="string">&quot;http://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    <span class="built_in">export</span> all_proxy=<span class="string">&quot;socks5://<span class="variable">$hostip</span>:<span class="variable">$port</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这里的 no_proxy 只保留本地回环</span></span><br><span class="line">    <span class="built_in">export</span> no_proxy=<span class="string">&quot;localhost,127.0.0.1&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;WSL Proxy: ON (127.0.0.1:10810)&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">proxy_off</span></span>() &#123;</span><br><span class="line">    <span class="built_in">unset</span> http_proxy https_proxy ALL_PROXY NO_PROXY HTTP_PROXY HTTPS_PROXY all_proxy no_proxy</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;WSL Proxy: OFF&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -692,7 +692,7 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 Connection established</span><br></pre></td></tr></table></figure>
 <p>笔者再次尝试下载模型，果然成功：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> gensim.downloader <span class="keyword">as</span> api</span><br><span class="line">wv_from_bin = api.load(<span class="string">&quot;glove-wiki-gigaword-200&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="再不成功的解决方案">再不成功的解决方案</h3>
+<h3 id="再不成功的解决方案"><a class="markdownIt-Anchor" href="#再不成功的解决方案"></a> 再不成功的解决方案</h3>
 <p>最有效的方法的就是在完成了上面步骤后，wsl2中输入：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.google.com</span><br></pre></td></tr></table></figure>
 <p>然后把输出的结果交给AI，它会告诉你的。</p>
