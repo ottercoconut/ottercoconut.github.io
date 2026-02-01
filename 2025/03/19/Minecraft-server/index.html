@@ -1,644 +1,199 @@
-<!DOCTYPE html>
-
-<html class="article-header-style-default">
-<head>
-	
-	<title>在Linux(CentOS)系统上部署Minecraft服务器 - 边个濑椰のBlog</title>
-	<meta charset="utf-8">
-	
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	
-	<meta name="description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)  参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Do">
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>在Linux(CentOS)系统上部署Minecraft服务器 | 边个濑椰のBlog</title><meta name="author" content="Kawauso"><meta name="copyright" content="Kawauso"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样) 参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Doc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Linux(CentOS)系统上部署Minecraft服务器">
 <meta property="og:url" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
-<meta property="og:description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)  参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Do">
+<meta property="og:description" content="笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样) 参考网站 在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation SakuraFrp 启动器安装 &#x2F; 使用指南 | SakuraFrp 帮助文档 CentOS | Doc">
 <meta property="og:locale">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185204.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185231.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203047.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203530.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Image_146159838978722.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_204855.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_205010.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Image_146585201484185.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png">
+<meta property="og:image" content="https://ottercoconut.github.io/img/avatar.gif">
 <meta property="article:published_time" content="2025-03-19T10:48:59.000Z">
-<meta property="article:modified_time" content="2025-09-11T05:05:13.319Z">
+<meta property="article:modified_time" content="2026-02-01T05:50:58.077Z">
 <meta property="article:author" content="Kawauso">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Minecraft">
+<meta property="article:tag" content="服务器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ottercoconut.github.io/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png">
+<meta name="twitter:image" content="https://ottercoconut.github.io/img/avatar.gif"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "在Linux(CentOS)系统上部署Minecraft服务器",
+  "url": "https://ottercoconut.github.io/2025/03/19/Minecraft-server/",
+  "image": "https://ottercoconut.github.io/img/avatar.gif",
+  "datePublished": "2025-03-19T10:48:59.000Z",
+  "dateModified": "2026-02-01T05:50:58.077Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Kawauso",
+      "url": "https://ottercoconut.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://ottercoconut.github.io/2025/03/19/Minecraft-server/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
 
-	<meta name="theme-color" content="#5e72e4">
-	<meta name="theme-color-rgb" content="94,114,228">
-	<meta name="theme-color-origin" content="#5e72e4">
-	<meta name="argon-enable-custom-theme-color" content="true">
-	<meta name="theme-card-radius" content="4">
-	<meta name="theme-version" content="1.0.2">
-	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
-	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
-	
-<link rel="stylesheet" href="/assets/argon_css_merged.css">
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
-	
-<link rel="stylesheet" href="/style.css">
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '在Linux(CentOS)系统上部署Minecraft服务器',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><style>
+  /* 统一样式：圆角、半透明、过渡 */
+  #aside-content .card-widget {
+    border-radius: 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 增加一层淡白色边框，增加高级感 */
+    transition: transform 0.3s;
+  }
 
-	
-<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+  /* 鼠标悬停时轻微放大，更有互动感 */
+  #aside-content .card-widget:hover {
+    transform: translateY(-5px);
+  }
 
-	
-<script src="/assets/argon_js_merged.js"></script>
-
-	
-<script src="/assets/js/argon.min.js"></script>
-
-	
-<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-	
-
-	<script>
-		var argonConfig = {
-			language: "zh_CN",
-			
-				zoomify: {
-					duration: 200,
-					easing: "cubic-bezier(0.4,0,0,1)",
-					scale: 0.9
-				},
-			
-			pangu: "false",
-			
-				lazyload: {
-					threshold: 800,
-					effect: "fadeIn"
-				},
-			
-			disable_pjax: false,
-			headroom: false
-		}
-	</script>
-	<script>
-		var darkmodeAutoSwitch = "false";
-		function setDarkmode(enable){
-			if (enable == true){
-				$("html").addClass("darkmode");
-			}else{
-				$("html").removeClass("darkmode");
-			}
-			$(window).trigger("scroll");
-		}
-		function toggleDarkmode(){
-			if ($("html").hasClass("darkmode")){
-				setDarkmode(false);
-				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
-			}else{
-				setDarkmode(true);
-				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
-			}
-		}
-		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
-			setDarkmode(true);
-		}
-		function toggleDarkmodeByPrefersColorScheme(media){
-			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
-				return;
-			}
-			if (media.matches){
-				setDarkmode(true);
-			}else{
-				setDarkmode(false);
-			}
-		}
-		function toggleDarkmodeByTime(){
-			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
-				return;
-			}
-			let hour = new Date().getHours();
-			if (hour < 7 || hour >= 22){
-				setDarkmode(true);
-			}else{
-				setDarkmode(false);
-			}
-		}
-		if (darkmodeAutoSwitch == 'system'){
-			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
-			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
-		}
-		if (darkmodeAutoSwitch == 'time'){
-			toggleDarkmodeByTime();
-		}
-		if (darkmodeAutoSwitch == 'alwayson'){
-			setDarkmode(true);
-		}
-
-		function toggleAmoledDarkMode(){
-			$("html").toggleClass("amoled-dark");
-			if ($("html").hasClass("amoled-dark")){
-				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
-			}else{
-				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
-			}
-		}
-		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
-			$("html").addClass("amoled-dark");
-		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
-			$("html").removeClass("amoled-dark");
-		}
-	</script>
-	<script>
-		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
-			$("html").addClass("using-safari");
-		}
-	</script>
-
-	
-		
-<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
-
-	
-<meta name="generator" content="Hexo 7.3.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
-
-
-
-<style id="themecolor_css">
-	
-	:root{
-		--themecolor: #5e72e4;
-		--themecolor-dark0: #5368E2;
-		--themecolor-dark: #485FE0;
-		--themecolor-dark2: #324CDD;
-		--themecolor-dark3: #233DD2;
-		--themecolor-light: #8A98EB;
-		--themecolor-rgbstr: 94,114,228;
-		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
-
-	}
+  /* 1. 红色系（淡樱花粉） */
+  #aside-content .card-widget:nth-child(1) { background-color: rgba(255, 182, 193, 0.4) !important; }
+  
+  /* 2. 橙色系（淡杏色） */
+  #aside-content .card-widget:nth-child(2) { background-color: rgba(255, 218, 185, 0.4) !important; }
+  
+  /* 3. 黄色系（淡奶油黄） */
+  #aside-content .card-widget:nth-child(3) { background-color: rgba(255, 250, 205, 0.4) !important; }
+  
+  /* 4. 绿色系（薄荷绿） */
+  #aside-content .card-widget:nth-child(4) { background-color: rgba(152, 251, 152, 0.3) !important; }
+  
+  /* 5. 蓝色系（淡天蓝） */
+  #aside-content .card-widget:nth-child(5) { background-color: rgba(175, 238, 238, 0.4) !important; }
+  
+  /* 6. 紫色系（薰衣草紫） */
+  #aside-content .card-widget:nth-child(6) { background-color: rgba(230, 230, 250, 0.5) !important; }
 </style>
-<style id="theme_cardradius_css">
-	:root{
-		--card-radius: 4px;
-	}
-</style>
-
-<body>
-<div id="toolbar">
-	<header class="header-global">
-		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
-			<div class="container">
-				
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<a class="navbar-brand" href="/">边个濑椰のBlog</a>
-				<div class="navbar-collapse collapse" id="navbar_global">
-					<div class="navbar-collapse-header">
-						<div class="row">
-							<div class="col-6 collapse-brand"></div>
-							<div class="col-6 collapse-close">
-								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
-									<span></span>
-									<span></span>
-								</button>
-							</div>
-						</div>
-					</div>
-					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
-						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
-							<a class="nav-link nav-link-icon">
-								<i class="fa fa-search"></i>
-								<span class="nav-link-inner--text d-lg-none">搜索</span>
-							</a>
-						</li>
-					</ul>
-					
-							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
-								
-										<li class='nav-item'>
-											<a href='/home' class='nav-link' >
-												<i class='ni ni-book-bookmark d-lg-none'></i>
-												<span class='nav-link-inner--text'>首页</span>
-											</a>
-											
-										</li>
-									
-										<li class='nav-item dropdown'>
-											<a href='' class='nav-link' onclick='return false;' data-toggle='dropdown' no-pjax>
-												<i class='ni ni-book-bookmark d-lg-none'></i>
-												<span class='nav-link-inner--text'>二级菜单</span>
-											</a>
-											
-													<div class="dropdown-menu">
-														
-															<a href='/' class='dropdown-item'>归档</a>
-														
-													</div>
-												
-										</li>
-									
-							</ul>
-						
-					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
-						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
-							<a class="nav-link nav-link-icon">
-								<i class="fa fa-search"></i>
-								<span class="nav-link-inner--text d-lg-none">搜索</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-				
-				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
-			</div>
-		</nav>
-	</header>
-</div>
-<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">搜索</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<!-- TODO -->
-<div class="form-group mb-3">
-	<div class="input-group input-group-alternative">
-		<div class="input-group-prepend">
-			<span class="input-group-text"><i class="fa fa-search"></i></span>
-		</div>
-		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
-	</div>
-	<div id="local-search-result"></div>
-</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-<!--Banner-->
-<section id="banner" class="banner section section-lg section-shaped">
-	<div class="shape shape-style-1 shape-primary">
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-	</div>
-
-	
-	<div id="banner_container" class="banner-container container text-center">
-		
-			<div class="banner-title text-white"><span class="banner-title-inner">边个濑椰のBlog</span>
-		
-		</div>
-	</div>
-	
-		<style>
-			section.banner{
-				background-image: url(/assets/img/banner.jpg) !important;
-			}
-		</style>
-	
-</section>
-
-
-	<style>
-		#content:before {
-			content: '';
-			display: block;
-			position: fixed;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			z-index: -2;
-			background: url(/assets/img/banner.jpg);
-			background-position: center;
-			background-size: cover;
-			background-repeat: no-repeat;
-			opacity: 0.8;
-			transition: opacity .5s ease;
-		}
-		html.darkmode #content:before{
-			filter: brightness(0.65);
-		}
-		
-			#content:after {
-				content: '';
-				display: block;
-				position: fixed;
-				left: 0;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				z-index: -2;
-				background: url(/assets/img/banner.jpg);
-				background-position: center;
-				background-size: cover;
-				background-repeat: no-repeat;
-				opacity: 0;
-				transition: opacity .5s ease;
-			}
-			html.darkmode #content:after {
-				opacity: 0.8;
-			}
-			html.darkmode #content:before {
-				opacity: 0;
-			}
-		
-		
-			#banner, #banner .shape {
-				background: transparent !important;
-			}
-		
-	</style>
-
-
-
-
-<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
-	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
-		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
-		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
-	</button>
-	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
-		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
-	</button>
-	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" style='display: none;'  aria-label="Comment" tooltip="评论">
-		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
-	</button>
-	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style='display: none;'  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
-		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
-	</button>
-	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button"  aria-label="Open Blog Settings Menu" tooltip="设置">
-		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
-	</button>
-	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
-		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
-		<div class="blog-setting-item mt-3">
-			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
-			<div style="flex: 1;"></div>
-			<label id="blog_setting_darkmode_switch" class="custom-toggle">
-				<span class="custom-toggle-slider rounded-circle"></span>
-			</label>
-		</div>
-		<div class="blog-setting-item mt-3">
-			<div style="flex: 1;">字体</div>
-			<div>
-				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mt-3">
-			<div style="flex: 1;">阴影</div>
-			<div>
-				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mt-3 mb-3">
-			<div style="flex: 1;">滤镜</div>
-			<div id="blog_setting_filters" class="ml-3">
-				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
-				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
-				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
-				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mb-3">
-			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
-			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
-				<div id="blog_setting_card_radius"></div>
-			</div>
-		</div>
-		
-			<div class="blog-setting-item mt-1 mb-3">
-				<div style="flex: 1;">主题色</div>
-				<div id="theme-color-picker" class="ml-3"></div>
-			</div>
-		
-	</div>
-	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
-		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
-	</button>
-	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
-		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
-		<span id="fabtn_reading_progress_details">0%</span>
-	</button>
-</div>
-
-<div id="content" class="site-content">
-
-
-
-
-
-
-
-
-
-<div class="page-information-card-container">
-	
-</div>
-
-<div id="sidebar_mask"></div>
-<aside id="leftbar" class="leftbar widget-area" role="complementary">
-		
-		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
-			<div class="leftbar-banner card-body">
-				<span class="leftbar-banner-title text-white">边个濑椰のBlog</span>
-				
-				
-			</div>
-			
-			
-				<ul id='leftbar_part1_menu' class='leftbar-menu'>
-					<li class='leftbar-menu-item'><a href='/'>首页</a></li><li class='leftbar-menu-item'><a href='/archives'>归档</a></li><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>二级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>三级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item'><a href='/'>首页</a></li></ul></li></ul></li>
-				</ul>
-			
-			<div class="card-body text-center leftbar-search-button">
-				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
-					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
-				</button>
-			</div>
-		</div>
-		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
-			<div id="leftbar_part2_inner" class="card-body">
-				
-				<div class="nav-wrapper" style="padding-top: 5px;">
-	                <ul class="nav nav-pills nav-fill" role="tablist">
-						
-							<li class="nav-item sidebar-tab-switcher">
-								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
-							</li>
-						
-						<li class="nav-item sidebar-tab-switcher">
-							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
-						</li>
-	                </ul>
-				</div>
-				<div>
-					<div class="tab-content" style="padding: 10px 10px 0 10px;">
-						
-							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
-								<div id="leftbar_catalog"></div>
-								<script type="text/javascript">
-									$(function () {
-										$(document).headIndex({
-											articleWrapSelector: '#post_content',
-											indexBoxSelector: '#leftbar_catalog',
-											subItemBoxClass: "index-subItem-box",
-											itemClass: "index-item",
-											linkClass: "index-link",
-											offset: 80,
-										});
-									})
-								</script>
-								
-							</div>
-						
-						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
-							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
-							<h6 id="leftbar_overview_author_name">边个濑椰のBlog</h6>
-							<nav class="site-state">
-								<div class="site-state-item site-state-posts">
-									<a href="/archives">
-										<span class="site-state-item-count">16</span>
-										<span class="site-state-item-name">文章</span>
-									</a>
-								</div>
-								<div class="site-state-item site-state-categories">
-									<a data-toggle="modal" data-target="#blog_categories">
-										<span class="site-state-item-count">0</span>
-										<span class="site-state-item-name">分类</span>
-									</a>
-								</div>      
-								<div class="site-state-item site-state-tags">
-									<a data-toggle="modal" data-target="#blog_tags">
-										<span class="site-state-item-count">0</span>
-										<span class="site-state-item-name">标签</span>
-									</a>
-								</div>
-							</nav>
-							
-									<div class="site-author-links">
-										
-											<div class='site-author-links-item'>
-												<a href="https://blog.csdn.net/byn200?spm=1000.2115.3001.5343" rel='noopener' target='_blank'>CSDN</a>
-											</div>
-										
-											<div class='site-author-links-item'>
-												<a href="https://www.zhihu.com/people/byn200" rel='noopener' target='_blank'>知乎</a>
-											</div>
-										
-									</div>
-								
-							
-									<div class='site-friend-links'>
-										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
-										<ul class='site-friend-links-ul'>
-											
-										</ul>
-									</div>
-								
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-</aside>
-<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">分类</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">标签</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				
-			</div>
-		</div>
-	</div>
-</div>
-
-
-<div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
-		
-		
-			
-	<article class="post post-full card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
-		
-		<a class="post-title" href="/2025/03/19/Minecraft-server/">在Linux(CentOS)系统上部署Minecraft服务器</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-19 18:48:59 | 编辑于 2025-9-11 13:05:13">2025-3-19 18:48
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-19 18:48:59 | 编辑于 2025-9-11 13:05:13">2025-9-11 13:05
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							1.6k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							6 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content" id="post_content">
-		<p>笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)</p>
-<h3 id="参考网站"><a class="markdownIt-Anchor" href="#参考网站"></a> 参考网站</h3>
+<meta name="generator" content="Hexo 8.1.1"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">边个濑椰のBlog</span></a><a class="nav-page-title" href="/"><span class="site-name">在Linux(CentOS)系统上部署Minecraft服务器</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">在Linux(CentOS)系统上部署Minecraft服务器</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-19T10:48:59.000Z" title="Created 2025-03-19 18:48:59">2025-03-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-02-01T05:50:58.077Z" title="Updated 2026-02-01 13:50:58">2026-02-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF/">实用技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)</p>
+<h3 id="参考网站">参考网站</h3>
 <p><a target="_blank" rel="noopener" href="https://docs.redhat.com/zh-cn/documentation/red_hat_build_of_openjdk/21/html-single/installing_and_using_red_hat_build_of_openjdk_21_on_rhel/index#installing-jre-on-rhel-using-yum_openjdk">在 RHEL 上安装并使用红帽构建的 OpenJDK 21 | Red Hat Product Documentation</a></p>
 <p><a target="_blank" rel="noopener" href="https://doc.natfrp.com/launcher/usage.html">SakuraFrp 启动器安装 / 使用指南 | SakuraFrp 帮助文档</a></p>
 <p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/">CentOS | Docker Docs</a></p>
@@ -646,21 +201,18 @@
 <ul>
 <li>来自B站的UP主<code>翱翔大使</code>，是全篇的主要思路来源</li>
 </ul>
-<h2 id="java配置"><a class="markdownIt-Anchor" href="#java配置"></a> Java配置</h2>
+<h2 id="java配置">Java配置</h2>
 <p>运行我的世界需要，须对应版本的Java环境，笔者这里安装的是OpenJDK21</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> yum install java-21-openjdk</span><br><span class="line">java -version //验证是否成功安装</span><br></pre></td></tr></table></figure>
 <p>如果服务器有多个Java版本，可以用<code>alternatives</code>进行版本切换</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alternatives --config java</span><br></pre></td></tr></table></figure>
 <p>如图，我们输入<code>2</code>并回车，就切换到了需要的版本</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="Screenshot_2025-03-19_191616.png">
-
-<h2 id="游戏部署"><a class="markdownIt-Anchor" href="#游戏部署"></a> 游戏部署</h2>
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_191616.png" class="" title="Screenshot_2025-03-19_191616.png">
+<h2 id="游戏部署">游戏部署</h2>
 <p>首先在下面这个网址下载Minecraft的服务器端，这里我下的是支持Fabric的Banner(1.20.1)</p>
 <p>[MohistMC](<a target="_blank" rel="noopener" href="https://www.mohistmc.com/">MohistMC - 主页</a>)</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185204.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185231.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185204.png" class="">
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_185231.png" class="">
 <p>下载完成后是个类似<code>banner-1.20.1-800-server.jar</code>的文件，接下来打开SSH软件，在服务器上操作：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/username //切换到个人文件夹或者想安装的位置</span><br><span class="line"><span class="built_in">mkdir</span> Minecraft //创建存放游戏的文件夹</span><br><span class="line"><span class="built_in">cd</span> Minecraft</span><br></pre></td></tr></table></figure>
 <p>我们用SSH软件中的SFTP功能(或其他文件传输功能)，将刚才的游戏文件<code>banner-1.20.1-800-server.jar</code>拷贝到新建的文件夹<code>/home/username/Mineraft</code>中</p>
@@ -686,12 +238,12 @@
 <p>然后一路顺畅，笔者在这里没有遇到报错，最后来到<code>...EULA...</code>让我们同意EULA协议，输入<code>true</code>后回车，等待一下，游戏服务器就在<code>25565</code>端口上成功运行了</p>
 <p>若想离开Minecraft的这个<code>screen</code>按下<code>Ctrl+A+D</code>即可</p>
 <p>关于游戏规则的更改(比如”是否允许非正版玩家加入“)，需要修改<code>server.properties</code>的内容</p>
-<hr />
+<hr>
 <p>关于连接，如果是云服务器，在管理界面映射一下端口，然后在客户端的Minecraft中连接<code>域名:端口</code>即可</p>
 <p>但是像笔者这样的物理服务器，或者说安装了Linux的设备，个人PC，在没有公网IP的情况下，就要继续内网穿透了</p>
-<h2 id="内网穿透"><a class="markdownIt-Anchor" href="#内网穿透"></a> 内网穿透</h2>
+<h2 id="内网穿透">内网穿透</h2>
 <p>笔者在这里使用我的世界领域中比较有名且良心的<code>SakuraFrp</code>进行内网穿透，其它工具也大同小异</p>
-<h3 id="docker"><a class="markdownIt-Anchor" href="#docker"></a> Docker</h3>
+<h3 id="docker">Docker</h3>
 <p>Linux上的<code>SakuraFrp</code>是基于Docker运行的，所以下面我们先部署Docker，操作完全根据官方文档进行</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dnf -y install dnf-plugins-core</span><br><span class="line"><span class="built_in">sudo</span> dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
 <p>笔者在下面这遇到了安装速度十分缓慢，和下载失败的问题，重新执行命令再执行一次便解决了</p>
@@ -712,200 +264,27 @@
 <p>保存 + 退出，接下来重启docker，再执行一次测试</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
 <p>笔者到这就已经成功安装好docker了，若是测试仍不通过，请检查<code>daemon.json</code>的内容，是否少了或者多了逗号和括号</p>
-<h3 id="sakurafrp"><a class="markdownIt-Anchor" href="#sakurafrp"></a> SakuraFrp</h3>
+<h3 id="sakurafrp">SakuraFrp</h3>
 <p><code>SakuraFrp</code>在Linux上的部署，官方文档给出了详细的方案</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203047.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203047.png" class="">
 <p>首先在终端以管理员身份运行</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bash -c <span class="string">&quot;. &lt;(curl -sSL https://doc.natfrp.com/launcher.sh)&quot;</span></span><br></pre></td></tr></table></figure>
 <p>安装好后，应该是会自动输出日志，并需要填写访问密钥，这个(或者说接下来的操作)可以在<code>SakuraFrp</code>官网的管理面板找到</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203530.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_203530.png" class="">
 <p>登录好之后就能看到其日志文件，下面是常规的启动并查看日志的操作</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker start natfrp-service</span><br><span class="line">docker logs natfrp-service</span><br></pre></td></tr></table></figure>
 <p>如图，接下来需要用物理方式操作下服务器</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Image_146159838978722.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Image_146159838978722.png" class="">
 <p>打开浏览器(一般Linux自带Firefox)访问“使用”后面的网址打开<code>WebUI</code></p>
 <p>然后看到“隧道”那什么都没有，只有一个加号，这时我们在打开<code>SakuraFrp</code>的管理面板，找到服务下的<code>隧道列表</code>，新建两个隧道，如图所示：</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_204855.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_205010.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_204855.png" class="">
+<img src="/2025/03/19/Minecraft-server/Screenshot_2025-03-19_205010.png" class="">
 <p>第一个端口号为7102的是服务器上<code>SakuraFrp</code>的<code>WebUI</code>，以便远程管理</p>
 <p>第二个端口号为25565的是Minecraft的服务器端</p>
 <p>回到<code>WebUI</code>界面刷新一下就能看到刚刚创建好的两个隧道了，我们分别双击，然后回到终端的日志界面</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/Image_146585201484185.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
+<img src="/2025/03/19/Minecraft-server/Image_146585201484185.png" class="">
 <p>如图的红色字符的链接，就是<code>WebUI</code>和Minecraft的远程访问链接，将Minecraft对应的复制到游戏中即可连接上</p>
-<h2 id="结语"><a class="markdownIt-Anchor" href="#结语"></a> 结语</h2>
+<h2 id="结语">结语</h2>
 <p>大功告成！(笔者服务器出生地的截图 &gt;w&lt;)</p>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/19/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="">
-
-
-	</div>
-
-	
-
-	
-
-	
-</article>
-
-	<div id="share_container">
-	<div id="share" data-initialized="true">
-		<a class="no-pjax icon-wechat" tooltip="分享到微信">
-			<button class="btn btn-icon btn-success">
-				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
-			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
-				豆
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
-			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
-			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
-			<button class="btn btn-icon btn-warning">
-				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
-			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
-			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2025/03/19/Minecraft-server/&text=在Linux(CentOS)系统上部署Minecraft服务器" tooltip="分享到 Telegram">
-			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
-			<button class="btn btn-icon btn-default">
-				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
-			</button>
-		</a>
-	</div>
-	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
-		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
-	</button>
-</div>
-<script type="text/javascript">
-	socialShare("#share", {
-	    title : '在Linux(CentOS)系统上部署Minecraft服务器',
-	    description : `笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希...`,
-	    wechatQrcodeTitle : "分享到微信",
-	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'https://ottercoconut.github.io/2025/03/19/Minecraft-server/'
-	});
-	$("#share_show")[0].onclick = function(){
-		$("#share_container").addClass("opened");
-	};
-	$("#share_copy_link")[0].onclick = function(){
-		let input = document.createElement('input');
-		document.body.appendChild(input);
-		input.setAttribute("value", window.location.href);
-		input.setAttribute("readonly", "readonly");
-		input.setAttribute("style", "opacity: 0;mouse-events:none;");
-		input.select();
-		if (document.execCommand('copy')){
-			iziToast.show({
-				title: '链接已复制',
-				message: "链接已复制到剪贴板",
-				class: 'shadow',
-				position: 'topRight',
-				backgroundColor: '#2dce89',
-				titleColor: '#ffffff',
-				messageColor: '#ffffff',
-				iconColor: '#ffffff',
-				progressBarColor: '#ffffff',
-				icon: 'fa fa-check',
-				timeout: 5000
-			});
-		}else{
-			iziToast.show({
-				title: '复制失败',
-				message: "请手动复制链接",
-				class: 'shadow',
-				position: 'topRight',
-				backgroundColor: '#f5365c',
-				titleColor: '#ffffff',
-				messageColor: '#ffffff',
-				iconColor: '#ffffff',
-				progressBarColor: '#ffffff',
-				icon: 'fa fa-close',
-				timeout: 5000
-			});
-		}
-		document.body.removeChild(input);
-	};
-</script>
-
-
-
-
-
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2025/03/21/java-multithreading/" rel="prev"> Java 多线程</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2025/03/18/Redis/" rel="next"> Redis</a></div></div>
-
-
-
-
-		
-		
-		
-		
-
-					<footer id="footer" class="site-footer card shadow-sm border-0">
-						
-						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
-						<span id="busuanzi_container_site_uv">
-							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
-						</span>
-					</footer>
-				</main>
-			</div>
-		</div>
-		
-<script src="/argontheme.js"></script>
-
-		
-		
-		
-
-		
-			<script>
-				var argonEnableCodeHighlight = true;
-			</script>
-			
-<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
-
-		
-
-	</div>
-</div>
-<noscript>
-	<style>
-		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
-		.comment-item-text .comment-sticker.lazyload{display: none;}
-	</style>
-</noscript>
-</body>
-
-
-
-</html>
-
+<img src="/2025/03/19/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png" class="">
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://ottercoconut.github.io">Kawauso</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://ottercoconut.github.io/2025/03/19/Minecraft-server/">https://ottercoconut.github.io/2025/03/19/Minecraft-server/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/Minecraft/">Minecraft</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.gif" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/21/java-multithreading/" title="Java 多线程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">Java 多线程</div></div><div class="info-2"><div class="info-item-1">参考网站 多线程 - Java教程 - 廖雪峰的官方网站  多数参考了廖老师的博客 非常好教程  万字图解Java多线程 - 个人文章 - SegmentFault 思否  相对没那么详细，就讲到同步锁和线程池，简洁清晰 也补充了一些知识，例如线程状态，同步锁，生产者消费者模型…  Java 多线程 进程/线程 进程和线程的关系： 一个进程可以包含一个或多个线程 ，但至少会有一个线程。 操作系统调度的 最小任务单位 其实不是进程，而是线程。常用的Windows、Linux等操作系统都采用抢占式多任务，如何调度线程完全由操作系统决定，程序自己不能决定什么时候执行，以及执行多长时间。 多任务既可以由多进程实现，也可以由单进程内的多线程实现，还可以混合多进程＋多线程 和多线程相比，多进程的缺点在于：  创建进程比创建线程 开销 大，尤其是在Windows系统上 进程间通信比线程间通信要慢，因为线程间通信就是读写同一个变量，速度很快  多进程的优点在于：  多进程 稳定性 比多线程高，因为在多进程的情况下，一个进程崩溃不会影响其他进程 在多线程的情况下，任何一个线程崩溃会直接导致整个进程...</div></div></div></a><a class="pagination-related" href="/2025/03/18/Redis/" title="Redis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">Redis</div></div><div class="info-2"><div class="info-item-1">Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内置功能还包括事务、发布/订阅模式以及Lua脚本支持，使其应用场景广泛，从实时分析到会话管理均表现出色。此外，Redis支持主从复制和集群模式，具有良好的扩展性。 参考网站 知乎 超强、超详细Redis入门教程 CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）—第一集  详细，附有业务场景的实例  数据结构 Redis包含五大数据类型：字符串(string), 列表(list), 哈希(hash), 集合(set), 集合(zset) string Redis 最基本的数据类型，每个键对应一个值，值可以是文本、数字或二进制数据，最大存储 512MB。支持字符串拼...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Kawauso</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">25</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ottercoconut"><i class="fab fa-github"></i><span>喵~</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E7%BD%91%E7%AB%99"><span class="toc-number">1.</span> <span class="toc-text">参考网站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">Java配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E9%83%A8%E7%BD%B2"><span class="toc-number">3.</span> <span class="toc-text">游戏部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">4.</span> <span class="toc-text">内网穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#docker"><span class="toc-number">4.1.</span> <span class="toc-text">Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sakurafrp"><span class="toc-number">4.2.</span> <span class="toc-text">SakuraFrp</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/30/wsl2-proxy/" title="如何在WSL2上使用本机代理">如何在WSL2上使用本机代理</a><time datetime="2026-01-30T08:31:20.000Z" title="Created 2026-01-30 16:31:20">2026-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/28/cs224n/" title="cs224n">cs224n</a><time datetime="2026-01-28T06:31:08.000Z" title="Created 2026-01-28 14:31:08">2026-01-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/22/pytorch/" title="Pytorch基础">Pytorch基础</a><time datetime="2026-01-22T02:49:28.000Z" title="Created 2026-01-22 10:49:28">2026-01-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/15/toefl-speaking/" title="TOEFL Speaking">TOEFL Speaking</a><time datetime="2026-01-15T08:41:43.000Z" title="Created 2026-01-15 16:41:43">2026-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/13/toefl-writing/" title="TOEFL Writing">TOEFL Writing</a><time datetime="2026-01-13T06:25:25.000Z" title="Created 2026-01-13 14:25:25">2026-01-13</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Kawauso</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

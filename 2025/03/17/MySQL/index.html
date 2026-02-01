@@ -1,648 +1,203 @@
-<!DOCTYPE html>
-
-<html class="article-header-style-default">
-<head>
-	
-	<title>MySQL - 边个濑椰のBlog</title>
-	<meta charset="utf-8">
-	
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	
-	<meta name="description" content="MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如">
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MySQL | 边个濑椰のBlog</title><meta name="author" content="Kawauso"><meta name="copyright" content="Kawauso"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL">
 <meta property="og:url" content="https://ottercoconut.github.io/2025/03/17/MySQL/index.html">
 <meta property="og:site_name" content="边个濑椰のBlog">
 <meta property="og:description" content="MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如">
 <meta property="og:locale">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-11_132438.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-11_134213.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-13_164705.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-13_170736.png">
-<meta property="og:image" content="c:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png">
-<meta property="og:image" content="c:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp">
-<meta property="og:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-11_203039.png">
+<meta property="og:image" content="https://ottercoconut.github.io/img/avatar.gif">
 <meta property="article:published_time" content="2025-03-17T12:06:34.000Z">
-<meta property="article:modified_time" content="2025-03-20T08:05:51.063Z">
+<meta property="article:modified_time" content="2026-02-01T05:04:50.779Z">
 <meta property="article:author" content="Kawauso">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ottercoconut.github.io/2025/03/17/MySQL/Screenshot_2025-03-11_132438.png">
+<meta name="twitter:image" content="https://ottercoconut.github.io/img/avatar.gif"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MySQL",
+  "url": "https://ottercoconut.github.io/2025/03/17/MySQL/",
+  "image": "https://ottercoconut.github.io/img/avatar.gif",
+  "datePublished": "2025-03-17T12:06:34.000Z",
+  "dateModified": "2026-02-01T05:04:50.779Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Kawauso",
+      "url": "https://ottercoconut.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://ottercoconut.github.io/2025/03/17/MySQL/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
 
-	<meta name="theme-color" content="#5e72e4">
-	<meta name="theme-color-rgb" content="94,114,228">
-	<meta name="theme-color-origin" content="#5e72e4">
-	<meta name="argon-enable-custom-theme-color" content="true">
-	<meta name="theme-card-radius" content="4">
-	<meta name="theme-version" content="1.0.2">
-	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
-	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
-	
-<link rel="stylesheet" href="/assets/argon_css_merged.css">
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
-	
-<link rel="stylesheet" href="/style.css">
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MySQL',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><style>
+  /* 统一样式：圆角、半透明、过渡 */
+  #aside-content .card-widget {
+    border-radius: 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 增加一层淡白色边框，增加高级感 */
+    transition: transform 0.3s;
+  }
 
-	
-<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+  /* 鼠标悬停时轻微放大，更有互动感 */
+  #aside-content .card-widget:hover {
+    transform: translateY(-5px);
+  }
 
-	
-<script src="/assets/argon_js_merged.js"></script>
-
-	
-<script src="/assets/js/argon.min.js"></script>
-
-	
-<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-	
-
-	<script>
-		var argonConfig = {
-			language: "zh_CN",
-			
-				zoomify: {
-					duration: 200,
-					easing: "cubic-bezier(0.4,0,0,1)",
-					scale: 0.9
-				},
-			
-			pangu: "false",
-			
-				lazyload: {
-					threshold: 800,
-					effect: "fadeIn"
-				},
-			
-			disable_pjax: false,
-			headroom: false
-		}
-	</script>
-	<script>
-		var darkmodeAutoSwitch = "false";
-		function setDarkmode(enable){
-			if (enable == true){
-				$("html").addClass("darkmode");
-			}else{
-				$("html").removeClass("darkmode");
-			}
-			$(window).trigger("scroll");
-		}
-		function toggleDarkmode(){
-			if ($("html").hasClass("darkmode")){
-				setDarkmode(false);
-				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
-			}else{
-				setDarkmode(true);
-				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
-			}
-		}
-		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
-			setDarkmode(true);
-		}
-		function toggleDarkmodeByPrefersColorScheme(media){
-			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
-				return;
-			}
-			if (media.matches){
-				setDarkmode(true);
-			}else{
-				setDarkmode(false);
-			}
-		}
-		function toggleDarkmodeByTime(){
-			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
-				return;
-			}
-			let hour = new Date().getHours();
-			if (hour < 7 || hour >= 22){
-				setDarkmode(true);
-			}else{
-				setDarkmode(false);
-			}
-		}
-		if (darkmodeAutoSwitch == 'system'){
-			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
-			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
-		}
-		if (darkmodeAutoSwitch == 'time'){
-			toggleDarkmodeByTime();
-		}
-		if (darkmodeAutoSwitch == 'alwayson'){
-			setDarkmode(true);
-		}
-
-		function toggleAmoledDarkMode(){
-			$("html").toggleClass("amoled-dark");
-			if ($("html").hasClass("amoled-dark")){
-				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
-			}else{
-				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
-			}
-		}
-		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
-			$("html").addClass("amoled-dark");
-		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
-			$("html").removeClass("amoled-dark");
-		}
-	</script>
-	<script>
-		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
-			$("html").addClass("using-safari");
-		}
-	</script>
-
-	
-		
-<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
-
-	
-<meta name="generator" content="Hexo 7.3.0"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
-
-
-
-<style id="themecolor_css">
-	
-	:root{
-		--themecolor: #5e72e4;
-		--themecolor-dark0: #5368E2;
-		--themecolor-dark: #485FE0;
-		--themecolor-dark2: #324CDD;
-		--themecolor-dark3: #233DD2;
-		--themecolor-light: #8A98EB;
-		--themecolor-rgbstr: 94,114,228;
-		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
-
-	}
+  /* 1. 红色系（淡樱花粉） */
+  #aside-content .card-widget:nth-child(1) { background-color: rgba(255, 182, 193, 0.4) !important; }
+  
+  /* 2. 橙色系（淡杏色） */
+  #aside-content .card-widget:nth-child(2) { background-color: rgba(255, 218, 185, 0.4) !important; }
+  
+  /* 3. 黄色系（淡奶油黄） */
+  #aside-content .card-widget:nth-child(3) { background-color: rgba(255, 250, 205, 0.4) !important; }
+  
+  /* 4. 绿色系（薄荷绿） */
+  #aside-content .card-widget:nth-child(4) { background-color: rgba(152, 251, 152, 0.3) !important; }
+  
+  /* 5. 蓝色系（淡天蓝） */
+  #aside-content .card-widget:nth-child(5) { background-color: rgba(175, 238, 238, 0.4) !important; }
+  
+  /* 6. 紫色系（薰衣草紫） */
+  #aside-content .card-widget:nth-child(6) { background-color: rgba(230, 230, 250, 0.5) !important; }
 </style>
-<style id="theme_cardradius_css">
-	:root{
-		--card-radius: 4px;
-	}
-</style>
-
-<body>
-<div id="toolbar">
-	<header class="header-global">
-		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
-			<div class="container">
-				
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<a class="navbar-brand" href="/">边个濑椰のBlog</a>
-				<div class="navbar-collapse collapse" id="navbar_global">
-					<div class="navbar-collapse-header">
-						<div class="row">
-							<div class="col-6 collapse-brand"></div>
-							<div class="col-6 collapse-close">
-								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
-									<span></span>
-									<span></span>
-								</button>
-							</div>
-						</div>
-					</div>
-					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
-						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
-							<a class="nav-link nav-link-icon">
-								<i class="fa fa-search"></i>
-								<span class="nav-link-inner--text d-lg-none">搜索</span>
-							</a>
-						</li>
-					</ul>
-					
-							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
-								
-										<li class='nav-item'>
-											<a href='/home' class='nav-link' >
-												<i class='ni ni-book-bookmark d-lg-none'></i>
-												<span class='nav-link-inner--text'>首页</span>
-											</a>
-											
-										</li>
-									
-										<li class='nav-item dropdown'>
-											<a href='' class='nav-link' onclick='return false;' data-toggle='dropdown' no-pjax>
-												<i class='ni ni-book-bookmark d-lg-none'></i>
-												<span class='nav-link-inner--text'>二级菜单</span>
-											</a>
-											
-													<div class="dropdown-menu">
-														
-															<a href='/' class='dropdown-item'>归档</a>
-														
-													</div>
-												
-										</li>
-									
-							</ul>
-						
-					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
-						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
-							<a class="nav-link nav-link-icon">
-								<i class="fa fa-search"></i>
-								<span class="nav-link-inner--text d-lg-none">搜索</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-				
-				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
-			</div>
-		</nav>
-	</header>
-</div>
-<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">搜索</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<!-- TODO -->
-<div class="form-group mb-3">
-	<div class="input-group input-group-alternative">
-		<div class="input-group-prepend">
-			<span class="input-group-text"><i class="fa fa-search"></i></span>
-		</div>
-		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
-	</div>
-	<div id="local-search-result"></div>
-</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-<!--Banner-->
-<section id="banner" class="banner section section-lg section-shaped">
-	<div class="shape shape-style-1 shape-primary">
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-		<span></span>
-	</div>
-
-	
-	<div id="banner_container" class="banner-container container text-center">
-		
-			<div class="banner-title text-white"><span class="banner-title-inner">边个濑椰のBlog</span>
-		
-		</div>
-	</div>
-	
-		<style>
-			section.banner{
-				background-image: url(/assets/img/banner.jpg) !important;
-			}
-		</style>
-	
-</section>
-
-
-	<style>
-		#content:before {
-			content: '';
-			display: block;
-			position: fixed;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			z-index: -2;
-			background: url(/assets/img/banner.jpg);
-			background-position: center;
-			background-size: cover;
-			background-repeat: no-repeat;
-			opacity: 0.8;
-			transition: opacity .5s ease;
-		}
-		html.darkmode #content:before{
-			filter: brightness(0.65);
-		}
-		
-			#content:after {
-				content: '';
-				display: block;
-				position: fixed;
-				left: 0;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				z-index: -2;
-				background: url(/assets/img/banner.jpg);
-				background-position: center;
-				background-size: cover;
-				background-repeat: no-repeat;
-				opacity: 0;
-				transition: opacity .5s ease;
-			}
-			html.darkmode #content:after {
-				opacity: 0.8;
-			}
-			html.darkmode #content:before {
-				opacity: 0;
-			}
-		
-		
-			#banner, #banner .shape {
-				background: transparent !important;
-			}
-		
-	</style>
-
-
-
-
-<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
-	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
-		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
-		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
-	</button>
-	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
-		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
-	</button>
-	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" style='display: none;'  aria-label="Comment" tooltip="评论">
-		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
-	</button>
-	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" style='display: none;'  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
-		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
-	</button>
-	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button"  aria-label="Open Blog Settings Menu" tooltip="设置">
-		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
-	</button>
-	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
-		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
-		<div class="blog-setting-item mt-3">
-			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
-			<div style="flex: 1;"></div>
-			<label id="blog_setting_darkmode_switch" class="custom-toggle">
-				<span class="custom-toggle-slider rounded-circle"></span>
-			</label>
-		</div>
-		<div class="blog-setting-item mt-3">
-			<div style="flex: 1;">字体</div>
-			<div>
-				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mt-3">
-			<div style="flex: 1;">阴影</div>
-			<div>
-				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mt-3 mb-3">
-			<div style="flex: 1;">滤镜</div>
-			<div id="blog_setting_filters" class="ml-3">
-				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
-				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
-				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
-				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
-			</div>
-		</div>
-		<div class="blog-setting-item mb-3">
-			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
-			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
-				<div id="blog_setting_card_radius"></div>
-			</div>
-		</div>
-		
-			<div class="blog-setting-item mt-1 mb-3">
-				<div style="flex: 1;">主题色</div>
-				<div id="theme-color-picker" class="ml-3"></div>
-			</div>
-		
-	</div>
-	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
-		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
-	</button>
-	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
-		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
-		<span id="fabtn_reading_progress_details">0%</span>
-	</button>
-</div>
-
-<div id="content" class="site-content">
-
-
-
-
-
-
-
-
-
-<div class="page-information-card-container">
-	
-</div>
-
-<div id="sidebar_mask"></div>
-<aside id="leftbar" class="leftbar widget-area" role="complementary">
-		
-		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
-			<div class="leftbar-banner card-body">
-				<span class="leftbar-banner-title text-white">边个濑椰のBlog</span>
-				
-				
-			</div>
-			
-			
-				<ul id='leftbar_part1_menu' class='leftbar-menu'>
-					<li class='leftbar-menu-item'><a href='/'>首页</a></li><li class='leftbar-menu-item'><a href='/archives'>归档</a></li><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>二级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item leftbar-menu-item-haschildren'><a no-pjax onclick='return false;'>三级菜单</a><ul class='leftbar-menu-item leftbar-menu-subitem shadow-sm'><li class='leftbar-menu-item'><a href='/'>首页</a></li></ul></li></ul></li>
-				</ul>
-			
-			<div class="card-body text-center leftbar-search-button">
-				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
-					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
-				</button>
-			</div>
-		</div>
-		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
-			<div id="leftbar_part2_inner" class="card-body">
-				
-				<div class="nav-wrapper" style="padding-top: 5px;">
-	                <ul class="nav nav-pills nav-fill" role="tablist">
-						
-							<li class="nav-item sidebar-tab-switcher">
-								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
-							</li>
-						
-						<li class="nav-item sidebar-tab-switcher">
-							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
-						</li>
-	                </ul>
-				</div>
-				<div>
-					<div class="tab-content" style="padding: 10px 10px 0 10px;">
-						
-							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
-								<div id="leftbar_catalog"></div>
-								<script type="text/javascript">
-									$(function () {
-										$(document).headIndex({
-											articleWrapSelector: '#post_content',
-											indexBoxSelector: '#leftbar_catalog',
-											subItemBoxClass: "index-subItem-box",
-											itemClass: "index-item",
-											linkClass: "index-link",
-											offset: 80,
-										});
-									})
-								</script>
-								
-							</div>
-						
-						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
-							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
-							<h6 id="leftbar_overview_author_name">边个濑椰のBlog</h6>
-							<nav class="site-state">
-								<div class="site-state-item site-state-posts">
-									<a href="/archives">
-										<span class="site-state-item-count">16</span>
-										<span class="site-state-item-name">文章</span>
-									</a>
-								</div>
-								<div class="site-state-item site-state-categories">
-									<a data-toggle="modal" data-target="#blog_categories">
-										<span class="site-state-item-count">0</span>
-										<span class="site-state-item-name">分类</span>
-									</a>
-								</div>      
-								<div class="site-state-item site-state-tags">
-									<a data-toggle="modal" data-target="#blog_tags">
-										<span class="site-state-item-count">0</span>
-										<span class="site-state-item-name">标签</span>
-									</a>
-								</div>
-							</nav>
-							
-									<div class="site-author-links">
-										
-											<div class='site-author-links-item'>
-												<a href="https://blog.csdn.net/byn200?spm=1000.2115.3001.5343" rel='noopener' target='_blank'>CSDN</a>
-											</div>
-										
-											<div class='site-author-links-item'>
-												<a href="https://www.zhihu.com/people/byn200" rel='noopener' target='_blank'>知乎</a>
-											</div>
-										
-									</div>
-								
-							
-									<div class='site-friend-links'>
-										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
-										<ul class='site-friend-links-ul'>
-											
-										</ul>
-									</div>
-								
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-</aside>
-<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">分类</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">标签</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				
-			</div>
-		</div>
-	</div>
-</div>
-
-
-<div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
-		
-		
-			
-	<article class="post post-full card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
-		
-		<a class="post-title" href="/2025/03/17/MySQL/">MySQL</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 20:06:34 | 编辑于 2025-3-20 16:05:51">2025-3-17 20:06
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-edittime">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2025-3-17 20:06:34 | 编辑于 2025-3-20 16:05:51">2025-3-20 16:05
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							6.5k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							25 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content" id="post_content">
-		<p>MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如 InnoDB 和 MyISAM），允许用户根据需求灵活选择。此外，MySQL 提供主从复制、分区和集群（如 MySQL Cluster）等功能，适用于高可用性和分布式场景。从 Web 应用后台到企业级数据仓库，MySQL 的应用范围广泛。</p>
-<h3 id="参考网站"><a class="markdownIt-Anchor" href="#参考网站"></a> 参考网站</h3>
+<meta name="generator" content="Hexo 8.1.1"><link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">边个濑椰のBlog</span></a><a class="nav-page-title" href="/"><span class="site-name">MySQL</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">MySQL</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-17T12:06:34.000Z" title="Created 2025-03-17 20:06:34">2025-03-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-02-01T05:04:50.779Z" title="Updated 2026-02-01 13:04:50">2026-02-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/">后端开发</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开发，现由 Oracle 维护。它基于结构化查询语言（SQL），适用于管理大规模结构化数据，支持多种操作系统，如 Windows、Linux 和 macOS。MySQL 以其高性能、可靠性和易用性著称，提供丰富的功能，包括事务支持、索引优化、多表连接以及用户权限管理。其核心特点是支持多种存储引擎（如 InnoDB 和 MyISAM），允许用户根据需求灵活选择。此外，MySQL 提供主从复制、分区和集群（如 MySQL Cluster）等功能，适用于高可用性和分布式场景。从 Web 应用后台到企业级数据仓库，MySQL 的应用范围广泛。</p>
+<h3 id="参考网站">参考网站</h3>
 <p><a target="_blank" rel="noopener" href="http://xuesql.cn/">自学SQL网(教程 视频 练习全套)</a></p>
 <blockquote>
 <p>学完知识就有题做</p>
 </blockquote>
-<hr />
+<hr>
 <p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/30357711"></a></p>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-tutorial.html">MySQL 教程 | 菜鸟教程</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43896929/article/details/120750965">MySQL总结_sq连表-CSDN博客</a></p>
@@ -650,11 +205,11 @@
 <blockquote>
 <p>观感最好的教程</p>
 </blockquote>
-<h2 id="关系模型"><a class="markdownIt-Anchor" href="#关系模型"></a> 关系模型</h2>
+<h2 id="关系模型">关系模型</h2>
 <blockquote>
 <p>引用自 <a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/sql/relational/index.html">关系模型 - SQL教程 - 廖雪峰的官方网站</a></p>
 </blockquote>
-<h3 id="主键"><a class="markdownIt-Anchor" href="#主键"></a> 主键</h3>
+<h3 id="主键">主键</h3>
 <p>在关系数据库中，一张表中的每一行数据被称为一条记录。一条记录就是由多个字段组成的。例如，<code>students</code>表的两行记录：</p>
 <table>
 <thead>
@@ -698,10 +253,10 @@
 <blockquote>
 <p>如果使用INT自增类型，那么当一张表的记录数超过2147483647（约21亿）时，会达到上限而出错。使用BIGINT自增类型则可以最多约922亿亿条记录。</p>
 </blockquote>
-<h4 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h4>
+<h4 id="小结">小结</h4>
 <p>主键是关系表中记录的唯一标识。主键的选取非常重要：主键不要带有业务含义，而应该使用BIGINT自增或者GUID类型。主键也不应该允许<code>NULL</code>。</p>
 <p>可以使用多个列作为联合主键，但联合主键并不常用。</p>
-<h3 id="外键"><a class="markdownIt-Anchor" href="#外键"></a> 外键</h3>
+<h3 id="外键">外键</h3>
 <p>当我们用主键唯一标识记录时，我们就可以在<code>students</code>表中确定任意一个学生的记录：</p>
 <table>
 <thead>
@@ -794,7 +349,7 @@
 <p>要删除一个外键约束，也是通过<code>ALTER TABLE</code>实现的：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE students</span><br><span class="line">DROP FOREIGN KEY fk_class_id;</span><br></pre></td></tr></table></figure>
 <p>注意：删除外键约束并没有删除外键这一列。删除列是通过<code>DROP COLUMN ...</code>实现的。</p>
-<h4 id="多对多"><a class="markdownIt-Anchor" href="#多对多"></a> 多对多</h4>
+<h4 id="多对多">多对多</h4>
 <p>通过一个表的外键关联到另一个表，我们可以定义出一对多关系。有些时候，还需要定义“多对多”关系。例如，一个老师可以对应多个班级，一个班级也可以对应多个老师，因此，班级表和老师表存在多对多关系。</p>
 <p>多对多关系实际上是通过两个一对多关系实现的，即通过一个中间表，关联两个一对多关系，就形成了多对多关系：</p>
 <p><code>teachers</code>表：</p>
@@ -898,7 +453,7 @@
 <li><code>id=2</code>的二班对应<code>id=1,2,4</code>的张老师、王老师和赵老师；</li>
 </ul>
 <p>因此，通过中间表，我们就定义了一个“多对多”关系。</p>
-<h4 id="一对一"><a class="markdownIt-Anchor" href="#一对一"></a> 一对一</h4>
+<h4 id="一对一">一对一</h4>
 <p>一对一关系是指，一个表的记录对应到另一个表的唯一一个记录。</p>
 <p>例如，<code>students</code>表的每个学生可以有自己的联系方式，如果把联系方式存入另一个表<code>contacts</code>，我们就可以得到一个“一对一”关系：</p>
 <table>
@@ -930,9 +485,9 @@
 <p>有细心的童鞋会问，既然是一对一关系，那为啥不给<code>students</code>表增加一个<code>mobile</code>列，这样就能合二为一了？</p>
 <p>如果业务允许，完全可以把两个表合为一个表。但是，有些时候，如果某个学生没有手机号，那么，<code>contacts</code>表就不存在对应的记录。实际上，一对一关系准确地说，是<code>contacts</code>表一对一对应<code>students</code>表。</p>
 <p>还有一些应用会把一个大表拆成两个一对一的表，目的是把经常读取和不经常读取的字段分开，以获得更高的性能。例如，把一个大的用户表分拆为用户基本信息表<code>user_info</code>和用户详细信息表<code>user_profiles</code>，大部分时候，只需要查询<code>user_info</code>表，并不需要查询<code>user_profiles</code>表，这样就提高了查询速度。</p>
-<h4 id="小结-2"><a class="markdownIt-Anchor" href="#小结-2"></a> 小结</h4>
+<h4 id="小结">小结</h4>
 <p>关系数据库通过外键可以实现一对多、多对多和一对一的关系。外键既可以通过数据库来约束，也可以不设置约束，仅依靠应用程序的逻辑来保证。</p>
-<h3 id="索引"><a class="markdownIt-Anchor" href="#索引"></a> 索引</h3>
+<h3 id="索引">索引</h3>
 <p>在关系数据库中，如果有上万甚至上亿条记录，在查找记录的时候，想要获得非常快的速度，就需要使用索引。</p>
 <p>索引是关系数据库中对某一列或多个列的值进行预排序的数据结构。通过使用索引，可以让数据库系统不必扫描整个表，而是直接定位到符合条件的记录，这样就大大加快了查询速度。</p>
 <p>例如，对于<code>students</code>表：</p>
@@ -977,7 +532,7 @@
 <p>索引的效率取决于索引列的值是否散列，即该列的值如果越互不相同，那么索引效率越高。反过来，如果记录的列存在大量相同的值，例如<code>gender</code>列，大约一半的记录值是<code>M</code>，另一半是<code>F</code>，因此，对该列创建索引就没有意义。</p>
 <p>可以对一张表创建多个索引。索引的优点是提高了查询效率，缺点是在插入、更新和删除记录时，需要同时修改索引，因此，索引越多，插入、更新和删除记录的速度就越慢。</p>
 <p>对于主键，关系数据库会自动对其创建主键索引。使用主键索引的效率是最高的，因为主键会保证绝对唯一。</p>
-<h4 id="唯一索引"><a class="markdownIt-Anchor" href="#唯一索引"></a> 唯一索引</h4>
+<h4 id="唯一索引">唯一索引</h4>
 <p>在设计关系数据表的时候，看上去唯一的列，例如身份证号、邮箱地址等，因为他们具有业务含义，因此不宜作为主键。</p>
 <p>但是，这些列根据业务要求，又具有唯一性约束：即不能出现两条记录存储了同一个身份证号。这个时候，就可以给该列添加一个唯一索引。例如，我们假设<code>students</code>表的<code>name</code>不能重复：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> students</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">UNIQUE</span> INDEX uni_name (name);</span><br></pre></td></tr></table></figure>
@@ -986,13 +541,13 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> students</span><br><span class="line"><span class="keyword">ADD CONSTRAINT</span> uni_name <span class="keyword">UNIQUE</span> (name);</span><br></pre></td></tr></table></figure>
 <p>这种情况下，<code>name</code>列没有索引，但仍然具有唯一性保证。</p>
 <p>无论是否创建索引，对于用户和应用程序来说，使用关系数据库不会有任何区别。这里的意思是说，当我们在数据库中查询时，如果有相应的索引可用，数据库系统就会自动使用索引来提高查询效率，如果没有索引，查询也能正常执行，只是速度会变慢。因此，索引可以在使用数据库的过程中逐步优化。</p>
-<h4 id="小结-3"><a class="markdownIt-Anchor" href="#小结-3"></a> 小结</h4>
+<h4 id="小结">小结</h4>
 <p>通过对数据库表创建索引，可以提高查询速度；</p>
 <p>通过创建唯一索引，可以保证某一列的值具有唯一性；</p>
 <p>数据库索引对于用户和应用程序来说都是透明的。</p>
-<h2 id="select-查询"><a class="markdownIt-Anchor" href="#select-查询"></a> SELECT 查询</h2>
+<h2 id="select-查询">SELECT 查询</h2>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span></span><br><span class="line">    <span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> another_condition</span><br><span class="line">    <span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> …;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> movies </span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">year</span><span class="operator">&gt;=</span><span class="number">2010</span> <span class="keyword">AND</span> length_minutes<span class="operator">&lt;</span><span class="number">120</span>;</span><br></pre></td></tr></table></figure>
-<h3 id="筛选数字属性列"><a class="markdownIt-Anchor" href="#筛选数字属性列"></a> <strong>筛选数字属性列</strong></h3>
+<h3 id="筛选数字属性列"><strong>筛选数字属性列</strong></h3>
 <table>
 <thead>
 <tr>
@@ -1029,7 +584,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="筛选字符串属性列"><a class="markdownIt-Anchor" href="#筛选字符串属性列"></a> <strong>筛选字符串属性列</strong></h3>
+<h3 id="筛选字符串属性列"><strong>筛选字符串属性列</strong></h3>
 <table>
 <thead>
 <tr>
@@ -1072,27 +627,23 @@
 </tbody>
 </table>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*通配符*/</span></span><br><span class="line">col_name <span class="keyword">LIKE</span> &quot;%AT%&quot;;</span><br><span class="line"><span class="comment">/*&quot;AT&quot;&quot;AT*...&quot;&quot;...*AT&quot;&quot;...*AT*...&quot;均满足条件</span></span><br><span class="line"><span class="comment"> &quot;AT&quot;前后可以有任意字符*/</span></span><br><span class="line">col_name <span class="keyword">LIKE</span> &quot;AN_&quot;;</span><br><span class="line"><span class="comment">/*&quot;AND&quot;可以 &quot;AN&quot;&quot;ANDD&quot;均不行</span></span><br><span class="line"><span class="comment"> 与&#x27;%&#x27;相似 但只代表一个字符*/</span></span><br></pre></td></tr></table></figure>
-<h3 id="过滤排序"><a class="markdownIt-Anchor" href="#过滤排序"></a> 过滤/排序</h3>
+<h3 id="过滤-排序">过滤/排序</h3>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*用DISTINCT关键字来指定某个或某些属性列唯一返回*/</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s);</span><br></pre></td></tr></table></figure>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*让结果按一个或多个属性列做排序*/</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="comment">/* ASC 升序或 DESC 降序*/</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span> <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line"><span class="comment">/*LIMIT来指定只返回多少行结果 </span></span><br><span class="line"><span class="comment"> 用OFFSET来指定从哪一行开始返回*/</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br><span class="line"><span class="comment">/*关于OFFSET 若要输出第N行(及之后)</span></span><br><span class="line"><span class="comment">  则OFFSET的参数须为N-1 */</span></span><br></pre></td></tr></table></figure>
-<h4 id="例题"><a class="markdownIt-Anchor" href="#例题"></a> 例题</h4>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_132438.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题1">
-
-<hr />
-<h3 id="select复习题"><a class="markdownIt-Anchor" href="#select复习题"></a> SELECT复习题</h3>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_134213.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题2">
-
-<hr />
-<h3 id="在查询中使用表达式"><a class="markdownIt-Anchor" href="#在查询中使用表达式"></a> <strong>在查询中使用表达式</strong></h3>
+<h4 id="例题">例题</h4>
+<img src="/2025/03/17/MySQL/Screenshot_2025-03-11_132438.png" class="" title="例题1">
+<hr>
+<h3 id="select复习题">SELECT复习题</h3>
+<img src="/2025/03/17/MySQL/Screenshot_2025-03-11_134213.png" class="" title="例题2">
+<hr>
+<h3 id="在查询中使用表达式"><strong>在查询中使用表达式</strong></h3>
 <p>实际上AS不仅用在表达式别名上，普通的属性列甚至是表（table）都可以取一个别名，这让SQL更容易理解</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--属性列和表取别名的例子</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span> <span class="keyword">AS</span> better_column_name, …</span><br><span class="line"><span class="keyword">FROM</span> a_long_widgets_table_name <span class="keyword">AS</span> mywidgets</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> widget_sales</span><br><span class="line">  <span class="keyword">ON</span> mywidgets.id <span class="operator">=</span> widget_sales.widget_id;</span><br></pre></td></tr></table></figure>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--包含表达式的例子</span></span><br><span class="line"><span class="keyword">SELECT</span>  particle_speed <span class="operator">/</span> <span class="number">2.0</span> <span class="keyword">AS</span> half_particle_speed <span class="comment">--对结果做了一个除2</span></span><br><span class="line"><span class="keyword">FROM</span> physics_data</span><br><span class="line"><span class="keyword">WHERE</span> <span class="built_in">ABS</span>(particle_position) <span class="operator">*</span> <span class="number">10.0</span> <span class="operator">&gt;</span><span class="number">500</span></span><br><span class="line">            <span class="comment">--（条件要求这个属性绝对值乘以10大于500）;</span></span><br></pre></td></tr></table></figure>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-13_164705.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题3">
-
-<hr />
-<h3 id="在查询中进行统计"><a class="markdownIt-Anchor" href="#在查询中进行统计"></a> <strong>在查询中进行统计</strong></h3>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="样图1">
-
+<img src="/2025/03/17/MySQL/Screenshot_2025-03-13_164705.png" class="" title="例题3">
+<hr>
+<h3 id="在查询中进行统计"><strong>在查询中进行统计</strong></h3>
+<img src="/2025/03/17/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp" class="" title="样图1">
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> AGG_FUNC(column_or_expression) <span class="keyword">AS</span> aggregate_description, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> constraint_expression;</span><br></pre></td></tr></table></figure>
 <p>常用统计函数:</p>
 <table>
@@ -1125,65 +676,60 @@
 </tr>
 </tbody>
 </table>
-<hr />
-<h3 id="分组统计"><a class="markdownIt-Anchor" href="#分组统计"></a> 分组统计</h3>
-<p><code>GROUP BY</code> 数据分组语法可以按某个<code>col_name</code>对数据进行分组，如：<code>GROUP BY Year</code>指对数据按年份分组， 相同年份的分到一个组里。如果把统计函数和<code>GROUP BY</code>结合，那统计结果就是对分组内的数据统计了<br />
+<hr>
+<h3 id="分组统计">分组统计</h3>
+<p><code>GROUP BY</code> 数据分组语法可以按某个<code>col_name</code>对数据进行分组，如：<code>GROUP BY Year</code>指对数据按年份分组， 相同年份的分到一个组里。如果把统计函数和<code>GROUP BY</code>结合，那统计结果就是对分组内的数据统计了<br>
 <code>GROUP BY</code> 分组结果的数据条数，就是分组数量，比如：<code>GROUP BY Year</code>，全部数据里有几年，就返回几条数据， 不管是否应用了统计函数</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用分组的方式统计</span></span><br><span class="line"><span class="keyword">SELECT</span> AGG_FUNC(column_or_expression) <span class="keyword">AS</span> aggregate_description, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> constraint_expression</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">column</span>;</span><br></pre></td></tr></table></figure>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-13_170736.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题4">
-
-<p>在 <strong><code>GROUP BY</code></strong> 分组语法中，我们知道数据库是先对数据做 <strong><code>WHERE</code></strong> ，然后对结果做分组，如果我们要对分组完的数据再筛选出几条如何办？<br />
+<img src="/2025/03/17/MySQL/Screenshot_2025-03-13_170736.png" class="" title="例题4">
+<p>在 <strong><code>GROUP BY</code></strong> 分组语法中，我们知道数据库是先对数据做 <strong><code>WHERE</code></strong> ，然后对结果做分组，如果我们要对分组完的数据再筛选出几条如何办？<br>
 一个不常用的语法 <strong><code>HAVING</code></strong> 语法将用来解决这个问题，他可以对分组之后的数据再做<code>SELECT</code>筛选</p>
 <p><strong><code>HAVING</code></strong> 和 <strong><code>WHERE</code></strong> 语法一样，只不过作用的结果集不一样. 在我们例子数据表数据量小的情况下可能感觉 <strong><code>HAVING</code></strong> 没有什么用，但当你的数据量成千上万属性又很多时也许能帮上大忙</p>
-<hr />
-<h3 id="join-连接"><a class="markdownIt-Anchor" href="#join-连接"></a> JOIN 连接</h3>
-<h4 id="数据库范式"><a class="markdownIt-Anchor" href="#数据库范式"></a> 数据库范式</h4>
+<hr>
+<h3 id="join-连接">JOIN 连接</h3>
+<h4 id="数据库范式">数据库范式</h4>
 <p>数据库范式是数据表设计的规范，在范式规范下，数据库里每个表存储的重复数据降到最少(这有助于数据的一致性维护)同时在数据库范式下，表和表之间不再有很强的数据耦合，可以独立的增长(ie. 比如汽车引擎的增长和汽车的增长是完全独立的)</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_table_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable <span class="comment">--主表</span></span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> another_table <span class="comment">--要连接的表</span></span><br><span class="line">    <span class="keyword">ON</span> mytable.id <span class="operator">=</span> another_table.id </span><br><span class="line">    <span class="comment">--想象一下刚才讲的主键连接，两个相同的连成1条</span></span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span>, … <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br></pre></td></tr></table></figure>
 <p>本例中<code>ON</code>条件描述的关联关系:</p>
-<h4 id="inner-join-内连接"><a class="markdownIt-Anchor" href="#inner-join-内连接"></a> <strong><code>INNER JOIN</code></strong> (内)连接</h4>
-<p>先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)<br />
+<h4 id="inner-join-内-连接"><strong><code>INNER JOIN</code></strong> (内)连接</h4>
+<p>先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)<br>
 还有一个理解 <strong><code>INNER JOIN</code></strong> 的方式，就是把 <strong><code>INNER JOIN</code></strong> 想成两个集合的交集。</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题5" /></p>
-
-<h4 id="outer-join外连接"><a class="markdownIt-Anchor" href="#outer-join外连接"></a> <code>OUTER JOIN</code>外连接</h4>
+<p><img src="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png" alt="例题5"></p>
+<h4 id="outer-join外连接"><code>OUTER JOIN</code>外连接</h4>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用LEFT/RIGHT/FULL JOINs 做多表查询</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">INNER</span><span class="operator">/</span><span class="keyword">LEFT</span><span class="operator">/</span><span class="keyword">RIGHT</span><span class="operator">/</span><span class="keyword">FULL</span> <span class="keyword">JOIN</span> another_table</span><br><span class="line">    <span class="keyword">ON</span> mytable.id <span class="operator">=</span> another_table.matching_id</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>(s)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span>, … <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">LIMIT num_limit <span class="keyword">OFFSET</span> num_offset;</span><br></pre></td></tr></table></figure>
 <p>在表A 连接 B， <strong><code>LEFT JOIN</code></strong> 保留A的所有行，不管有没有能匹配上B，反过来 <strong><code>RIGHT JOIN</code><strong>则保留所有B里的行。最后</strong><code>FULL JOIN</code></strong> 不管有没有匹配上，同时保留A和B里的所有行</p>
 <p>将两个表数据1-1连接，保留A或B的原有行，如果某一行在另一个表不存在，会用 <code>NULL</code>来填充结果数据。</p>
-<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="例题6" /></p>
-
-<hr />
-<h3 id="查询执行顺序"><a class="markdownIt-Anchor" href="#查询执行顺序"></a> 查询执行顺序</h3>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="样图2">
-
+<p><img src="C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png" alt="例题6"></p>
+<hr>
+<h3 id="查询执行顺序">查询执行顺序</h3>
+<img src="/2025/03/17/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp" class="" title="样图2">
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--这才是完整的SELECT查询</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> <span class="keyword">column</span>, AGG_FUNC(column_or_expression), …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line">    <span class="keyword">JOIN</span> another_table</span><br><span class="line">      <span class="keyword">ON</span> mytable.column <span class="operator">=</span> another_table.column</span><br><span class="line">    <span class="keyword">WHERE</span> constraint_expression</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">column</span></span><br><span class="line">    <span class="keyword">HAVING</span> constraint_expression</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">column</span> <span class="keyword">ASC</span><span class="operator">/</span><span class="keyword">DESC</span></span><br><span class="line">    LIMIT count <span class="keyword">OFFSET</span> COUNT;</span><br></pre></td></tr></table></figure>
-<h4 id="1-from-和-join"><a class="markdownIt-Anchor" href="#1-from-和-join"></a> 1. <code>FROM</code> 和 <code>JOIN</code></h4>
+<h4 id="1-from-和-join">1. <code>FROM</code> 和 <code>JOIN</code></h4>
 <p><strong><code>FROM</code></strong> 或  <strong><code>JOIN</code></strong> 会第一个执行，确定一个整体的数据范围. 如果要JOIN不同表，可能会生成一个临时Table来用于 下面的过程。总之第一步可以简单理解为确定一个数据源表（含临时表）</p>
-<h4 id="2-where"><a class="markdownIt-Anchor" href="#2-where"></a> <strong>2. <code>WHERE</code></strong></h4>
+<h4 id="2-where"><strong>2. <code>WHERE</code></strong></h4>
 <p>我们确定了数据来源 <strong><code>WHERE</code></strong> 语句就将在这个数据源中按要求进行数据筛选，并丢弃不符合要求的数据行，所有的筛选col属性 只能来自 <strong><code>FROM</code></strong> 圈定的表. <code>AS</code>别名还不能在这个阶段使用，因为可能别名是一个还没执行的表达式</p>
-<h4 id="3-group-by"><a class="markdownIt-Anchor" href="#3-group-by"></a> <strong>3. <code>GROUP BY</code></strong></h4>
+<h4 id="3-group-by"><strong>3. <code>GROUP BY</code></strong></h4>
 <p>如果你用了 <strong><code>GROUP BY</code></strong> 分组，那 <strong><code>GROUP BY</code></strong> 将对之前的数据进行分组，统计等，并将是结果集缩小为分组数.这意味着 其他的数据在分组后丢弃.</p>
-<h4 id="4-having"><a class="markdownIt-Anchor" href="#4-having"></a> <strong>4. <code>HAVING</code></strong></h4>
+<h4 id="4-having"><strong>4. <code>HAVING</code></strong></h4>
 <p>如果你用了 <strong><code>GROUP BY</code></strong> 分组, <strong><code>HAVING</code></strong> 会在分组完成后对结果集再次筛选。<code>AS</code>别名也不能在这个阶段使用.</p>
-<h4 id="5-select"><a class="markdownIt-Anchor" href="#5-select"></a> <strong>5. <code>SELECT</code></strong></h4>
+<h4 id="5-select"><strong>5. <code>SELECT</code></strong></h4>
 <p>确定结果之后， <strong><code>SELECT</code></strong> 用来对结果col简单筛选或计算，决定输出什么数据.</p>
-<h4 id="6-distinct"><a class="markdownIt-Anchor" href="#6-distinct"></a> <strong>6. <code>DISTINCT</code></strong></h4>
+<h4 id="6-distinct"><strong>6. <code>DISTINCT</code></strong></h4>
 <p>如果数据行有重复 <strong><code>DISTINCT</code></strong> 将负责排重.</p>
-<h4 id="7-order-by"><a class="markdownIt-Anchor" href="#7-order-by"></a> <strong>7. <code>ORDER BY</code></strong></h4>
+<h4 id="7-order-by"><strong>7. <code>ORDER BY</code></strong></h4>
 <p>在结果集确定的情况下， <strong><code>ORDER BY</code></strong> 对结果做排序。因为 <strong><code>SELECT</code></strong> 中的表达式已经执行完了。此时可以用<code>AS</code>别名.</p>
-<h4 id="8-limit-offset"><a class="markdownIt-Anchor" href="#8-limit-offset"></a> <strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></h4>
+<h4 id="8-limit-offset"><strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></h4>
 <p>最后 <strong><code>LIMIT</code></strong> 和 <strong><code>OFFSET</code></strong> 从排序的结果中截取部分数据.</p>
-<h4 id="结论"><a class="markdownIt-Anchor" href="#结论"></a> <strong>结论</strong></h4>
+<h4 id="结论"><strong>结论</strong></h4>
 <p>不是每一个SQL语句都要用到所有的句法，但灵活运用以上的句法组合和深刻理解SQL执行原理将能在SQL层面更好的解决数据问题，而不用把问题 都抛给程序逻辑.</p>
-<hr />
-<h2 id="null"><a class="markdownIt-Anchor" href="#null"></a> NULL</h2>
+<hr>
+<h2 id="null">NULL</h2>
 <p>如果某个字段你没有填写到数据库，很可能就会出现 <strong><code>NULL</code></strong>  。所有一个常见的方式就是为字段设置 <strong><code>默认值</code></strong> ,比如 数字的默认值设置为0，字符串设置为  <code>&quot;&quot;</code> 字符串. 但是在一些 <strong><code>NULL</code></strong> 表示它本来含义的场景，需要注意是否设置默认值还是保持 <strong><code>NULL</code></strong> 。 (比如, 当你计算一些行的平均值的时候，如果是0会参与计算导致平均值差错，是  <strong><code>NULL</code></strong> 则不会参与计算).</p>
 <p>还有一些情况很难避免 <strong><code>NULL</code></strong> 的出现, 比如之前说的 outer-joining 多表连接，A和B有数据差异时，必须用 <strong><code>NULL</code></strong> 来填充。这种情况，可以用 <strong><code>IS NULL</code></strong> 和 <strong><code>IS NOT NULL</code></strong> 来选在某个字段是否等于 <strong><code>NULL</code></strong>.</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">column</span>, another_column, …</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">column</span> <span class="keyword">IS</span><span class="operator">/</span><span class="keyword">IS</span> <span class="keyword">NOT NULL</span></span><br><span class="line"><span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> another_condition</span><br><span class="line"><span class="keyword">AND</span><span class="operator">/</span><span class="keyword">OR</span> …;</span><br></pre></td></tr></table></figure>
-<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="/2025/03/17/MySQL/Screenshot_2025-03-11_203039.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" class="" title="例题7">
-
-<hr />
-<h2 id="修改数据"><a class="markdownIt-Anchor" href="#修改数据"></a> 修改数据</h2>
+<img src="/2025/03/17/MySQL/Screenshot_2025-03-11_203039.png" class="" title="例题7">
+<hr>
+<h2 id="修改数据">修改数据</h2>
 <blockquote>
 <p>部分引用自 <a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/sql/manipulation/index.html">修改数据 - SQL教程 - 廖雪峰的官方网站</a></p>
 </blockquote>
@@ -1195,7 +741,7 @@
 <li>DELETE：删除已有记录。</li>
 </ul>
 <p>我们将分别讨论这三种修改数据的语句的使用方法。</p>
-<h4 id="insert-插入"><a class="markdownIt-Anchor" href="#insert-插入"></a> INSERT 插入</h4>
+<h4 id="insert-插入">INSERT 插入</h4>
 <p>引用于 <a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-insert-query.html">MySQL 插入数据 | 菜鸟教程</a></p>
 <p>例如，我们向<code>user</code>表插入一条新记录，先列举出需要插入的字段名称，然后在<code>VALUES</code>子句中依次写出对应字段的值：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> table_name (column1, column2, column3, ...)</span><br><span class="line"><span class="keyword">VALUES</span> (value1, value2, value3, ...);</span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> users (username, email, birthdate, is_active)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;test@runoob.com&#x27;</span>, <span class="string">&#x27;1990-01-01&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
@@ -1203,8 +749,8 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> users</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="keyword">NULL</span>,<span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;test@runoob.com&#x27;</span>, <span class="string">&#x27;1990-01-01&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
 <p>还可以一次性添加多条记录，只需要在<code>VALUES</code>子句中指定多个记录值，每个记录是由<code>(...)</code>包含的一组值，每组值用逗号<code>,</code>分隔：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> users (username, email, birthdate, is_active)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="string">&#x27;test1&#x27;</span>, <span class="string">&#x27;test1@runoob.com&#x27;</span>, <span class="string">&#x27;1985-07-10&#x27;</span>, <span class="literal">true</span>),</span><br><span class="line">    (<span class="string">&#x27;test2&#x27;</span>, <span class="string">&#x27;test2@runoob.com&#x27;</span>, <span class="string">&#x27;1988-11-25&#x27;</span>, <span class="literal">false</span>),</span><br><span class="line">    (<span class="string">&#x27;test3&#x27;</span>, <span class="string">&#x27;test3@runoob.com&#x27;</span>, <span class="string">&#x27;1993-05-03&#x27;</span>, <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-<hr />
-<h3 id="update-更新"><a class="markdownIt-Anchor" href="#update-更新"></a> UPDATE 更新</h3>
+<hr>
+<h3 id="update-更新">UPDATE 更新</h3>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-update-query.html">MySQL UPDATE 更新 | 菜鸟教程</a></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> table_name</span><br><span class="line"><span class="keyword">SET</span> column1 <span class="operator">=</span> value1, column2 <span class="operator">=</span> value2, ...</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>;</span><br></pre></td></tr></table></figure>
 <p><strong>参数说明：</strong></p>
@@ -1232,8 +778,8 @@
 <p>当更新<code>id=999</code>的记录时：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; UPDATE students SET name=&#x27;大宝&#x27; WHERE id=999;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line">Rows matched: 0  Changed: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
 <p>MySQL会返回<code>0</code>，可以从打印的结果<code>Rows matched: 0 Changed: 0</code>看到。</p>
-<hr />
-<h3 id="delete-删除"><a class="markdownIt-Anchor" href="#delete-删除"></a> DELETE 删除</h3>
+<hr>
+<h3 id="delete-删除">DELETE 删除</h3>
 <p><code>DELETE</code>语句的基本语法是：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> <span class="operator">&lt;</span>表名<span class="operator">&gt;</span> <span class="keyword">WHERE</span> ...;</span><br></pre></td></tr></table></figure>
 <p>例如，我们想删除<code>students</code>表中<code>id=1</code>的记录，就需要这么写：</p>
@@ -1248,8 +794,8 @@
 <p>在使用MySQL这类真正的关系数据库时，<code>DELETE</code>语句也会返回删除的行数以及<code>WHERE</code>条件匹配的行数。</p>
 <p>例如，分别执行删除<code>id=1</code>和<code>id=999</code>的记录：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; DELETE FROM students WHERE id=1;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; DELETE FROM students WHERE id=999;</span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="create-创建"><a class="markdownIt-Anchor" href="#create-创建"></a> CREATE 创建</h2>
+<hr>
+<h2 id="create-创建">CREATE 创建</h2>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-create-tables.html">MySQL 创建数据表 | 菜鸟教程</a></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--用户表实例</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> users (</span><br><span class="line">    id <span class="type">INT</span> AUTO_INCREMENT <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    username <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    birthdate <span class="type">DATE</span>,</span><br><span class="line">    is_active <span class="type">BOOLEAN</span> <span class="keyword">DEFAULT</span> <span class="literal">TRUE</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <p>实例解析：</p>
@@ -1264,170 +810,4 @@
 <p><code>AUTO_INCREMENT</code> 关键字用于创建一个自增长的列，<code>PRIMARY KEY</code> 用于定义主键。</p>
 <p>如果希望在创建表时指定数据引擎，字符集和排序规则等，可以使用 <strong><code>CHARACTER SET</code></strong> 和 <strong><code>COLLATE</code></strong> 子句：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> mytable (</span><br><span class="line">    id <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">50</span>)</span><br><span class="line">) <span class="keyword">CHARACTER SET</span> utf8mb4 <span class="keyword">COLLATE</span> utf8mb4_general_ci;</span><br></pre></td></tr></table></figure>
-
-	</div>
-
-	
-
-	
-
-	
-</article>
-
-	<div id="share_container">
-	<div id="share" data-initialized="true">
-		<a class="no-pjax icon-wechat" tooltip="分享到微信">
-			<button class="btn btn-icon btn-success">
-				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
-			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
-				豆
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
-			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
-			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
-			<button class="btn btn-icon btn-warning">
-				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
-			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
-			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://ottercoconut.github.io/2025/03/17/MySQL/&text=MySQL" tooltip="分享到 Telegram">
-			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
-				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
-			</button>
-		</a>
-		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
-			<button class="btn btn-icon btn-default">
-				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
-			</button>
-		</a>
-	</div>
-	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
-		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
-	</button>
-</div>
-<script type="text/javascript">
-	socialShare("#share", {
-	    title : 'MySQL',
-	    description : `MySQL 是一个广受欢迎的开源关系型数据库管理系统（RDBMS），由瑞典公司 MySQL AB 开...`,
-	    wechatQrcodeTitle : "分享到微信",
-	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'https://ottercoconut.github.io/2025/03/17/MySQL/'
-	});
-	$("#share_show")[0].onclick = function(){
-		$("#share_container").addClass("opened");
-	};
-	$("#share_copy_link")[0].onclick = function(){
-		let input = document.createElement('input');
-		document.body.appendChild(input);
-		input.setAttribute("value", window.location.href);
-		input.setAttribute("readonly", "readonly");
-		input.setAttribute("style", "opacity: 0;mouse-events:none;");
-		input.select();
-		if (document.execCommand('copy')){
-			iziToast.show({
-				title: '链接已复制',
-				message: "链接已复制到剪贴板",
-				class: 'shadow',
-				position: 'topRight',
-				backgroundColor: '#2dce89',
-				titleColor: '#ffffff',
-				messageColor: '#ffffff',
-				iconColor: '#ffffff',
-				progressBarColor: '#ffffff',
-				icon: 'fa fa-check',
-				timeout: 5000
-			});
-		}else{
-			iziToast.show({
-				title: '复制失败',
-				message: "请手动复制链接",
-				class: 'shadow',
-				position: 'topRight',
-				backgroundColor: '#f5365c',
-				titleColor: '#ffffff',
-				messageColor: '#ffffff',
-				iconColor: '#ffffff',
-				progressBarColor: '#ffffff',
-				icon: 'fa fa-close',
-				timeout: 5000
-			});
-		}
-		document.body.removeChild(input);
-	};
-</script>
-
-
-
-
-
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/2025/03/18/Redis/" rel="prev"> Redis</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/2025/03/17/hello-world/" rel="next"> Hello World</a></div></div>
-
-
-
-
-		
-		
-		
-		
-
-					<footer id="footer" class="site-footer card shadow-sm border-0">
-						
-						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
-						<span id="busuanzi_container_site_uv">
-							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
-						</span>
-					</footer>
-				</main>
-			</div>
-		</div>
-		
-<script src="/argontheme.js"></script>
-
-		
-		
-		
-
-		
-			<script>
-				var argonEnableCodeHighlight = true;
-			</script>
-			
-<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
-
-		
-
-	</div>
-</div>
-<noscript>
-	<style>
-		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
-		.comment-item-text .comment-sticker.lazyload{display: none;}
-	</style>
-</noscript>
-</body>
-
-
-
-</html>
-
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://ottercoconut.github.io">Kawauso</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://ottercoconut.github.io/2025/03/17/MySQL/">https://ottercoconut.github.io/2025/03/17/MySQL/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.gif" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/03/18/Redis/" title="Redis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">Redis</div></div><div class="info-2"><div class="info-item-1">Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内置功能还包括事务、发布/订阅模式以及Lua脚本支持，使其应用场景广泛，从实时分析到会话管理均表现出色。此外，Redis支持主从复制和集群模式，具有良好的扩展性。 参考网站 知乎 超强、超详细Redis入门教程 CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）—第一集  详细，附有业务场景的实例  数据结构 Redis包含五大数据类型：字符串(string), 列表(list), 哈希(hash), 集合(set), 集合(zset) string Redis 最基本的数据类型，每个键对应一个值，值可以是文本、数字或二进制数据，最大存储 512MB。支持字符串拼...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/03/18/Redis/" title="Redis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-18</div><div class="info-item-2">Redis</div></div><div class="info-2"><div class="info-item-1">Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内置功能还包括事务、发布/订阅模式以及Lua脚本支持，使其应用场景广泛，从实时分析到会话管理均表现出色。此外，Redis支持主从复制和集群模式，具有良好的扩展性。 参考网站 知乎 超强、超详细Redis入门教程 CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）—第一集  详细，附有业务场景的实例  数据结构 Redis包含五大数据类型：字符串(string), 列表(list), 哈希(hash), 集合(set), 集合(zset) string Redis 最基本的数据类型，每个键对应一个值，值可以是文本、数字或二进制数据，最大存储 512MB。支持字符串拼...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Kawauso</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">25</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ottercoconut"><i class="fab fa-github"></i><span>喵~</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E7%BD%91%E7%AB%99"><span class="toc-number">1.</span> <span class="toc-text">参考网站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">关系模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE"><span class="toc-number">2.1.</span> <span class="toc-text">主键</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">2.1.1.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E9%94%AE"><span class="toc-number">2.2.</span> <span class="toc-text">外键</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A"><span class="toc-number">2.2.1.</span> <span class="toc-text">多对多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80"><span class="toc-number">2.2.2.</span> <span class="toc-text">一对一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">2.2.3.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">2.3.</span> <span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95"><span class="toc-number">2.3.1.</span> <span class="toc-text">唯一索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">2.3.2.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select-%E6%9F%A5%E8%AF%A2"><span class="toc-number">3.</span> <span class="toc-text">SELECT 查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%9B%E9%80%89%E6%95%B0%E5%AD%97%E5%B1%9E%E6%80%A7%E5%88%97"><span class="toc-number">3.1.</span> <span class="toc-text">筛选数字属性列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%9B%E9%80%89%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B1%9E%E6%80%A7%E5%88%97"><span class="toc-number">3.2.</span> <span class="toc-text">筛选字符串属性列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4-%E6%8E%92%E5%BA%8F"><span class="toc-number">3.3.</span> <span class="toc-text">过滤&#x2F;排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">3.3.1.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select%E5%A4%8D%E4%B9%A0%E9%A2%98"><span class="toc-number">3.4.</span> <span class="toc-text">SELECT复习题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E6%9F%A5%E8%AF%A2%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">3.5.</span> <span class="toc-text">在查询中使用表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E6%9F%A5%E8%AF%A2%E4%B8%AD%E8%BF%9B%E8%A1%8C%E7%BB%9F%E8%AE%A1"><span class="toc-number">3.6.</span> <span class="toc-text">在查询中进行统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E7%BB%9F%E8%AE%A1"><span class="toc-number">3.7.</span> <span class="toc-text">分组统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#join-%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.8.</span> <span class="toc-text">JOIN 连接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F"><span class="toc-number">3.8.1.</span> <span class="toc-text">数据库范式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#inner-join-%E5%86%85-%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.8.2.</span> <span class="toc-text">INNER JOIN (内)连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#outer-join%E5%A4%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.8.3.</span> <span class="toc-text">OUTER JOIN外连接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-number">3.9.</span> <span class="toc-text">查询执行顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-from-%E5%92%8C-join"><span class="toc-number">3.9.1.</span> <span class="toc-text">1. FROM 和 JOIN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-where"><span class="toc-number">3.9.2.</span> <span class="toc-text">2. WHERE</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-group-by"><span class="toc-number">3.9.3.</span> <span class="toc-text">3. GROUP BY</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-having"><span class="toc-number">3.9.4.</span> <span class="toc-text">4. HAVING</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-select"><span class="toc-number">3.9.5.</span> <span class="toc-text">5. SELECT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-distinct"><span class="toc-number">3.9.6.</span> <span class="toc-text">6. DISTINCT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-order-by"><span class="toc-number">3.9.7.</span> <span class="toc-text">7. ORDER BY</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-limit-offset"><span class="toc-number">3.9.8.</span> <span class="toc-text">8. LIMIT &#x2F; OFFSET</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">3.9.9.</span> <span class="toc-text">结论</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#null"><span class="toc-number">4.</span> <span class="toc-text">NULL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text">修改数据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#insert-%E6%8F%92%E5%85%A5"><span class="toc-number">5.1.</span> <span class="toc-text">INSERT 插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#update-%E6%9B%B4%E6%96%B0"><span class="toc-number">5.2.</span> <span class="toc-text">UPDATE 更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#delete-%E5%88%A0%E9%99%A4"><span class="toc-number">5.3.</span> <span class="toc-text">DELETE 删除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#create-%E5%88%9B%E5%BB%BA"><span class="toc-number">6.</span> <span class="toc-text">CREATE 创建</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/30/wsl2-proxy/" title="如何在WSL2上使用本机代理">如何在WSL2上使用本机代理</a><time datetime="2026-01-30T08:31:20.000Z" title="Created 2026-01-30 16:31:20">2026-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/28/cs224n/" title="cs224n">cs224n</a><time datetime="2026-01-28T06:31:08.000Z" title="Created 2026-01-28 14:31:08">2026-01-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/22/pytorch/" title="Pytorch基础">Pytorch基础</a><time datetime="2026-01-22T02:49:28.000Z" title="Created 2026-01-22 10:49:28">2026-01-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/15/toefl-speaking/" title="TOEFL Speaking">TOEFL Speaking</a><time datetime="2026-01-15T08:41:43.000Z" title="Created 2026-01-15 16:41:43">2026-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/13/toefl-writing/" title="TOEFL Writing">TOEFL Writing</a><time datetime="2026-01-13T06:25:25.000Z" title="Created 2026-01-13 14:25:25">2026-01-13</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Kawauso</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

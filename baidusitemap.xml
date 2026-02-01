@@ -1,67 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ottercoconut.github.io/2026/01/30/wsl2-proxy/</loc>
-    <lastmod>2026-01-30</lastmod>
+    <loc>https://ottercoconut.github.io/2025/03/18/Redis/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2026/01/28/cs224n/</loc>
-    <lastmod>2026-01-30</lastmod>
-  </url>
-  <url>
-    <loc>https://ottercoconut.github.io/2026/01/22/pytorch/</loc>
-    <lastmod>2026-01-28</lastmod>
-  </url>
-  <url>
-    <loc>https://ottercoconut.github.io/2026/01/13/toefl-writing/</loc>
-    <lastmod>2026-01-16</lastmod>
-  </url>
-  <url>
-    <loc>https://ottercoconut.github.io/2026/01/15/toefl-speaking/</loc>
-    <lastmod>2026-01-16</lastmod>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2025/11/02/TPO-experience/</loc>
-    <lastmod>2026-01-16</lastmod>
+    <lastmod>2026-02-01</lastmod>
+  </url>
+  <url>
+    <loc>https://ottercoconut.github.io/2026/01/13/toefl-writing/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2025/10/25/toefl-words/</loc>
-    <lastmod>2025-12-11</lastmod>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
-    <loc>https://ottercoconut.github.io/2025/11/22/data-mining/</loc>
-    <lastmod>2025-11-24</lastmod>
-  </url>
-  <url>
-    <loc>https://ottercoconut.github.io/2025/09/10/computer-organization/</loc>
-    <lastmod>2025-09-13</lastmod>
+    <loc>https://ottercoconut.github.io/2026/01/15/toefl-speaking/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2025/03/19/Minecraft-server/</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
-    <loc>https://ottercoconut.github.io/2025/04/09/MyBatis/</loc>
-    <lastmod>2025-04-09</lastmod>
+    <loc>https://ottercoconut.github.io/2026/01/30/wsl2-proxy/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
-    <loc>https://ottercoconut.github.io/2025/04/01/maven-fundamentals/</loc>
-    <lastmod>2025-04-01</lastmod>
+    <loc>https://ottercoconut.github.io/2025/09/10/computer-organization/</loc>
+    <lastmod>2026-02-01</lastmod>
+  </url>
+  <url>
+    <loc>https://ottercoconut.github.io/2025/11/23/data-mining/</loc>
+    <lastmod>2026-02-01</lastmod>
+  </url>
+  <url>
+    <loc>https://ottercoconut.github.io/2026/01/22/pytorch/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2025/03/21/java-multithreading/</loc>
-    <lastmod>2025-04-01</lastmod>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
-    <loc>https://ottercoconut.github.io/2025/03/18/Redis/</loc>
-    <lastmod>2025-03-20</lastmod>
+    <loc>https://ottercoconut.github.io/2025/04/01/maven-fundamentals/</loc>
+    <lastmod>2026-02-01</lastmod>
+  </url>
+  <url>
+    <loc>https://ottercoconut.github.io/2025/04/09/MyBatis/</loc>
+    <lastmod>2026-02-01</lastmod>
   </url>
   <url>
     <loc>https://ottercoconut.github.io/2025/03/17/MySQL/</loc>
-    <lastmod>2025-03-20</lastmod>
-  </url>
-  <url>
-    <loc>https://ottercoconut.github.io/2025/03/17/hello-world/</loc>
-    <lastmod>2025-03-17</lastmod>
+    <lastmod>2026-02-01</lastmod>
   </url>
 </urlset> 
