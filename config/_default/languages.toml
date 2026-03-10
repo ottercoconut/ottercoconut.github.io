@@ -1,0 +1,25 @@
+# Rename this file to languages.toml to enable multilingual support
+[zh-cn]
+    contentDir = 'content/zh'
+    disabled = false
+    languageName = "简体中文"
+    languageCode = "zh-CN"
+    languagedirection = "ltr"
+    title = "边个濑椰的博客"
+    weight = 1
+[en]
+    contentDir = 'content/en'
+    disabled = false
+    languageName      = "English"
+    languageCode = "en-US"
+    languagedirection = "ltr"
+    title             = "ottercoconut's Blog"
+    weight            = 2
+[ja]
+    contentDir = 'content/ja'
+    disabled = false
+    languageName = "日本語"
+    languageCode = "ja-JP"
+    languagedirection = "ltr"
+    title = "カワウソのブログ"
+    weight = 3
