@@ -7,7 +7,6 @@ categories = ["技术", "实用技术"]
 
 [params]
 toc = true
-content.enabled = false
 +++
 
 笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)
@@ -45,7 +44,7 @@ alternatives --config java
 
 如图，我们输入``2``并回车，就切换到了需要的版本
 
-![Screenshot_2025-03-19_191616.png](/assets/img/Minecraft-server/Screenshot_2025-03-19_191616.png)
+![Screenshot_2025-03-19_191616.png](/img/Minecraft-server/Screenshot_2025-03-19_191616.png)
 
  
 
