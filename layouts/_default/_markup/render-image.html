@@ -1,11 +1,19 @@
 {{- $src := .Destination -}}
 {{- $alt := .Text -}}
+
+{{/* 1. 先从 Page Bundle 查找 */}}
 {{- $image := .Page.Resources.GetMatch $src -}}
 
+{{/* 2. 找不到时，尝试从全局 assets/ 目录查找（去掉开头的 /） */}}
+{{- if not $image -}}
+  {{- $globalSrc := strings.TrimLeft "/" $src -}}
+  {{- $image = resources.Get $globalSrc -}}
+{{- end -}}
+
+{{/* 3. 两者都有资源：走 Hugo Pipes 响应式处理 */}}
 {{- if $image -}}
-  {{/* Page Bundle 资源：走主题原有的响应式处理 */}}
   {{- $small := $image.Resize "480x" -}}
-  {{- $big := $image.Resize "1024x" -}}
+  {{- $big   := $image.Resize "1024x" -}}
   <img
     src="{{ $big.RelPermalink }}"
     srcset="{{ $small.RelPermalink }} 480w, {{ $big.RelPermalink }} 1024w"
@@ -13,7 +21,7 @@
     loading="lazy"
     sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, 1232px"
   />
+{{/* 4. 仍找不到（如外部 URL 或 static 目录）：裸输出 */}}
 {{- else -}}
-  {{/* Fallback：static 目录或外部链接，直接输出 src */}}
   <img src="{{ $src | safeURL }}" alt="{{ $alt }}" loading="lazy" />
 {{- end -}}
