@@ -467,7 +467,7 @@ LIMIT num_limit OFFSET num_offset;
  先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)
 还有一个理解 **``INNER JOIN``** 的方式，就是把 **`INNER JOIN`** 想成两个集合的交集。
 
-![例题5](/uploads/posts/C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png)
+![例题5](/uploads/posts/MySQL/Screenshot_2025-03-11_142245.png)
 
 ####   `OUTER JOIN`外连接
 
@@ -486,7 +486,7 @@ LIMIT num_limit OFFSET num_offset;
 
 将两个表数据1-1连接，保留A或B的原有行，如果某一行在另一个表不存在，会用 `NULL`来填充结果数据。
 
-![例题6](/uploads/posts/C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png)
+![例题6](/uploads/posts/MySQL/Screenshot_2025-03-11_151348.png)
 
 ---
 
