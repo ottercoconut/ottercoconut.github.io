@@ -40,6 +40,10 @@ SortBy              = "default"
     ]
     page = [{ type = "toc" }]
 
+[imageProcessing.content]
+    enabled = false
+
+
 [opengraph.twitter]
     site = ""
     card = "summary_large_image"
