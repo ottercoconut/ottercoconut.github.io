@@ -6,6 +6,7 @@ categories = ["理论"]
 
 [params]
 toc = true
+toc_number = false
 +++
 
 课程源自B站“湖科大教学匠”的《计算机组成微课堂》 https://www.bilibili.com/video/BV1qG41197E4/?share_source=copy_web&vd_source=440fb90b593ac5ecf9b12f264d73b53b
