@@ -1,0 +1,383 @@
+<!doctype html><html lang=zh-CN dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。\n参考网站 知乎 超强、超详细Redis入门教程\n"><title>Redis</title><link rel=canonical href=https://ottercoconut.github.io/p/redis/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="Redis"><meta property='og:description' content="Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。\n参考网站 知乎 超强、超详细Redis入门教程\n"><meta property='og:url' content='https://ottercoconut.github.io/p/redis/'><meta property='og:site_name' content='边个濑椰的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='缓存'><meta property='article:tag' content='持久化'><meta property='article:tag' content='数据库'><meta property='article:published_time' content='2025-03-18T15:41:00+08:00'><meta property='article:modified_time' content='2025-03-18T15:41:00+08:00'><meta name=twitter:title content="Redis"><meta name=twitter:description content="Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。\n参考网站 知乎 超强、超详细Redis入门教程\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>边个濑椰的博客</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/redis/ selected>简体中文</option><option value=/en/>English</option><option value=/ja/>日本語</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav class=toc-nav id=TableOfContents><ol><li><ol><li><a href=#参考网站>参考网站</a></li></ol></li><li><a href=#数据结构>数据结构</a><ol><li><a href=#string>string</a><ol><li><a href=#基础操作>基础操作</a></li><li><a href=#扩展操作>扩展操作</a></li><li><a href=#string类型数值操作的注意事项>string类型数值操作的注意事项</a></li></ol></li><li><a href=#hash>hash</a><ol><li><a href=#基础操作-1>基础操作</a></li><li><a href=#扩展操作-1>扩展操作</a></li><li><a href=#hash类型数据操作的注意事项>hash类型数据操作的注意事项</a></li></ol></li><li><a href=#list>list</a><ol><li><a href=#基础操作-2>基础操作</a></li><li><a href=#扩展操作-2>扩展操作</a></li><li><a href=#list类型数据操作注意事项>list类型数据操作注意事项</a></li></ol></li><li><a href=#set>set</a><ol><li><a href=#基础操作-3>基础操作</a></li><li><a href=#进阶操作>进阶操作</a></li><li><a href=#set类型数据操作的注意事项>set类型数据操作的注意事项</a></li></ol></li><li><a href=#zset>zset</a><ol><li><a href=#基础操作-4>基础操作</a></li><li><a href=#进阶操作-1>进阶操作</a></li><li><a href=#sorted_set类型数据操作的注意事项>sorted_set类型数据操作的注意事项</a></li></ol></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E6%8A%80%E6%9C%AF/ style=background-color:#beefd9;color:#0f3d29>技术
+</a><a href=/categories/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/ style=background-color:#e7beef;color:#360f3d>后端开发</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/redis/>Redis</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-03-18T15:41:00+08:00>Tuesday, March 18, 2025</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><aside class=article-toc><details><summary><div class=article-toc-title><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6-6 6"/></svg>
+<span></span></div></summary><nav class=toc-nav><ol><li><ol><li><a href=#参考网站>参考网站</a></li></ol></li><li><a href=#数据结构>数据结构</a><ol><li><a href=#string>string</a><ol><li><a href=#基础操作>基础操作</a></li><li><a href=#扩展操作>扩展操作</a></li><li><a href=#string类型数值操作的注意事项>string类型数值操作的注意事项</a></li></ol></li><li><a href=#hash>hash</a><ol><li><a href=#基础操作-1>基础操作</a></li><li><a href=#扩展操作-1>扩展操作</a></li><li><a href=#hash类型数据操作的注意事项>hash类型数据操作的注意事项</a></li></ol></li><li><a href=#list>list</a><ol><li><a href=#基础操作-2>基础操作</a></li><li><a href=#扩展操作-2>扩展操作</a></li><li><a href=#list类型数据操作注意事项>list类型数据操作注意事项</a></li></ol></li><li><a href=#set>set</a><ol><li><a href=#基础操作-3>基础操作</a></li><li><a href=#进阶操作>进阶操作</a></li><li><a href=#set类型数据操作的注意事项>set类型数据操作的注意事项</a></li></ol></li><li><a href=#zset>zset</a><ol><li><a href=#基础操作-4>基础操作</a></li><li><a href=#进阶操作-1>进阶操作</a></li><li><a href=#sorted_set类型数据操作的注意事项>sorted_set类型数据操作的注意事项</a></li></ol></li></ol></li></ol></nav></details></aside><section class=article-content><p>Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。</p><h3 id=参考网站>参考网站</h3><p><a class=link href=https://zhuanlan.zhihu.com/p/411888708 target=_blank rel=noopener>知乎 超强、超详细Redis入门教程</a></p><p><a class=link href=https://blog.csdn.net/wenwenaier/article/details/121878831 target=_blank rel=noopener>CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）&mdash;第一集</a></p><blockquote><p>详细，附有业务场景的实例</p></blockquote><h2 id=数据结构>数据结构</h2><p>Redis包含五大数据类型：字符串(<code>string</code>), 列表(<code>list</code>), 哈希(<code>hash</code>), 集合(<code>set</code>), 集合(<code>zset</code>)</p><h3 id=string>string</h3><p>Redis 最基本的数据类型，每个键对应一个值，值可以是文本、数字或二进制数据，最大存储 512MB。支持字符串拼接、截取、递增递减等操作，适用于缓存数据、计数器（如访问量统计）、分布式锁等场景。</p><h4 id=基础操作>基础操作</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>set key value
+</span></span><span class=line><span class=cl>get key
+</span></span><span class=line><span class=cl>del key 
+</span></span></code></pre></td></tr></table></div></div><h5 id=添加修改多个数据>添加修改多个数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>mset key1 value1 key2 value2...
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取多个数据>获取多个数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>mget key1 key2...
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取数据的字符个数>获取数据的字符个数</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>strlen key
+</span></span><span class=line><span class=cl>//例如
+</span></span><span class=line><span class=cl>set name1 nosql
+</span></span><span class=line><span class=cl>strlen name1
+</span></span><span class=line><span class=cl>//输出为: 5
+</span></span></code></pre></td></tr></table></div></div><h5 id=追加信息>追加信息</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>append key value
+</span></span><span class=line><span class=cl>//例如
+</span></span><span class=line><span class=cl>append name1 name
+</span></span><span class=line><span class=cl>get name1
+</span></span><span class=line><span class=cl>/*输出为: nosqlname*/
+</span></span></code></pre></td></tr></table></div></div><h5 id=多数据操作与单数据操作>多数据操作与单数据操作</h5><ul><li>单指令执行 n 条指令需要 n次发送 + n次处理 + n次返回</li><li>多指令执行 n 条指令需要 1次发送 + n次处理 + 1次返回</li><li>数据量较大时，多指令消耗的时间远远少于单指令</li></ul><h4 id=扩展操作>扩展操作</h4><h5 id=设置数值数据增加减少指定范围的值>设置数值数据增加/减少指定范围的值</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>incrby key increment
+</span></span><span class=line><span class=cl>decrby key increment
+</span></span></code></pre></td></tr></table></div></div><h5 id=对字符串类型进行数值操作>对字符串类型进行数值操作</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>127.0.0.1:6379&gt; set mynum &#34;2&#34;
+</span></span><span class=line><span class=cl>OK
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; get mynum
+</span></span><span class=line><span class=cl>&#34;2&#34;
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; incr mynum
+</span></span><span class=line><span class=cl>(integer) 3
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; get mynum
+</span></span><span class=line><span class=cl>&#34;3&#34;
+</span></span></code></pre></td></tr></table></div></div><p>遇到数值操作，redis会自动将字符串类型转换成数值</p><h4 id=string类型数值操作的注意事项>string类型数值操作的注意事项</h4><ul><li>数据操作不成功的反馈与数据正常操作之间的差异<ul><li>表示运行结果是否成功<ul><li>（integer）0->false 失败</li><li>（integer）1->true 成功</li></ul></li><li>表示运行结果值<ul><li>（integer）3->3 3个</li><li>（integer）1->1 1个</li></ul></li></ul></li><li>数据未获取到<ul><li>（&lsquo;&rsquo;nil&rsquo;&rsquo;）等同于&rsquo;&rsquo;null&rsquo;'</li></ul></li><li>数据最大存储量<ul><li>512MB</li></ul></li><li>数值计算最大范围（&lsquo;&lsquo;java&rsquo;&lsquo;中的&rsquo;&rsquo;long&rsquo;&lsquo;的最大值）<ul><li>9223372036854775807</li></ul></li></ul><hr><h3 id=hash>hash</h3><p>类似于小型的键值存储，适用于存储结构化数据，如用户信息（ID、姓名、邮箱等），相比 <code>String</code> 类型更节省内存，因为多个字段共享同一个键。可以对字段进行单独操作，避免整体读取修改，适用于存储对象、会话信息等。</p><h4 id=基础操作-1>基础操作</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hset key field value //添加/修改数据
+</span></span><span class=line><span class=cl>hget key field //获取数据
+</span></span><span class=line><span class=cl>hgetall key
+</span></span><span class=line><span class=cl>hdel key field1 [field2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=添加修改多个数据-1>添加/修改多个数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hmset key field1 value1 field2 value2
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取多个数据-1>获取多个数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hmget key field1 field2...
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取哈希表中字段的数量>获取哈希表中字段的数量</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hlen key
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取哈希表中是否存在指定的字段>获取哈希表中是否存在指定的字段</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hexists key field
+</span></span></code></pre></td></tr></table></div></div><h4 id=扩展操作-1>扩展操作</h4><h5 id=获取哈希表中所有字段名或字段值>获取哈希表中所有字段名或字段值</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hkeys key
+</span></span><span class=line><span class=cl>hvals key
+</span></span></code></pre></td></tr></table></div></div><h5 id=设置指定字段的数值数据增加指定范围的值>设置指定字段的数值数据增加指定范围的值</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>hincrby key field increment
+</span></span></code></pre></td></tr></table></div></div><h5 id=综合示例>综合示例</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>//建立哈希，并赋值
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; HMSET user:001 username antirez password P1pp0 age 34 
+</span></span><span class=line><span class=cl>OK
+</span></span><span class=line><span class=cl>//列出哈希的内容
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; HGETALL user:001 
+</span></span><span class=line><span class=cl>1) &#34;username&#34;
+</span></span><span class=line><span class=cl>2) &#34;antirez&#34;
+</span></span><span class=line><span class=cl>3) &#34;password&#34;
+</span></span><span class=line><span class=cl>4) &#34;P1pp0&#34;
+</span></span><span class=line><span class=cl>5) &#34;age&#34;
+</span></span><span class=line><span class=cl>6) &#34;34&#34;
+</span></span><span class=line><span class=cl>//更改哈希中的某一个值
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; HSET user:001 password 12345 
+</span></span><span class=line><span class=cl>(integer) 0
+</span></span><span class=line><span class=cl>//再次列出哈希的内容
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; HGETALL user:001 
+</span></span><span class=line><span class=cl>1) &#34;username&#34;
+</span></span><span class=line><span class=cl>2) &#34;antirez&#34;
+</span></span><span class=line><span class=cl>3) &#34;password&#34;
+</span></span><span class=line><span class=cl>4) &#34;12345&#34;
+</span></span><span class=line><span class=cl>5) &#34;age&#34;
+</span></span><span class=line><span class=cl>6) &#34;34&#34;
+</span></span></code></pre></td></tr></table></div></div><h4 id=hash类型数据操作的注意事项>hash类型数据操作的注意事项</h4><ul><li>1.<code>hash</code>类型下的<code>value</code><strong>只能存储字符串</strong>，不允许存储其他数据类型，不存在嵌套现象。如果数据未获取到，对应的值为（<code>nil</code>）</li><li>2.每个<code>hash</code>可以存储2^23-1个键值对</li><li>3.<code>hash</code>类型十分贴近对象的数据存储形式，并且可以灵活添加对象属性。但hash设计初衷不是为了存储大量对象而设计的，切记不可滥用，<strong>更不可以将hash作为对象列表使用</strong></li><li>4.<code>hgetall</code>操作可以获取全部属性，如果内部<code>field</code>过多，遍历整体数据效率就会很低，有可能成为数据访问瓶颈</li></ul><hr><h3 id=list>list</h3><p>基于双向链表实现，可以从头部（左侧）或尾部（右侧）快速插入和删除元素，同时支持指定范围的索引读取。适合实现消息队列、时间轴（如微博动态）、任务调度等应用，尤其适用于需要按照插入顺序处理数据的场景。</p><h4 id=基础操作-2>基础操作</h4><h5 id=添加修改数据>添加/修改数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lpush key value1 [value2]... //从左边进
+</span></span><span class=line><span class=cl>rpush key value1 [value2]... /*从右边进*/
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取数据>获取数据</h5><p>关于<code>lrange</code>:</p><ul><li>lrange用来获取指定范围的元素</li><li>-1 代表倒数第一个元素</li><li>列表元素索引从位置0开始</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lrange key start stop
+</span></span><span class=line><span class=cl>lindex key index
+</span></span><span class=line><span class=cl>lien key
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取并移除数据>获取并移除数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lpop key
+</span></span><span class=line><span class=cl>rpop key
+</span></span></code></pre></td></tr></table></div></div><h5 id=移除指定数据>移除指定数据</h5><p>关于<code>lrem</code>:</p><ul><li>参数<code>count</code><ul><li><code>count > 0</code> → 从头（左侧）开始删除<code>count</code>个匹配的<code>value</code></li><li><code>count &lt; 0</code> → 从尾（右侧）开始删除<code>count</code>个匹配的<code>value</code></li><li><code>count = 0</code> → 删除<strong>所有匹配的<code>value</code></strong>（等价于删除列表中所有该值的元素）</li></ul></li><li>如果<code>key</code>不存在<ul><li>返回 0</li></ul></li><li>常用于<strong>去除列表中的重复元素或清理数据</strong></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lrem key count value
+</span></span></code></pre></td></tr></table></div></div><h4 id=扩展操作-2>扩展操作</h4><h5 id=在规定时间内获取并移除数据>在规定时间内获取并移除数据</h5><p>关于<code>blpop</code>:</p><ul><li>参数<code>key1 [key2...]</code><ul><li>可以提供多个列表的键名，<code>Redis</code> 会按照顺序依次检查这些列表</li></ul></li><li>参数<code>timeout</code><ul><li>timeout > 0 → 如果列表为空，则最多等待 <code>timeout</code> 秒</li><li>timeout &lt; 0 → 永远<strong>阻塞</strong>，直到有数据可用</li></ul></li><li>适用于<strong>任务队列、生产者-消费者模型</strong>等场景</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>blpop key1 [key2] timeout
+</span></span><span class=line><span class=cl>brpop key1 [key2] timeout
+</span></span></code></pre></td></tr></table></div></div><p>示例</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>RPUSH list1 &#34;a&#34; &#34;b&#34; &#34;c&#34;    // 列表内容：[&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+</span></span><span class=line><span class=cl>BLPOP list1 10             // 取出 &#34;a&#34;，返回 [&#34;list1&#34;, &#34;a&#34;]
+</span></span><span class=line><span class=cl>BLPOP list1 10             // 取出 &#34;b&#34;，返回 [&#34;list1&#34;, &#34;b&#34;]
+</span></span><span class=line><span class=cl>BLPOP list1 10             // 取出 &#34;c&#34;，返回 [&#34;list1&#34;, &#34;c&#34;]
+</span></span><span class=line><span class=cl>BLPOP list1 10             /* 列表为空，阻塞最多 10 秒，若无新元素，则返回 nil */
+</span></span></code></pre></td></tr></table></div></div><h5 id=综合示例-1>综合示例</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>//新建一个list叫做mylist，并在列表头部插入元素&#34;1&#34;
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; lpush mylist &#34;1&#34; 
+</span></span><span class=line><span class=cl>//返回当前mylist中的元素个数
+</span></span><span class=line><span class=cl>(integer) 1 
+</span></span><span class=line><span class=cl>//在mylist右侧插入元素&#34;2&#34;
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; rpush mylist &#34;2&#34; 
+</span></span><span class=line><span class=cl>(integer) 2
+</span></span><span class=line><span class=cl>//在mylist左侧插入元素&#34;0&#34;
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; lpush mylist &#34;0&#34; 
+</span></span><span class=line><span class=cl>(integer) 3
+</span></span><span class=line><span class=cl>//列出mylist中从编号0到编号1的元素
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; lrange mylist 0 1 
+</span></span><span class=line><span class=cl>1) &#34;0&#34;
+</span></span><span class=line><span class=cl>2) &#34;1&#34;
+</span></span><span class=line><span class=cl>//列出mylist中从编号0到倒数第一个元素
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; lrange mylist 0 -1 
+</span></span><span class=line><span class=cl>1) &#34;0&#34;
+</span></span><span class=line><span class=cl>2) &#34;1&#34;
+</span></span><span class=line><span class=cl>3) &#34;2&#34;
+</span></span></code></pre></td></tr></table></div></div><h4 id=list类型数据操作注意事项>list类型数据操作注意事项</h4><ul><li>1.<code>list</code>中保存的数据都是<code>string</code>类型的，数据总容量是有限的，最多2^32-1个元素</li><li>2.<code>list</code>具有&rsquo;&lsquo;索引&rsquo;&lsquo;的概念，但是操作数据时通常以&rsquo;&lsquo;队列&rsquo;&lsquo;的形式进行入队出队操作，或以&rsquo;&lsquo;栈&rsquo;&lsquo;的形式进行入栈出栈操作</li><li>3.获取全部数据操作结束索引设置为-1</li><li>4.<code>list</code>可以对数据进行<code>分页</code>操作，通常第1页的信息来自于<code>list</code>，第2页及更多的信息通过&rsquo;&lsquo;数据库&rsquo;&lsquo;的形式加载</li></ul><hr><h3 id=set>set</h3><p>由唯一无序的元素组成，支持 O(1) 时间复杂度的添加、删除和查找操作，并提供交集、并集、差集等集合运算，适用于去重、推荐系统中的共同关注、标签管理等应用。由于不允许重复元素，可以高效存储不重复的数据集合。</p><h4 id=基础操作-3>基础操作</h4><h5 id=添加数据>添加数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>sadd key member1 [member2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取全部数据>获取全部数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>smembers key
+</span></span></code></pre></td></tr></table></div></div><h5 id=删除数据>删除数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>srem key member1 [member2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取集合数据总量>获取集合数据总量</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>scard key
+</span></span></code></pre></td></tr></table></div></div><h5 id=判断集合中是否包含指定数据>判断集合中是否包含指定数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>sismember key member
+</span></span></code></pre></td></tr></table></div></div><h4 id=进阶操作>进阶操作</h4><h5 id=随机获取集合中指定数量的数据>随机获取集合中指定数量的数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>srandmember key [count]
+</span></span></code></pre></td></tr></table></div></div><h5 id=随机获取集合中的某个数据并将其移出集合>随机获取集合中的某个数据并将其移出集合</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>spop key
+</span></span></code></pre></td></tr></table></div></div><h5 id=求两个集合的交并差集>求两个集合的交、并、差集</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>sinter key1 [key2]
+</span></span><span class=line><span class=cl>sunion key1 [key2]
+</span></span><span class=line><span class=cl>sdiff key1 [key2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=求两个集合的交并差集-并存储到指定集合中>求两个集合的交、并、差集 并存储到指定集合中</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>sinterstore destination key1 [key2]
+</span></span><span class=line><span class=cl>sunionstore destination key1 [key2]
+</span></span><span class=line><span class=cl>sdiffstore destination key1 [key2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=将指定数据从原始集合中移动到目标集合中>将指定数据从原始集合中移动到目标集合中</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>smove source destination member
+</span></span></code></pre></td></tr></table></div></div><h5 id=综合示例-2>综合示例</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>//向集合myset中加入一个新元素&#34;one&#34;
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sadd myset &#34;one&#34; 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sadd myset &#34;two&#34;
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>//列出集合myset中的所有元素
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; smembers myset 
+</span></span><span class=line><span class=cl>1) &#34;one&#34;
+</span></span><span class=line><span class=cl>2) &#34;two&#34;
+</span></span><span class=line><span class=cl>//判断元素1是否在集合myset中，返回1表示存在
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sismember myset &#34;one&#34; 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>//判断元素3是否在集合myset中，返回0表示不存在
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sismember myset &#34;three&#34; 
+</span></span><span class=line><span class=cl>(integer) 0
+</span></span><span class=line><span class=cl>//新建一个新的集合yourset
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sadd yourset &#34;1&#34; 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sadd yourset &#34;2&#34;
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; smembers yourset
+</span></span><span class=line><span class=cl>1) &#34;1&#34;
+</span></span><span class=line><span class=cl>2) &#34;2&#34;
+</span></span><span class=line><span class=cl>//对两个集合求并集
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; sunion myset yourset 
+</span></span><span class=line><span class=cl>1) &#34;1&#34;
+</span></span><span class=line><span class=cl>2) &#34;one&#34;
+</span></span><span class=line><span class=cl>3) &#34;2&#34;
+</span></span><span class=line><span class=cl>4) &#34;two&#34;
+</span></span></code></pre></td></tr></table></div></div><h4 id=set类型数据操作的注意事项>set类型数据操作的注意事项</h4><ul><li>set类型<code>不允许数据重复</code>，如果添加的数据在set中已经存在，将只<code>保留一份</code></li><li>set虽然和hash的<code>存储结构相同</code>，但是<code>无法启用hash中存储值的空间</code></li></ul><h3 id=zset>zset</h3><p>在 Set 的基础上增加了一个分数（score），并按分数排序，支持范围查询、按分数排名等操作。适用于排行榜（如游戏积分榜）、优先级队列（如定时任务）、时间排序数据存储（如文章阅读量排名）等需要按权重排序的场景。</p><h4 id=基础操作-4>基础操作</h4><h5 id=添加数据-1>添加数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zadd key score1 member1 [score2 member2]
+</span></span></code></pre></td></tr></table></div></div><h5 id=获取全部数据-1>获取全部数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zrange key start stop [WITHSCORES]     //按从小到大的顺序展示
+</span></span><span class=line><span class=cl>zrevrange key start stop [WITHSCORES]  //按从大到小的顺序展示
+</span></span></code></pre></td></tr></table></div></div><h5 id=删除数据-1>删除数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zrem key member [member...]
+</span></span></code></pre></td></tr></table></div></div><h5 id=按条件获取数据>按条件获取数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zrangebyscore key min max [Withscores][limit]
+</span></span><span class=line><span class=cl>zrevrangebyscore key max min [withscores]
+</span></span></code></pre></td></tr></table></div></div><h5 id=按条件删除数据>按条件删除数据</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zremrangebyrank key start stop  //按索引删除
+</span></span><span class=line><span class=cl>zremrangebyscore key min max 	//按范围删除
+</span></span></code></pre></td></tr></table></div></div><h5 id=综合示例-3>综合示例</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>//新增一个有序集合myzset，并加入一个元素baidu.com，给它赋予的序号是1：
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; zadd myzset 1 baidu.com 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>//向myzset中新增一个元素360.com，赋予它的序号是3
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; zadd myzset 3 360.com 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>//向myzset中新增一个元素google.com，赋予它的序号是2
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; zadd myzset 2 google.com 
+</span></span><span class=line><span class=cl>(integer) 1
+</span></span><span class=line><span class=cl>//列出myzset的所有元素，同时列出其序号，可以看出myzset已经是有序的了。
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; zrange myzset 0 -1 with scores 
+</span></span><span class=line><span class=cl>1) &#34;baidu.com&#34;
+</span></span><span class=line><span class=cl>2) &#34;1&#34;
+</span></span><span class=line><span class=cl>3) &#34;google.com&#34;
+</span></span><span class=line><span class=cl>4) &#34;2&#34;
+</span></span><span class=line><span class=cl>5) &#34;360.com&#34;
+</span></span><span class=line><span class=cl>6) &#34;3&#34;
+</span></span><span class=line><span class=cl>//只列出myzset的元素
+</span></span><span class=line><span class=cl>127.0.0.1:6379&gt; zrange myzset 0 -1 
+</span></span><span class=line><span class=cl>1) &#34;baidu.com&#34;
+</span></span><span class=line><span class=cl>2) &#34;google.com&#34;
+</span></span><span class=line><span class=cl>3) &#34;360.com&#34;
+</span></span></code></pre></td></tr></table></div></div><h4 id=进阶操作-1>进阶操作</h4><h5 id=获取集合数据总量-1>获取集合数据总量</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zcard key
+</span></span><span class=line><span class=cl>zcount key min max
+</span></span></code></pre></td></tr></table></div></div><h5 id=集合交并集操作>集合交、并集操作</h5><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>zinterstore destination numkeys key [key …]
+</span></span><span class=line><span class=cl>zunionstore destination numkeys key [key …]
+</span></span></code></pre></td></tr></table></div></div><h4 id=sorted_set类型数据操作的注意事项>sorted_set类型数据操作的注意事项</h4><p>score保存的数据存储空间是64位，如果是整数范围是-9007199254740992~9007199254740992
+score保存的数据也可以是一个双精度的double值，基于双精度浮点数的特征，可能会丢失精度，使用时候要慎重
+sorted_set底层存储还是基于set结构的，因此数据不能重复，如果重复添加相同的数据，score值将被反复覆盖，保留最后一次修改的结果</p></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/%E7%BC%93%E5%AD%98/>缓存</a>
+<a href=/tags/%E6%8C%81%E4%B9%85%E5%8C%96/>持久化</a>
+<a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/>数据库</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title></h2><div class=subsection-list><div class=article-list--tile><article><a href=/p/mysql/><div class=article-details><h2 class=article-title>MySQL</h2></div></a></article><article><a href=/p/java-%E5%A4%9A%E7%BA%BF%E7%A8%8B/><div class=article-details><h2 class=article-title>Java 多线程</h2></div></a></article><article><a href=/p/java-%E5%A4%9A%E7%BA%BF%E7%A8%8B/><div class=article-details><h2 class=article-title>Java 多线程</h2></div></a></article><article><a href=/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/><div class=article-details><h2 class=article-title>群晖NAS代理及Emby配置</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/><div class=article-details><h2 class=article-title>如何在WSL2上使用本机代理</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 边个濑椰的博客</section><section class=powerby><br></section></footer><script type=module>
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>
