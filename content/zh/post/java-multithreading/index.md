@@ -1,9 +1,9 @@
 +++
-title: Java 多线程
-date: 2025-03-21T14:50:07+08:00
-translationKey: java-multithreading
-tags: [Java, 并发, 多线程, JVM]
-categories: [技术, 后端开发]
+title = Java 多线程
+date = 2025-03-21T14:50:07+08:00
+translationKey = java-multithreading
+tags = [Java, 并发, 多线程, JVM]
+categories = [技术, 后端开发]
 
 [params]
 toc = true
