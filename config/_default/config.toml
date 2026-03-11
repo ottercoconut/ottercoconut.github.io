@@ -22,6 +22,3 @@ disqusShortname = "hugo-theme-stack"
 category = "categories"
 tag = "tags"
 
-# hugo.toml
-[markup.goldmark.renderHooks.image]
-  enableDefault = true

@@ -44,7 +44,7 @@ alternatives --config java
 
 如图，我们输入``2``并回车，就切换到了需要的版本
 
-![Screenshot_2025-03-19_191616.png](/img/Minecraft-server/Screenshot_2025-03-19_191616.png)
+![Screenshot_2025-03-19_191616.png](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_191616.png)
 
 
 ## 游戏部署
