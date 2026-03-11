@@ -7,6 +7,27 @@
     languagedirection = "ltr"
     title = "边个濑椰的博客"
     weight = 1
+
+[[zh-cn.menus.main]]
+    name = "首页"
+    pageRef = "/"
+    weight = 10
+
+[[zh-cn.menus.main]]
+    name = "归档"
+    pageRef = "/archives"
+    weight = 20
+
+[[zh-cn.menus.main]]
+    name = "搜索"
+    pageRef = "/search"
+    weight = 30
+
+[[zh-cn.menus.main]]
+    name = "关于"
+    pageRef = "/about"
+    weight = 40
+
 [en]
     contentDir = 'content/en'
     disabled = false
@@ -15,6 +36,27 @@
     languagedirection = "ltr"
     title             = "ottercoconut's Blog"
     weight            = 2
+
+[[en.menus.main]]
+    name = "Home"
+    pageRef = "/"
+    weight = 10
+
+[[en.menus.main]]
+    name = "Archives"
+    pageRef = "/archives"
+    weight = 20
+
+[[en.menus.main]]
+    name = "Search"
+    pageRef = "/search"
+    weight = 30
+
+[[en.menus.main]]
+    name = "About"
+    pageRef = "/about"
+    weight = 40
+
 [ja]
     contentDir = 'content/ja'
     disabled = false
@@ -23,3 +65,23 @@
     languagedirection = "ltr"
     title = "ottercoconutのブログ"
     weight = 3
+
+[[ja.menus.main]]
+    name = "ホーム"
+    pageRef = "/"
+    weight = 10
+
+[[ja.menus.main]]
+    name = "アーカイブ"
+    pageRef = "/archives"
+    weight = 20
+
+[[ja.menus.main]]
+    name = "検索"
+    pageRef = "/search"
+    weight = 30
+
+[[ja.menus.main]]
+    name = "このサイトについて"
+    pageRef = "/about"
+    weight = 40
