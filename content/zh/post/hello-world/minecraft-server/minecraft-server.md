@@ -1,17 +1,13 @@
----
-title: 在Linux(CentOS)系统上部署Minecraft服务器
-date: 2025-03-19 18:48:59
-lang: zh-CN
-translation_key: minecraft-server
-tags: [服务器, Linux, Minecraft]
-categories: 
-	- 技术
-	- 实用技术
----
++++
+title = "在Linux(CentOS)系统上部署Minecraft服务器"
+date = 2025-03-19T18:48:59+08:00
+translationKey = "minecraft-server"
+tags = ["服务器", "Linux", "Minecraft"]
+categories = ["技术", "实用技术"]
 
-
-
-  
+[params]
+toc = true
++++
 
 笔者近日配置好了物理服务器，便想利用起来建一个我的世界服务器，经熬夜研究后成功，将本攻略分享出来，希望能帮到大家，尤其是没有公网环境的Linux用户(像我一样)
 

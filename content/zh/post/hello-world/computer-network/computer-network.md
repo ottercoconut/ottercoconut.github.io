@@ -1,13 +1,13 @@
----
-title: 计算机网络
-date: 2026-02-20 14:10:19
-lang: zh-CN
-translation_key: computer-network
-tags: [408, 网络]
-categories: 
-	- 理论
-toc_number: false
----
++++
+title = "计算机网络"
+date = 2026-02-20T14:10:19+08:00
+translationKey = "computer-network"
+tags = ["408", "网络"]
+categories = ["理论"]
+
+[params]
+toc = true
++++
 
 [湖科大教书匠 深入浅出计算机网络](https://space.bilibili.com/360996402/lists/533771?type=season)
 

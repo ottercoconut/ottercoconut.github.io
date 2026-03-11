@@ -1,13 +1,14 @@
----
-title: 群晖NAS代理及Emby配置
-date: 2026-02-16 11:12:15
-lang: zh-CN
-translation_key: nas-proxy
-tags: [代理, 网络]
-categories: 
-	- 技术
-	- 实用技术
----
++++
+title = "群晖NAS代理及Emby配置"
+date = 2026-02-16T11:12:15+08:00
+translationKey = "nas-proxy"
+tags = ["代理", "网络"]
+categories = ["技术", "实用技术"]
+
+[params]
+toc = true
++++
+
 
 近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：
 

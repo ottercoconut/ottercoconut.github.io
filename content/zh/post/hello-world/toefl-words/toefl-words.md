@@ -1,12 +1,13 @@
----
-title: 托福听力学科单词学习辨听/必考词汇合集
-date: 2025-10-25 22:41:05
-lang: zh-CN
-translation_key: toefl-words
-tags:
-categories: 
-	- 英语
----
++++
+title = "托福听力学科单词学习辨听/必考词汇合集"
+date = 2025-10-25T22:41:05+08:00
+translationKey = "toefl-words"
+tags = []
+categories = ["英语"]
+
+[params]
+toc = true
++++
 
 ### 托福听力学科单词学习辨听
 

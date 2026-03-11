@@ -1,16 +1,13 @@
----
++++
+title = "数据挖掘"
+date = 2025-11-23T21:42:00+08:00
+translationKey = "data-mining"
+tags = ["数据预处理", "KNN算法", "聚类方法"]
+categories = ["理论"]
 
-title: 数据挖掘
-date: 2025-11-23 21:42:00
-lang: zh-CN
-translation_key: data-mining
-tags: [数据预处理, KNN算法, 聚类方法]
-categories: 
-	- 理论
-toc_number: false
----
-
-
+[params]
+toc = true
++++
 
 ### 数据挖掘复习
 

@@ -1,12 +1,13 @@
----
-title: TOEFL题目经验
-date: 2025-11-02 15:54:54
-lang: zh-CN
-translation_key: tpo-experience
-tags:
-categories: 
-	- 英语
----
++++
+title = "TOEFL题目经验"
+date = 2025-11-02T15:54:54+08:00
+translationKey = "tpo-experience"
+tags = []
+categories = ["英语"]
+
+[params]
+toc = true
++++
 
 ### Intro
 

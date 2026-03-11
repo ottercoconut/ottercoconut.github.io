@@ -1,13 +1,13 @@
----
-title: 如何在WSL2上使用本机代理
-date: 2026-01-30 16:31:20
-lang: zh-CN
-translation_key: wsl2-proxy
-tags: [代理, 网络]
-categories: 
-	- 技术
-	- 实用技术
----
++++
+title = "如何在WSL2上使用本机代理"
+date = 2026-01-30T16:31:20+08:00
+translationKey = "wsl2-proxy"
+tags = ["代理", "网络"]
+categories = ["技术", "实用技术"]
+
+[params]
+toc = true
++++
 
 由于近日笔者经常用Python下载各种模型，终要解决困扰已久的wsl2与Windows主机代理不互通的问题。笔者浪费了半个下午后终于搞定，在得力助手Gemini的帮助下，主要步骤如下：
 

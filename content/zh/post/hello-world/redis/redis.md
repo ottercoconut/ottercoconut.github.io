@@ -1,14 +1,15 @@
----
-title: Redis
-date: 2025-03-18 15:41:00
-lang: zh-CN
-translation_key: redis
-tags: [缓存, 持久化, 数据库]
-categories:
-	- 技术
-	- 后端开发
----
-Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。它由Salvatore Sanfilippo开发，支持多种数据结构，如字符串、哈希、列表、集合和有序集合等，具备丰富的数据操作能力。Redis以其超快的读写速度著称，因为数据主要存储在内存中，同时支持可选的磁盘持久化（如RDB快照和AOF日志）以保障数据可靠性。其内置功能还包括事务、发布/订阅模式以及Lua脚本支持，使其应用场景广泛，从实时分析到会话管理均表现出色。此外，Redis支持主从复制和集群模式，具有良好的扩展性。
++++
+title = "Redis"
+date = 2025-03-18T15:41:00+08:00
+translationKey = "redis"
+tags = ["缓存", "持久化", "数据库"]
+categories = ["技术", "后端开发"]
+
+[params]
+toc = true
++++
+
+Redis（Remote Dictionary Server）是一个高性能的开源内存数据结构存储系统，常被用作数据库、缓存和消息代理。
 
 ### 参考网站  
 

@@ -1,13 +1,13 @@
----
-title: MySQL
-date: 2025-03-17 20:06:34
-lang: zh-CN
-translation_key: mysql
-tags: [数据库, MySQL]
-categories: 
-	- 技术
-	- 后端开发
----
++++
+title = "MySQL"
+date = 2025-03-17T20:06:34+08:00
+translationKey = "mysql"
+tags = ["数据库", "MySQL"]
+categories = ["技术", "后端开发"]
+
+[params]
+toc = true
++++
 
 ### 参考网站
 

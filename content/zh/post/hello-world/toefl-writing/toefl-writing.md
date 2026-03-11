@@ -1,12 +1,13 @@
----
-title: TOEFL Writing
-date: 2026-01-13 14:25:25
-lang: zh-CN
-translation_key: toefl-writing
-tags:
-categories: 
-	- 英语
----
++++
+title = "TOEFL Writing"
+date = 2026-01-13T14:25:25+08:00
+translationKey = "toefl-writing"
+tags = []
+categories = ["英语"]
+
+[params]
+toc = true
++++
 
 ## Integrated Writing
 

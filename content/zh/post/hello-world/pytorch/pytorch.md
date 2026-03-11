@@ -1,13 +1,13 @@
----
-title: Pytorch基础
-date: 2026-01-22 10:49:28
-lang: zh-CN
-translation_key: pytorch
-tags: [TensorBoard, Transformer, Dataset]
-categories: 
-	- 技术
-	- 深度学习
----
++++
+title = "Pytorch基础"
+date = 2026-01-22T10:49:28+08:00
+translationKey = "pytorch"
+tags = ["TensorBoard", "Transformer", "Dataset"]
+categories = ["技术", "深度学习"]
+
+[params]
+toc = true
++++
 
 本篇是对Pytorch基础使用的学习，主要基于B站小土堆的https://www.bilibili.com/video/BV1hE411t7RN/以及Gemini的帮助，除实践外也包含了一些深度学习模型的原理
 

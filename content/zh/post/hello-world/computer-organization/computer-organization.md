@@ -1,14 +1,12 @@
----
++++
+title = "计算机组成原理"
+date = 2025-09-10
+tags = ["408", "存储", "指令"]
+categories = ["理论"]
 
-title: 计算机组成原理
-date: 2025-09-10
-lang: zh-CN
-translation_key: computer-organization
-tags: [408, 存储, 指令]
-categories: 
-	- 理论
-toc_number: false
----
+[params]
+toc = true
++++
 
 课程源自B站“湖科大教学匠”的《计算机组成微课堂》 https://www.bilibili.com/video/BV1qG41197E4/?share_source=copy_web&vd_source=440fb90b593ac5ecf9b12f264d73b53b
 BV1qG41197E4  
