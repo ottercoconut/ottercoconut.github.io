@@ -7,7 +7,6 @@ categories = ["理论"]
 
 [params]
 toc = true
-toc_number = false
 +++
 
 [湖科大教书匠 深入浅出计算机网络](https://space.bilibili.com/360996402/lists/533771?type=season)
