@@ -44,7 +44,7 @@ alternatives --config java
 
 如图，我们输入``2``并回车，就切换到了需要的版本
 
-![Screenshot_2025-03-19_191616.png](Minecraft-server/Screenshot_2025-03-19_191616.png)
+![Screenshot_2025-03-19_191616.png](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_191616.png)
 
  
 
@@ -54,9 +54,9 @@ alternatives --config java
 
 [MohistMC]([MohistMC - 主页](https://www.mohistmc.com/))
 
-![](Minecraft-server/Screenshot_2025-03-19_185204.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_185204.png)
 
-![](Minecraft-server/Screenshot_2025-03-19_185231.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_185231.png)
 
 下载完成后是个类似``banner-1.20.1-800-server.jar``的文件，接下来打开SSH软件，在服务器上操作：
 
@@ -228,7 +228,7 @@ docker run hello-world
 
 ``SakuraFrp``在Linux上的部署，官方文档给出了详细的方案
 
-![](Minecraft-server/Screenshot_2025-03-19_203047.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_203047.png)
 
 首先在终端以管理员身份运行
 
@@ -238,7 +238,7 @@ sudo bash -c ". <(curl -sSL https://doc.natfrp.com/launcher.sh)"
 
 安装好后，应该是会自动输出日志，并需要填写访问密钥，这个(或者说接下来的操作)可以在``SakuraFrp``官网的管理面板找到
 
-![](Minecraft-server/Screenshot_2025-03-19_203530.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_203530.png)
 
 登录好之后就能看到其日志文件，下面是常规的启动并查看日志的操作
 
@@ -251,15 +251,15 @@ docker logs natfrp-service
 
 如图，接下来需要用物理方式操作下服务器
 
-![](Minecraft-server/Image_146159838978722.png)
+![](/uploads/posts/Minecraft-server/Image_146159838978722.png)
 
 打开浏览器(一般Linux自带Firefox)访问“使用”后面的网址打开``WebUI``
 
 然后看到“隧道”那什么都没有，只有一个加号，这时我们在打开``SakuraFrp``的管理面板，找到服务下的``隧道列表``，新建两个隧道，如图所示：
 
-![](Minecraft-server/Screenshot_2025-03-19_204855.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_204855.png)
 
-![](Minecraft-server/Screenshot_2025-03-19_205010.png)
+![](/uploads/posts/Minecraft-server/Screenshot_2025-03-19_205010.png)
 
 第一个端口号为7102的是服务器上``SakuraFrp``的``WebUI``，以便远程管理
 
@@ -267,7 +267,7 @@ docker logs natfrp-service
 
 回到``WebUI``界面刷新一下就能看到刚刚创建好的两个隧道了，我们分别双击，然后回到终端的日志界面
 
-![](Minecraft-server/Image_146585201484185.png)
+![](/uploads/posts/Minecraft-server/Image_146585201484185.png)
 
 如图的红色字符的链接，就是``WebUI``和Minecraft的远程访问链接，将Minecraft对应的复制到游戏中即可连接上
 
@@ -279,5 +279,5 @@ docker logs natfrp-service
 
 大功告成！(笔者服务器出生地的截图 >w<)
 
-![](Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png)
+![](/uploads/posts/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png)
 
