@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "このサイトについて"
 date: 2026-03-10T23:00:00+08:00
 slug: "about"
 draft: false
