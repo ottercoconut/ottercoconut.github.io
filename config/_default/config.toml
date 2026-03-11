@@ -17,3 +17,7 @@ disqusShortname = "hugo-theme-stack"
 
 [pagination]
     pagerSize = 5
+
+[taxonomies]
+category = "categories"
+tag = "tags"
