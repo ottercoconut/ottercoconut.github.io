@@ -523,7 +523,7 @@ for input, target in dataset:
 
 - 针对CIFAR10图像数据集的简单分类模型实战
 
-![](pytorch/Screenshot_2026-01-26_140919.png)
+![](/uploads/posts/pytorch/Screenshot_2026-01-26_140919.png)
 
 - 首先了解Sequential，`nn.Sequential` 是 `nn.Module` 的一个特殊子类，它的作用是**自动完成 `forward` 逻辑**。注意：其中每一个参数都是某层的类，所以要写逗号。Sequential既简化了模型定义，也简化了`forward()`。
 

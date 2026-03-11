@@ -353,7 +353,7 @@ LIMIT num_limit OFFSET num_offset;
 
 #### 例题
 
-![例题1](MySQL/Screenshot_2025-03-11_132438.png)
+![例题1](/uploads/posts/MySQL/Screenshot_2025-03-11_132438.png)
 
 ---
 
@@ -361,7 +361,7 @@ LIMIT num_limit OFFSET num_offset;
 
 ### SELECT复习题
 
-![例题2](MySQL/Screenshot_2025-03-11_134213.png)
+![例题2](/uploads/posts/MySQL/Screenshot_2025-03-11_134213.png)
 
 ---
 
@@ -387,7 +387,7 @@ WHERE ABS(particle_position) * 10.0 >500
             --（条件要求这个属性绝对值乘以10大于500）;
 ```
 
-![例题3](MySQL/Screenshot_2025-03-13_164705.png)
+![例题3](/uploads/posts/MySQL/Screenshot_2025-03-13_164705.png)
 
 ---
 
@@ -395,7 +395,7 @@ WHERE ABS(particle_position) * 10.0 >500
 
 ### **在查询中进行统计**
 
-![样图1](MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp)
+![样图1](/uploads/posts/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp)
 
 ```sql
 SELECT AGG_FUNC(column_or_expression) AS aggregate_description, …
@@ -430,7 +430,7 @@ WHERE constraint_expression
 GROUP BY column;
 ```
 
-![例题4](MySQL/Screenshot_2025-03-13_170736.png)
+![例题4](/uploads/posts/MySQL/Screenshot_2025-03-13_170736.png)
 
 在 **`GROUP BY`** 分组语法中，我们知道数据库是先对数据做 **`WHERE`** ，然后对结果做分组，如果我们要对分组完的数据再筛选出几条如何办？
 一个不常用的语法 **`HAVING`** 语法将用来解决这个问题，他可以对分组之后的数据再做`SELECT`筛选
@@ -467,7 +467,7 @@ LIMIT num_limit OFFSET num_offset;
  先将两个表数据连接到一起，两个表中如果通过ID互相找不到的数据将会舍弃。此时，你可以将连表后的数据看作两个表的合并，SQL中的其他语句会在这个合并基础上 继续执行(想一下和之前的单表操作就一样了)
 还有一个理解 **``INNER JOIN``** 的方式，就是把 **`INNER JOIN`** 想成两个集合的交集。
 
-![例题5](C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png)
+![例题5](/uploads/posts/C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_142245.png)
 
 ####   `OUTER JOIN`外连接
 
@@ -486,7 +486,7 @@ LIMIT num_limit OFFSET num_offset;
 
 将两个表数据1-1连接，保留A或B的原有行，如果某一行在另一个表不存在，会用 `NULL`来填充结果数据。
 
-![例题6](C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png)
+![例题6](/uploads/posts/C:/Users/Kawauso/Documents/Blogs/source/_posts/MySQL/Screenshot_2025-03-11_151348.png)
 
 ---
 
@@ -494,7 +494,7 @@ LIMIT num_limit OFFSET num_offset;
 
 ### 查询执行顺序
 
-![样图2](MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp)
+![样图2](/uploads/posts/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp)
 
 ```sql
 --这才是完整的SELECT查询
@@ -563,7 +563,7 @@ AND/OR another_condition
 AND/OR …;
 ```
 
-![例题7](MySQL/Screenshot_2025-03-11_203039.png)
+![例题7](/uploads/posts/MySQL/Screenshot_2025-03-11_203039.png)
 
 ---
 

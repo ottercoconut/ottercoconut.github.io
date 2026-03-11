@@ -220,7 +220,7 @@ $$
 
 #### 3.2.4 相关分析
 
-![](data-mining/Screenshot_2025-11-22_152834.png)
+![](/uploads/posts/data-mining/Screenshot_2025-11-22_152834.png)
 
 #### 3.2.7 数据规约策略
 

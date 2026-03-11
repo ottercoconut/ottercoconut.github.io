@@ -57,7 +57,7 @@ Slides里介绍了几种方式：
 - Use the **similarity of the word vectors for c and o to calculate the probability** of o given c (or vice versa)
 - **Keep adjusting the word vectors** to maximize this probability
 
-![](cs224n/Word2Vec-1.png)
+![](/uploads/posts/cs224n/Word2Vec-1.png)
 
 #### Objective Function
 
@@ -190,7 +190,7 @@ $$
 
 #### Co-occurrence Martix
 
-![](cs224n/co-occurrence.png)
+![](/uploads/posts/cs224n/co-occurrence.png)
 
 构建共现矩阵的方法非常简单，首先设定窗口长度，然后对在窗口长度内出现的共现词频率进行计数，一个简单的例子如上图（窗口为1，仅算相邻词）。但是：
 
@@ -200,7 +200,7 @@ $$
 
 那么如何进行降维来优化？经典的方法是进行SVD矩阵分解（虽然问了AI也没明白原理，而且Assignment1中用一个`sklearn`的函数就解决了）
 
-![](cs224n/SVD.png)
+![](/uploads/posts/cs224n/SVD.png)
 $$
 X = U \Sigma V^T
 $$
@@ -292,9 +292,9 @@ pprint.pprint(wv_from_bin.most_similar(positive=['foot', 'glove'], negative=['ha
 
 ### Structure
 
-![](cs224n/neural-network-1.png)
+![](/uploads/posts/cs224n/neural-network-1.png)
 
-![](cs224n/neural-network-2.png)
+![](/uploads/posts/cs224n/neural-network-2.png)
 
 ---
 
@@ -307,14 +307,14 @@ pprint.pprint(wv_from_bin.most_similar(positive=['foot', 'glove'], negative=['ha
   - **多层失效**：额外的层会被压缩成单个线性变换：$W_1 W_2 x = Wx$（即多层线性层等同于一层）。
   - **有了非线性**：通过包含非线性的多层结构，网络可以逼近更复杂的函数！
 
-![](cs224n/neural-network-3.png)
+![](/uploads/posts/cs224n/neural-network-3.png)
 
 - **左下侧图对**：左图显示线性分类（只能画直线），无法区分复杂的红绿点分布；右图显示非线性分类（可以画曲线），完美分割了数据。
 - **右侧三张波形图**：展示了随着函数复杂度的增加，只有非线性模型才能拟合这些起伏的蓝点（观测数据）。
 
 关于常用的非线性函数，在《智能计算系统》课上均有学习，不多赘述
 
-![](cs224n/neural-network-4.png)
+![](/uploads/posts/cs224n/neural-network-4.png)
 
 ---
 
@@ -453,19 +453,19 @@ $$
 
 按流程逐步计算各函数，从输入得到输出，即是**正向传播(Forward Propagation)**
 
-![](cs224n/backpropagation-1.png)
+![](/uploads/posts/cs224n/backpropagation-1.png)
 
 对于反向传播中的单个节点，有$downstream\ gradient=upstream\ gradient\times local\ gradient$
 
-![](cs224n/backpropagation-2.png)
+![](/uploads/posts/cs224n/backpropagation-2.png)
 
 对于单节点的多输入，upstream gradient不变，各输入的local gradient不同，但计算公式是不变的
 
-![](cs224n/backpropagation-3.png)
+![](/uploads/posts/cs224n/backpropagation-3.png)
 
 下面举个多输入的实际例子
 
-![](cs224n/backpropagation-4.png)
+![](/uploads/posts/cs224n/backpropagation-4.png)
 
 我们可以在这个基础上，假设输入y的值变为了2.1，那么$a=x+y=3.1$，$b=max(y+z)=y=2.1$，$a\times b=6.51$
 
@@ -514,7 +514,7 @@ $$
 
 "Scientists count whales from space"可以理解为"Scientists [count] [whales from space]" 或者 "Scientists [count whales] [from space]" ……
 
-![](cs224n/dependency-1.png)
+![](/uploads/posts/cs224n/dependency-1.png)
 
 ### Dependency Grammar and Treebanks 
 
@@ -527,11 +527,11 @@ An arrow connects a head (governor, superior, regent) with a dependent (modifier
 
 Usually, dependencies form a tree (a connected, acyclic, single-root graph)
 
-![](cs224n/dependency-2.png)
+![](/uploads/posts/cs224n/dependency-2.png)
 
 #### Annotated Data
 
-![](cs224n/dependency-3.png)
+![](/uploads/posts/cs224n/dependency-3.png)
 
 起初，构建语言库（Treebank）似乎比手动编写语法规则要慢得多，且看起来没那么有用。手动标注数据确实是件麻烦的工作，但现在看来，却有很大的优势：
 
@@ -569,7 +569,7 @@ Usually, dependencies form a tree (a connected, acyclic, single-root graph)
 
 但是现实中非投影的例子很常见，比如"*Who did Bill buy the coffee from yesterday*"
 
-![](cs224n/dependency-4.png)
+![](/uploads/posts/cs224n/dependency-4.png)
 
 ### Transition-Based Dependency Parser
 
@@ -593,7 +593,7 @@ Finish:  $\sigma = [w], \beta = \emptyset$
 
 那么下面先来举个例子：Analysis of "*I ate fish*"
 
-![](cs224n/dependency-5.png)
+![](/uploads/posts/cs224n/dependency-5.png)
 
 1. **Left Arc**操作 生成了一个由栈顶指向第二个元素的弧，建立了"`ate`"是中心词，"I"依存于"`ate`"的关系。然后将"`I`"移出栈。
 2. **Shift**操作 将"`fish`"从缓冲区移入栈中
@@ -604,7 +604,7 @@ Finish:  $\sigma = [w], \beta = \emptyset$
 
 评价依存分析的指标分为**UAS**（无标签附件分数）和 **LAS**（有标签附件分数），下面是一个具体的例子: "*[ROOT] She saw the video lecture.*"，表中"Gold"是标准答案，"Parsed"是分析出的答案：
 
-![](cs224n/dependency-6.png)
+![](/uploads/posts/cs224n/dependency-6.png)
 
 - 可见，UAS计算的是`Head`寻找得是否正确，本例中第三个"the"的依存词和标准不符。
 - LAS计算的它们之间的关系类型是否标注正确，即`Head`和关系标签(`label`)都要一致，本例中只有"She"和"saw"是与标准相符的。
@@ -615,7 +615,7 @@ More than 95% of parsing time is consumed by feature computation
 
 所以，我们可以用神经网络来加速特征提取，当然其方法还是基于上面的基于转移（Transition-based）的神经依存句法分析器。具体使用了了向量化、非线性等深度学习知识搭建出了第一个基于神经网络的依存分析器(2014年)。
 
-![](cs224n/dependency-7.png)
+![](/uploads/posts/cs224n/dependency-7.png)
 
 ## Recurrent Neural Networks
 
@@ -678,7 +678,7 @@ $$
 
 ### A fixed-window neural Language Model
 
-![](cs224n/RNN-1.png)
+![](/uploads/posts/cs224n/RNN-1.png)
 
 1. **输入层 (Words / One-hot vectors)**: 输入为单词的 one-hot 向量 $\boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \boldsymbol{x}^{(3)}, \boldsymbol{x}^{(4)}$。
 
@@ -712,7 +712,7 @@ $$
 
 ### RNN Language Model
 
-![](cs224n/RNN-2.png)
+![](/uploads/posts/cs224n/RNN-2.png)
 
 **RNN 的优点**：
 

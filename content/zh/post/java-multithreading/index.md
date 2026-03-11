@@ -512,7 +512,7 @@ class HelloThread extends Thread {
 
 线程的状态可从 操作系统层面分为五种状态
 
-![](java-multithreading/thread-status-1.png)
+![](/uploads/posts/java-multithreading/thread-status-1.png)
 
 
 
@@ -528,7 +528,7 @@ class HelloThread extends Thread {
 
 在Java程序中，一个线程对象只能调用一次`start()`方法启动新线程，并在新线程中执行`run()`方法。一旦`run()`方法执行完毕，线程就结束了。因此，Java线程的状态有以下几种：
 
-![](java-multithreading/thread-status-2.png)
+![](/uploads/posts/java-multithreading/thread-status-2.png)
 
 1. NEW 线程对象被创建
 2. Runnable 线程调用了 `start()` 方法后进入该状态，该状态包含了三种情况
@@ -540,7 +540,7 @@ class HelloThread extends Thread {
 5. TIMED_WAITING 调用 `sleep(time)`  `wait(time)`  `join(time)` 等方法后的状态
 6. TERMINATED 线程执行完成或抛出异常后的状态
 
-![](java-multithreading/thread-status-3.png)
+![](/uploads/posts/java-multithreading/thread-status-3.png)
 
 当线程启动后，它可以在`Runnable`、`Blocked`、`Waiting`和`Timed Waiting`这几个状态之间切换，直到最后变成`Terminated`状态，线程终止。
 

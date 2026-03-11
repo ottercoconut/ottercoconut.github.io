@@ -72,7 +72,7 @@ toc = true
 
 #### 电路交换、报文交换、分组交换的对比
 
-![](computer-network/Screenshot-2026-01-04-151109.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-04-151109.png)
 
 - 电路交换
 
@@ -169,7 +169,7 @@ $T b/s = k \cdot G b/s = 10^3 \cdot 10^9 b/s = 10^{12} b/s$ (bps)
 
 #### 时延
 
-![](computer-network/Screenshot-2026-01-04-172857.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-04-172857.png)
 
 #### 时延带宽积
 
@@ -213,7 +213,7 @@ $T b/s = k \cdot G b/s = 10^3 \cdot 10^9 b/s = 10^{12} b/s$ (bps)
 
 - 原理参考模型，从下到上以此为：**物理层、数据链路层、网络层、运输层、应用层**
 
-![](computer-network/Screenshot-2026-01-04-181131.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-04-181131.png)
 
 #### 分层的必要性
 
@@ -227,7 +227,7 @@ $T b/s = k \cdot G b/s = 10^3 \cdot 10^9 b/s = 10^{12} b/s$ (bps)
 
 #### 分层思想举例
 
-![](computer-network/Screenshot-2026-01-04-233936.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-04-233936.png)
 
 #### 专用术语
 
@@ -293,17 +293,17 @@ $T b/s = k \cdot G b/s = 10^3 \cdot 10^9 b/s = 10^{12} b/s$ (bps)
 
 #### 串行运输和并行运输
 
-![](computer-network/Screenshot-2026-01-05-171623.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-171623.png)
 
 #### 同步传输和异步传输
 
-![](computer-network/Screenshot-2026-01-05-171637.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-171637.png)
 
-![](computer-network/Screenshot-2026-01-05-171654.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-171654.png)
 
 #### 单向通信、双向交替通信和双向同时通信
 
-![](computer-network/Screenshot-2026-01-05-171705.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-171705.png)
 
 ## 2.4 编码与调制
 
@@ -336,11 +336,11 @@ $T b/s = k \cdot G b/s = 10^3 \cdot 10^9 b/s = 10^{12} b/s$ (bps)
 > - 在噪声干扰环境下，检测有无跳变比检测跳变方向更不容易出错，因此差分曼彻斯特编码信号比曼彻斯特编码信号更易于检测。
 > - 在传输介质接线错误导致高低电平翻转的情况下，差分曼彻斯特编码仍然有效。
 
-![](computer-network/Screenshot-2026-01-05-175121.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-175121.png)
 
 #### 带通调制方法和混合调制方法
 
-![](computer-network/Screenshot-2026-01-05-180704.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-180704.png)
 
 ## 2.5 信道的极限容量
 
@@ -372,7 +372,7 @@ W：信道的频率带宽（单位为Hz）  Baud：波特，即码元/秒
   - 当1个码元只携带1比特的信息量时，波特率（码元/秒）与比特率（比特/秒）在数值上是相等的。
   - 当1个码元携带n比特的信息量时，波特率（码元/秒）转换成比特率（比特/秒）时，数值要乘以n。
 
-![](computer-network/Screenshot-2026-01-05-194812.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-194812.png)
 
 #### 香农公式
 
@@ -397,9 +397,9 @@ S/N：信噪比，常用分贝（dB）表示
 - 实际信道不可能无限制地提高频率带宽W或信道中的信噪比S/N。
 - 实际信道中能够达到的信息传输速率，要比香农公式给出的极限传输速率低不少。这是因为在实际信道中，信号还要受到其他一些损伤，例如各种脉冲干扰和信号衰减等，这些因素在香农公式中并未考虑。
 
-![](computer-network/Screenshot-2026-01-05-195041.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-195041.png)
 
-![](computer-network/Screenshot-2026-01-05-195412.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-195412.png)
 
 ## 2.6 信道复用技术
 
@@ -429,13 +429,13 @@ S/N：信噪比，常用分贝（dB）表示
     - $(A + \overline{B}) \cdot B = A \cdot B + \overline{B} \cdot B = 0 + (-1) = -1$ 运算结果为-1，表明收到的是比特0
     - $(A + \overline{B}) \cdot C = A \cdot C + \overline{B} \cdot C = 0 + 0 = 0$ 运算结果为0，表明没有收到信息
 
-![](computer-network/Screenshot-2026-01-05-231025.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-231025.png)
 
 ## 3.1 数据链路层概述
 
 #### 在网络体系中的地位
 
-![](computer-network/Screenshot-2026-01-05-234331.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-234331.png)
 
 #### 链路、数据链路和帧
 
@@ -444,7 +444,7 @@ S/N：信噪比，常用分贝（dB）表示
 - 计算机中的网络适配器（俗称网卡）和其相应的**软件驱动程序**就实现了这些协议。**一般的网络适配器都包含了物理层和数据链路层这两层的功能**。
 - 帧（Frame）是**数据链路层**对等实体之间在水平方向进行逻辑通信的**协议数据单元PDU**。
 
-![](computer-network/Screenshot-2026-01-05-233458.png)
+![](/uploads/posts/computer-network/Screenshot-2026-01-05-233458.png)
 
 ## 3.2 数据链路层的三个重要问题
 
@@ -488,9 +488,9 @@ S/N：信噪比，常用分贝（dB）表示
   - 面向字节的物理链路使用**字节填充**的方法实现透明传输。即在把帧交给物理层之前，要在和定界符相同的内容前加入**转义字符**，或者在和转义字符相同的内容前加入**转义字符**
   - 面向比特的物理链路使用**比特填充**的方法实现透明传输。即在内容中连续遇到5个1时，在后面加0（因为01111110就是帧定界符了）
 
-![](computer-network/Screenshot-2026-02-24-135310.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-24-135310.png)
 
-![](computer-network/Screenshot-2026-02-24-135929.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-24-135929.png)
 
 ---
 
@@ -530,15 +530,15 @@ $$
 
 - 发送方CRC操作
 
-![](computer-network/Screenshot-2026-02-26-101057.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-101057.png)
 
-![](computer-network/Screenshot-2026-02-26-102333.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-102333.png)
 
 - 接收方CRC操作
 
-![](computer-network/Screenshot-2026-02-26-101439.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-101439.png)
 
-![](computer-network/Screenshot-2026-02-26-103107.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-103107.png)
 
 #### 总结
 
@@ -559,7 +559,7 @@ $$
 - **可靠传输服务并不局限于数据链路层**，其他各层均可选择实现可靠传输。
 - 可靠传输的实现比较复杂，开销比较大，是否使用可靠传输取决于应用需求。
 
-![](computer-network/Screenshot-2026-02-26-104300.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-104300.png)
 
 #### 停止-等待 (SW) 协议
 
@@ -573,13 +573,13 @@ $$
 - 接收方发送ACK，若是传输**中途丢失**，结合上一条，发送方就会**超时重传**，但这样接收方就**重复接收**了同一个DATA。为解决该问题，引入数据**分组编号**，分组编号即0和1，DATA就该叫做DATA0/1。接收方**丢弃重复的数据分组，再发送一个确认分组**。
 - 更复杂的情况会出现ACK被发送方重复接收，同理需要给ACK分组编号。
 
-![](computer-network/Screenshot-2026-02-26-112517.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-112517.png)
 
 **停止-等待协议属于自动请求重传（Automatic Repeat reQuest, ARQ）协议。** 即重传的请求是发送方自动进行的，而不是接收方请求发送方重传某个误码的数据分组。
 
 ##### 信道利用率
 
-![](computer-network/Screenshot-2026-02-26-113359.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-113359.png)
 $$
 信道利用率\ U \approx \frac{T_D}{T_D + RTT + T_A}
 $$
@@ -602,11 +602,11 @@ $$
    - **结果**：信道利用率 **$U$ 比较高**。
    - **典型案例**：无线局域网（往返时间远小于数据发送时间）。
 
-![](computer-network/Screenshot-2026-02-26-111200.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-111200.png)
 
 #### 回退N帧 (GBN) 协议
 
-![](computer-network/Screenshot-2026-02-26-115114.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-115114.png)
 
 - **在使用流水线传输方式时，发送方不能无限制地连续发送数据分组**，否则可能会导致网络中的路由器或接收方来不及处理这些数据分组，进而导致数据分组的丢失，这实际上是对网络资源的浪费。因此，必须采取措施来限制发送方连续发送数据分组的数量。
 - **回退N帧协议采用流水线传输方式，并且利用发送窗口来限制发送方连续发送数据分组的数量，这属于连续ARQ协议。**
@@ -621,7 +621,7 @@ $$
 - 收到多个重复确认时，可在重传计时器超时前尽早开始重传，由具体实现决定（即确定收到几个重复确认进行重传）。
 - 发送窗口内某个已发送的数据分组产生超时重传时，发送窗口内该数据分组的后续已发送的数据分组也必须全部重传，这就是回退N帧 (Go-back-N, GBN) 协议名称的由来。
 
-![](computer-network/Screenshot-2026-02-26-141807.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-141807.png)
 
 ##### 接收方
 
@@ -632,7 +632,7 @@ $$
   - 或者可以在自己有数据分组要发送时才对之前按序接收且无误码的数据分组进行捎带确认。
 - 接收方收到未按序到达的数据分组后，除丢弃外，还可对之前最后一个按序到达的数据分组进行重复确认，以便发送方尽快重传。
 
-![](computer-network/Screenshot-2026-02-26-142240.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-142240.png)
 
 #### 选择重传协议
 
@@ -672,7 +672,7 @@ $$
 
 #### 帧格式
 
-![](computer-network/Screenshot-2026-02-26-150751.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-150751.png)
 
 - **标志（Flag）字段**：PPP帧的定界符，取值为 **0x7E**。
 - **地址（Address）字段**：取值为 **0xFF**，预留（目前没有什么作用）。
@@ -684,7 +684,7 @@ $$
 
 ##### 面向字节的异步链路
 
-![](computer-network/Screenshot-2026-02-26-151729.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-151729.png)
 
 - 发送方的处理：
   - 将数据载荷中出现的每一个 0x7E **减去 0x20**（相当于异或 0x20），然后在其前面**插入转义字符 0x7D**。
@@ -696,7 +696,7 @@ $$
 
 ##### 面向比特的同步链路
 
-![](computer-network/Screenshot-2026-02-26-152240.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-152240.png)
 
 - 发送方的处理：
   - 对帧的数据载荷进行扫描（一般由硬件完成），每出现 **5 个连续的比特 1**，则在其后**填充一个比特 0**。
@@ -706,7 +706,7 @@ $$
 
 #### 差错检测
 
-![](computer-network/Screenshot-2026-02-26-153004.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-153004.png)
 
 - **帧检验序列FCS字段**：其值是使用**循环冗余校验CRC**计算出的检错码。
 - CRC采用的生成多项式为：
@@ -719,7 +719,7 @@ $$
 
 以用户主机拨号接入因特网服务提供者ISP的拨号服务器的过程为例
 
-![](computer-network/Screenshot-2026-02-26-153348.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-153348.png)
 
 ## 3.4 共享式以太网
 
@@ -746,7 +746,7 @@ $$
 - 网卡除要**实现物理层和数据链路层功能**，其另外一个重要功能就是要进行**并行传输和串行传输**的转换。由于网络的传输速率和计算机内部总线上的传输速率并不相同，因此在网卡的核心芯片中都会包含用于缓存数据的存储器。
 - 在确保网卡硬件正确的情况下，为了使网卡正常工作，还必须要在计算机的操作系统中为网卡安装相应的设备驱动程序。驱动程序负责驱动网卡发送和接收帧。
 
-![](computer-network/Screenshot-2026-02-26-160633.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-160633.png)
 
 #### MAC地址
 
@@ -756,7 +756,7 @@ $$
 
 ##### 地址格式
 
-![](computer-network/Screenshot-2026-02-26-161212.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-161212.png)
 
 其中第 1 字节的 b1 位：G/L (Global/Local)
 
@@ -829,7 +829,7 @@ $$
 
 #### 共享式以太网的争用期
 
-![](computer-network/Screenshot-2026-02-26-172730.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-172730.png)
 
 - 站点从发送帧开始，最多经过时长 $2\tau$（即 $\delta \to 0$）就可检测出所发送的帧是否遭遇了碰撞。
 
@@ -853,7 +853,7 @@ $$
 
   则总线长度为：$2 \times 10^8\ m/s \times 25.6\mu s = 5120m$
 
-![](computer-network/Screenshot-2026-02-26-174651.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-26-174651.png)
 
 #### 共享式以太网的最小/最大帧长
 
@@ -872,14 +872,14 @@ $$
   - 当某个站点在发送帧时，如果帧的前 $64B$ 没有遭遇碰撞，那么帧的后续部分也就不会遭遇碰撞。也就是说，如果遭遇碰撞，就一定是在帧的前 $64B$ 之内。
   - 由于发送帧的站点边发送帧边检测碰撞，一旦检测到碰撞就立即中止帧的发送，此时已发送的数据量一定小于 $64B$。因此，接收站点收到**长度小于 $64B$ 的帧**，就可判定这是一个**遭遇了碰撞而异常中止的无效帧**，将其丢弃即可。
 
-![](computer-network/Screenshot-2026-02-27-111734.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-111734.png)
 
 ##### 最大帧长
 
 - 一般来说，**帧的数据载荷的长度应远大于帧首部和尾部的总长度**，这样可以**提高帧的传输效率**。
 - 然而，如果不限制数据载荷的长度上限，就可能使得**帧的长度太长**，这会**带来一些问题**。
 
-![](computer-network/Screenshot-2026-02-27-112615.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-112615.png)
 
 - 以太网V2的MAC帧，最大长度为1518B。其中数据载荷最大为1500B，最小为46B。其它的部分：目的地址、源地址、类型和FCS共占了18B
 
@@ -903,7 +903,7 @@ $$
 
 #### 信道利用率
 
-![](computer-network/Screenshot-2026-02-27-115237.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-115237.png)
 $$
 S_{max} = \frac{T_0}{T_0 + \tau} = \frac{1}{1 + \frac{\tau}{T_0}} = \frac{1}{1 + a}
 $$
@@ -982,7 +982,7 @@ $$
   - 网桥可以**识别帧的结构**。
   - 网桥可以根据帧首部中的**目的MAC地址**和网桥自身的**帧转发表**来转发或丢弃所收到的帧。
 
-![](computer-network/Screenshot-2026-02-27-141446.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-141446.png)
 
 #### 透明网桥的自学习和转发帧的流程
 
@@ -1036,7 +1036,7 @@ $$
   - 当交换机的接口连接的是集线器时，该接口就**只能使用CSMA/CD协议并只能工作在半双工方式**。
   - 现在的交换机和计算机中的网卡都能自动识别上述两种情况，并自动切换到相应的工作方式。
 
-![](computer-network/Screenshot-2026-02-27-145017.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-145017.png)
 
 | **主机间的通信**  | **交换机1的操作** | **交换机2的操作** |
 | ----------------- | ----------------- | ----------------- |
@@ -1045,7 +1045,7 @@ $$
 | E $\rightarrow$ X | 登记 转发（盲目） | 登记 转发（盲目） |
 | X $\rightarrow$ E | 登记 丢弃         | 收不到            |
 
-![](computer-network/Screenshot-2026-02-27-150438.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-150438.png)
 
 - 交换机一般都具有多种速率的接口，例如10Mb/s、100Mb/s、1Gb/s甚至10Gb/s的接口，大部分接口支持多速率自适应。
 - 一般的交换机都采用“**存储转发**”方式，为了减小交换机的转发时延，某些交换机采用了**直通**（Cut-Through）交换方式。
@@ -1053,7 +1053,7 @@ $$
   - 直通交换的**时延非常小**。
   - 直通交换**不检查差错就直接将帧转发出去**，有可能会将一些无效帧转发给其他主机。
 
-![](computer-network/Screenshot-2026-02-27-151448.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-151448.png)
 
 ---
 
@@ -1065,7 +1065,7 @@ $$
 
 ## 3.6 以太网的MAC帧格式
 
-![](computer-network/Screenshot-2026-02-27-154609.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-154609.png)
 
 ## 3.7 虚拟局域网 VLAN
 
@@ -1106,7 +1106,7 @@ $$
 
 - IEEE 802.1Q帧也称为Dot One Q帧，它对以太网V2的MAC帧格式进行了扩展：在源地址字段和类型字段之间插入了**4字节的VLAN标签**（tag）字段。
 
-![](computer-network/Screenshot-2026-02-27-162829.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-162829.png)
 
 - **标签协议标识符TPID**：长度为16比特，其值固定为0x8100，表示该帧是IEEE 802.1Q帧。
 - **优先级PRI**：长度为3比特，取值范围是0~7，值越大优先级越高。当网络阻塞时，设备优先发送优先级高的802.1Q帧。
@@ -1138,7 +1138,7 @@ $$
 
 ## 3.8 以太网的发展
 
-![](computer-network/Screenshot-2026-02-27-163837.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-163837.png)
 
 - 都使用**IEEE 802.3的帧格式**
 - 都遵守**IEEE 802.3的最小帧长和最大帧长**的规定
@@ -1151,7 +1151,7 @@ $$
 
 - 网络层的主要任务就是**将分组从源主机经过多个网络和多段链路传输到目的主机**，可以将该任务划分为**分组转发**和**路由选择**两种重要的功能。
 
-![](computer-network/Screenshot-2026-02-27-170843.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-27-170843.png)
 
 
 
@@ -1205,7 +1205,7 @@ $$
 
 - 由于IPv4地址由32比特构成，不方便阅读、记录以及输入等，因此IPv4地址采用**点分十进制表示方法**以方便用户使用。
 
-![](computer-network/Screenshot-2026-02-28-095009.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-095009.png)
 
 ---
 
@@ -1240,7 +1240,7 @@ $$
 | **D**        | 多播地址 | 224.0.0.0      | 239.255.255.255   | 268435456 ($2^{28}$) | 6.25% ($2^{32-4}/2^{32}$) |
 | **E**        | 保留     | 240.0.0.0      | 255.255.255.255   | 268435456 ($2^{28}$) | 6.25% ($2^{32-4}/2^{32}$) |
 
-![](computer-network/Screenshot-2026-02-28-113743.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-113743.png)
 
 ##### 一般不使用的特殊IPv4地址
 
@@ -1252,9 +1252,9 @@ $$
 | net-id     | 全1                | A类：net-id.255.255.255 B类：net-id.255.255 C类：net-id.255 | 不可以         | 可以             | 对网络net-id上的所有主机进行广播         |
 | 127        | 非全0或全1的任何数 | 127.0.0.1~127.255.255.254                                   | 可以           | 可以             | 用于本地软件环回测试                     |
 
-![](computer-network/Screenshot-2026-02-28-113904.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-113904.png)
 
-![](computer-network/Screenshot-2026-02-28-114131.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-114131.png)
 
 ---
 
@@ -1291,9 +1291,9 @@ $$
   - B类：255.255.0.0
   - C类：255.255.255.0
 
-![](computer-network/Screenshot-2026-02-28-144748.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-144748.png)
 
-![](computer-network/Screenshot-2026-02-28-145204.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-145204.png)
 
 #### 无分类编址
 
@@ -1320,21 +1320,21 @@ $$
 
 - 使用CIDR的一个好处是，可以根据客户的需要**分配适当大小的CIDR地址块**，因此可以更加有效地分配IPv4的地址空间。
 
-  ![](computer-network/Screenshot-2026-02-28-155034.png)
+  ![](/uploads/posts/computer-network/Screenshot-2026-02-28-155034.png)
 
 ##### 路由聚合
 
 - 使用CIDR的另一个好处是**路由聚合**（也称为**构造超网**）。
 
-  ![](computer-network/Screenshot-2026-02-28-155253.png)
+  ![](/uploads/posts/computer-network/Screenshot-2026-02-28-155253.png)
 
   **网络前缀越长，地址块越小，路由越具体**；
 
 - 若路由器查表转发分组时发现有多条路由条目匹配，则选择网络前缀最长的那条路由条目，这称为**最长前缀匹配**，因为这样的路由更具体。
 
-![](computer-network/Screenshot-2026-02-28-152545.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-152545.png)
 
-![](computer-network/Screenshot-2026-02-28-155422.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-155422.png)
 
 - 【2021年 题35】现将一个IP网络划分为3个子网，若其中一个子网是192.168.9.128/26，则下列网络中。不可能是另外两个子网之一的是( )
   A. 192.168.9.0/25
@@ -1376,7 +1376,7 @@ $$
 >   24个连续的比特1对应网络号   
 >   **3个连续的比特1表示从主机号借用3个比特作为子网号**
 
-![](computer-network/Screenshot-2026-02-28-172549.png)
+![](/uploads/posts/computer-network/Screenshot-2026-02-28-172549.png)
 
 #### 使用变长子网掩码划分子网
 
@@ -1390,9 +1390,9 @@ $$
 >
 > - 建议先为大的子块选取。
 
-![](computer-network/Screenshot-2026-03-09-093223.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-093223.png)
 
-![](computer-network/Screenshot-2026-03-09-093533.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-093533.png)
 
 ---
 
@@ -1400,14 +1400,14 @@ $$
 
 #### IPv4地址与MAC地址的封装位置
 
-![](computer-network/Screenshot-2026-03-09-093821.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-093821.png)
 
 #### 数据报传送过程中IPv4地址与MAC地址的变化情况
 
 - 在数据包的传送过程中，数据包的源IP地址和目的IP地址保持不变。
 - 在数据包的传送过程中，数据包的源MAC地址和目的MAC地址逐链路（或网络）改变。
 
-![](computer-network/Screenshot-2026-03-09-093841.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-093841.png)
 
 #### IPv4地址与MAC地址的关系
 
@@ -1431,7 +1431,7 @@ $$
 
 - 转发表中的MAC地址与交换机接口号的对应关系记录也要周期性删除，因为这种对应关系并不是永久不变的。
 
-![](computer-network/Screenshot-2026-03-09-102041.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-102041.png)
 
 - ARP 协议的相关注意事项：
   - 由于 ARP 协议的主要用途是从网际层使用的 IP 地址解析出在数据链路层使用的 MAC 地址。因此，有的教材将 ARP 协议划归在 **网际层**，而有的教材将 ARP 协议划归在 **数据链路层**。这两种做法都是可以的。
@@ -1451,13 +1451,13 @@ $$
   - 若找到匹配的路由条目，则按该路由条目的指示进行转发；
   - 否则丢弃该IP数据报，并向发送该IP数据报的源主机发送差错报告。
 
-![](computer-network/Screenshot-2026-03-09-104601.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-104601.png)
 
 ---
 
 ### 4.2.7 IPv4数据报的首部格式
 
-![](computer-network/Screenshot-2026-03-09-112701.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-112701.png)
 
 #### 首部长度
 
@@ -1490,7 +1490,7 @@ ___________________________________________________
 
 【举例】某个IPv4数据报总长度为3820字节，采用20字节固定首部，根据数据链路层要求，需要将该IPv4数据报分片为长度不超过1420字节的数据报片。
 
-![](computer-network/Screenshot-2026-03-09-113819.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-113819.png)
 
 |              | **总长度** | **标识** | **MF** | **DF** | **片偏移**     |
 | ------------ | ---------- | -------- | ------ | ------ | -------------- |
@@ -1541,7 +1541,7 @@ D. 800，1
 
 【举例】生存时间TTL字段的作用 —— **防止被错误路由的IPv4数据报无限制地在因特网中兜圈**
 
-![](computer-network/Screenshot-2026-03-09-115555.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-115555.png)
 
 ####  协议
 
@@ -1558,7 +1558,7 @@ D. 800，1
 - 长度为16个比特，用于检测IPv4数据报在传输过程中其**首部是否出现了差错**。
 - IPv4数据报每经过一个路由器，其首部中的某些字段的值（例如生存时间TTL、标志以及片偏移等）都可能发生变化，因此**路由器都要重新计算一下首部检验和**。
 
-![](computer-network/Screenshot-2026-03-09-133113.png)
+![](/uploads/posts/computer-network/Screenshot-2026-03-09-133113.png)
 
 - 上述检验和的计算方法不仅用于IP协议，还用于运输层的用户数据报协议UDP和传输控制协议TCP，常被称为**因特网检验和**（Internet Checksum）。这种检验和的检错性能虽然不如CRC，但更易用软件实现。
 
