@@ -1,841 +1,126 @@
-<!DOCTYPE html>
-<html lang="zh-CN" dir="ltr">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n">
-<title>群晖NAS代理及Emby配置</title>
-
-
-<link rel="canonical" href="http://localhost:1313/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-
-
-<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="群晖NAS代理及Emby配置">
-<meta property='og:description' content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n">
-<meta property='og:url' content='http://localhost:1313/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/'>
-<meta property='og:site_name' content='边个濑椰的博客'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='代理' /><meta property='article:tag' content='网络' /><meta property='article:published_time' content='2026-02-16T11:12:15&#43;08:00'/><meta property='article:modified_time' content='2026-02-16T11:12:15&#43;08:00'/>
-<meta name="twitter:title" content="群晖NAS代理及Emby配置">
-<meta name="twitter:description" content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n">
-    <link rel="shortcut icon" href="/img/favicon.png" />
-
-    </head>
-    <body class="
-    article-page
-    ">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
-        }
-    })();
-</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header>
-        <figure class="site-avatar">
-                <a href="/">
-                    <img src="/img/avatar.png" 
-                        width="150"
-                        height="150"
-                        class="site-logo"
-                        loading="lazy"
-                        alt="Avatar">
-                </a>
-                
-                    <span class="emoji">🍥</span>
-                
-            </figure>
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">边个濑椰的博客</a></h1>
-            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
-        </div>
-    </header><ol class="menu-social">
-            
-                <li>
-                    <a 
-                        href='https://github.com/ottercoconut/'
-                        
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-        <li >
-            <a href='/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>首页</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/archives/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>归档</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/search/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>搜索</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/links/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-                    <li id="i18n-switch">  
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
-                            
-                                
-                                
-                                    
-                                        
-                                    
-                                
-                                <option value="/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/" selected>简体中文</option>
-                            
-                                
-                                
-                                    
-                                
-                                <option value="/en/" >English</option>
-                            
-                                
-                                
-                                    
-                                
-                                <option value="/ja/" >日本語</option>
-                            
-                        </select>
-                    </li>
-                
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span></span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                
-    <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title"></h2>
-        
-        <div class="widget--toc">
-            <nav class="toc-nav" id="TableOfContents">
-                
-  <ol>
-    <li><a href="#v2raya">v2rayA</a></li>
-    <li><a href="#emby">Emby</a></li>
-  </ol>
-
-            </nav>
-        </div>
-    </section>
-
-            
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <article class="main-article">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            
-            
-            
-            <a href="/categories/%E6%8A%80%E6%9C%AF/" style="background-color: hsl(154, 60%, 84%); color: hsl(154, 60%, 15%);">
-                技术
-            </a>
-        
-            
-            
-            
-            <a href="/categories/%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF/" style="background-color: hsl(114, 60%, 84%); color: hsl(114, 60%, 15%);">
-                实用技术
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/">群晖NAS代理及Emby配置</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    
-    
-    
-    <footer class="article-meta">
-        
-            <div class="inline-meta">
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                    <time class="article-time--published" datetime='2026-02-16T11:12:15&#43;08:00'>Monday, February 16, 2026</time>
-                
-
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                    <time class="article-time--reading">
-                        
-                    </time>
-                
-            </div>
-        
-
-        
-
-        
-    </footer>
-    
-</div>
-
-</header>
-
-    
-    <aside class="article-toc">
-        <details>
-            <summary>
-                <div class="article-toc-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
-                    <span></span>
-                </div>
-            </summary>
-            <nav class="toc-nav">
-                
-  <ol>
-    <li><a href="#v2raya">v2rayA</a></li>
-    <li><a href="#emby">Emby</a></li>
-  </ol>
-
-            </nav>
-        </details>
-    </aside>
-    
-
-    <section class="article-content">
-    
-    
-    <p>近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：</p>
-<ol>
-<li>重新安装v2rayA</li>
-<li>配置docker版的emby。</li>
-</ol>
-<p>参考网站：</p>
-<p><a class="link" href="https://v2raya.org/docs/prologue/installation/linux/"  target="_blank" rel="noopener"
-    >Linux 后备安装方式 - v2rayA</a></p>
-<p><a class="link" href="https://github.com/XTLS/Xray-core"  target="_blank" rel="noopener"
-    >XTLS/Xray-core: Xray, Penetrates Everything. Also the best v2ray-core. Where the magic happens. An open platform for various uses.</a></p>
-<p><a class="link" href="https://v2raya.org/docs/advanced-application/synology-transparent-proxy/"  target="_blank" rel="noopener"
-    >群晖实现透明代理 - v2rayA</a></p>
-<p><a class="link" href="https://github.com/sjtuross/syno-iptables"  target="_blank" rel="noopener"
-    >sjtuross/syno-iptables: Some missing iptables modules for Synology</a></p>
-<p><a class="link" href="https://blog.csdn.net/caca_66/article/details/150264099"  target="_blank" rel="noopener"
-    >群晖 DSM 7.2 为 Container Manager（docker）设置代理_群晖docker设置代理-CSDN博客</a></p>
-<h2 id="v2raya">v2rayA
-</h2><p>由v2rayA的官方文档可见，群晖并没有特别适配的版本，所以采用通用的二进制文件进行安装。既然裸连也无法从github上拉取文件，我们在电脑上下好传到NAS上。此外，下面的安装内容实则和文档略有不同。</p>
-<ol>
-<li>
-<p>拷贝v2rayA和xray</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cp v2raya_linux_x64 /usr/local/bin/v2raya
-</span></span><span class="line"><span class="cl">cp xray /usr/local/bin/
-</span></span><span class="line"><span class="cl">chmod +x /usr/local/bin/v2raya
-</span></span><span class="line"><span class="cl">chmod +x /usr/local/bin/xray
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>拷贝xray自带的GFWList代理规则文件：<code>geoip.dat</code>和<code>geosite.dat</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/share
-</span></span><span class="line"><span class="cl">mkdir xray
-</span></span><span class="line"><span class="cl">cp .../g* xray
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>修改<code>service</code>配置文件</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo vi /etc/systemd/system/v2raya.service
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>内容由ChatGPT结合官方文档生成：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>Unit<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">Description</span><span class="o">=</span>v2rayA Service
-</span></span><span class="line"><span class="cl"><span class="nv">After</span><span class="o">=</span>network.target
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>Service<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">Type</span><span class="o">=</span>simple
-</span></span><span class="line"><span class="cl"><span class="nv">User</span><span class="o">=</span>root
-</span></span><span class="line"><span class="cl"><span class="nv">Environment</span><span class="o">=</span><span class="s2">&#34;V2RAYA_CONFIG=/usr/local/etc/v2raya&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">Environment</span><span class="o">=</span><span class="s2">&#34;V2RAYA_LOG_FILE=/tmp/v2raya.log&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">Environment</span><span class="o">=</span><span class="s2">&#34;XRAY_LOCATION_ASSET=/usr/local/share/xray&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">ExecStart</span><span class="o">=</span>/usr/local/bin/v2raya --passcheckroot
-</span></span><span class="line"><span class="cl"><span class="nv">Restart</span><span class="o">=</span>on-failure
-</span></span><span class="line"><span class="cl"><span class="nv">LimitNOFILE</span><span class="o">=</span><span class="m">1000000</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>Install<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>激活v2rayA，根据官方文档，采用服务的形式运行</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl start v2raya
-</span></span><span class="line"><span class="cl">sudo systemctl status v2raya
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>配置开机自启。理论上这步之后配置完毕，笔者又顺便解决了群晖用不了透明代理的问题</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> v2raya
-</span></span><span class="line"><span class="cl">sudo systemctl is-enabled v2raya
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>激活透明代理</p>
-<div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>arch</th>
-          <th>kernel</th>
-          <th>iptables version</th>
-          <th>system model</th>
-          <th>platform version</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>apollolake</td>
-          <td>4.4.180+</td>
-          <td>v1.8.3</td>
-          <td>DS918+</td>
-          <td>7.0.1-42218</td>
-      </tr>
-      <tr>
-          <td>apollolake</td>
-          <td>4.4.59+</td>
-          <td>v1.6.0</td>
-          <td>DS918+</td>
-          <td>6.2.3-25426</td>
-      </tr>
-      <tr>
-          <td>broadwell</td>
-          <td>3.10.105</td>
-          <td>v1.6.0</td>
-          <td>DS3617xs</td>
-          <td>6.2.3-25426</td>
-      </tr>
-      <tr>
-          <td>bromolow</td>
-          <td>3.10.105</td>
-          <td>v1.6.0</td>
-          <td>DS3615xs</td>
-          <td>6.2.3-25426</td>
-      </tr>
-      <tr>
-          <td>geminilake</td>
-          <td>4.4.180+</td>
-          <td>v1.8.3</td>
-          <td>DS920+</td>
-          <td>7.1-42661</td>
-      </tr>
-      <tr>
-          <td>geminilake</td>
-          <td>4.4.302+</td>
-          <td>v1.8.3</td>
-          <td>DS220+</td>
-          <td>7.2-64570</td>
-      </tr>
-  </tbody>
-</table></div>
-<p>由于群晖系统的原因，先根据型号确定架构，然后从github仓库中下好的模块中选出适配机器的文件（比如笔者的DS224是geminilake）</p>
-<p>上传相应的ko模块至<code>/lib/modules/</code>，上传相应的so模块至<code>/usr/lib/iptables/</code>，即可。</p>
-<p>运行<code>sudo -i</code>之后再运行以下<code>insmod</code>命令尝试加载ko内核模块。由于模块互相有依赖性，需按一定顺序加载</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">insmod /lib/modules/nfnetlink.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip_set.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip_set_hash_ip.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_set.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip_set_hash_net.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_mark.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_connmark.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_comment.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_TPROXY.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_socket.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/iptable_mangle.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/textsearch.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ts_bm.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/xt_string.ko
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">insmod /lib/modules/nf_nat_ipv6.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/nf_nat_masquerade_ipv6.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip6t_MASQUERADE.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip6table_nat.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip6table_raw.ko
-</span></span><span class="line"><span class="cl">insmod /lib/modules/ip6table_mangle.ko
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>但是系统重启后，模块可能需要重新加载。而笔者不再使用透明代理，所以没再研究。</p>
-</li>
-</ol>
-<h2 id="emby">Emby
-</h2><p>在配置好v2rayA后，即使采用了改配置文件的办法，emby的流量仍不能成功地通过v2rayA来走，各种修改配置ip后无果，于是自然想到是docker变成本机服务导致的。</p>
-<p>在v2rayA上多次修改配置后，终于发现开启透明代理解决问题，同时也解决了连接不上Docker仓库的问题，但更大的问题是启用透明代理会使外网访问全部失败（亏好内网还能连接）。“透明代理”我想可以理解为“全局代理”。</p>
-<p>Docker(Container Manager)单独设置代理的问题详见前言链接。</p>
-<ol>
-<li>
-<p>在“映像”中选中emby并运行，在“存储空间设置”中加入媒体库的路径，在“环境”中加入三个环境变量，“网络”中选择<code>host</code>模式：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">HTTP_PROXY</span> <span class="o">=</span> http://127.0.0.1:20171
-</span></span><span class="line"><span class="cl"><span class="nv">HTTPS_PROXY</span> <span class="o">=</span> http://127.0.0.1:20171
-</span></span><span class="line"><span class="cl"><span class="nv">NO_PROXY</span> <span class="o">=</span> localhost,127.0.0.1
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>完成基本设置，安装好之前的动漫相关的插件，刮削成功。</p>
-</li>
-</ol>
-
-</section>
-
-
-    <footer class="article-meta article-footer">
-    
-    <section class="article-tags">
-        
-            <a href="/tags/%E4%BB%A3%E7%90%86/">代理</a>
-        
-            <a href="/tags/%E7%BD%91%E7%BB%9C/">网络</a>
-        
-    </section>
-
-
-    
-    <section class="article-copyright inline-meta">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
-</svg>
-
-
-
-        <span>Licensed under CC BY-NC-SA 4.0</span>
-    </section>
-    </footer>
-
-
-    
-        <link 
-                rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
-            ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
-                defer
-                >
-            </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
-                defer
-                >
-            </script><script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const elementsToRender = [".main-article", ".widget--toc"];
-
-        elementsToRender.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) {
-                renderMathInElement(element, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false },
-                        { left: "\\(", right: "\\)", display: false },
-                        { left: "\\[", right: "\\]", display: true }
-                    ],
-                    ignoredClasses: ["gist"]
-                });
-            }
-        });
-    });
-</script>
-    
-</article>
-
-    
-
-    
-
-<aside>
-    <h2 class="section-title"></h2>
-    <div class="subsection-list">
-        <div class="article-list--tile">
-            
-                
-<article class="">
-    <a href="/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">如何在WSL2上使用本机代理</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/%E5%9C%A8linuxcentos%E7%B3%BB%E7%BB%9F%E4%B8%8A%E9%83%A8%E7%BD%B2minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">在Linux(CentOS)系统上部署Minecraft服务器</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/cs224n/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">CS224N</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/pytorch%E5%9F%BA%E7%A1%80/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Pytorch基础</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/java-%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Java 多线程</h2>
-        </div>
-    </a>
-</article>
-            
-        </div>
-    </div>
-</aside>
-
-     
-    
-        
-        <div class="disqus-container">
-    <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
-
-<style>
-    .disqus-container {
-        background-color: var(--card-background);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--shadow-l1);
-        padding: var(--card-padding);
-    }
-</style>
-
-<script>
-    window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
-            DISQUS.reset({
-                reload: true
-            });
-        }
-    })
-</script>
-    
-
-    <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
-        
-            2020 - 
-        
-        2026 边个濑椰的博客
-    </section>
-    
-    <section class="powerby">
-         <br />
-        
-    </section>
-</footer>
-
-
-    
-
-
-
-<script type="module">
+<!doctype html><html lang=zh-CN dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n"><title>群晖NAS代理及Emby配置</title><link rel=canonical href=https://ottercoconut.github.io/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="群晖NAS代理及Emby配置"><meta property='og:description' content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n"><meta property='og:url' content='https://ottercoconut.github.io/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/'><meta property='og:site_name' content='边个濑椰的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='代理'><meta property='article:tag' content='网络'><meta property='article:published_time' content='2026-02-16T11:12:15+08:00'><meta property='article:modified_time' content='2026-02-16T11:12:15+08:00'><meta name=twitter:title content="群晖NAS代理及Emby配置"><meta name=twitter:description content="近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>边个濑椰的博客</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>首页</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/ selected>简体中文</option><option value=/en/>English</option><option value=/ja/>日本語</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav class=toc-nav id=TableOfContents><ol><li><a href=#v2raya>v2rayA</a></li><li><a href=#emby>Emby</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E6%8A%80%E6%9C%AF/ style=background-color:#beefd9;color:#0f3d29>技术
+</a><a href=/categories/%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF/ style=background-color:#c3efbe;color:#143d0f>实用技术</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/>群晖NAS代理及Emby配置</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-02-16T11:12:15+08:00>Monday, February 16, 2026</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><aside class=article-toc><details><summary><div class=article-toc-title><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6-6 6"/></svg>
+<span></span></div></summary><nav class=toc-nav><ol><li><a href=#v2raya>v2rayA</a></li><li><a href=#emby>Emby</a></li></ol></nav></details></aside><section class=article-content><p>近日笔者在使用群晖NAS的v2rayA时遇到了时间同步不正确导致的无法正常使用的问题，导致emby无法刮削。虽然不知道原因，但也是个老问题了，版本很旧，而且用的是第三方软件市场的docker，现在docker也不能裸连获取了。下面是解决经验：</p><ol><li>重新安装v2rayA</li><li>配置docker版的emby。</li></ol><p>参考网站：</p><p><a class=link href=https://v2raya.org/docs/prologue/installation/linux/ target=_blank rel=noopener>Linux 后备安装方式 - v2rayA</a></p><p><a class=link href=https://github.com/XTLS/Xray-core target=_blank rel=noopener>XTLS/Xray-core: Xray, Penetrates Everything. Also the best v2ray-core. Where the magic happens. An open platform for various uses.</a></p><p><a class=link href=https://v2raya.org/docs/advanced-application/synology-transparent-proxy/ target=_blank rel=noopener>群晖实现透明代理 - v2rayA</a></p><p><a class=link href=https://github.com/sjtuross/syno-iptables target=_blank rel=noopener>sjtuross/syno-iptables: Some missing iptables modules for Synology</a></p><p><a class=link href=https://blog.csdn.net/caca_66/article/details/150264099 target=_blank rel=noopener>群晖 DSM 7.2 为 Container Manager（docker）设置代理_群晖docker设置代理-CSDN博客</a></p><h2 id=v2raya>v2rayA</h2><p>由v2rayA的官方文档可见，群晖并没有特别适配的版本，所以采用通用的二进制文件进行安装。既然裸连也无法从github上拉取文件，我们在电脑上下好传到NAS上。此外，下面的安装内容实则和文档略有不同。</p><ol><li><p>拷贝v2rayA和xray</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cp v2raya_linux_x64 /usr/local/bin/v2raya
+</span></span><span class=line><span class=cl>cp xray /usr/local/bin/
+</span></span><span class=line><span class=cl>chmod +x /usr/local/bin/v2raya
+</span></span><span class=line><span class=cl>chmod +x /usr/local/bin/xray
+</span></span></code></pre></td></tr></table></div></div></li><li><p>拷贝xray自带的GFWList代理规则文件：<code>geoip.dat</code>和<code>geosite.dat</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> /usr/local/share
+</span></span><span class=line><span class=cl>mkdir xray
+</span></span><span class=line><span class=cl>cp .../g* xray
+</span></span></code></pre></td></tr></table></div></div></li><li><p>修改<code>service</code>配置文件</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo vi /etc/systemd/system/v2raya.service
+</span></span></code></pre></td></tr></table></div></div><p>内容由ChatGPT结合官方文档生成：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=o>[</span>Unit<span class=o>]</span>
+</span></span><span class=line><span class=cl><span class=nv>Description</span><span class=o>=</span>v2rayA Service
+</span></span><span class=line><span class=cl><span class=nv>After</span><span class=o>=</span>network.target
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>[</span>Service<span class=o>]</span>
+</span></span><span class=line><span class=cl><span class=nv>Type</span><span class=o>=</span>simple
+</span></span><span class=line><span class=cl><span class=nv>User</span><span class=o>=</span>root
+</span></span><span class=line><span class=cl><span class=nv>Environment</span><span class=o>=</span><span class=s2>&#34;V2RAYA_CONFIG=/usr/local/etc/v2raya&#34;</span>
+</span></span><span class=line><span class=cl><span class=nv>Environment</span><span class=o>=</span><span class=s2>&#34;V2RAYA_LOG_FILE=/tmp/v2raya.log&#34;</span>
+</span></span><span class=line><span class=cl><span class=nv>Environment</span><span class=o>=</span><span class=s2>&#34;XRAY_LOCATION_ASSET=/usr/local/share/xray&#34;</span>
+</span></span><span class=line><span class=cl><span class=nv>ExecStart</span><span class=o>=</span>/usr/local/bin/v2raya --passcheckroot
+</span></span><span class=line><span class=cl><span class=nv>Restart</span><span class=o>=</span>on-failure
+</span></span><span class=line><span class=cl><span class=nv>LimitNOFILE</span><span class=o>=</span><span class=m>1000000</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>[</span>Install<span class=o>]</span>
+</span></span><span class=line><span class=cl><span class=nv>WantedBy</span><span class=o>=</span>multi-user.target
+</span></span></code></pre></td></tr></table></div></div></li><li><p>激活v2rayA，根据官方文档，采用服务的形式运行</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo systemctl start v2raya
+</span></span><span class=line><span class=cl>sudo systemctl status v2raya
+</span></span></code></pre></td></tr></table></div></div><p>配置开机自启。理论上这步之后配置完毕，笔者又顺便解决了群晖用不了透明代理的问题</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo systemctl <span class=nb>enable</span> v2raya
+</span></span><span class=line><span class=cl>sudo systemctl is-enabled v2raya
+</span></span></code></pre></td></tr></table></div></div></li><li><p>激活透明代理</p><div class=table-wrapper><table><thead><tr><th>arch</th><th>kernel</th><th>iptables version</th><th>system model</th><th>platform version</th></tr></thead><tbody><tr><td>apollolake</td><td>4.4.180+</td><td>v1.8.3</td><td>DS918+</td><td>7.0.1-42218</td></tr><tr><td>apollolake</td><td>4.4.59+</td><td>v1.6.0</td><td>DS918+</td><td>6.2.3-25426</td></tr><tr><td>broadwell</td><td>3.10.105</td><td>v1.6.0</td><td>DS3617xs</td><td>6.2.3-25426</td></tr><tr><td>bromolow</td><td>3.10.105</td><td>v1.6.0</td><td>DS3615xs</td><td>6.2.3-25426</td></tr><tr><td>geminilake</td><td>4.4.180+</td><td>v1.8.3</td><td>DS920+</td><td>7.1-42661</td></tr><tr><td>geminilake</td><td>4.4.302+</td><td>v1.8.3</td><td>DS220+</td><td>7.2-64570</td></tr></tbody></table></div><p>由于群晖系统的原因，先根据型号确定架构，然后从github仓库中下好的模块中选出适配机器的文件（比如笔者的DS224是geminilake）</p><p>上传相应的ko模块至<code>/lib/modules/</code>，上传相应的so模块至<code>/usr/lib/iptables/</code>，即可。</p><p>运行<code>sudo -i</code>之后再运行以下<code>insmod</code>命令尝试加载ko内核模块。由于模块互相有依赖性，需按一定顺序加载</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>insmod /lib/modules/nfnetlink.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip_set.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip_set_hash_ip.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_set.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip_set_hash_net.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_mark.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_connmark.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_comment.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_TPROXY.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_socket.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/iptable_mangle.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/textsearch.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ts_bm.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/xt_string.ko
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>insmod /lib/modules/nf_nat_ipv6.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/nf_nat_masquerade_ipv6.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip6t_MASQUERADE.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_nat.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_raw.ko
+</span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_mangle.ko
+</span></span></code></pre></td></tr></table></div></div><p>但是系统重启后，模块可能需要重新加载。而笔者不再使用透明代理，所以没再研究。</p></li></ol><h2 id=emby>Emby</h2><p>在配置好v2rayA后，即使采用了改配置文件的办法，emby的流量仍不能成功地通过v2rayA来走，各种修改配置ip后无果，于是自然想到是docker变成本机服务导致的。</p><p>在v2rayA上多次修改配置后，终于发现开启透明代理解决问题，同时也解决了连接不上Docker仓库的问题，但更大的问题是启用透明代理会使外网访问全部失败（亏好内网还能连接）。“透明代理”我想可以理解为“全局代理”。</p><p>Docker(Container Manager)单独设置代理的问题详见前言链接。</p><ol><li><p>在“映像”中选中emby并运行，在“存储空间设置”中加入媒体库的路径，在“环境”中加入三个环境变量，“网络”中选择<code>host</code>模式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>HTTP_PROXY</span> <span class=o>=</span> http://127.0.0.1:20171
+</span></span><span class=line><span class=cl><span class=nv>HTTPS_PROXY</span> <span class=o>=</span> http://127.0.0.1:20171
+</span></span><span class=line><span class=cl><span class=nv>NO_PROXY</span> <span class=o>=</span> localhost,127.0.0.1
+</span></span></code></pre></td></tr></table></div></div></li><li><p>完成基本设置，安装好之前的动漫相关的插件，刮削成功。</p></li></ol></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/%E4%BB%A3%E7%90%86/>代理</a>
+<a href=/tags/%E7%BD%91%E7%BB%9C/>网络</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title></h2><div class=subsection-list><div class=article-list--tile><article><a href=/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/><div class=article-details><h2 class=article-title>如何在WSL2上使用本机代理</h2></div></a></article><article><a href=/p/%E5%9C%A8linuxcentos%E7%B3%BB%E7%BB%9F%E4%B8%8A%E9%83%A8%E7%BD%B2minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8/><div class=article-details><h2 class=article-title>在Linux(CentOS)系统上部署Minecraft服务器</h2></div></a></article><article><a href=/p/cs224n/><div class=article-details><h2 class=article-title>CS224N</h2></div></a></article><article><a href=/p/pytorch%E5%9F%BA%E7%A1%80/><div class=article-details><h2 class=article-title>Pytorch基础</h2></div></a></article><article><a href=/p/java-%E5%A4%9A%E7%BA%BF%E7%A8%8B/><div class=article-details><h2 class=article-title>Java 多线程</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 边个濑椰的博客</section><section class=powerby><br></section></footer><script type=module>
     import gallery from '\/ts\/gallery.js';
 
     const articleContent = document.querySelector('.article-content');
@@ -859,14 +144,4 @@
         });
         lightbox.init();
     }
-</script>
-    
-
-            </main>
-        </div>
-        
-<script type="text/javascript" src="/ts/main.ebbcfeccd0e3cfa572562617604832bdf089c169a8390ba9150b13949cfc6b7d.js" defer></script>
-
-
-    </body>
-</html>
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>
