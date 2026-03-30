@@ -11,7 +11,7 @@ toc = true
 
 ## Intro
 
-本篇是对[Stanford CS 224N | Natural Language Processing with Deep Learning](https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/) (Spring 2024)这门课程的学习笔记。关于这门课的内容，总结如下：
+本篇是对[Stanford CS 224N | Natural Language Processing with Deep Learning (Spring 2024)](https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/) 这门课程的学习笔记。关于这门课的知识点，总结如下：
 
 - 词向量、RNN、LSTM、Seq2Seq 模型、机器翻译、注意力机制、Transformer 等等
 
@@ -712,6 +712,8 @@ $$
 
 ### RNN Language Model
 
+[The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+
 ![](/uploads/posts/cs224n/RNN-2.png)
 
 **RNN 的优点**：
@@ -763,7 +765,7 @@ $$
 - 随着时间步 $T$ 的增加，梯度会呈**指数级增长**。
 - 模型权重会更新得过大，导致网络变得极不稳定，参数值可能会溢出（变成 NaN），训练崩溃。
 
-如果在更新模型参数前，梯度的**范数 (norm)** 超过了预设的某个**阈值**，则按比例将其缩小，如果 $\|\hat{\boldsymbol{g}}\| \ge threshold$ ，则进行**梯度裁剪**，梯度裁剪**让模型更新时保持在**相同的方向**上，但只迈出**更小的一步**：
+如果在更新模型参数前，梯度的**范数 (norm)** 超过了预设的某个**阈值**，则按比例将其缩小，如果 $\|\hat{\boldsymbol{g}}\| \ge threshold$ ，则进行**梯度裁剪**，梯度裁剪**让模型更新时保持在**相同的方向**上，但只迈出**更小的一步：
 $$
 \hat{\boldsymbol{g}} \leftarrow \frac{threshold}{\|\hat{\boldsymbol{g}}\|} \hat{\boldsymbol{g}}
 $$
@@ -774,10 +776,107 @@ $$
 
 - 如果 $W_h$ 的特征值小于 1，或者激活函数（如图中提到的 $f$ 或 tanh）的导数小于 1。
 - 梯度会随着反向传播的步数增加而**指数级减小**。
-- 这对应了你提供图片中提到的 RNN 缺点：**“在实践中，很难获取到很多步之前的信息”**。当梯度变得极其微小时，远距离的权重更新几乎停滞，模型“忘记”了长期的上下文。
+- 这对应了提到的 RNN 缺点：**“在实践中，很难获取到很多步之前的信息”**。当梯度变得极其微小时，远距离的权重更新几乎停滞，模型“忘记”了长期的上下文。
 
 对于 vanilla RNN（基础 RNN）来说，学习如何跨越多个时间步长来**保留信息**实在是太困难了，因为隐藏状态 $\boldsymbol{h}^{(t)}$ 会被不断地**重写**：
 $$
 \boldsymbol{h}^{(t)} = \sigma(\boldsymbol{W}_h \boldsymbol{h}^{(t-1)} + \boldsymbol{W}_x \boldsymbol{x}^{(t)} + \boldsymbol{b})
 $$
 所以，我们引入独立记忆 ，如LSTM。或者建立直接连接，如Attention机制。
+
+---
+
+### **Long** **Short-Term** Memory
+
+[Understanding LSTM Networks -- colah's blog](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+**遗忘门 (Forget gate)**：控制从上一个细胞状态中保留什么以及忘记什么。
+$$
+\boldsymbol{f}^{(t)} = \sigma (\boldsymbol{W}_f \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_f \boldsymbol{x}^{(t)} + \boldsymbol{b}_f)
+$$
+**输入门 (Input gate)**：控制新细胞内容的哪些部分被写入到细胞中。
+$$
+\boldsymbol{i}^{(t)} = \sigma (\boldsymbol{W}_i \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_i \boldsymbol{x}^{(t)} + \boldsymbol{b}_i)
+$$
+**输出门 (Output gate)**：控制细胞的哪些部分被输出到隐藏状态中。
+$$
+\boldsymbol{o}^{(t)} = \sigma (\boldsymbol{W}_o \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_o \boldsymbol{x}^{(t)} + \boldsymbol{b}_o)
+$$
+**New cell content**：这是要被写入细胞的新内容（即我们在之前讨论中提到的“候选内容”）。
+$$
+\tilde{\boldsymbol{c}}^{(t)} = \tanh (\boldsymbol{W}_c \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_c \boldsymbol{x}^{(t)} + \boldsymbol{b}_c)
+$$
+**Cell state**：擦除（“忘记”）上一个细胞状态中的某些内容，并写入（“输入”）一些新的细胞内容。
+$$
+\boldsymbol{c}^{(t)} = \boldsymbol{f}^{(t)} \odot \boldsymbol{c}^{(t-1)} + \boldsymbol{i}^{(t)} \odot \tilde{\boldsymbol{c}}^{(t)}
+$$
+**隐藏状态 (Hidden state)**：从细胞中读取（“输出”）某些内容。
+$$
+\boldsymbol{h}^{(t)} = \boldsymbol{o}^{(t)} \odot \tanh \boldsymbol{c}^{(t)}
+$$
+
+#### Step-by-Step LSTM Walk Through
+
+![](/uploads/posts/cs224n/LSTM3-chain.png)
+
+- 在上图中，每条线都承载着一个完整的向量，从一个节点的输出指向其他节点的输入。粉色圆圈代表逐点运算，例如向量加法，而黄色方框代表已学习的神经网络层。合并的线条表示连接，而分叉的线条表示其内容被复制，并将副本发送到不同的位置。
+
+![](/uploads/posts/cs224n/LSTM3-C-line.png)
+
+- LSTM 的关键在于单元状态，也就是图中贯穿顶部的水平线。
+
+  单元状态就像一条传送带，它沿着整个链条直线传递，只有一些微小的线性交互。信息很容易原封不动地沿着传送带流动。
+
+- LSTM 能够对单元状态进行信息添加或移除，这种操作由称为“门”的结构进行精细调控。
+
+  门是一种选择性地允许信息通过的方式。它们由一个 sigmoid 神经网络层和一个逐点乘法运算组成。
+
+![](/uploads/posts/cs224n/LSTM3-focus-f.png)
+
+- LSTM 的第一步是决定我们要从细胞状态中丢弃什么信息 。这个决定由一个称为“遗忘门层”的 sigmoid 层来做出 。它接收 $h_{t-1}$ 和 $x_t$，并为细胞状态 $C_{t-1}$ 中的每个数字输出一个介于 0 和 1 之间的数值；1 代表“完全保留”，而 0 代表“彻底丢弃” 。
+- 让我们回到之前那个尝试根据前面所有单词预测下一个单词的语言模型例子 。在这样一个问题中，细胞状态可能包含了当前主语的性别信息，以便模型能使用正确的代词 。当我们看到一个新的主语时，我们会希望忘记旧主语的性别 。
+
+![](/uploads/posts/cs224n/LSTM3-focus-i.png)
+
+- 下一步是决定我们要将什么新信息存储在细胞状态中 。这包含两个部分。首先，一个称为“输入门层”的 sigmoid 层决定了我们将更新哪些值；接着，一个 $\tanh$ 层创建了一个包含新候选值的向量 $\tilde{C}_t$，这些值可以被添加到状态中。在下一步里，我们将结合这两个部分来对状态进行更新 。
+- 在我们的语言模型例子中，我们会希望将新主语的性别添加到细胞状态中，以替换我们正在遗忘的旧性别信息 。
+
+![](/uploads/posts/cs224n/LSTM3-focus-C.png)
+
+- 现在是时候将旧的细胞状态 $C_{t-1}$ 更新为新的细胞状态 $C_t$ 了。前面的步骤已经决定了要做什么，我们只需要去实际执行它 。
+
+- 我们将旧状态乘以 $f_t$，以此来忘掉我们之前决定要忘记的信息 。然后我们加上 $i_t * \tilde{C}_t$。这就是新的候选值，根据我们决定更新每个状态值的程度进行了缩放 。
+
+  在语言模型的例子中，正是在这里，我们实际丢弃了关于旧主语性别的信息，并添加了新信息，就像我们在前面步骤中决定的那样 。
+
+![](/uploads/posts/cs224n/LSTM3-focus-o.png)
+
+- 最后，我们需要决定我们要输出什么 。这个输出将基于我们的细胞状态，但会是一个经过过滤的版本 。
+
+  首先，我们运行一个 sigmoid 层，它决定了我们要输出细胞状态的哪些部分 。然后，我们将细胞状态通过 $\tanh$（将值推到 -1 和 1 之间）并将其乘以 sigmoid 门的输出，这样我们就只输出了我们决定输出的部分 。
+
+- 以语言模型为例，由于它刚刚处理了一个主语，接下来可能会倾向于输出与谓语动词相关的信息，以预判后续内容。例如，模型可能会输出该主语是单数还是复数，这样如果接下来出现动词，我们就能知道该以何种形式进行词形变化。
+
+#### How does LSTM solve vanishing gradients
+
+- LSTM 架构使得 RNN 更容易在多个时间步长内保留信息。例如，如果某个单元维度的遗忘门设置为 1，输入门设置为 0，那么该单元的信息将被无限期地保留。
+
+  相比之下，普通的 RNN 更难学习一个循环权重矩阵 $W_h$，以保留隐藏状态中的信息。
+
+- 尽管梯度消失/爆炸现象无法避免，但对于长距离依赖关系，模型还可以创建更直接、更线性的直通连接。比如ResNet, DenseNet......都在模块之间、层之间不同程度地创建了直接连接。
+
+#### Bidirectional RNNs
+
+- 传统的单向 RNN 或 LSTM 存在一个明显的局限：在处理序列时，它只能“向左看”（即只利用过去的历史上下文）。然而，在许多 NLP 任务（如情感分类、命名实体识别或句子整体理解）中，当前词的准确含义往往也依赖于“右侧”（未来）的上下文。
+- 为了解决这个问题，研究者引入了双向架构（通常使用 LSTM 实现，即 BiLSTM）：
+  - **前向 (Forward) RNN**：按照从左到右的顺序处理输入序列，计算出一系列隐藏状态 $\overrightarrow{h}_t$。
+  - **后向 (Backward) RNN**：按照从右到左的逆序处理同一个输入序列，计算出一系列隐藏状态 $\overleftarrow{h}_t$。
+  - **拼接状态 (Concatenated State)**：在每一个时间步 $t$，将前向和后向的隐藏状态拼接在一起，形成该位置的最终表示 $h_t = [\overrightarrow{h}_t; \overleftarrow{h}_t]$。这样，每个词的特征表示就同时包含了整个句子的左侧和右侧完整信息。
+- 双向 LSTM 的特征提取能力非常强大，但它**仅适用于能够一次性获取完整输入序列的任务**（例如对整段文本进行分类，或翻译时的源句子编码）。它**不能**用于传统的语言模型（Language Modeling），因为语言模型的本质任务是“预测下一个词”，如果允许模型看到右侧的“未来”信息，就违背了自回归预测的初衷。
+
+#### Neural Machine Translation
+
+- 神经机器翻译是 NLP 深度学习领域的第一个巨大成功。NMT 主要是基于 **Sequence-to-Sequence (Seq2Seq)** 架构，该架构的核心正是由两个 RNN（通常是 LSTM）组成的：**编码器 (Encoder)** 和 **解码器 (Decoder)**。
+- Encoder负责读取源语言句子，但在读取过程中它不产生实际的翻译输出，而是不断更新其隐藏状态。当 Encoder 处理完源句子的最后一个词后，其**最终的隐藏状态**（Final Hidden State）被视作整个句子的语义浓缩。它充当了一个“信息瓶颈”，因为整个源句子的所有复杂含义都必须被压缩进这一个固定维度的向量中。
+- Decodere端的 LSTM 本质上是一个**条件语言模型 (Conditional Language Model)**，初始隐藏状态不再是随机的或全零的，而是被严格赋值为 Encoder 输出的那个“瓶颈”向量。这意味着 Decoder 的所有生成动作都是**以源句子的语义向量为条件**展开的。
+  在每一个时间步，它根据当前的隐藏状态输出概率最高的词，并将该词（Feeding in last word）作为下一步的输入继续循环，直到生成句子结束标记 `<EOS>`。
