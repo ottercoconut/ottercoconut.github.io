@@ -25,10 +25,10 @@ toc = true
 | attic          | n.    | 阁楼               |
 | characteristic | adj.  | 特点,品质,特有的   |
 | crater         | n.    | 火山口,陨石坑;弹坑 |
-| illustrate     | vt.   | 举例说明,图解      |
+| illustrate     | v.    | 举例说明,图解      |
 | mound          | n.    | 土墩;一堆          |
 | geothermal     | adj.  | 地热的             |
-| reveal         | vt.   | 揭示;展现          |
+| reveal         | v.    | 揭示;展现          |
 | cellar         | n.    | 地下室,酒窖        |
 | stratum        | n.    | 地层;阶层          |
 | particle       | n.    | 微粒;颗粒;粒子     |
@@ -42,64 +42,64 @@ toc = true
 
 ### List4-List6
 
-| 单词          | 词性   | 中文释义              |
-| ------------- | ------ | --------------------- |
-| herd          | n./v.  | 兽群,牧群;放牧        |
-| fort          | n./v.  | 堡垒;设置要塞保卫     |
-| prey          | n.     | 被捕食者;受害者       |
-| succession    | n.     | 连续;继承;生物演替    |
-| petroleum     | n.     | 石油                  |
-| sophisticated | adj.   | 复杂精致的;富有经验的 |
-| ritual        | n.     | 典礼,仪式             |
-| accumulate    | vt.    | 堆积,积累             |
-| fracture      | n./v.  | 破裂;骨折;折断        |
-| substance     | n.     | 物质;实质             |
-| porosity      | n.     | 多孔性                |
-| abundance     | n.     | 丰富,富裕             |
-| considerable  | adj.   | 相当大或多的          |
-| toxic         | adj.   | 有毒,中毒的           |
-| favorable     | adj.   | 赞同称赞的;有利的     |
-| retain        | vt.    | 保持保留;记住         |
-| tectonic      | adj.   | 构造的                |
-| geometric     | adj.   | 几何学的              |
-| breed         | v./n.  | 繁殖;品种             |
-| cessation     | n.     | (暂时)停止,休止       |
-| drain         | v./n.  | 排水;耗尽;排水(系统)  |
-| scrape        | vt./n. | 刮去;擦刮;刮痕        |
-| arch          | n./v.  | 拱门,拱形;拱起        |
-| approximately | adv.   | 大约,近似             |
-| cylinder      | n.     | 圆筒,圆柱;汽缸        |
-| permeability  | n.     | 渗透性                |
-| amnesia       | n.     | 健忘症                |
-| proportion    | n.     | 比率;比例;相称        |
-| perception    | n.     | 知觉;觉察;观念        |
-| collision     | n.     | 碰撞,冲突             |
-| infantile     | adj.   | 婴儿的;婴儿期的       |
-| appropriate   | adj.   | 适当的,恰当的         |
-| fluctuation   | n.     | 波动,涨落             |
-| celebrity     | n.     | 名人;名气             |
-| inclusion     | n.     | 包含,内含物           |
-| corridor      | n.     | 走廊,通道             |
-| guild         | n.     | 同业公会;行会         |
+| 单词          | 词性  | 中文释义              |
+| ------------- | ----- | --------------------- |
+| herd          | n./v. | 兽群,牧群;放牧        |
+| fort          | n./v. | 堡垒;设置要塞保卫     |
+| prey          | n.    | 被捕食者;受害者       |
+| succession    | n.    | 连续;继承;生物演替    |
+| petroleum     | n.    | 石油                  |
+| sophisticated | adj.  | 复杂精致的;富有经验的 |
+| ritual        | n.    | 典礼,仪式             |
+| accumulate    | v.    | 堆积,积累             |
+| fracture      | n./v. | 破裂;骨折;折断        |
+| substance     | n.    | 物质;实质             |
+| porosity      | n.    | 多孔性                |
+| abundance     | n.    | 丰富,富裕             |
+| considerable  | adj.  | 相当大或多的          |
+| toxic         | adj.  | 有毒,中毒的           |
+| favorable     | adj.  | 赞同称赞的;有利的     |
+| retain        | v.    | 保持保留;记住         |
+| tectonic      | adj.  | 构造的                |
+| geometric     | adj.  | 几何学的              |
+| breed         | v./n. | 繁殖;品种             |
+| cessation     | n.    | (暂时)停止,休止       |
+| drain         | v./n. | 排水;耗尽;排水(系统)  |
+| scrape        | v./n. | 刮去;擦刮;刮痕        |
+| arch          | n./v. | 拱门,拱形;拱起        |
+| approximately | adv.  | 大约,近似             |
+| cylinder      | n.    | 圆筒,圆柱;汽缸        |
+| permeability  | n.    | 渗透性                |
+| amnesia       | n.    | 健忘症                |
+| proportion    | n.    | 比率;比例;相称        |
+| perception    | n.    | 知觉;觉察;观念        |
+| collision     | n.    | 碰撞,冲突             |
+| infantile     | adj.  | 婴儿的;婴儿期的       |
+| appropriate   | adj.  | 适当的,恰当的         |
+| fluctuation   | n.    | 波动,涨落             |
+| celebrity     | n.    | 名人;名气             |
+| inclusion     | n.    | 包含,内含物           |
+| corridor      | n.    | 走廊,通道             |
+| guild         | n.    | 同业公会;行会         |
 
 ### List7-List9
 
 | 单词          | 词性    | 中文释义                       |
 | ------------- | ------- | ------------------------------ |
-| depict        | vt.     | 描绘,描述                      |
+| depict        | v.      | 描绘,描述                      |
 | engraving     | n./v.   | 版画;雕刻;雕刻                 |
-| stencil       | n./vt.  | 图案模板;用模板印刷            |
+| stencil       | n./v.   | 图案模板;用模板印刷            |
 | retreat       | n.      | 撤退                           |
 | projection    | n.      | 预测;规划;投射;突起物          |
 | dissolve      | v.      | 溶解;解除                      |
-| undergo       | vt.     | 经历;承受                      |
+| undergo       | v.      | 经历;承受                      |
 | temperate     | adj.    | 适度的,温和的                  |
 | surplus       | adj./n. | 过剩多余的;余额;盈余           |
 | shale         | n.      | 页岩                           |
 | silt          | n.      | 淤泥;泥沙                      |
 | derive        | v.      | 起源于,来自;获得               |
 | aboriginal    | adj.    | 原产的;土著的                  |
-| extract       | vt./n.  | 提取;选取;提炼;摘录;引文       |
+| extract       | v./n.   | 提取;选取;提炼;摘录;引文       |
 | dense         | adj.    | 密集的;浓的                    |
 | arid          | adj.    | 干旱的;贫瘠的;枯燥的           |
 | orient        | v./n.   | 标定方向;以...为参照;东方;亚洲 |
@@ -109,23 +109,23 @@ toc = true
 | severe        | adj.    | 严峻的;严厉的;艰难的           |
 | trail         | v./n.   | 追踪;足迹;小径;一缕            |
 | isotope       | n.      | 同位素                         |
-| possess       | vt.     | 拥有;具备;控制                 |
+| possess       | v.      | 拥有;具备;控制                 |
 | enclosure     | n.      | 围场;围地                      |
 | cease         | v.      | 停止;终止                      |
 | lichen        | n.      | 地衣                           |
-| assign        | vt.     | 分派;布置;赋予                 |
+| assign        | v.      | 分派;布置;赋予                 |
 | niche         | n.      | 生态位;壁龛                    |
 | consistent    | adj.    | 一致连贯的                     |
-| portray       | vt.     | 描绘;扮演                      |
+| portray       | v.      | 描绘;扮演                      |
 | gravel        | n.      | 沙砾;碎石                      |
-| punctuate     | vt.     | 加标点;不时打断;加强           |
+| punctuate     | v.      | 加标点;不时打断;加强           |
 | reproduce     | v.      | 复制;重现;繁殖                 |
 | flutter       | n./v.   | 摆动,颤动;飘飞                 |
 | metamorphosis | n.      | 变形                           |
 | specialize    | v.      | 专门从事;详细说明              |
 | earthenware   | n./adj. | 陶器;陶制的                    |
 | hinder        | v.      | 阻碍                           |
-| engrave       | vt.     | 雕刻;铭记                      |
+| engrave       | v.      | 雕刻;铭记                      |
 | neonate       | n.      | 新生儿                         |
 | dome          | n.      | 圆屋顶;穹顶                    |
 | expedition    | n.      | 远征;探险队                    |
@@ -164,8 +164,8 @@ toc = true
 | subsidence    | n.      | 沉降;下沉                     |
 | swamp         | n./v.   | 沼泽;湿地;淹没;陷入困境       |
 | subterranean  | adj.    | 地底下的                      |
-| sustain       | vt.     | 维持;支持;遭受;救济           |
-| facilitate    | vt.     | 促进助长                      |
+| sustain       | v.      | 维持;支持;遭受;救济           |
+| facilitate    | v.      | 促进助长                      |
 | tropical      | adj.    | 热带的                        |
 | readily       | adv.    | 乐意地;快捷容易地             |
 | metabolic     | adj.    | 新陈代谢的                    |
@@ -174,7 +174,7 @@ toc = true
 | substantial   | adj.    | 重大的;大量的;结实的          |
 | intersect     | v.      | 横穿;交叉                     |
 | recruit       | n./v.   | 新成员;招聘征募               |
-| resemble      | vt.     | 与...相像,类似                |
+| resemble      | v.      | 与...相像,类似                |
 | porous        | adj.    | 多孔的;渗透的                 |
 | crystalline   | adj.    | 结晶的;清澈的                 |
 | precipitation | n.      | 降水;沉淀                     |
@@ -189,13 +189,13 @@ toc = true
 | slope         | n./v.   | 斜坡;斜面;倾斜;悄悄潜行       |
 | contaminate   | v.      | 污染;弄脏                     |
 | specimen      | n.      | 标本;样品                     |
-| saturate      | vt.     | 渗透;使饱和                   |
+| saturate      | v.      | 渗透;使饱和                   |
 | interfere     | v.      | 干涉;妨碍                     |
 | diminish      | v.      | 减少;减弱                     |
 | scribe        | n.      | 抄写员                        |
 | gradient      | n.      | 梯度;变化率                   |
 | signature     | n.      | 签名;标志特征                 |
-| elongate      | vt.     | 延长,加长                     |
+| elongate      | v.      | 延长,加长                     |
 | scatter       | v./n.   | 散开;分散;撒开,散播           |
 | graze         | n./v.   | 放牧                          |
 | scent         | n./v.   | 香味,气味;闻到;察觉           |
@@ -204,7 +204,7 @@ toc = true
 | duration      | n.      | 持续时间;期间                 |
 | proceed       | v.      | 继续进行;持续不断             |
 | depletion     | n.      | 大量消耗                      |
-| freight       | n./vt.  | 货物,货运;装货,运输           |
+| freight       | n./v.   | 货物,货运;装货,运输           |
 
 ### List13
 
@@ -218,11 +218,11 @@ toc = true
 | gulf         | n.      | 海湾                         |
 | perennial    | adj./n. | 持续的;多年生的 / 多年生植物 |
 | decay        | n./v.   | 腐烂;衰败;衰落               |
-| enclose      | vt.     | 包围;封入                    |
+| enclose      | v.      | 包围;封入                    |
 | debris       | n.      | 碎片;残骸                    |
-| refine       | vt.     | 提炼;改善                    |
-| classify     | vt.     | 分类;归类                    |
-| imitate      | vt.     | 模仿;效仿                    |
+| refine       | v.      | 提炼;改善                    |
+| classify     | v.      | 分类;归类                    |
+| imitate      | v.      | 模仿;效仿                    |
 | circulate    | v.      | 循环;流通;散布               |
 | tremendous   | adj.    | 极大的;极好的                |
 | nevertheless | adv.    | 然而;不过                    |
@@ -240,11 +240,11 @@ toc = true
 | mundane      | adj.    | 平凡世俗的                   |
 | pertinent    | adj.    | 有关;相关的                  |
 | siltation    | n.      | 淤积;沉淀                    |
-| accentuate   | vt.     | 强调;加重                    |
+| accentuate   | v.      | 强调;加重                    |
 | epitome      | n.      | 梗概;缩影                    |
 | protrude     | v.      | 伸出;突出                    |
 | renowned     | adj.    | 有名的;声誉的                |
-| ventilate    | vt.     | 通风;空气流通                |
+| ventilate    | v.      | 通风;空气流通                |
 
 ### List14
 
@@ -268,7 +268,7 @@ toc = true
 | cope          | v./n.   | 处理;应付 / 长袍           |
 | evaluate      | v.      | 评价;估计                  |
 | volatile      | adj.    | 易变不稳定的;易挥发的      |
-| reclaim       | vt./n.  | 开垦;收回 / 改造;感化      |
+| reclaim       | v./n.   | 开垦;收回 / 改造;感化      |
 | aesthetic     | adj.    | 艺术审美的                 |
 | deform        | v.      | 变形;畸形                  |
 | twist         | v./n.   | 扭动;扭曲;扭伤 / 转机;卷曲 |
@@ -289,33 +289,33 @@ toc = true
 | aggregate   | n./adj./v. | 集合体 / 总计的 / 总计;汇集         |
 | seep        | v.         | 渗透;漏出                           |
 | rational    | adj.       | 理性的;合理的                       |
-| insulate    | vt.        | 使隔离;绝缘                         |
-| span        | n./vt.     | 跨度;期间 / 横跨                    |
+| insulate    | v.         | 使隔离;绝缘                         |
+| span        | n./v.      | 跨度;期间 / 横跨                    |
 | overcast    | adj.       | 阴天的                              |
 | pond        | n.         | 池塘                                |
 | narrative   | n./adj.    | 记叙文;叙述 / 叙述的                |
 | nebular     | adj.       | 星云的                              |
 | presumable  | adj.       | 可推测的                            |
-| utilize     | vt.        | 利用;使用                           |
+| utilize     | v.         | 利用;使用                           |
 | trumpet     | n./v.      | 喇叭;小号 / 大力宣传                |
 | herbivore   | n.         | 食草动物                            |
 | repetition  | n.         | 重复;背诵;重奏                      |
 | constituent | n./adj.    | 成分;要素;选民 / 组成的             |
 | nerve       | n.         | 神经;胆量                           |
 | occasion    | n./v.      | 时机;场合;原因 / 导致;引起          |
-| exclude     | vt.        | 排除;阻挡;拒绝                      |
-| surplus     | vt.        | 超过;优于;胜过                      |
+| exclude     | v.         | 排除;阻挡;拒绝                      |
+| surplus     | v.         | 超过;优于;胜过                      |
 | devise      | v.         | 设计;发明;策划                      |
 | dwelling    | n.         | 住处;居住                           |
 | planetarium | n.         | 天文馆                              |
 | resilience  | n.         | 弹性                                |
 | bulge       | n./v.      | 膨胀;暴涨;凸出                      |
-| attribute   | vt./n.     | 认为是;把...归于 / 品质;特征        |
+| attribute   | v./n.      | 认为是;把...归于 / 品质;特征        |
 | glassy      | adj./adv.  | 似玻璃的;眼神呆滞的                 |
 | conscience  | n.         | 良心;良知                           |
 | stray       | v./n./adj. | 走失;走神 / 走失离群者 / 零散走失的 |
 | hazel       | n./adj.    | 榛树;淡褐色 / 榛树的                |
-| pollinate   | vt.        | 给...传授花粉                       |
+| pollinate   | v.         | 给...传授花粉                       |
 | fabric      | n.         | 织物;结构                           |
 | redundancy  | n.         | 过剩;冗余;裁员                      |
 | larva       | n.         | 幼虫                                |
@@ -471,3 +471,169 @@ toc = true
 | amenity        | n.             | 愉快舒适;便利设施                                  |
 | barter         | n. / v.        | 以物易物                                           |
 | mason          | n.             | 石匠,泥瓦匠                                        |
+
+### List20
+
+| **单词**        | **词性**       | **中文释义**                      |
+| --------------- | -------------- | --------------------------------- |
+| cosmic          | adj.           | 宇宙的;外太空的                   |
+| herbivorous     | adj.           | 食草的                            |
+| optimum         | adj. & n.      | 最优的;最适宜的 / 最佳条件        |
+| consort         | n. & v.        | 统治者的配偶;伙伴 / 来往;厮混     |
+| disturb         | v.             | 打扰;搅乱;妨碍                    |
+| desiccate       | vt.            | 弄干;使脱水                       |
+| allegedly       | adv.           | 涉嫌的;据说                       |
+| instrumentation | n.             | 仪器,仪表                         |
+| overlook        | vt.            | 俯瞰;远眺;忽略;宽容               |
+| immobility      | n.             | 不动;固定                         |
+| conversion      | n.             | 转变;改造;换算                    |
+| decorative      | adj.           | 装饰性的                          |
+| insulation      | n.             | 绝缘;隔热;隔离                    |
+| outlive         | v.             | 比...长命                         |
+| salinity        | n.             | 盐度;盐性                         |
+| non-specialist  | n.             | 非专家                            |
+| narrator        | n.             | 叙述者;解说员                     |
+| objectivity     | n.             | 客观性                            |
+| gender-neutral  | adj.           | 中性的                            |
+| re-enactment    | n.             | 重现,再现                         |
+| alertness       | n.             | 警觉;机敏                         |
+| tidal           | adj.           | 潮水的;潮汐的                     |
+| standardize     | vt.            | 使标准化                          |
+| vicinity        | n.             | 邻近地区;附近                     |
+| inhale          | v.             | 吸入;吸气                         |
+| sorghum         | n.             | 高粱                              |
+| pollinator      | n.             | 传粉媒介;传粉昆虫                 |
+| collapse        | v. & n.        | 倒塌;崩溃 / 垮台;暴跌             |
+| temporary       | adj.           | 短暂的;临时的                     |
+| windmill        | n.             | 风车                              |
+| sparse          | adj.           | 稀少的                            |
+| far-reaching    | adj.           | 影响深远的                        |
+| wagon           | n.             | 运货马车;车皮                     |
+| stationary      | adj.           | 静止的;不动的                     |
+| long-lived      | adj.           | 长命的;持久的                     |
+| implicate       | v.             | 使牵连其中;涉及                   |
+| relief          | n.             | 宽慰;安心;免除;减轻;救援物资      |
+| watercraft      | n.             | 船只;船舶                         |
+| rebound         | n. & v.        | 弹回;恢复;回响                    |
+| via             | prep.          | 经过;凭借                         |
+| isle            | n.             | 小岛                              |
+| meager          | adj.           | 贫乏的;不足的;粗劣的              |
+| silicate        | n.             | 硅酸盐                            |
+| weave           | n. & v.        | 编织 / 编造;迂回前进              |
+| rigid           | adj.           | 严格的;刚性的;僵硬的;顽固的       |
+| workshop        | n.             | 车间;研讨会                       |
+| monumental      | adj.           | 极大的;不朽的                     |
+| durable         | adj.           | 耐用的;持久的                     |
+| tribe           | n.             | 部落;部族;一伙人                  |
+| cavity          | n.             | 腔洞;蛀牙                         |
+| pinpoint        | vt., n. & adj. | 准确指出 / 针尖;精确位置 / 精确的 |
+| cliff           | n.             | 悬崖                              |
+
+### List21
+
+| **单词**         | **词性**  | **中文释义**                            |
+| ---------------- | --------- | --------------------------------------- |
+| exceed           | v.        | 超过;超越                               |
+| illuminate       | v.        | 照亮;阐明                               |
+| harness          | n. & v.   | 马具 / 利用;控制                        |
+| courtship        | n.        | 求爱;求偶                               |
+| turbine          | n.        | 涡轮机                                  |
+| portable         | adj.      | 轻便的;便于携带的                       |
+| herbicide        | n.        | 除草剂                                  |
+| spite            | adv. & n. | 虽然(in spite of) / 恶意;怨恨           |
+| dangle           | v.        | 悬挂;悬摆;悬而未定                      |
+| anatomy          | n.        | 解剖;剖析                               |
+| precursor        | n.        | 先驱先锋;前身                           |
+| drawback         | n.        | 缺点;不利条件                           |
+| luminous         | adj.      | 发光的;明亮的;清楚的                    |
+| radiate          | vt.       | 辐射;流露;散发                          |
+| nectar           | n.        | 花蜜;甘露                               |
+| petal            | n.        | 花瓣                                    |
+| sturdy           | adj.      | 坚固的;强壮的                           |
+| leather          | n.        | 皮革;皮外套                             |
+| remnant          | n.        | 剩余;残存;边角料                        |
+| lush             | adj.      | 草木丰盛的;豪华的                       |
+| stealthy         | adj.      | 鬼鬼祟祟的;悄悄的                       |
+| passive          | adj.      | 被动的;消极的                           |
+| whisk            | v. & n.   | 搅拌;飞奔 / 搅拌器                      |
+| detrimental      | adj.      | 有害的;不利的                           |
+| dampen           | v.        | 弄湿;抑制;减弱                          |
+| shark            | n.        | 鲨鱼;诈骗者                             |
+| carpet           | n. & v.   | 地毯;覆盖物 / 铺地毯;覆盖               |
+| thermal          | adj.      | 热的;保暖的                             |
+| pulverize        | vt.       | 弄碎;磨成粉;摧毁                        |
+| sift             | v.        | 筛(面粉/沙子);审查                      |
+| articulate       | v. & adj. | 清晰表达 / 善于表达的                   |
+| optic            | adj.      | 眼睛视觉的                              |
+| impersonate      | v.        | 扮演;模仿                               |
+| concession       | n.        | 让步;优惠;特许权                        |
+| exempt           | v.        | 免除,豁免                               |
+| abbreviate       | v.        | 缩写;缩略                               |
+| creek            | n.        | 小湾,小河,小溪                          |
+| courier          | n.        | 快递员;快递公司                         |
+| beak             | n.        | (猛禽等的)嘴,喙                         |
+| constipation     | n.        | 便秘                                    |
+| assembly         | n.        | 议会;集会;装配组装                      |
+| fur              | n.        | 皮草;软毛                               |
+| continual        | adj.      | 连续的,频繁的                           |
+| alliance         | n.        | 联盟;同盟                               |
+| piracy           | n.        | 海盗行为;盗版行为                       |
+| well-defined     | adj.      | 定义明确的                              |
+| peanut           | n.        | 花生                                    |
+| ever-changing    | adj.      | 日新月异的                              |
+| logistic         | adj.      | 后勤的;物流的;组织的                    |
+| capital          | n. & adj. | 首都;资本;柱头;大写字母 / 资本的;首都的 |
+| radiocarbon      | n.        | 放射性碳                                |
+| troop            | n. & v.   | 军队;一群 / 成群移动                    |
+| delta            | n.        | (河流的)三角洲                          |
+| characterization | n.        | 人物塑造                                |
+| speculate        | v.        | 推测;投机                               |
+
+### List22
+
+| 单词          | 词性           | 中文释义                   |
+| ------------- | -------------- | -------------------------- |
+| vapor         | n.             | 水汽;水蒸气                |
+| forage        | n. & v.        | 饲料 / 觅食;搜寻           |
+| depose        | v.             | 免职;罢免                  |
+| relic         | n.             | 遗物,遗迹;废墟;纪念物      |
+| opposition    | n.             | 反对;对手                  |
+| withdraw      | v.             | 撤退;取钱;返回             |
+| disrupt       | v.             | 使中断;扰乱                |
+| abstract      | adj. & n. & v. | 抽象的 / 摘要 / 提取       |
+| controversial | adj.           | 有争议的                   |
+| inconclusive  | adj.           | 不确定的;无结论的          |
+| gully         | n.             | 溪谷;建筑雨水口            |
+| proponent     | n.             | 支持者;拥护者;提倡者       |
+| perplex       | v.             | 使困惑;迷惑                |
+| obliterate    | v.             | 消灭;清除;忘却             |
+| caravan       | n.             | 商队                       |
+| aristocratic  | adj.           | 贵族的                     |
+| recount       | v.             | 详述;重新计算              |
+| thesis        | n.             | 论文;论点;命题             |
+| superiority   | n.             | 优势,优势性                |
+| contend       | v.             | 声称;对付;争夺             |
+| contract      | n. & v.        | 合同;契约 / 收缩;缩小      |
+| compensate    | v.             | 补偿;报酬;抵消             |
+| assess        | v.             | 评估;估价                  |
+| hydrology     | n.             | 水文,水文学                |
+| tar           | n.             | 柏油;沥青;焦油             |
+| bind          | v.             | 约束;装订;捆绑;联系紧密    |
+| undertake     | v.             | 承担;从事                  |
+| impede        | v.             | 妨碍;阻碍;阻止             |
+| negotiate     | v.             | 谈判协商;顺利通过          |
+| pillar        | n.             | 柱子;中坚核心              |
+| petrify       | v.             | 吓呆;停止发展              |
+| engulf        | v.             | 吞没,误食                  |
+| informant     | n.             | 告密者                     |
+| shed          | n. & v.        | 棚屋;工棚 / 蜕皮;脱毛;落叶 |
+| indigenous    | adj.           | 土生土长的;固有的          |
+| outweigh      | v.             | 重于;大于;超过             |
+| antiquity     | n.             | 古迹;古物;古人             |
+| neglect       | n. & v.        | 疏忽;忽略;疏漏             |
+| spectrum      | n.             | 光谱;范围                  |
+| correlate     | v.             | 使相互关联                 |
+| perfume       | n.             | 香水;香料;香味             |
+| distract      | v.             | 使分心;使混乱              |
+| versus        | prep.          | 以...为对手                |
+
