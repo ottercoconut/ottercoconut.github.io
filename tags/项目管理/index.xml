@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>项目管理 on 边个濑椰的博客</title><link>https://ottercoconut.github.io/tags/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86/</link><description>Recent content in 项目管理 on 边个濑椰的博客</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 01 Apr 2025 14:49:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/tags/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml"/><item><title>Maven 基础</title><link>https://ottercoconut.github.io/p/maven-%E5%9F%BA%E7%A1%80/</link><pubDate>Tue, 01 Apr 2025 14:49:00 +0800</pubDate><guid>https://ottercoconut.github.io/p/maven-%E5%9F%BA%E7%A1%80/</guid><description>&lt;h3 id="参考网站"&gt;参考网站
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://liaoxuefeng.com/books/java/maven/index.html" target="_blank" rel="noopener"
+ &gt;Maven基础 - Java教程 - 廖雪峰的官方网站&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="maven-基础"&gt;Maven 基础
+&lt;/h2&gt;&lt;h3 id="maven介绍"&gt;maven介绍
+&lt;/h3&gt;&lt;p&gt;在了解Maven之前，我们先来看看一个Java项目需要的东西。首先，我们需要确定引入哪些依赖包。例如，如果我们需要用到&lt;a class="link" href="https://commons.apache.org/proper/commons-logging/" target="_blank" rel="noopener"
+ &gt;commons logging&lt;/a&gt;，我们就必须把commons logging的jar包放入classpath。如果我们还需要&lt;a class="link" href="https://logging.apache.org/log4j/" target="_blank" rel="noopener"
+ &gt;log4j&lt;/a&gt;，就需要把log4j相关的jar包都放到classpath中。这些就是依赖包的管理。&lt;/p&gt;
+&lt;p&gt;其次，我们要确定项目的目录结构。例如，&lt;code&gt;src&lt;/code&gt;目录存放Java源码，&lt;code&gt;resources&lt;/code&gt;目录存放配置文件，&lt;code&gt;bin&lt;/code&gt;目录存放编译生成的&lt;code&gt;.class&lt;/code&gt;文件。&lt;/p&gt;
+&lt;p&gt;此外，我们还需要配置环境，例如JDK的版本，编译打包的流程，当前代码的版本号。&lt;/p&gt;
+&lt;p&gt;最后，除了使用Eclipse这样的IDE进行编译外，我们还必须能通过命令行工具进行编译，才能够让项目在一个独立的服务器上编译、测试、部署。&lt;/p&gt;
+&lt;p&gt;这些工作难度不大，但是非常琐碎且耗时。如果每一个项目都自己搞一套配置，肯定会一团糟。我们需要的是一个标准化的Java项目管理和构建工具。&lt;/p&gt;
+&lt;p&gt;Maven就是是专门为Java项目打造的管理和构建工具，它的主要功能有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;提供了一套标准化的项目结构；&lt;/li&gt;
+&lt;li&gt;提供了一套标准化的构建流程（编译，测试，打包，发布……）；&lt;/li&gt;
+&lt;li&gt;提供了一套依赖管理机制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="maven项目结构"&gt;Maven项目结构
+&lt;/h4&gt;&lt;p&gt;一个使用Maven管理的普通的Java项目，它的目录结构默认如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;a-maven-project
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├── pom.xml
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├── src
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ ├── main
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ │ ├── java
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ │ └── resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ └── test
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ ├── java
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ └── resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└── target
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;项目的根目录&lt;code&gt;a-maven-project&lt;/code&gt;是项目名，它有一个项目描述文件&lt;code&gt;pom.xml&lt;/code&gt;，存放Java源码的目录是&lt;code&gt;src/main/java&lt;/code&gt;，存放资源文件的目录是&lt;code&gt;src/main/resources&lt;/code&gt;，存放测试源码的目录是&lt;code&gt;src/test/java&lt;/code&gt;，存放测试资源的目录是&lt;code&gt;src/test/resources&lt;/code&gt;，最后，所有编译、打包生成的文件都放在&lt;code&gt;target&lt;/code&gt;目录里。这些就是一个Maven项目的标准目录结构。&lt;/p&gt;
+&lt;p&gt;所有的目录结构都是约定好的标准结构，我们千万不要随意修改目录结构。使用标准结构不需要做任何配置，Maven就可以正常使用。&lt;/p&gt;
+&lt;p&gt;我们再来看最关键的一个项目描述文件&lt;code&gt;pom.xml&lt;/code&gt;，它的内容长得像下面：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;project&lt;/span&gt; &lt;span class="err"&gt;...&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;modelVersion&amp;gt;&lt;/span&gt;4.0.0&lt;span class="nt"&gt;&amp;lt;/modelVersion&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;com.itranswarp.learnjava&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;hello&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.0&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;packaging&amp;gt;&lt;/span&gt;jar&lt;span class="nt"&gt;&amp;lt;/packaging&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;properties&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;project.build.sourceEncoding&amp;gt;&lt;/span&gt;UTF-8&lt;span class="nt"&gt;&amp;lt;/project.build.sourceEncoding&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;		&lt;span class="nt"&gt;&amp;lt;maven.compiler.release&amp;gt;&lt;/span&gt;17&lt;span class="nt"&gt;&amp;lt;/maven.compiler.release&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;/properties&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;dependencies&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.slf4j&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;slf4j-simple&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;2.0.16&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="nt"&gt;&amp;lt;/dependencies&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/project&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中，&lt;code&gt;groupId&lt;/code&gt;类似于Java的包名，通常是公司或组织名称，&lt;code&gt;artifactId&lt;/code&gt;类似于Java的类名，通常是项目名称，再加上&lt;code&gt;version&lt;/code&gt;，一个Maven工程就是由&lt;code&gt;groupId&lt;/code&gt;，&lt;code&gt;artifactId&lt;/code&gt;和&lt;code&gt;version&lt;/code&gt;作为唯一标识。&lt;/p&gt;
+&lt;p&gt;我们在引用其他第三方库的时候，也是通过这3个变量确定。例如，依赖&lt;code&gt;org.slfj4:slf4j-simple:2.0.16&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.slf4j&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;slf4j-simple&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;2.0.16&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用&lt;code&gt;&amp;lt;dependency&amp;gt;&lt;/code&gt;声明一个依赖后，Maven就会自动下载这个依赖包并把它放到classpath中。&lt;/p&gt;
+&lt;p&gt;另外，注意到&lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt;定义了一些属性，常用的属性有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;project.build.sourceEncoding&lt;/code&gt;：表示项目源码的字符编码，通常应设定为&lt;code&gt;UTF-8&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;maven.compiler.release&lt;/code&gt;：表示使用的JDK版本，例如&lt;code&gt;21&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;maven.compiler.source&lt;/code&gt;：表示Java编译器读取的源码版本；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;maven.compiler.target&lt;/code&gt;：表示Java编译器编译的Class版本。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从Java 9开始，推荐使用&lt;code&gt;maven.compiler.release&lt;/code&gt;属性，保证编译时输入的源码和编译输出版本一致。如果源码和输出版本不同，则应该分别设置&lt;code&gt;maven.compiler.source&lt;/code&gt;和&lt;code&gt;maven.compiler.target&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;通过&lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt;定义的属性，就可以固定JDK版本，防止同一个项目的不同的开发者各自使用不同版本的JDK。&lt;/p&gt;
+&lt;h4 id="小结"&gt;小结
+&lt;/h4&gt;&lt;p&gt;Maven是一个Java项目的管理和构建工具：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maven使用&lt;code&gt;pom.xml&lt;/code&gt;定义项目内容，并使用预设的目录结构；&lt;/li&gt;
+&lt;li&gt;在Maven中声明一个依赖项可以自动下载并导入classpath；&lt;/li&gt;
+&lt;li&gt;Maven使用&lt;code&gt;groupId&lt;/code&gt;，&lt;code&gt;artifactId&lt;/code&gt;和&lt;code&gt;version&lt;/code&gt;唯一定位一个依赖。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="依赖管理"&gt;依赖管理
+&lt;/h3&gt;&lt;p&gt;如果我们的项目依赖第三方的jar包，例如commons logging，那么问题来了：commons logging发布的jar包在哪下载？&lt;/p&gt;
+&lt;p&gt;如果我们还希望依赖log4j，那么使用log4j需要哪些jar包？&lt;/p&gt;
+&lt;p&gt;类似的依赖还包括：JUnit，JavaMail，MySQL驱动等等，一个可行的方法是通过搜索引擎搜索到项目的官网，然后手动下载zip包，解压，放入classpath。但是，这个过程非常繁琐。&lt;/p&gt;
+&lt;p&gt;Maven解决了依赖管理问题。例如，我们的项目依赖&lt;code&gt;abc&lt;/code&gt;这个jar包，而&lt;code&gt;abc&lt;/code&gt;又依赖&lt;code&gt;xyz&lt;/code&gt;这个jar包：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌──────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│Sample Project│
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└──────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌──────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ abc │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└──────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌──────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ xyz │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└──────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当我们声明了&lt;code&gt;abc&lt;/code&gt;的依赖时，Maven自动把&lt;code&gt;abc&lt;/code&gt;和&lt;code&gt;xyz&lt;/code&gt;都加入了我们的项目依赖，不需要我们自己去研究&lt;code&gt;abc&lt;/code&gt;是否需要依赖&lt;code&gt;xyz&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;因此，Maven的第一个作用就是解决依赖管理。我们声明了自己的项目需要&lt;code&gt;abc&lt;/code&gt;，Maven会自动导入&lt;code&gt;abc&lt;/code&gt;的jar包，再判断出&lt;code&gt;abc&lt;/code&gt;需要&lt;code&gt;xyz&lt;/code&gt;，又会自动导入&lt;code&gt;xyz&lt;/code&gt;的jar包，这样，最终我们的项目会依赖&lt;code&gt;abc&lt;/code&gt;和&lt;code&gt;xyz&lt;/code&gt;两个jar包。&lt;/p&gt;
+&lt;p&gt;我们来看一个复杂依赖示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.springframework.boot&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;spring-boot-starter-web&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.4.2.RELEASE&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当我们声明一个&lt;code&gt;spring-boot-starter-web&lt;/code&gt;依赖时，Maven会自动解析并判断最终需要大概二三十个其他依赖：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;spring-boot-starter-web
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; spring-boot-starter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; spring-boot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sprint-boot-autoconfigure
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; spring-boot-starter-logging
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; logback-classic
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; logback-core
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; slf4j-api
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; jcl-over-slf4j
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; slf4j-api
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; jul-to-slf4j
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; slf4j-api
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; log4j-over-slf4j
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; slf4j-api
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; spring-core
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; snakeyaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; spring-boot-starter-tomcat
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; tomcat-embed-core
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; tomcat-embed-el
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; tomcat-embed-websocket
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; tomcat-embed-core
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; jackson-databind
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ...
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果我们自己去手动管理这些依赖是非常费时费力的，而且出错的概率很大。&lt;/p&gt;
+&lt;h3 id="依赖关系"&gt;依赖关系
+&lt;/h3&gt;&lt;p&gt;Maven定义了几种依赖关系，分别是&lt;code&gt;compile&lt;/code&gt;、&lt;code&gt;test&lt;/code&gt;、&lt;code&gt;runtime&lt;/code&gt;和&lt;code&gt;provided&lt;/code&gt;：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;scope&lt;/th&gt;
+ &lt;th&gt;说明&lt;/th&gt;
+ &lt;th&gt;示例&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;compile&lt;/td&gt;
+ &lt;td&gt;编译时需要用到该jar包（默认）&lt;/td&gt;
+ &lt;td&gt;commons-logging&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;test&lt;/td&gt;
+ &lt;td&gt;编译Test时需要用到该jar包&lt;/td&gt;
+ &lt;td&gt;junit&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;runtime&lt;/td&gt;
+ &lt;td&gt;编译时不需要，但运行时需要用到&lt;/td&gt;
+ &lt;td&gt;mysql&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;provided&lt;/td&gt;
+ &lt;td&gt;编译时需要用到，但运行时由JDK或某个服务器提供&lt;/td&gt;
+ &lt;td&gt;servlet-api&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;其中，默认的&lt;code&gt;compile&lt;/code&gt;是最常用的，Maven会把这种类型的依赖直接放入classpath。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;test&lt;/code&gt;依赖表示仅在测试时使用，正常运行时并不需要。最常用的&lt;code&gt;test&lt;/code&gt;依赖就是JUnit：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.junit.jupiter&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;junit-jupiter-api&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;5.3.2&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;scope&amp;gt;&lt;/span&gt;test&lt;span class="nt"&gt;&amp;lt;/scope&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;runtime&lt;/code&gt;依赖表示编译时不需要，但运行时需要。最典型的&lt;code&gt;runtime&lt;/code&gt;依赖是JDBC驱动，例如MySQL驱动：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;mysql&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;mysql-connector-java&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;5.1.48&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;scope&amp;gt;&lt;/span&gt;runtime&lt;span class="nt"&gt;&amp;lt;/scope&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;provided&lt;/code&gt;依赖表示编译时需要，但运行时不需要。最典型的&lt;code&gt;provided&lt;/code&gt;依赖是Servlet API，编译的时候需要，但是运行时，Servlet服务器内置了相关的jar，所以运行期不需要：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;jakarta.servlet&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;jakarta.servlet-api&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;4.0.0&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;scope&amp;gt;&lt;/span&gt;provided&lt;span class="nt"&gt;&amp;lt;/scope&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/dependency&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;最后一个问题是，Maven如何知道从何处下载所需的依赖？也就是相关的jar包？答案是Maven维护了一个中央仓库（&lt;a class="link" href="https://repo1.maven.org/" target="_blank" rel="noopener"
+ &gt;repo1.maven.org&lt;/a&gt;），所有第三方库将自身的jar以及相关信息上传至中央仓库，Maven就可以从中央仓库把所需依赖下载到本地。&lt;/p&gt;
+&lt;p&gt;Maven并不会每次都从中央仓库下载jar包。一个jar包一旦被下载过，就会被Maven自动缓存在本地目录（用户主目录的&lt;code&gt;.m2&lt;/code&gt;目录），所以，除了第一次编译时因为下载需要时间会比较慢，后续过程因为有本地缓存，并不会重复下载相同的jar包。&lt;/p&gt;
+&lt;h4 id="唯一id"&gt;唯一ID
+&lt;/h4&gt;&lt;p&gt;对于某个依赖，Maven只需要3个变量即可唯一确定某个jar包：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;groupId：属于组织的名称，类似Java的包名；&lt;/li&gt;
+&lt;li&gt;artifactId：该jar包自身的名称，类似Java的类名；&lt;/li&gt;
+&lt;li&gt;version：该jar包的版本。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通过上述3个变量，即可唯一确定某个jar包。Maven通过对jar包进行PGP签名确保任何一个jar包一经发布就无法修改。修改已发布jar包的唯一方法是发布一个新版本。&lt;/p&gt;
+&lt;p&gt;因此，某个jar包一旦被Maven下载过，即可永久地安全缓存在本地。&lt;/p&gt;
+&lt;p&gt;注：只有以&lt;code&gt;-SNAPSHOT&lt;/code&gt;结尾的版本号会被Maven视为开发版本，开发版本每次都会重复下载，这种SNAPSHOT版本只能用于内部私有的Maven repo，公开发布的版本不允许出现SNAPSHOT。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;后续我们在表示Maven依赖时，使用简写形式groupId:artifactId:version，例如：org.slf4j:slf4j-api:2.0.4。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="maven镜像"&gt;Maven镜像
+&lt;/h4&gt;&lt;p&gt;除了可以从Maven的中央仓库下载外，还可以从Maven的镜像仓库下载。如果访问Maven的中央仓库非常慢，我们可以选择一个速度较快的Maven的镜像仓库。Maven镜像仓库定期从中央仓库同步：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; slow ┌───────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ┌─────────────▶│Maven Central Repo.│
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ └───────────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ │sync
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌───────┐ fast ┌───────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ User │─────────▶│Maven Mirror Repo. │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└───────┘ └───────────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;中国区用户可以使用阿里云提供的Maven镜像仓库。使用Maven镜像仓库需要一个配置，在用户主目录下进入&lt;code&gt;.m2&lt;/code&gt;目录，创建一个&lt;code&gt;settings.xml&lt;/code&gt;配置文件，内容如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-xml" data-lang="xml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;settings&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;mirrors&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;mirror&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;id&amp;gt;&lt;/span&gt;aliyun&lt;span class="nt"&gt;&amp;lt;/id&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;aliyun&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;mirrorOf&amp;gt;&lt;/span&gt;central&lt;span class="nt"&gt;&amp;lt;/mirrorOf&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;&amp;lt;!-- 国内推荐阿里云的Maven镜像 --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;url&amp;gt;&lt;/span&gt;https://maven.aliyun.com/repository/central&lt;span class="nt"&gt;&amp;lt;/url&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/mirror&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;lt;/mirrors&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;&amp;lt;/settings&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;配置镜像仓库后，Maven的下载速度就会非常快。&lt;/p&gt;
+&lt;h4 id="搜索第三方组件"&gt;搜索第三方组件
+&lt;/h4&gt;&lt;p&gt;最后一个问题：如果我们要引用一个第三方组件，比如&lt;code&gt;okhttp&lt;/code&gt;，如何确切地获得它的&lt;code&gt;groupId&lt;/code&gt;、&lt;code&gt;artifactId&lt;/code&gt;和&lt;code&gt;version&lt;/code&gt;？方法是通过&lt;a class="link" href="https://search.maven.org/" target="_blank" rel="noopener"
+ &gt;search.maven.org&lt;/a&gt;搜索关键字，找到对应的组件后，直接复制&lt;/p&gt;
+&lt;h4 id="命令行编译"&gt;命令行编译
+&lt;/h4&gt;&lt;p&gt;在命令中，进入到&lt;code&gt;pom.xml&lt;/code&gt;所在目录，输入以下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-plain" data-lang="plain"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ mvn clean package
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果一切顺利，即可在&lt;code&gt;target&lt;/code&gt;目录下获得编译后自动打包的jar。&lt;/p&gt;
+&lt;h4 id="在ide中使用maven"&gt;在IDE中使用Maven
+&lt;/h4&gt;&lt;p&gt;几乎所有的IDE都内置了对Maven的支持。在Eclipse中，可以直接创建或导入Maven项目。如果导入后的Maven项目有错误，可以尝试选择项目后点击右键，选择Maven - Update Project&amp;hellip;更新&lt;/p&gt;
+&lt;h4 id="小结-1"&gt;小结
+&lt;/h4&gt;&lt;p&gt;Maven通过解析依赖关系确定项目所需的jar包，常用的4种&lt;code&gt;scope&lt;/code&gt;有：&lt;code&gt;compile&lt;/code&gt;（默认），&lt;code&gt;test&lt;/code&gt;，&lt;code&gt;runtime&lt;/code&gt;和&lt;code&gt;provided&lt;/code&gt;；&lt;/p&gt;
+&lt;p&gt;Maven从中央仓库下载所需的jar包并缓存在本地；&lt;/p&gt;
+&lt;p&gt;可以通过镜像仓库加速下载。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="构建流程"&gt;构建流程
+&lt;/h3&gt;&lt;p&gt;Maven不但有标准化的项目结构，而且还有一套标准化的构建流程，可以自动化实现编译，打包，发布，等等。&lt;/p&gt;
+&lt;h4 id="lifecycle和phase"&gt;Lifecycle和Phase
+&lt;/h4&gt;&lt;p&gt;使用Maven时，我们首先要了解什么是Maven的生命周期（lifecycle）。&lt;/p&gt;
+&lt;p&gt;Maven的生命周期由一系列阶段（phase）构成，以内置的生命周期&lt;code&gt;default&lt;/code&gt;为例，它包含以下phase：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;validate 校验&lt;/li&gt;
+&lt;li&gt;initialize 初始化&lt;/li&gt;
+&lt;li&gt;generate-sources 生成源码&lt;/li&gt;
+&lt;li&gt;process-sources 处理源码&lt;/li&gt;
+&lt;li&gt;generate-resources 生成资源&lt;/li&gt;
+&lt;li&gt;process-resources 处理资源&lt;/li&gt;
+&lt;li&gt;compile 编译&lt;/li&gt;
+&lt;li&gt;process-classes 处理-classes&lt;/li&gt;
+&lt;li&gt;generate-test-sources 生成测试源码&lt;/li&gt;
+&lt;li&gt;process-test-sources 处理测试源码&lt;/li&gt;
+&lt;li&gt;generate-test-resources 生成测试资源&lt;/li&gt;
+&lt;li&gt;process-test-resources 处理测试资源&lt;/li&gt;
+&lt;li&gt;test-compile 测试编译&lt;/li&gt;
+&lt;li&gt;process-test-classes 处理测试-classes&lt;/li&gt;
+&lt;li&gt;test 测试&lt;/li&gt;
+&lt;li&gt;prepare-package 准备打包&lt;/li&gt;
+&lt;li&gt;package 打包&lt;/li&gt;
+&lt;li&gt;pre-integration-test 预综合测试&lt;/li&gt;
+&lt;li&gt;integration-test 综合测试&lt;/li&gt;
+&lt;li&gt;post-integration-test 综合测试之后&lt;/li&gt;
+&lt;li&gt;verify 核实&lt;/li&gt;
+&lt;li&gt;install 安装&lt;/li&gt;
+&lt;li&gt;deploy 部署&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果我们运行&lt;code&gt;mvn package&lt;/code&gt;，Maven就会执行&lt;code&gt;default&lt;/code&gt;生命周期，它会从开始一直运行到&lt;code&gt;package&lt;/code&gt;这个phase为止：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;validate&lt;/li&gt;
+&lt;li&gt;initialize&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;li&gt;prepare-package&lt;/li&gt;
+&lt;li&gt;package&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果我们运行&lt;code&gt;mvn compile&lt;/code&gt;，Maven也会执行&lt;code&gt;default&lt;/code&gt;生命周期，但这次它只会运行到&lt;code&gt;compile&lt;/code&gt;，即以下几个phase：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;validate&lt;/li&gt;
+&lt;li&gt;initialize&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;li&gt;process-resources&lt;/li&gt;
+&lt;li&gt;compile&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Maven另一个常用的生命周期是&lt;code&gt;clean&lt;/code&gt;，它会执行3个phase：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pre-clean&lt;/li&gt;
+&lt;li&gt;clean （注意这个clean不是lifecycle而是phase）&lt;/li&gt;
+&lt;li&gt;post-clean&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，我们使用&lt;code&gt;mvn&lt;/code&gt;这个命令时，后面的参数是phase，Maven自动根据生命周期运行到指定的phase。&lt;/p&gt;
+&lt;p&gt;更复杂的例子是指定多个phase，例如，运行&lt;code&gt;mvn clean package&lt;/code&gt;，Maven先执行&lt;code&gt;clean&lt;/code&gt;生命周期并运行到&lt;code&gt;clean&lt;/code&gt;这个phase，然后执行&lt;code&gt;default&lt;/code&gt;生命周期并运行到&lt;code&gt;package&lt;/code&gt;这个phase，实际执行的phase如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pre-clean&lt;/li&gt;
+&lt;li&gt;clean （注意这个clean是phase）&lt;/li&gt;
+&lt;li&gt;validate （开始执行default生命周期的第一个phase）&lt;/li&gt;
+&lt;li&gt;initialize&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;li&gt;prepare-package&lt;/li&gt;
+&lt;li&gt;package&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在实际开发过程中，经常使用的命令有：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mvn clean&lt;/code&gt;：清理所有生成的class和jar；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mvn clean compile&lt;/code&gt;：先清理，再执行到&lt;code&gt;compile&lt;/code&gt;；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mvn clean test&lt;/code&gt;：先清理，再执行到&lt;code&gt;test&lt;/code&gt;，因为执行&lt;code&gt;test&lt;/code&gt;前必须执行&lt;code&gt;compile&lt;/code&gt;，所以这里不必指定&lt;code&gt;compile&lt;/code&gt;；&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mvn clean package&lt;/code&gt;：先清理，再执行到&lt;code&gt;package&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;大多数phase在执行过程中，因为我们通常没有在&lt;code&gt;pom.xml&lt;/code&gt;中配置相关的设置，所以这些phase什么事情都不做。&lt;/p&gt;
+&lt;p&gt;经常用到的phase其实只有几个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;clean：清理&lt;/li&gt;
+&lt;li&gt;compile：编译&lt;/li&gt;
+&lt;li&gt;test：运行测试&lt;/li&gt;
+&lt;li&gt;package：打包&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="goal"&gt;Goal
+&lt;/h4&gt;&lt;p&gt;执行一个phase又会触发一个或多个goal：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;执行的Phase&lt;/th&gt;
+ &lt;th&gt;对应执行的Goal&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;compile&lt;/td&gt;
+ &lt;td&gt;compiler:compile&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;test&lt;/td&gt;
+ &lt;td&gt;compiler:testCompile surefire:test&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;goal的命名总是&lt;code&gt;abc:xyz&lt;/code&gt;这种形式。&lt;/p&gt;
+&lt;p&gt;其实我们类比一下就明白了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;lifecycle相当于Java的package，它包含一个或多个phase；&lt;/li&gt;
+&lt;li&gt;phase相当于Java的class，它包含一个或多个goal；&lt;/li&gt;
+&lt;li&gt;goal相当于class的method，它其实才是真正干活的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;大多数情况，我们只要指定phase，就默认执行这些phase默认绑定的goal，只有少数情况，我们可以直接指定运行一个goal，例如，启动Tomcat服务器：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-plain" data-lang="plain"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ mvn tomcat:run
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id="小结-2"&gt;小结
+&lt;/h4&gt;&lt;p&gt;Maven通过lifecycle、phase和goal来提供标准的构建流程。&lt;/p&gt;
+&lt;p&gt;最常用的构建命令是指定phase，然后让Maven执行到指定的phase：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mvn clean&lt;/li&gt;
+&lt;li&gt;mvn clean compile&lt;/li&gt;
+&lt;li&gt;mvn clean test&lt;/li&gt;
+&lt;li&gt;mvn clean package&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通常情况，我们总是执行phase默认绑定的goal，因此不必指定goal。&lt;/p&gt;
+&lt;hr&gt;</description></item></channel></rss>
