@@ -20021,7 +20021,7 @@ $$&lt;h4 id="总线复用"&gt;总线复用
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;因此，使用&lt;code&gt;ScheduledThreadPool&lt;/code&gt;时，我们要根据需要选择执行一次、FixedRate执行还是FixedDelay执行。&lt;/p&gt;
-&lt;p&gt;细心的童鞋还可以思考下面的问题：&lt;/p&gt;
+&lt;p&gt;还可以思考下面的问题：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;在FixedRate模式下，假设每秒触发，如果某次任务执行时间超过1秒，后续任务会不会并发执行？&lt;/li&gt;
 &lt;li&gt;如果任务抛出了异常，后续任务是否继续执行？&lt;/li&gt;
