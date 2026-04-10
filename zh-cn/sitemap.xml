@@ -161,6 +161,16 @@
   </url><url>
     <loc>http://localhost:1313/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/</loc>
     <lastmod>2026-01-30T16:31:20+08:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="http://localhost:1313/en/p/how-to-use-host-proxy-on-wsl2/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-CN"
+                href="http://localhost:1313/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/"
+                />
   </url><url>
     <loc>http://localhost:1313/p/cs224n/</loc>
     <lastmod>2026-01-28T14:31:08+08:00</lastmod>
@@ -251,6 +261,16 @@
   </url><url>
     <loc>http://localhost:1313/p/redis/</loc>
     <lastmod>2025-03-18T15:41:00+08:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="http://localhost:1313/en/p/redis/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-CN"
+                href="http://localhost:1313/p/redis/"
+                />
   </url><url>
     <loc>http://localhost:1313/tags/%E6%8C%81%E4%B9%85%E5%8C%96/</loc>
     <lastmod>2025-03-18T15:41:00+08:00</lastmod>
@@ -263,9 +283,29 @@
   </url><url>
     <loc>http://localhost:1313/p/mysql/</loc>
     <lastmod>2025-03-17T20:06:34+08:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="http://localhost:1313/en/p/mysql/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-CN"
+                href="http://localhost:1313/p/mysql/"
+                />
   </url><url>
     <loc>http://localhost:1313/tags/mysql/</loc>
     <lastmod>2025-03-17T20:06:34+08:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="http://localhost:1313/en/tags/mysql/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-CN"
+                href="http://localhost:1313/tags/mysql/"
+                />
   </url><url>
     <loc>http://localhost:1313/archives/</loc>
     <lastmod>2022-03-06T00:00:00+00:00</lastmod>

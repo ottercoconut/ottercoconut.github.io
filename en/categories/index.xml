@@ -11,5 +11,23 @@
             <pubDate>Fri, 20 Feb 2026 14:10:19 +0800</pubDate>
             <guid>http://localhost:1313/en/categories/%E7%90%86%E8%AE%BA/</guid>
             <description></description>
+        </item><item>
+            <title>Practical Tech</title>
+            <link>http://localhost:1313/en/categories/practical-tech/</link>
+            <pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate>
+            <guid>http://localhost:1313/en/categories/practical-tech/</guid>
+            <description></description>
+        </item><item>
+            <title>Tech</title>
+            <link>http://localhost:1313/en/categories/tech/</link>
+            <pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate>
+            <guid>http://localhost:1313/en/categories/tech/</guid>
+            <description></description>
+        </item><item>
+            <title>Backend Development</title>
+            <link>http://localhost:1313/en/categories/backend-development/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/categories/backend-development/</guid>
+            <description></description>
         </item></channel>
 </rss>

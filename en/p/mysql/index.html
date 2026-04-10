@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="References 自学SQL网(教程 视频 练习全套)\nLearn the knowledge and immediately have exercises to do.\nMySQL 教程 | 菜鸟教程\nMySQL总结_sq连表-CSDN博客\n主键 - SQL教程 - 廖雪峰的官方网站\n">
+<title>MySQL</title>
+
+
+<link rel="canonical" href="http://localhost:1313/en/p/mysql/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="MySQL">
+<meta property='og:description' content="References 自学SQL网(教程 视频 练习全套)\nLearn the knowledge and immediately have exercises to do.\nMySQL 教程 | 菜鸟教程\nMySQL总结_sq连表-CSDN博客\n主键 - SQL教程 - 廖雪峰的官方网站\n">
+<meta property='og:url' content='http://localhost:1313/en/p/mysql/'>
+<meta property='og:site_name' content='ottercoconut&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Database' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2025-03-17T20:06:34&#43;08:00'/><meta property='article:modified_time' content='2025-03-17T20:06:34&#43;08:00'/>
+<meta name="twitter:title" content="MySQL">
+<meta name="twitter:description" content="References 自学SQL网(教程 视频 练习全套)\nLearn the knowledge and immediately have exercises to do.\nMySQL 教程 | 菜鸟教程\nMySQL总结_sq连表-CSDN博客\n主键 - SQL教程 - 廖雪峰的官方网站\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/en/">
+                    <img src="/img/avatar.png" 
+                        width="150"
+                        height="150"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/en/">ottercoconut&#39;s Blog</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/ottercoconut/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/en/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    <li id="i18n-switch">  
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                            
+                                
+                                
+                                    
+                                        
+                                    
+                                
+                                    
+                                
+                                <option value="/p/mysql/" >简体中文</option>
+                            
+                                
+                                
+                                    
+                                
+                                    
+                                        
+                                    
+                                
+                                <option value="/en/p/mysql/" selected>English</option>
+                            
+                        </select>
+                    </li>
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#references">References</a></li>
+      </ol>
+    </li>
+    <li><a href="#relational-model">Relational Model</a>
+      <ol>
+        <li><a href="#primary-key">Primary Key</a>
+          <ol>
+            <li><a href="#summary">Summary</a></li>
+          </ol>
+        </li>
+        <li><a href="#foreign-key">Foreign Key</a>
+          <ol>
+            <li><a href="#many-to-many">Many-to-Many</a></li>
+            <li><a href="#one-to-one">One-to-One</a></li>
+            <li><a href="#summary-1">Summary</a></li>
+          </ol>
+        </li>
+        <li><a href="#index">Index</a>
+          <ol>
+            <li><a href="#unique-index">Unique Index</a></li>
+            <li><a href="#summary-2">Summary</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#select-query">SELECT Query</a>
+      <ol>
+        <li><a href="#filtering-numeric-attribute-columns"><strong>Filtering Numeric Attribute Columns</strong></a></li>
+        <li><a href="#filtering-string-attribute-columns"><strong>Filtering String Attribute Columns</strong></a></li>
+        <li><a href="#filtering--sorting">Filtering / Sorting</a>
+          <ol>
+            <li><a href="#example-problem">Example Problem</a></li>
+          </ol>
+        </li>
+        <li><a href="#select-review-problems">SELECT Review Problems</a></li>
+        <li><a href="#using-expressions-in-queries"><strong>Using Expressions in Queries</strong></a></li>
+        <li><a href="#performing-statistics-in-queries"><strong>Performing Statistics in Queries</strong></a></li>
+        <li><a href="#grouped-statistics">Grouped Statistics</a></li>
+        <li><a href="#join-connections">JOIN Connections</a>
+          <ol>
+            <li><a href="#database-normal-forms">Database Normal Forms</a></li>
+            <li><a href="#inner-join-inner-connections"><strong><code>INNER JOIN</code></strong> (Inner) Connections</a></li>
+            <li><a href="#outer-join-outer-connections"><code>OUTER JOIN</code> Outer Connections</a></li>
+          </ol>
+        </li>
+        <li><a href="#query-execution-order">Query Execution Order</a>
+          <ol>
+            <li><a href="#1fromandjoin">1. <code>FROM</code> and <code>JOIN</code></a></li>
+            <li><a href="#2"><strong>2. <code>WHERE</code></strong></a></li>
+            <li><a href="#3"><strong>3. <code>GROUP BY</code></strong></a></li>
+            <li><a href="#4"><strong>4. <code>HAVING</code></strong></a></li>
+            <li><a href="#5"><strong>5. <code>SELECT</code></strong></a></li>
+            <li><a href="#6"><strong>6. <code>DISTINCT</code></strong></a></li>
+            <li><a href="#7"><strong>7. <code>ORDER BY</code></strong></a></li>
+            <li><a href="#8"><strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></a></li>
+            <li><a href="#conclusion"><strong>Conclusion</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#null">NULL</a></li>
+    <li><a href="#modifying-data">Modifying Data</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#insert-insertion">INSERT Insertion</a></li>
+          </ol>
+        </li>
+        <li><a href="#update-undergoing-updates">UPDATE Undergoing Updates</a></li>
+        <li><a href="#delete-removal">DELETE Removal</a></li>
+      </ol>
+    </li>
+    <li><a href="#create-creation">CREATE Creation</a></li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/en/categories/tech/" style="background-color: hsl(145, 60%, 84%); color: hsl(145, 60%, 15%);">
+                Tech
+            </a>
+        
+            
+            
+            
+            <a href="/en/categories/backend-development/" style="background-color: hsl(282, 60%, 84%); color: hsl(282, 60%, 15%);">
+                Backend Development
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/en/p/mysql/">MySQL</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2025-03-17T20:06:34&#43;08:00'>Monday, March 17, 2025</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        11 minutes read
+                    </time>
+                
+            </div>
+        
+
+        
+            <div class="inline-meta">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                
+                    <a href="/p/mysql/" class="link">简体中文</a>
+                
+            </div>
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span>Table of contents</span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#references">References</a></li>
+      </ol>
+    </li>
+    <li><a href="#relational-model">Relational Model</a>
+      <ol>
+        <li><a href="#primary-key">Primary Key</a>
+          <ol>
+            <li><a href="#summary">Summary</a></li>
+          </ol>
+        </li>
+        <li><a href="#foreign-key">Foreign Key</a>
+          <ol>
+            <li><a href="#many-to-many">Many-to-Many</a></li>
+            <li><a href="#one-to-one">One-to-One</a></li>
+            <li><a href="#summary-1">Summary</a></li>
+          </ol>
+        </li>
+        <li><a href="#index">Index</a>
+          <ol>
+            <li><a href="#unique-index">Unique Index</a></li>
+            <li><a href="#summary-2">Summary</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#select-query">SELECT Query</a>
+      <ol>
+        <li><a href="#filtering-numeric-attribute-columns"><strong>Filtering Numeric Attribute Columns</strong></a></li>
+        <li><a href="#filtering-string-attribute-columns"><strong>Filtering String Attribute Columns</strong></a></li>
+        <li><a href="#filtering--sorting">Filtering / Sorting</a>
+          <ol>
+            <li><a href="#example-problem">Example Problem</a></li>
+          </ol>
+        </li>
+        <li><a href="#select-review-problems">SELECT Review Problems</a></li>
+        <li><a href="#using-expressions-in-queries"><strong>Using Expressions in Queries</strong></a></li>
+        <li><a href="#performing-statistics-in-queries"><strong>Performing Statistics in Queries</strong></a></li>
+        <li><a href="#grouped-statistics">Grouped Statistics</a></li>
+        <li><a href="#join-connections">JOIN Connections</a>
+          <ol>
+            <li><a href="#database-normal-forms">Database Normal Forms</a></li>
+            <li><a href="#inner-join-inner-connections"><strong><code>INNER JOIN</code></strong> (Inner) Connections</a></li>
+            <li><a href="#outer-join-outer-connections"><code>OUTER JOIN</code> Outer Connections</a></li>
+          </ol>
+        </li>
+        <li><a href="#query-execution-order">Query Execution Order</a>
+          <ol>
+            <li><a href="#1fromandjoin">1. <code>FROM</code> and <code>JOIN</code></a></li>
+            <li><a href="#2"><strong>2. <code>WHERE</code></strong></a></li>
+            <li><a href="#3"><strong>3. <code>GROUP BY</code></strong></a></li>
+            <li><a href="#4"><strong>4. <code>HAVING</code></strong></a></li>
+            <li><a href="#5"><strong>5. <code>SELECT</code></strong></a></li>
+            <li><a href="#6"><strong>6. <code>DISTINCT</code></strong></a></li>
+            <li><a href="#7"><strong>7. <code>ORDER BY</code></strong></a></li>
+            <li><a href="#8"><strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong></a></li>
+            <li><a href="#conclusion"><strong>Conclusion</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#null">NULL</a></li>
+    <li><a href="#modifying-data">Modifying Data</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#insert-insertion">INSERT Insertion</a></li>
+          </ol>
+        </li>
+        <li><a href="#update-undergoing-updates">UPDATE Undergoing Updates</a></li>
+        <li><a href="#delete-removal">DELETE Removal</a></li>
+      </ol>
+    </li>
+    <li><a href="#create-creation">CREATE Creation</a></li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h3 id="references">References
+</h3><p><a class="link" href="http://xuesql.cn/"  target="_blank" rel="noopener"
+    >自学SQL网(教程 视频 练习全套)</a></p>
+
+    <blockquote>
+        <p>Learn the knowledge and immediately have exercises to do.</p>
+
+    </blockquote>
+<hr>
+<p><a class="link" href="https://www.zhihu.com/question/30357711"  target="_blank" rel="noopener"
+    ></a></p>
+<p><a class="link" href="https://www.runoob.com/mysql/mysql-tutorial.html"  target="_blank" rel="noopener"
+    >MySQL 教程 | 菜鸟教程</a></p>
+<p><a class="link" href="https://blog.csdn.net/weixin_43896929/article/details/120750965"  target="_blank" rel="noopener"
+    >MySQL总结_sq连表-CSDN博客</a></p>
+<p><a class="link" href="https://liaoxuefeng.com/books/sql/relational/primary-key/index.html"  target="_blank" rel="noopener"
+    >主键 - SQL教程 - 廖雪峰的官方网站</a></p>
+
+    <blockquote>
+        <p>Best viewing experience tutorial.</p>
+
+    </blockquote>
+<h2 id="relational-model">Relational Model
+</h2>
+    <blockquote>
+        <p>Quoted from <a class="link" href="https://liaoxuefeng.com/books/sql/relational/index.html"  target="_blank" rel="noopener"
+    >关系模型 - SQL教程 - 廖雪峰的官方网站</a></p>
+
+    </blockquote>
+<h3 id="primary-key">Primary Key
+</h3><p>In a relational database, each row of data in a table is called a record. A record is composed of multiple fields. For example, two records in the <code>students</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>class id</th>
+          <th>name</th>
+          <th>gender</th>
+          <th>score</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>Xiaoming</td>
+          <td>M</td>
+          <td>90</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>1</td>
+          <td>Xiaohong</td>
+          <td>F</td>
+          <td>95</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>For a relational table, there is a very important constraint: <strong>any two records cannot be duplicated</strong>. Non-duplication doesn&rsquo;t mean two records are not entirely identical, but rather that <strong>different records can be uniquely distinguished by a certain field</strong>, and this field is called the <em><strong>primary key</strong></em>.</p>
+<p>For example, assuming we use the <code>name</code> field as the primary key, then we can uniquely identify a record through the name <code>Xiaoming</code> or <code>Xiaohong</code>. However, with this setup, we couldn&rsquo;t store students with the same name, because <strong>inserting two records with the same primary key is not allowed</strong>.</p>
+<p>The most crucial requirement for a primary key is: once a record is inserted into the table, <strong>it&rsquo;s best not to modify the primary key anymore, because the primary key is used to uniquely locate a record</strong>. Modifying the primary key will cause a series of cascading effects.</p>
+<p>Because the role of the primary key is so important, how to select a primary key will have a significant impact on business development. If we use a student&rsquo;s ID number as the primary key, it seems to uniquely locate a record. However, an ID number is also a business scenario. If the ID number&rsquo;s length increases or needs to be changed, and as a primary key, it has to be modified, it will have a severe impact on the business.</p>
+<p>Therefore, a basic principle for selecting a primary key is: <strong>do not use any business-related fields as the primary key</strong>.</p>
+<p>Thus, fields that seem unique like ID numbers, mobile phone numbers, and email addresses, should <em>not</em> be used as primary keys.</p>
+<p>The best primary key is a field completely unrelated to the business, and we generally name this field <code>id</code>. Common types suitable for the <code>id</code> field are:</p>
+<ol>
+<li>Auto-incrementing integer type: The database will automatically assign an auto-incrementing integer to each record upon insertion, so we don&rsquo;t have to worry at all about primary key duplication, nor do we need to pre-generate the primary key ourselves;</li>
+<li>Globally Unique Identifier (GUID) type: Also known as UUID, using a globally unique string as a primary key, such as <code>8f55d96b-8acc-4636-8cb8-76bf8abc2f57</code>. The GUID algorithm ensures that the strings generated by any computer at any time are different through network card MAC addresses, timestamps, and random numbers. Most programming languages have built-in GUID algorithms, allowing you to pre-calculate the primary key.</li>
+</ol>
+<p>For most applications, an auto-incrementing primary key is usually sufficient. The primary key we defined in the <code>students</code> table is also of <code>BIGINT NOT NULL AUTO_INCREMENT</code> type.</p>
+
+    <blockquote>
+        <p>If an INT auto-increment type is used, an error will occur when the number of records in a table exceeds 2,147,483,647 (about 2.1 billion) as it reaches the upper limit. Using the BIGINT auto-increment type allows for a maximum of about 9.22 quintillion records.</p>
+
+    </blockquote>
+<h4 id="summary">Summary
+</h4><p>The primary key is the unique identifier for a record in a relational table. Selecting a primary key is very important: a primary key should not have any business meaning, and should instead use a BIGINT auto-increment or GUID type. A primary key should also not allow <code>NULL</code>.</p>
+<p>Multiple columns can be used as a composite primary key, but composite primary keys are not commonly used.</p>
+<h3 id="foreign-key">Foreign Key
+</h3><p>When we uniquely identify records using a primary key, we can determine any student&rsquo;s record in the <code>students</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>other columns&hellip;</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Xiaoming</td>
+          <td>&hellip;</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>Xiaohong</td>
+          <td>&hellip;</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>We can also determine any class record in the <code>classes</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>other columns&hellip;</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Class 1</td>
+          <td>&hellip;</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>Class 2</td>
+          <td>&hellip;</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>But how do we determine which class a record in the <code>students</code> table belongs to, for example, Xiaoming with <code>id=1</code>?</p>
+<p>Since one class can have multiple students, in the relational model, the relationship between these two tables can be called &ldquo;one-to-many&rdquo;, meaning one record in the <code>classes</code> table can correspond to multiple records in the <code>students</code> table.</p>
+<p>To express this one-to-many relationship, we need to add a <code>class_id</code> column to the <code>students</code> table, letting its value correspond to a specific record in the <code>classes</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>class_id</th>
+          <th>name</th>
+          <th>other columns&hellip;</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>Xiaoming</td>
+          <td>&hellip;</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>1</td>
+          <td>Xiaohong</td>
+          <td>&hellip;</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>2</td>
+          <td>Xiaobai</td>
+          <td>&hellip;</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>This way, we can directly locate which record in the <code>classes</code> table a <code>students</code> table record should correspond to based on the <code>class_id</code> column.</p>
+<ul>
+<li>Xiaoming&rsquo;s <code>class_id</code> is <code>1</code>, therefore, the corresponding record in the <code>classes</code> table is Class 1 with <code>id=1</code>;</li>
+<li>Xiaohong&rsquo;s <code>class_id</code> is <code>1</code>, therefore, the corresponding record in the <code>classes</code> table is Class 1 with <code>id=1</code>;</li>
+<li>Xiaobai&rsquo;s <code>class_id</code> is <code>2</code>, therefore, the corresponding record in the <code>classes</code> table is Class 2 with <code>id=2</code>.</li>
+</ul>
+<p>In the <code>students</code> table, through the <code>class_id</code> field, <strong>data can be associated with another table</strong>, and such a column is called a <code>foreign key</code>.</p>
+<p>A foreign key is not implemented through the column name, but by defining a foreign key constraint:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">fk_class_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">class_id</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">REFERENCES</span><span class="w"> </span><span class="nf">classes</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Here, the foreign key constraint name <code>fk_class_id</code> can be anything, <code>FOREIGN KEY (class_id)</code> specifies <code>class_id</code> as the foreign key, and <code>REFERENCES classes (id)</code> specifies that this foreign key will be linked to the <code>id</code> column of the <code>classes</code> table (i.e., the primary key of the <code>classes</code> table).</p>
+<p>By defining a foreign key constraint, a relational database can guarantee that invalid data cannot be inserted. That is, if a record with <code>id=99</code> doesn&rsquo;t exist in the <code>classes</code> table, the <code>students</code> table cannot insert a record with <code>class_id=99</code>.</p>
+<p>Since foreign key constraints reduce database performance, most Internet applications, in pursuit of speed, do not set foreign key constraints and solely rely on the application itself to ensure logical correctness. In this case, <code>class_id</code> is just an ordinary column, it simply acts as a foreign key.</p>
+<p>To delete a foreign key constraint, it is also achieved via <code>ALTER TABLE</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">DROP</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">fk_class_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Note: Deleting a foreign key constraint does not delete the foreign key column itself. Deleting a column is achieved via <code>DROP COLUMN ...</code>.</p>
+<h4 id="many-to-many">Many-to-Many
+</h4><p>By associating a foreign key in one table with another table, we can define a one-to-many relationship. Sometimes, we also need to define a &ldquo;many-to-many&rdquo; relationship. For example, one teacher can correspond to multiple classes, and one class can also correspond to multiple teachers. Thus, there is a many-to-many relationship between the class table and the teacher table.</p>
+<p>A many-to-many relationship is actually implemented through two one-to-many relationships. That is, by using an intermediate table to connect two one-to-many relationships, a many-to-many relationship is formed:</p>
+<p><code>teachers</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Mr. Zhang</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>Mr. Wang</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>Mr. Li</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>Mr. Zhao</td>
+      </tr>
+  </tbody>
+</table></div>
+<p><code>classes</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Class 1</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>Class 2</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>Intermediate table <code>teacher_class</code> connecting two one-to-many relationships:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>teacher_id</th>
+          <th>class_id</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>1</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>2</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>2</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>3</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>4</td>
+          <td>2</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>Through the intermediate table <code>teacher_class</code>, we can know the relationship from <code>teachers</code> to <code>classes</code>:</p>
+<ul>
+<li>Mr. Zhang with <code>id=1</code> corresponds to Class 1 and Class 2 with <code>id=1,2</code>;</li>
+<li>Mr. Wang with <code>id=2</code> corresponds to Class 1 and Class 2 with <code>id=1,2</code>;</li>
+<li>Mr. Li with <code>id=3</code> corresponds to Class 1 with <code>id=1</code>;</li>
+<li>Mr. Zhao with <code>id=4</code> corresponds to Class 2 with <code>id=2</code>.</li>
+</ul>
+<p>Similarly, we can know the relationship from <code>classes</code> to <code>teachers</code>:</p>
+<ul>
+<li>Class 1 with <code>id=1</code> corresponds to Mr. Zhang, Mr. Wang, and Mr. Li with <code>id=1,2,3</code>;</li>
+<li>Class 2 with <code>id=2</code> corresponds to Mr. Zhang, Mr. Wang, and Mr. Zhao with <code>id=1,2,4</code>;</li>
+</ul>
+<p>Therefore, through the intermediate table, we&rsquo;ve defined a &ldquo;many-to-many&rdquo; relationship.</p>
+<h4 id="one-to-one">One-to-One
+</h4><p>A one-to-one relationship means that a record in one table corresponds to a single, unique record in another table.</p>
+<p>For instance, every student in the <code>students</code> table can have their own contact information. If we store the contact details in another table <code>contacts</code>, we can obtain a &ldquo;one-to-one&rdquo; relationship:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>student_id</th>
+          <th>mobile</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>135xxxx6300</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>2</td>
+          <td>138xxxx2209</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>5</td>
+          <td>139xxxx8086</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>Some attentive readers might ask, since it&rsquo;s a one-to-one relationship, why not just add a <code>mobile</code> column to the <code>students</code> table so they can be merged into one?</p>
+<p>If the business logic allows, combining the two tables into one is entirely possible. However, sometimes if a student doesn&rsquo;t have a mobile number, a corresponding record wouldn&rsquo;t exist in the <code>contacts</code> table. In fact, a one-to-one relationship, strictly speaking, is the <code>contacts</code> table having a one-to-one correspondence with the <code>students</code> table.</p>
+<p>Furthermore, some applications split a large table into two one-to-one tables to separate frequently read fields from infrequently read ones for better performance. For example, splitting a large user table into a basic user information table <code>user_info</code> and a detailed user information table <code>user_profiles</code>. Most of the time, only the <code>user_info</code> table needs to be queried without querying <code>user_profiles</code>, which improves the query speed.</p>
+<h4 id="summary-1">Summary
+</h4><p>Relational databases can implement one-to-many, many-to-many, and one-to-one relationships using foreign keys. Foreign keys can either be constrained by the database or set without constraints, relying solely on the application&rsquo;s logic to guarantee integrity.</p>
+<h3 id="index">Index
+</h3><p>In a relational database, if there are tens of thousands or even hundreds of millions of records, you need to use indexes to achieve very fast query speeds.</p>
+<p>An index is a strictly pre-sorted data structure in a relational database for the values of one or multiple columns. By utilizing indexes, the database system doesn&rsquo;t have to scan the entire table, but directly pinpoints the records that meet the criteria, greatly speeding up queries.</p>
+<p>For example, for the <code>students</code> table:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>class_id</th>
+          <th>name</th>
+          <th>gender</th>
+          <th>score</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>Xiaoming</td>
+          <td>M</td>
+          <td>90</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>1</td>
+          <td>Xiaohong</td>
+          <td>F</td>
+          <td>95</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>1</td>
+          <td>Xiaojun</td>
+          <td>M</td>
+          <td>88</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>If you frequently query based on the <code>score</code> column, you can create an index on the <code>score</code> column:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_score</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Using <code>ADD INDEX idx_score (score)</code> creates an index named <code>idx_score</code> that utilizes the <code>score</code> column. The index name is arbitrary, and if the index comprises multiple columns, they can be written sequentially in parentheses, for example:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ADD</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_name_score</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>The efficiency of an index depends on whether the values of the indexed column are dispersed—that is, the more distinct the column&rsquo;s values are, the higher the index efficiency. Conversely, if a column&rsquo;s records contain a large number of identical values, like the <code>gender</code> column where roughly half the values are <code>M</code> and the other half are <code>F</code>, creating an index for that column makes no sense.</p>
+<p>You can create multiple indexes for a single table. The advantage of indexes is improved query efficiency, while the disadvantage is that when inserting, updating, and deleting records, the index needs to be modified simultaneously. Therefore, the more indexes there are, the slower the operations to insert, update, and delete records become.</p>
+<p>For primary keys, relational databases will automatically create a primary key index for them. Using a primary key index is the most efficient because the primary key guarantees absolute uniqueness.</p>
+<h4 id="unique-index">Unique Index
+</h4><p>When designing relational data tables, columns that appear unique, such as ID numbers and email addresses, should not be modeled as primary keys due to having business significance.</p>
+<p>However, based on business requirements, these columns still have a uniqueness constraint: meaning two records cannot store the exact same ID number. At this point, we can add a unique index to this column. For example, assuming the <code>name</code> in the <code>students</code> table cannot be duplicated:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ADD</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">uni_name</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Through the <code>UNIQUE</code> keyword, we have added a unique index.</p>
+<p>You can also add a unique constraint to a certain column without creating a unique index:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">students</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">uni_name</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>In this scenario, the <code>name</code> column doesn&rsquo;t have an index, but still maintains a uniqueness guarantee.</p>
+<p>Regardless of whether an index is created or not, using a relational database will make no difference to the user and the application. This implies that when we query the database, if a matching index is available, the database system will automatically utilize the index to boost query efficiency. If no index exists, the query will still execute normally, but at a slower speed. Hence, indexes can be progressively optimized during database usage.</p>
+<h4 id="summary-2">Summary
+</h4><p>Creating indexes for database tables can accelerate query speeds;</p>
+<p>Creating unique indexes acts to guarantee the uniqueness of the values in a specific column;</p>
+<p>Database indexes are transparent to both users and applications.</p>
+<h2 id="select-query">SELECT Query
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">AND</span><span class="o">/</span><span class="k">OR</span><span class="w"> </span><span class="n">another_condition</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">AND</span><span class="o">/</span><span class="k">OR</span><span class="w"> </span><span class="err">…</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">movies</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="k">year</span><span class="o">&gt;=</span><span class="mi">2010</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">length_minutes</span><span class="o">&lt;</span><span class="mi">120</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="filtering-numeric-attribute-columns"><strong>Filtering Numeric Attribute Columns</strong>
+</h3><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>Keyword</th>
+          <th></th>
+          <th>Example</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>=, !=, &lt; &lt;=, &gt;, ≥</td>
+          <td></td>
+          <td>col_name != 4</td>
+      </tr>
+      <tr>
+          <td>BETWEEN … AND …</td>
+          <td>Between two numbers</td>
+          <td>col_name BETWEEN 1.5 AND 10.5</td>
+      </tr>
+      <tr>
+          <td>NOT BETWEEN … AND …</td>
+          <td></td>
+          <td>col_name NOT BETWEEN 1 AND 10</td>
+      </tr>
+      <tr>
+          <td>IN (…)</td>
+          <td>In a list</td>
+          <td>col_name IN (2, 4, 6)</td>
+      </tr>
+      <tr>
+          <td>NOT IN (…)</td>
+          <td></td>
+          <td>col_name NOT IN (1, 3, 5)</td>
+      </tr>
+  </tbody>
+</table></div>
+<h3 id="filtering-string-attribute-columns"><strong>Filtering String Attribute Columns</strong>
+</h3><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>=</td>
+          <td>Exactly equals</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>!= or &lt;&gt;</td>
+          <td>Does not equal</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>LIKE</td>
+          <td>Equivalent to = without wildcards</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>NOT LIKE</td>
+          <td>Equivalent to != without wildcards</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>%</td>
+          <td>Wildcard</td>
+          <td>col_name LIKE &ldquo;%AT%&rdquo;</td>
+      </tr>
+      <tr>
+          <td>_(Underscore)</td>
+          <td></td>
+          <td>col_name LIKE &ldquo;AN_&rdquo;</td>
+      </tr>
+  </tbody>
+</table></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="cm">/* Wildcards */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">col_name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s2">&#34;%AT%&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* &#34;AT&#34;, &#34;AT*...&#34;, &#34;...*AT&#34;, &#34;...*AT*...&#34; all satisfy the condition
+</span></span></span><span class="line"><span class="cl"><span class="cm"> There can be arbitrary characters before and after &#34;AT&#34; */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">col_name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s2">&#34;AN_&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* &#34;AND&#34; is okay, &#34;AN&#34;, &#34;ANDD&#34; are not
+</span></span></span><span class="line"><span class="cl"><span class="cm"> Similar to &#39;%&#39;, but only represents a single character */</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="filtering--sorting">Filtering / Sorting
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="cm">/* Use the DISTINCT keyword to specify that a certain attribute column or columns return uniquely */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="cm">/* Sort the results based on one or more attribute columns */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* ASC for ascending or DESC for descending */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* LIMIT specifies how many rows of results to return
+</span></span></span><span class="line"><span class="cl"><span class="cm"> OFFSET specifies from which row to start returning */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* Regarding OFFSET, if you want to output the Nth row (and onwards)
+</span></span></span><span class="line"><span class="cl"><span class="cm"> the parameter for OFFSET must be N-1 */</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="example-problem">Example Problem
+</h4><p><img src="/uploads/posts/MySQL/Screenshot_2025-03-11_132438.png" alt="Example Problem 1" loading="lazy" /></p>
+<hr>
+<h3 id="select-review-problems">SELECT Review Problems
+</h3><p><img src="/uploads/posts/MySQL/Screenshot_2025-03-11_134213.png" alt="Example Problem 2" loading="lazy" /></p>
+<hr>
+<h3 id="using-expressions-in-queries"><strong>Using Expressions in Queries</strong>
+</h3><p>Actually, <code>AS</code> is not only used for assigning aliases to expressions; standard attribute columns and even tables can be assigned an alias, making the SQL easier to grasp.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Examples of aliasing attribute columns and tables
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">better_column_name</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">a_long_widgets_table_name</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">mywidgets</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">widget_sales</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">ON</span><span class="w"> </span><span class="n">mywidgets</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">widget_sales</span><span class="p">.</span><span class="n">widget_id</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Example containing an expression
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w">  </span><span class="n">particle_speed</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_particle_speed</span><span class="w"> </span><span class="c1">-- Divided the results by 2
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">physics_data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="k">ABS</span><span class="p">(</span><span class="n">particle_position</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">&gt;</span><span class="mi">500</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">-- (The condition requires the absolute value of this attribute multiplied by 10 to be greater than 500);
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/uploads/posts/MySQL/Screenshot_2025-03-13_164705.png" alt="Example Problem 3" loading="lazy" /></p>
+<hr>
+<h3 id="performing-statistics-in-queries"><strong>Performing Statistics in Queries</strong>
+</h3><p><img src="/uploads/posts/MySQL/v2-89b10c80ff69acdb02494042f55c59d2_1440w.webp" alt="Sample Image 1" loading="lazy" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_or_expression</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">aggregate_description</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Common statistical functions:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>Function</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>COUNT(*) COUNT(column)</td>
+          <td>Counting! COUNT(*) counts the number of data rows, COUNT(column) counts the number of non-NULL rows in the column</td>
+      </tr>
+      <tr>
+          <td>MIN(column)</td>
+          <td>Finds the row with the smallest column value</td>
+      </tr>
+      <tr>
+          <td>MAX(column)</td>
+          <td>Finds the row with the largest column value</td>
+      </tr>
+      <tr>
+          <td>AVG(column)</td>
+          <td>Takes the average of the column for all rows</td>
+      </tr>
+      <tr>
+          <td>SUM(column)</td>
+          <td>Sums the column for all rows</td>
+      </tr>
+  </tbody>
+</table></div>
+<hr>
+<h3 id="grouped-statistics">Grouped Statistics
+</h3><p>The <code>GROUP BY</code> data grouping syntax can group data by a specific <code>col_name</code>. For example, <code>GROUP BY Year</code> means grouping the data by year, placing data from the same year into the same group. If a statistical function is combined with <code>GROUP BY</code>, then the statistical result is constrained to the data within each group.
+The number of data rows resulting from a <code>GROUP BY</code> grouping is exactly the number of groups. For instance, with <code>GROUP BY Year</code>, however many years exist in the overall data, that same number of data rows will be returned, regardless of whether a statistical function is applied.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Statistics using groupings
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_or_expression</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">aggregate_description</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/uploads/posts/MySQL/Screenshot_2025-03-13_170736.png" alt="Example Problem 4" loading="lazy" /></p>
+<p>In the <code>GROUP BY</code> grouping syntax, we know that the database first filters the data with <code>WHERE</code>, and then groups the results. What if we want to filter out a few more rows from the already grouped data?
+A less commonly utilized syntax, the <code>HAVING</code> syntax, will be employed to resolve this problem; it allows further <code>SELECT</code> filtering on the post-grouping data.</p>
+<p>The <code>HAVING</code> syntax is identical to <code>WHERE</code>, except the result set it operates on is different. In the case of the small datasets in our examples, <code>HAVING</code> may not seem very useful, but when your data volume hits the thousands or millions with numerous attributes, it can be of immense help.</p>
+<hr>
+<h3 id="join-connections">JOIN Connections
+</h3><h4 id="database-normal-forms">Database Normal Forms
+</h4><p>Database normal forms are standardizations for data table design. Under these normal form guidelines, the duplicate data stored by each schema is reduced to a minimum (assisting in maintaining data coherence). Meanwhile, under database normalization, tables no longer possess rigid data decoupling, permitting independent scaling (i.e., for example, the growth of car engines and cars is completely decoupled).</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_table_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="c1">-- The primary table
+</span></span></span><span class="line"><span class="cl"><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">another_table</span><span class="w"> </span><span class="c1">-- The table to be joined
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">ON</span><span class="w"> </span><span class="n">mytable</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_table</span><span class="p">.</span><span class="n">id</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">-- Imagine the primary key join mentioned earlier, two identical ones are merged into 1 row
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>The relation association described by the <code>ON</code> condition in this example:</p>
+<h4 id="inner-join-inner-connections"><strong><code>INNER JOIN</code></strong> (Inner) Connections
+</h4><p>First, combine the data from two tables together, any data from either table that fails to find a counterpart via ID will be discarded. At this stage, you may envision the post-join data as an aggregation of two tables, where the remaining SQL clauses will continue their execution upon this combination (imagine it&rsquo;s exactly the same as the previous single-table operations).
+Another method for comprehending an <strong><code>INNER JOIN</code></strong> is to think of an <strong><code>INNER JOIN</code></strong> as the intersection of two sets.</p>
+<p><img src="/uploads/posts/MySQL/Screenshot_2025-03-11_142245.png" alt="Example Problem 5" loading="lazy" /></p>
+<h4 id="outer-join-outer-connections"><code>OUTER JOIN</code> Outer Connections
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Perform multi-table queries using LEFT/RIGHT/FULL JOINs
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">INNER</span><span class="o">/</span><span class="k">LEFT</span><span class="o">/</span><span class="k">RIGHT</span><span class="o">/</span><span class="k">FULL</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">another_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">ON</span><span class="w"> </span><span class="n">mytable</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_table</span><span class="p">.</span><span class="n">matching_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>When executing a connection on Table A to Table B, a <strong><code>LEFT JOIN</code></strong> retains all elements of A, unaffected by if they match successfully with B, conversely, a <strong><code>RIGHT JOIN</code></strong> retains all elements present inside B. Concluding, a <strong><code>FULL JOIN</code></strong> will simultaneously conserve all row items originating from both A and B regardless of achieving any matches.</p>
+<p>Establishing a 1-to-1 linkage connecting two table schemas reserves A&rsquo;s or B&rsquo;s intrinsic entries, where if a provided column doesn&rsquo;t reside within the opposite table, a <code>NULL</code> is to fill up the consequential data.</p>
+<p><img src="/uploads/posts/MySQL/Screenshot_2025-03-11_151348.png" alt="Example Problem 6" loading="lazy" /></p>
+<hr>
+<h3 id="query-execution-order">Query Execution Order
+</h3><p><img src="/uploads/posts/MySQL/v2-d414289449f1dcaaa8c81e13de989b57_1440w.webp" alt="Sample Image 2" loading="lazy" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- This is the complete SELECT query
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_or_expression</span><span class="p">),</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">JOIN</span><span class="w"> </span><span class="n">another_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">ON</span><span class="w"> </span><span class="n">mytable</span><span class="p">.</span><span class="k">column</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_table</span><span class="p">.</span><span class="k">column</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">HAVING</span><span class="w"> </span><span class="n">constraint_expression</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">LIMIT</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="k">COUNT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="1fromandjoin">1. <code>FROM</code> and <code>JOIN</code>
+</h4><p><strong><code>FROM</code></strong> or <strong><code>JOIN</code></strong> are the first to execute, pinpointing the overall constraints behind a data range. Should different tables require a JOIN, an intermediate temporary Table may generate, subsequently serving later downstream operations. Fundamentally, this initial block could be summarized as recognizing the genesis data source table (inclusive of any temp tables).</p>
+<h4 id="2"><strong>2. <code>WHERE</code></strong>
+</h4><p>Now that we have ascertained the data schema source, the <strong><code>WHERE</code></strong> statement undertakes data screening on this data origin depending exclusively on specified parameters, ejecting whichever data entries do not correspond to the requested qualifications. All screened col attributes ought to materialize out of the tables identified through <strong><code>FROM</code></strong>. Due to aliases plausibly embodying non-executed formulas, <code>AS</code> aliases cannot be invoked dynamically inside this specific phase.</p>
+<h4 id="3"><strong>3. <code>GROUP BY</code></strong>
+</h4><p>If you implemented <strong><code>GROUP BY</code></strong> for classifying entries, the subsequent <strong><code>GROUP BY</code></strong> groups earlier data alongside computations for tallies, shrinking resultant outcomes aligned closer to the aggregate number of partitions. Therefore, any extra parameters not part of the classified dimensions get wiped.</p>
+<h4 id="4"><strong>4. <code>HAVING</code></strong>
+</h4><p>If you implemented <strong><code>GROUP BY</code></strong> clustering, <strong><code>HAVING</code></strong> conducts additional sifting onto corresponding outcome schemas immediately after finishing earlier groupings. <code>AS</code> aliases conversely stay deactivated for use amidst this procedure phase.</p>
+<h4 id="5"><strong>5. <code>SELECT</code></strong>
+</h4><p>After finalizing findings, <strong><code>SELECT</code></strong> is implemented across columns comprising the solution output to perform simple sifting operations or computational mathematics aimed specifically at establishing the explicit contents outputted.</p>
+<h4 id="6"><strong>6. <code>DISTINCT</code></strong>
+</h4><p>Should elements suffer uninvited repetition, <strong><code>DISTINCT</code></strong> bears the duty to enforce deduplication.</p>
+<h4 id="7"><strong>7. <code>ORDER BY</code></strong>
+</h4><p>Where the generated finding bounds stay solidly solidified, <strong><code>ORDER BY</code></strong> categorizes sequence alignments over the end-product. Since standard evaluation across variables enveloped in <strong><code>SELECT</code></strong> rests fulfilled. Thus here entails dynamic utility via establishing <code>AS</code> aliases.</p>
+<h4 id="8"><strong>8. <code>LIMIT</code> / <code>OFFSET</code></strong>
+</h4><p>As the conclusion steps, <strong><code>LIMIT</code></strong> beside <strong><code>OFFSET</code></strong> carve out compartmental slices directly abstracted right after sorted listings.</p>
+<h4 id="conclusion"><strong>Conclusion</strong>
+</h4><p>Not absolutely every SQL statement relies intrinsically around comprehensively capturing all potential terminologies, but nimbly navigating via varied compositional constructs paired securely closely with intuitive SQL theoretical execution foundations ensures superior resolutions handling localized database hurdles exclusively bounded natively on SQL, rather than blindly migrating all problematic dilemmas towards application code programming abstractions.</p>
+<hr>
+<h2 id="null">NULL
+</h2><p>If you overlook committing distinct inputs allocated for designated database columns, it prominently projects a <strong><code>NULL</code></strong>. Thus, a recurrent solution allocates structural <strong><code>default values</code></strong>, typically like standardizing numeric fields to 0, combined with calibrating textual dimensions matching <code>&quot;&quot;</code> string dimensions. Nevertheless, where intrinsic characteristics authentically mirror absolute intentional <strong><code>NULL</code></strong> meanings, please pay cautious consideration against recklessly standardizing alternative defaults versus legitimately accepting pure <strong><code>NULL</code></strong>. (For example, whilst establishing cross-record average arithmetic, applying 0 automatically registers evaluations consequently contaminating accurate calculations, although deploying pure <strong><code>NULL</code></strong> exclusively bypasses erroneous quantitative inclusions entirely).</p>
+<p>Another situational bracket proving highly restrictive preventing <strong><code>NULL</code></strong> generations involves executing outer-joining multi-schema combinations earlier narrated, considering whenever quantitative data discrepancies present amongst A contrasting B schemas, one absolutely depends directly around <strong><code>NULL</code></strong> to seamlessly patch up dimensions natively missing references. Tackling equivalent predicaments, manipulating logic gates bounded internally with <strong><code>IS NULL</code></strong> identically accompanied by <strong><code>IS NOT NULL</code></strong> expertly determines specific boolean verifications judging if a definitive spatial coordinate explicitly registers fundamentally parallel corresponding precisely toward <strong><code>NULL</code></strong>.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">IS</span><span class="o">/</span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">AND</span><span class="o">/</span><span class="k">OR</span><span class="w"> </span><span class="n">another_condition</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">AND</span><span class="o">/</span><span class="k">OR</span><span class="w"> </span><span class="err">…</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/uploads/posts/MySQL/Screenshot_2025-03-11_203039.png" alt="Example Problem 7" loading="lazy" /></p>
+<hr>
+<h2 id="modifying-data">Modifying Data
+</h2>
+    <blockquote>
+        <p>Partially quoted from <a class="link" href="https://liaoxuefeng.com/books/sql/manipulation/index.html"  target="_blank" rel="noopener"
+    >修改数据 - SQL教程 - 廖雪峰的官方网站</a></p>
+
+    </blockquote>
+<p>The bedrock operational foundations revolving around relational database constructs categorically parallel CRUD manipulations: Create, Retrieve, Update, Delete. Addressing specific interrogations, we comprehensively expounded exactly describing elaborate dynamic utilities encompassing the <code>SELECT</code> statements effectively.</p>
+<p>Transitioning precisely over dimensional expansions, excisions alongside modifications dynamically reflect parallel standard matching respective descriptive SQL queries:</p>
+<ul>
+<li>INSERT: Inject original fresh record items;</li>
+<li>UPDATE: Overwrite formerly registered content;</li>
+<li>DELETE: Terminate and rip historical documented dimensions out.</li>
+</ul>
+<p>We will singularly unpack distinct structural application semantics independently driving these tri-fold modifying algorithmic assertions consecutively.</p>
+<h4 id="insert-insertion">INSERT Insertion
+</h4><p>Referenced in <a class="link" href="https://www.runoob.com/mysql/mysql-insert-query.html"  target="_blank" rel="noopener"
+    >MySQL 插入数据 | 菜鸟教程</a></p>
+<p>For illustration, injecting completely novel unrepresented components directly supplementing an internal <code>user</code> structural matrix primarily lists requisite sequential locational destinations dynamically accompanied by parallel structured inputs categorically sequentially encoded straightly following downstream <code>VALUES</code> parameters:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="k">table_name</span><span class="w"> </span><span class="p">(</span><span class="n">column1</span><span class="p">,</span><span class="w"> </span><span class="n">column2</span><span class="p">,</span><span class="w"> </span><span class="n">column3</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="n">value3</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">--
+</span></span></span><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">birthdate</span><span class="p">,</span><span class="w"> </span><span class="n">is_active</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test@runoob.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1990-01-01&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Whenever attempting holistic whole scale broad injections globally accommodating all columns (which ultimately equates loading literal standalone rows natively), explicit dimensional coordinates remain perfectly dismissible entirely voluntarily:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">NULL</span><span class="p">,</span><span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test@runoob.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1990-01-01&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Moreover it is similarly trivial establishing multifaceted multi-tier simultaneous bundled row records entirely unified through simply assigning combined aggregated sets grouped intrinsically under <code>VALUES</code> clauses, sequentially mapping individualized items cleanly compartmentalized bound uniquely using encapsulated parenthesis formatted like <code>(...)</code> neatly divided employing systematic commas <code>,</code> effectively:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">birthdate</span><span class="p">,</span><span class="w"> </span><span class="n">is_active</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">VALUES</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="s1">&#39;test1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test1@runoob.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1985-07-10&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="s1">&#39;test2&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test2@runoob.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1988-11-25&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">false</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="s1">&#39;test3&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test3@runoob.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1993-05-03&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<h3 id="update-undergoing-updates">UPDATE Undergoing Updates
+</h3><p><a class="link" href="https://www.runoob.com/mysql/mysql-update-query.html"  target="_blank" rel="noopener"
+    >MySQL UPDATE 更新 | 菜鸟教程</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="k">table_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="n">column1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="n">column2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value2</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Parameter Details:</strong></p>
+<ul>
+<li><code>table_name</code> is the name of the table wherein data rests scheduled anticipating functional updates.</li>
+<li><code>column1</code>, <code>column2</code>, &hellip; highlight discrete positional columns formally recognized awaiting modifications outright.</li>
+<li><code>value1</code>, <code>value2</code>, &hellip; outline structurally novel information intrinsically scheduled effectively overwriting earlier dated legacy materials seamlessly.</li>
+<li><code>WHERE condition</code> represents conditional non-mandatory clauses functionally singling filtering parameters strictly governing explicitly updated rows. Omitting completely identical <code>WHERE</code> clauses subsequently universally upgrades holistically comprehensive tables unconditionally totally.</li>
+</ul>
+<p><strong>Complementary Additions:</strong></p>
+<ul>
+<li>You remain effectively legally permitted upgrading independently singular and synchronously mixed multifield properties jointly.</li>
+<li>You seamlessly retain liberties programming absolutely disparate multifaceted conditions freely enveloped universally underneath <code>WHERE</code> subqueries.</li>
+<li>You natively manage comprehensive wide-scale adjustments immediately localized purely isolated targeting standalone tables independently.</li>
+</ul>
+<p>Implementing conditional bounds effectively anchored via <code>WHERE</code> structures provides phenomenally irreplaceable instrumental control purposefully identifying discrete unique tabular boundaries specifically designated requiring surgical alterations effectively.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Update the value of a single column
+</span></span></span><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">employees</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">60000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">employee_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">101</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Update the values of multiple columns
+</span></span></span><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">orders</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Shipped&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">ship_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2023-03-01&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">order_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1001</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Use an expression to update a value
+</span></span></span><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">products</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">category</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Electronics&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- Update using a value from a subquery
+</span></span></span><span class="line"><span class="cl"><span class="k">UPDATE</span><span class="w"> </span><span class="n">customers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="n">total_purchases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">orders</span><span class="p">.</span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">customer_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Premium&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>While authentically negotiating functionally operational structured rational core relational database engines like specifically MySQL inherently, deploying <code>UPDATE</code> statements generally consistently echoes feedback indicating successfully modified elements matching corresponding filtering parameters aligned alongside comprehensive <code>WHERE</code> clauses.</p>
+<p>Showcasing structural examples, notably modernizing distinct elements bound identifying primarily tracking <code>id=1</code> exactly natively:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">mysql&gt; UPDATE students SET name=&#39;大宝&#39; WHERE id=1;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.00 sec)
+</span></span><span class="line"><span class="cl">Rows matched: 1  Changed: 1  Warnings: 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MySQL distinctly natively signals explicit responsive <code>1</code>, transparently immediately visible inspecting completely rendered identical results cleanly reading <code>Rows matched: 1 Changed: 1</code> accurately unequivocally.</p>
+<p>Should corresponding updates primarily affect tracking exclusively registering elements possessing intrinsically tracking <code>id=999</code> similarly:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">mysql&gt; UPDATE students SET name=&#39;大宝&#39; WHERE id=999;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.00 sec)
+</span></span><span class="line"><span class="cl">Rows matched: 0  Changed: 0  Warnings: 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MySQL naturally natively signifies respective conditional returning <code>0</code>, explicitly transparently visible natively inspecting distinctly echoing outputs explicitly validating <code>Rows matched: 0 Changed: 0</code> accurately clearly.</p>
+<hr>
+<h3 id="delete-removal">DELETE Removal
+</h3><p>Basic fundamental grammar orchestrating structured <code>DELETE</code> syntaxes structurally aligns identically resembling:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">&lt;</span><span class="k">Table</span><span class="w"> </span><span class="n">Name</span><span class="o">&gt;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="p">...;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Applying illustrative formatting, attempting functionally eliminating distinct entities harboring unique mapping identifiers securely registered notably <code>id=1</code> localized strictly natively bounded among active <code>students</code> properties structurally explicitly fundamentally entails encoding practically:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- Delete the record with id=1:
+</span></span></span><span class="line"><span class="cl"><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Query and observe the results:
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Deliberately paying meticulous attention regarding operational definitions surrounding conditional bounding <code>WHERE</code> elements dynamically filtering out structurally precise parameters mandating prompt executions authentically mirrors exact operations mirroring identical capabilities natively accessible inherently inside structural comparable <code>UPDATE</code> variants. As identically similarly analogous identically dynamically natively, deploying structural functional declarative <code>DELETE</code> operations inherently successfully eliminates identically diverse extensive multiple item datasets independently automatically simultaneously effectively cleanly essentially perfectly similarly entirely efficiently fundamentally:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- Delete records with id=5,6,7:
+</span></span></span><span class="line"><span class="cl"><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">&gt;=</span><span class="mi">5</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">id</span><span class="o">&lt;=</span><span class="mi">7</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Query and observe the results:
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Assuming implicitly applied uniquely distinguishing boundary conditions explicitly failing matching corresponding any active database contents intrinsically perfectly effectively directly completely natively prevents completely <code>DELETE</code> statements automatically triggering system errors, identically mirroring similar outcomes consequently completely yielding total absences involving active eliminations occurring effectively whatsoever natively. Exemplifying analogous parallel dynamically practically:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- Delete the record with id=999:
+</span></span></span><span class="line"><span class="cl"><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">999</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- Query and observe the results:
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Finally, it is essential to be extremely careful. Similar to <code>UPDATE</code>, a <code>DELETE</code> statement without a <code>WHERE</code> condition will delete the data for the entire table:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">students</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>In this case, all records in the entire table will be deleted. Therefore, you must also be very careful when executing a <code>DELETE</code> statement. It is best to first use a <code>SELECT</code> statement to test whether the <code>WHERE</code> condition filters out the expected set of records, and then use <code>DELETE</code> to delete them.</p>
+<p>When using a true relational database like MySQL, the <code>DELETE</code> statement will also return the number of deleted rows and the number of rows matching the <code>WHERE</code> condition.</p>
+<p>For example, individually executing the deletion of records with <code>id=1</code> and <code>id=999</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">mysql&gt; DELETE FROM students WHERE id=1;
+</span></span><span class="line"><span class="cl">Query OK, 1 row affected (0.01 sec)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mysql&gt; DELETE FROM students WHERE id=999;
+</span></span><span class="line"><span class="cl">Query OK, 0 rows affected (0.01 sec)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<h2 id="create-creation">CREATE Creation
+</h2><p><a class="link" href="https://www.runoob.com/mysql/mysql-create-tables.html"  target="_blank" rel="noopener"
+    >MySQL 创建数据表 | 菜鸟教程</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="c1">-- User table instance
+</span></span></span><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">username</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">birthdate</span><span class="w"> </span><span class="nb">DATE</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">is_active</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">TRUE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Instance Analysis:</p>
+<ul>
+<li><code>id</code>: User id, integer type, auto-incrementing, acting as the primary key.</li>
+<li><code>username</code>: Username, variable-length string, empty values not allowed.</li>
+<li><code>email</code>: User email, variable-length string, empty values not allowed.</li>
+<li><code>birthdate</code>: User&rsquo;s date of birth, date type.</li>
+<li><code>is_active</code>: Whether the user has been activated, boolean type, default value is true.</li>
+</ul>
+<p>The above is just a simple instance utilizing some common data types including <code>INT</code>, <code>VARCHAR</code>, <code>DATE</code>, <code>BOOLEAN</code>. You can choose different data types depending on actual needs.</p>
+<p>The <code>AUTO_INCREMENT</code> keyword is deployed for creating an auto-incrementing column, and <code>PRIMARY KEY</code> is used for defining a primary key.</p>
+<p>If you desire to assign the data engine, character set, and sorting rules upon creating the table, you may employ <strong><code>CHARACTER SET</code></strong> alongside <strong><code>COLLATE</code></strong> clauses:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_general_ci</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/en/tags/database/">Database</a>
+        
+            <a href="/en/tags/mysql/">MySQL</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">Related content</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/en/p/redis/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/en/p/how-to-use-host-proxy-on-wsl2/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">How to Use Host Proxy on WSL2</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 ottercoconut&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.cb7a123540d26af6863483a994e00134749a05b073820fd7c04b3a3c15b4f89c.js" defer></script>
+
+
+    </body>
+</html>

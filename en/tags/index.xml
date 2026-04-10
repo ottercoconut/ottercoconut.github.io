@@ -17,5 +17,41 @@
             <pubDate>Fri, 20 Feb 2026 14:10:19 +0800</pubDate>
             <guid>http://localhost:1313/en/tags/%E7%BD%91%E7%BB%9C/</guid>
             <description></description>
+        </item><item>
+            <title>Networking</title>
+            <link>http://localhost:1313/en/tags/networking/</link>
+            <pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/networking/</guid>
+            <description></description>
+        </item><item>
+            <title>Proxy</title>
+            <link>http://localhost:1313/en/tags/proxy/</link>
+            <pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/proxy/</guid>
+            <description></description>
+        </item><item>
+            <title>Cache</title>
+            <link>http://localhost:1313/en/tags/cache/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/cache/</guid>
+            <description></description>
+        </item><item>
+            <title>Database</title>
+            <link>http://localhost:1313/en/tags/database/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/database/</guid>
+            <description></description>
+        </item><item>
+            <title>Persistence</title>
+            <link>http://localhost:1313/en/tags/persistence/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/persistence/</guid>
+            <description></description>
+        </item><item>
+            <title>MySQL</title>
+            <link>http://localhost:1313/en/tags/mysql/</link>
+            <pubDate>Mon, 17 Mar 2025 20:06:34 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/mysql/</guid>
+            <description></description>
         </item></channel>
 </rss>

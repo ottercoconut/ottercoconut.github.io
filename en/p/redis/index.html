@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Redis (Remote Dictionary Server) is a high-performance, open-source, in-memory data structure store, used as a database, cache, and message broker.\nReferences 知乎 超强、超详细Redis入门教程\nCSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）&mdash;第一集\n">
+<title>Redis</title>
+
+
+<link rel="canonical" href="http://localhost:1313/en/p/redis/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="Redis">
+<meta property='og:description' content="Redis (Remote Dictionary Server) is a high-performance, open-source, in-memory data structure store, used as a database, cache, and message broker.\nReferences 知乎 超强、超详细Redis入门教程\nCSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）&mdash;第一集\n">
+<meta property='og:url' content='http://localhost:1313/en/p/redis/'>
+<meta property='og:site_name' content='ottercoconut&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Cache' /><meta property='article:tag' content='Persistence' /><meta property='article:tag' content='Database' /><meta property='article:published_time' content='2025-03-18T15:41:00&#43;08:00'/><meta property='article:modified_time' content='2025-03-18T15:41:00&#43;08:00'/>
+<meta name="twitter:title" content="Redis">
+<meta name="twitter:description" content="Redis (Remote Dictionary Server) is a high-performance, open-source, in-memory data structure store, used as a database, cache, and message broker.\nReferences 知乎 超强、超详细Redis入门教程\nCSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）&mdash;第一集\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/en/">
+                    <img src="/img/avatar.png" 
+                        width="150"
+                        height="150"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/en/">ottercoconut&#39;s Blog</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/ottercoconut/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/en/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/en/links/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    <li id="i18n-switch">  
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                            
+                                
+                                
+                                    
+                                        
+                                    
+                                
+                                    
+                                
+                                <option value="/p/redis/" >简体中文</option>
+                            
+                                
+                                
+                                    
+                                
+                                    
+                                        
+                                    
+                                
+                                <option value="/en/p/redis/" selected>English</option>
+                            
+                        </select>
+                    </li>
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#references">References</a></li>
+      </ol>
+    </li>
+    <li><a href="#data-structures">Data Structures</a>
+      <ol>
+        <li><a href="#string">string</a>
+          <ol>
+            <li><a href="#basic-operations">Basic Operations</a></li>
+            <li><a href="#advanced-operations">Advanced Operations</a></li>
+            <li><a href="#considerations-for-string-type-numeric-operations">Considerations for String Type Numeric Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#hash">hash</a>
+          <ol>
+            <li><a href="#basic-operations-1">Basic Operations</a></li>
+            <li><a href="#advanced-operations-1">Advanced Operations</a></li>
+            <li><a href="#considerations-for-hash-type-data-operations">Considerations for Hash Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#list">list</a>
+          <ol>
+            <li><a href="#basic-operations-2">Basic Operations</a></li>
+            <li><a href="#advanced-operations-2">Advanced Operations</a></li>
+            <li><a href="#considerations-for-list-type-data-operations">Considerations for List Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#set">set</a>
+          <ol>
+            <li><a href="#basic-operations-3">Basic Operations</a></li>
+            <li><a href="#advanced-operations-3">Advanced Operations</a></li>
+            <li><a href="#considerations-for-set-type-data-operations">Considerations for Set Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#zset">zset</a>
+          <ol>
+            <li><a href="#basic-operations-4">Basic Operations</a></li>
+            <li><a href="#advanced-operations-4">Advanced Operations</a></li>
+            <li><a href="#considerations-for-sorted_set-type-data-operations">Considerations for sorted_set Type Data Operations</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/en/categories/tech/" style="background-color: hsl(145, 60%, 84%); color: hsl(145, 60%, 15%);">
+                Tech
+            </a>
+        
+            
+            
+            
+            <a href="/en/categories/backend-development/" style="background-color: hsl(282, 60%, 84%); color: hsl(282, 60%, 15%);">
+                Backend Development
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/en/p/redis/">Redis</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2025-03-18T15:41:00&#43;08:00'>Tuesday, March 18, 2025</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        5 minutes read
+                    </time>
+                
+            </div>
+        
+
+        
+            <div class="inline-meta">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                
+                    <a href="/p/redis/" class="link">简体中文</a>
+                
+            </div>
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span>Table of contents</span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#references">References</a></li>
+      </ol>
+    </li>
+    <li><a href="#data-structures">Data Structures</a>
+      <ol>
+        <li><a href="#string">string</a>
+          <ol>
+            <li><a href="#basic-operations">Basic Operations</a></li>
+            <li><a href="#advanced-operations">Advanced Operations</a></li>
+            <li><a href="#considerations-for-string-type-numeric-operations">Considerations for String Type Numeric Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#hash">hash</a>
+          <ol>
+            <li><a href="#basic-operations-1">Basic Operations</a></li>
+            <li><a href="#advanced-operations-1">Advanced Operations</a></li>
+            <li><a href="#considerations-for-hash-type-data-operations">Considerations for Hash Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#list">list</a>
+          <ol>
+            <li><a href="#basic-operations-2">Basic Operations</a></li>
+            <li><a href="#advanced-operations-2">Advanced Operations</a></li>
+            <li><a href="#considerations-for-list-type-data-operations">Considerations for List Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#set">set</a>
+          <ol>
+            <li><a href="#basic-operations-3">Basic Operations</a></li>
+            <li><a href="#advanced-operations-3">Advanced Operations</a></li>
+            <li><a href="#considerations-for-set-type-data-operations">Considerations for Set Type Data Operations</a></li>
+          </ol>
+        </li>
+        <li><a href="#zset">zset</a>
+          <ol>
+            <li><a href="#basic-operations-4">Basic Operations</a></li>
+            <li><a href="#advanced-operations-4">Advanced Operations</a></li>
+            <li><a href="#considerations-for-sorted_set-type-data-operations">Considerations for sorted_set Type Data Operations</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <p>Redis (Remote Dictionary Server) is a high-performance, open-source, in-memory data structure store, used as a database, cache, and message broker.</p>
+<h3 id="references">References
+</h3><p><a class="link" href="https://zhuanlan.zhihu.com/p/411888708"  target="_blank" rel="noopener"
+    >知乎 超强、超详细Redis入门教程</a></p>
+<p><a class="link" href="https://blog.csdn.net/wenwenaier/article/details/121878831"  target="_blank" rel="noopener"
+    >CSDN【Redis二三事】一套超详细的Redis学习教程（步骤图片+实操）&mdash;第一集</a></p>
+
+    <blockquote>
+        <p>Detailed, with real business scenario examples.</p>
+
+    </blockquote>
+<h2 id="data-structures">Data Structures
+</h2><p>Redis includes five major data types: string (<code>string</code>), list (<code>list</code>), hash (<code>hash</code>), set (<code>set</code>), and sorted set (<code>zset</code>).</p>
+<h3 id="string">string
+</h3><p>The most basic data type in Redis. Each key corresponds to a value, which can be text, numbers, or binary data, with a maximum storage of 512MB. It supports operations like string concatenation, substring, increment, and decrement, and is suitable for scenarios such as caching data, counters (e.g., page view statistics), and distributed locks.</p>
+<h4 id="basic-operations">Basic Operations
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set key value
+</span></span><span class="line"><span class="cl">get key
+</span></span><span class="line"><span class="cl">del key 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="addmodify-multiple-data">Add/Modify Multiple Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mset key1 value1 key2 value2...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-multiple-data">Get Multiple Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mget key1 key2...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-character-count-of-data">Get Character Count of Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">strlen key
+</span></span><span class="line"><span class="cl">// For example
+</span></span><span class="line"><span class="cl">set name1 nosql
+</span></span><span class="line"><span class="cl">strlen name1
+</span></span><span class="line"><span class="cl">// Output: 5
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="append-information">Append Information
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">append key value
+</span></span><span class="line"><span class="cl">// For example
+</span></span><span class="line"><span class="cl">append name1 name
+</span></span><span class="line"><span class="cl">get name1
+</span></span><span class="line"><span class="cl">/* Output: nosqlname*/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="multi-data-vs-single-data-operations">Multi-data vs Single-data Operations
+</h5><ul>
+<li>Executing $n$ commands individually requires 1 send + 1 process + 1 return $n$ times</li>
+<li>Executing $n$ commands via a multi-data command requires 1 send + $n$ processes + 1 return</li>
+<li>When the data volume is large, the time consumed by multi-data commands is much less than individual commands</li>
+</ul>
+<h4 id="advanced-operations">Advanced Operations
+</h4><h5 id="incrementdecrement-numeric-data-by-a-specified-range">Increment/Decrement Numeric Data by a Specified Range
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">incrby key increment
+</span></span><span class="line"><span class="cl">decrby key increment
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="numeric-operations-on-string-types">Numeric Operations on String Types
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">127.0.0.1:6379&gt; set mynum &#34;2&#34;
+</span></span><span class="line"><span class="cl">OK
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; get mynum
+</span></span><span class="line"><span class="cl">&#34;2&#34;
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; incr mynum
+</span></span><span class="line"><span class="cl">(integer) 3
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; get mynum
+</span></span><span class="line"><span class="cl">&#34;3&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>When encountering numeric operations, Redis will automatically convert the string type into a number.</p>
+<h4 id="considerations-for-string-type-numeric-operations">Considerations for String Type Numeric Operations
+</h4><ul>
+<li>Differences between execution status feedback and normal data manipulation feedback
+<ul>
+<li>Indicates whether the operation results were successful
+<ul>
+<li>(integer) 0 -&gt; false Failed</li>
+<li>(integer) 1 -&gt; true Succeeded</li>
+</ul>
+</li>
+<li>Indicates the resulting value
+<ul>
+<li>(integer) 3 -&gt; 3      3 items</li>
+<li>(integer) 1 -&gt; 1      1 item</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Data not found
+<ul>
+<li>(<code>nil</code>) is equivalent to <code>null</code></li>
+</ul>
+</li>
+<li>Maximum data storage capacity
+<ul>
+<li>512MB</li>
+</ul>
+</li>
+<li>Maximum range for numeric calculations (maximum value of <code>long</code> in <code>java</code>)
+<ul>
+<li>9223372036854775807</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="hash">hash
+</h3><p>Similar to a small key-value store, suitable for storing structured data such as user information (ID, name, email, etc.). Compared to the <code>String</code> type, it saves more memory because multiple fields share the same key. You can operate on fields individually to avoid reading and modifying the entire object, making it suitable for storing objects, session information, etc.</p>
+<h4 id="basic-operations-1">Basic Operations
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hset key field value // Add/Modify data
+</span></span><span class="line"><span class="cl">hget key field // Get data
+</span></span><span class="line"><span class="cl">hgetall key
+</span></span><span class="line"><span class="cl">hdel key field1 [field2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="addmodify-multiple-data-1">Add/Modify Multiple Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hmset key field1 value1 field2 value2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-multiple-data-1">Get Multiple Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hmget key field1 field2...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-the-number-of-fields-in-a-hash-table">Get the Number of Fields in a Hash Table
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hlen key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="check-if-a-specified-field-exists-in-a-hash-table">Check if a Specified Field Exists in a Hash Table
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hexists key field
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="advanced-operations-1">Advanced Operations
+</h4><h5 id="get-all-field-names-or-field-values-in-a-hash-table">Get All Field Names or Field Values in a Hash Table
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hkeys key
+</span></span><span class="line"><span class="cl">hvals key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="increment-the-numeric-value-of-a-specified-field-by-a-certain-range">Increment the Numeric Value of a Specified Field by a Certain Range
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">hincrby key field increment
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="comprehensive-example">Comprehensive Example
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Create hash and assign values
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; HMSET user:001 username antirez password P1pp0 age 34 
+</span></span><span class="line"><span class="cl">OK
+</span></span><span class="line"><span class="cl">// List the contents of the hash
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; HGETALL user:001 
+</span></span><span class="line"><span class="cl">1) &#34;username&#34;
+</span></span><span class="line"><span class="cl">2) &#34;antirez&#34;
+</span></span><span class="line"><span class="cl">3) &#34;password&#34;
+</span></span><span class="line"><span class="cl">4) &#34;P1pp0&#34;
+</span></span><span class="line"><span class="cl">5) &#34;age&#34;
+</span></span><span class="line"><span class="cl">6) &#34;34&#34;
+</span></span><span class="line"><span class="cl">// Change a specific value in the hash
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; HSET user:001 password 12345 
+</span></span><span class="line"><span class="cl">(integer) 0
+</span></span><span class="line"><span class="cl">// List the contents of the hash again
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; HGETALL user:001 
+</span></span><span class="line"><span class="cl">1) &#34;username&#34;
+</span></span><span class="line"><span class="cl">2) &#34;antirez&#34;
+</span></span><span class="line"><span class="cl">3) &#34;password&#34;
+</span></span><span class="line"><span class="cl">4) &#34;12345&#34;
+</span></span><span class="line"><span class="cl">5) &#34;age&#34;
+</span></span><span class="line"><span class="cl">6) &#34;34&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="considerations-for-hash-type-data-operations">Considerations for Hash Type Data Operations
+</h4><ul>
+<li>
+<ol>
+<li>The <code>value</code> under the <code>hash</code> type <strong>can only store strings</strong>, and no other data types are allowed, so there is no nesting. If no data is found, the corresponding value is (<code>nil</code>).</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>Each <code>hash</code> can store 2^23-1 key-value pairs.</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>The <code>hash</code> type is very close to the data storage format of objects, and object properties can be flexibly added. However, its initial design was not meant for storing large numbers of objects. Remember not to abuse it, and <strong>never use a hash as an object list</strong>.</li>
+</ol>
+</li>
+<li>
+<ol start="4">
+<li>The <code>hgetall</code> operation can retrieve all properties. If there are too many <code>field</code>s inside, traversing the whole data will be very inefficient and may become a bottleneck for data access.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="list">list
+</h3><p>Based on a doubly linked list, it allows fast insertion and deletion of elements from the head (left) or tail (right), and supports reading elements by specifying an index range. It is suitable for implementing message queues, timelines (such as Weibo feeds), task scheduling, and other applications, especially for scenarios that require processing data according to insertion order.</p>
+<h4 id="basic-operations-2">Basic Operations
+</h4><h5 id="addmodify-data">Add/Modify Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">lpush key value1 [value2]... // Push from the left
+</span></span><span class="line"><span class="cl">rpush key value1 [value2]... /* Push from the right */
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-data">Get Data
+</h5><p>About <code>lrange</code>:</p>
+<ul>
+<li><code>lrange</code> is used to get elements within a specified range</li>
+<li>-1 represents the last element</li>
+<li>List element indexing starts from position 0</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">lrange key start stop
+</span></span><span class="line"><span class="cl">lindex key index
+</span></span><span class="line"><span class="cl">lien key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-and-remove-data">Get and Remove Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">lpop key
+</span></span><span class="line"><span class="cl">rpop key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="remove-specified-data">Remove Specified Data
+</h5><p>About <code>lrem</code>:</p>
+<ul>
+<li>Parameter <code>count</code>
+<ul>
+<li><code>count &gt; 0</code> -&gt; Remove <code>count</code> matching <code>value</code>s starting from the head (left)</li>
+<li><code>count &lt; 0</code> -&gt; Remove <code>count</code> matching <code>value</code>s starting from the tail (right)</li>
+<li><code>count = 0</code> -&gt; Remove <strong>all matching <code>value</code>s</strong> (equivalent to removing all elements with this value from the list)</li>
+</ul>
+</li>
+<li>If <code>key</code> does not exist
+<ul>
+<li>Returns 0</li>
+</ul>
+</li>
+<li>Commonly used to <strong>remove duplicate elements from a list or clean up data</strong></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">lrem key count value
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="advanced-operations-2">Advanced Operations
+</h4><h5 id="get-and-remove-data-within-a-specified-time">Get and Remove Data Within a Specified Time
+</h5><p>About <code>blpop</code>:</p>
+<ul>
+<li>Parameter <code>key1 [key2...]</code>
+<ul>
+<li>Multiple list keys can be provided, and <code>Redis</code> will check these lists in order sequentially</li>
+</ul>
+</li>
+<li>Parameter <code>timeout</code>
+<ul>
+<li>timeout &gt; 0 -&gt; If the list is empty, wait up to <code>timeout</code> seconds</li>
+<li>timeout &lt; 0 -&gt; Block <strong>indefinitely</strong> until data is available</li>
+</ul>
+</li>
+<li>Applicable to scenarios like <strong>task queues, producer-consumer models</strong>, etc.</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">blpop key1 [key2] timeout
+</span></span><span class="line"><span class="cl">brpop key1 [key2] timeout
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Example</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">RPUSH list1 &#34;a&#34; &#34;b&#34; &#34;c&#34;    // List content: [&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]
+</span></span><span class="line"><span class="cl">BLPOP list1 10             // Pop &#34;a&#34;, returns [&#34;list1&#34;, &#34;a&#34;]
+</span></span><span class="line"><span class="cl">BLPOP list1 10             // Pop &#34;b&#34;, returns [&#34;list1&#34;, &#34;b&#34;]
+</span></span><span class="line"><span class="cl">BLPOP list1 10             // Pop &#34;c&#34;, returns [&#34;list1&#34;, &#34;c&#34;]
+</span></span><span class="line"><span class="cl">BLPOP list1 10             /* List is empty, blocks for up to 10 seconds; if no new elements, returns nil */
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="comprehensive-example-1">Comprehensive Example
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Create a new list called mylist and insert element &#34;1&#34; at the head
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; lpush mylist &#34;1&#34; 
+</span></span><span class="line"><span class="cl">// Returns the current number of elements in mylist
+</span></span><span class="line"><span class="cl">(integer) 1 
+</span></span><span class="line"><span class="cl">// Insert element &#34;2&#34; on the right side of mylist
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; rpush mylist &#34;2&#34; 
+</span></span><span class="line"><span class="cl">(integer) 2
+</span></span><span class="line"><span class="cl">// Insert element &#34;0&#34; on the left side of mylist
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; lpush mylist &#34;0&#34; 
+</span></span><span class="line"><span class="cl">(integer) 3
+</span></span><span class="line"><span class="cl">// List elements in mylist from index 0 to 1
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; lrange mylist 0 1 
+</span></span><span class="line"><span class="cl">1) &#34;0&#34;
+</span></span><span class="line"><span class="cl">2) &#34;1&#34;
+</span></span><span class="line"><span class="cl">// List elements in mylist from index 0 to the last element
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; lrange mylist 0 -1 
+</span></span><span class="line"><span class="cl">1) &#34;0&#34;
+</span></span><span class="line"><span class="cl">2) &#34;1&#34;
+</span></span><span class="line"><span class="cl">3) &#34;2&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="considerations-for-list-type-data-operations">Considerations for List Type Data Operations
+</h4><ul>
+<li>
+<ol>
+<li>The data stored in a <code>list</code> is of the <code>string</code> type, and the total data capacity is limited to a maximum of 2^32-1 elements.</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>A <code>list</code> has the concept of &ldquo;indexes,&rdquo; but manipulating data is usually done in the form of a &ldquo;queue&rdquo; (enqueue/dequeue) or a &ldquo;stack&rdquo; (push/pop).</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>When retrieving all data, the end index is set to -1.</li>
+</ol>
+</li>
+<li>
+<ol start="4">
+<li>A <code>list</code> allows <code>pagination</code> of data; typically, page 1 information comes from the <code>list</code>, while page 2 and more are loaded in a &ldquo;database&rdquo; fashion.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="set">set
+</h3><p>It consists of unique, unordered elements, supporting addition, deletion, and search operations with O(1) time complexity, and provides set operations like intersection, union, and difference. Suitable for applications like deduplication, mutual follows in recommendation systems, and tag management. Because duplicate elements are not allowed, it efficiently stores collections of distinct data.</p>
+<h4 id="basic-operations-3">Basic Operations
+</h4><h5 id="add-data">Add Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sadd key member1 [member2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-all-data">Get All Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">smembers key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="delete-data">Delete Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">srem key member1 [member2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-total-amount-of-set-data">Get Total Amount of Set Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">scard key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="check-if-specified-data-is-in-the-set">Check if Specified Data is in the Set
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sismember key member
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="advanced-operations-3">Advanced Operations
+</h4><h5 id="randomly-get-a-specified-number-of-elements-from-the-set">Randomly Get a Specified Number of Elements from the Set
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">srandmember key [count]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="randomly-get-an-element-from-the-set-and-remove-it">Randomly Get an Element from the Set and Remove It
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">spop key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="calculate-the-intersection-union-and-difference-of-two-sets">Calculate the Intersection, Union, and Difference of Two Sets
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sinter key1 [key2]
+</span></span><span class="line"><span class="cl">sunion key1 [key2]
+</span></span><span class="line"><span class="cl">sdiff key1 [key2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="calculate-the-intersection-union-and-difference-of-two-sets-and-store-in-a-specified-set">Calculate the Intersection, Union, and Difference of Two Sets and Store in a Specified Set
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sinterstore destination key1 [key2]
+</span></span><span class="line"><span class="cl">sunionstore destination key1 [key2]
+</span></span><span class="line"><span class="cl">sdiffstore destination key1 [key2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="move-specified-data-from-the-source-set-to-the-destination-set">Move Specified Data from the Source Set to the Destination Set
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">smove source destination member
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="comprehensive-example-2">Comprehensive Example
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Add a new element &#34;one&#34; to the set myset
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sadd myset &#34;one&#34; 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sadd myset &#34;two&#34;
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">// List all elements in the set myset
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; smembers myset 
+</span></span><span class="line"><span class="cl">1) &#34;one&#34;
+</span></span><span class="line"><span class="cl">2) &#34;two&#34;
+</span></span><span class="line"><span class="cl">// Check if element &#34;one&#34; is in the set myset, returning 1 indicates existence
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sismember myset &#34;one&#34; 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">// Check if element &#34;three&#34; is in the set myset, returning 0 indicates non-existence
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sismember myset &#34;three&#34; 
+</span></span><span class="line"><span class="cl">(integer) 0
+</span></span><span class="line"><span class="cl">// Create a new set yourset
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sadd yourset &#34;1&#34; 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sadd yourset &#34;2&#34;
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; smembers yourset
+</span></span><span class="line"><span class="cl">1) &#34;1&#34;
+</span></span><span class="line"><span class="cl">2) &#34;2&#34;
+</span></span><span class="line"><span class="cl">// Take the union of the two sets
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; sunion myset yourset 
+</span></span><span class="line"><span class="cl">1) &#34;1&#34;
+</span></span><span class="line"><span class="cl">2) &#34;one&#34;
+</span></span><span class="line"><span class="cl">3) &#34;2&#34;
+</span></span><span class="line"><span class="cl">4) &#34;two&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="considerations-for-set-type-data-operations">Considerations for Set Type Data Operations
+</h4><ul>
+<li>The set type <code>does not allow duplicate data</code>. If the added data already exists in the set, only <code>one copy will be kept</code>.</li>
+<li>Although set has the <code>same storage structure</code> as hash, it <code>cannot utilize the space for storing values</code> in the hash.</li>
+</ul>
+<h3 id="zset">zset
+</h3><p>Builds upon Set by adding a score to each element and ordering them by this score, supporting ranged queries, score-based ranking, and other operations. Suitable for leaderboards (like game scores), priority queues (like scheduled tasks), and time-sorted data storage (like article reading rankings), where sorting by weight is needed.</p>
+<h4 id="basic-operations-4">Basic Operations
+</h4><h5 id="add-data-1">Add Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zadd key score1 member1 [score2 member2]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-all-data-1">Get All Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zrange key start stop [WITHSCORES]     // Display in ascending order
+</span></span><span class="line"><span class="cl">zrevrange key start stop [WITHSCORES]  // Display in descending order
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="delete-data-1">Delete Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zrem key member [member...]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="get-data-by-condition">Get Data by Condition
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zrangebyscore key min max [Withscores][limit]
+</span></span><span class="line"><span class="cl">zrevrangebyscore key max min [withscores]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="delete-data-by-condition">Delete Data by Condition
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zremrangebyrank key start stop  // Delete by index
+</span></span><span class="line"><span class="cl">zremrangebyscore key min max 	// Delete by range
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="comprehensive-example-3">Comprehensive Example
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Add a new sorted set myzset, insert the element baidu.com, and assign it score 1:
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; zadd myzset 1 baidu.com 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">// Add the element 360.com to myzset, assigning it score 3
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; zadd myzset 3 360.com 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">// Add the element google.com to myzset, assigning it score 2
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; zadd myzset 2 google.com 
+</span></span><span class="line"><span class="cl">(integer) 1
+</span></span><span class="line"><span class="cl">// List all elements of myzset along with their scores, showing that myzset is already ordered.
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; zrange myzset 0 -1 with scores 
+</span></span><span class="line"><span class="cl">1) &#34;baidu.com&#34;
+</span></span><span class="line"><span class="cl">2) &#34;1&#34;
+</span></span><span class="line"><span class="cl">3) &#34;google.com&#34;
+</span></span><span class="line"><span class="cl">4) &#34;2&#34;
+</span></span><span class="line"><span class="cl">5) &#34;360.com&#34;
+</span></span><span class="line"><span class="cl">6) &#34;3&#34;
+</span></span><span class="line"><span class="cl">// List only the elements of myzset
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; zrange myzset 0 -1 
+</span></span><span class="line"><span class="cl">1) &#34;baidu.com&#34;
+</span></span><span class="line"><span class="cl">2) &#34;google.com&#34;
+</span></span><span class="line"><span class="cl">3) &#34;360.com&#34;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="advanced-operations-4">Advanced Operations
+</h4><h5 id="get-total-amount-of-set-data-1">Get Total Amount of Set Data
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zcard key
+</span></span><span class="line"><span class="cl">zcount key min max
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="set-intersection-and-union-operations">Set Intersection and Union Operations
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">zinterstore destination numkeys key [key …]
+</span></span><span class="line"><span class="cl">zunionstore destination numkeys key [key …]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="considerations-for-sorted_set-type-data-operations">Considerations for sorted_set Type Data Operations
+</h4><p>The data storage space for the score is 64-bit; for an integer, the range is -9007199254740992 to 9007199254740992.
+The data saved in the score can also be a double-precision floating-point number. Based on the characteristics of double-precision floating-point numbers, precision might be lost, so it should be used with caution.
+The underlying storage of sorted_set is still based on the set structure. Therefore, data cannot be duplicated. If identical data is added repeatedly, the score value will simply be overwritten repeatedly, keeping the result of the last modification.</p>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/en/tags/cache/">Cache</a>
+        
+            <a href="/en/tags/persistence/">Persistence</a>
+        
+            <a href="/en/tags/database/">Database</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const elementsToRender = [".main-article", ".widget--toc"];
+
+        elementsToRender.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                    ],
+                    ignoredClasses: ["gist"]
+                });
+            }
+        });
+    });
+</script>
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">Related content</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/en/p/mysql/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MySQL</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/en/p/how-to-use-host-proxy-on-wsl2/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">How to Use Host Proxy on WSL2</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 ottercoconut&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.cb7a123540d26af6863483a994e00134749a05b073820fd7c04b3a3c15b4f89c.js" defer></script>
+
+
+    </body>
+</html>
