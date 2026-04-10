@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>KNN Algorithm on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/knn-algorithm/</link><description>Recent content in KNN Algorithm on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sun, 23 Nov 2025 21:42:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/knn-algorithm/index.xml" rel="self" type="application/rss+xml"/><item><title>Data Mining</title><link>https://ottercoconut.github.io/en/p/data-mining/</link><pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/data-mining/</guid><description>&lt;h3 id="data-mining-review"&gt;Data Mining Review
+&lt;/h3&gt;&lt;p&gt;Content comes from PPTs and the key information highlighted at the end of the class.&lt;/p&gt;
+&lt;h4 id="review-question-ppt"&gt;Review Question PPT
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;What relationships does association rule mining in data mining primarily aim to discover between data items?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Association rule mining is mainly used to discover frequent co-occurrences or hidden associative relationships between data items.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;In cluster analysis, what does the K value in the K-means algorithm represent?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In the K-means clustering algorithm, the K value represents the number of clusters the user expects the dataset to be partitioned into.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What algorithms exist for decision trees? What criteria do they mainly base their feature selection for partitioning on, and analyze the shortcomings of each criterion.&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Algorithm&lt;/th&gt;
+ &lt;th&gt;Criterion&lt;/th&gt;
+ &lt;th&gt;Shortcoming&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;ID3&lt;/td&gt;
+ &lt;td&gt;Information Gain&lt;/td&gt;
+ &lt;td&gt;Strongly prefers multi-valued features, prone to overfitting&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;C4.5&lt;/td&gt;
+ &lt;td&gt;Information Gain Ratio&lt;/td&gt;
+ &lt;td&gt;Computation is more complex, might prefer features with fewer values&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;CART&lt;/td&gt;
+ &lt;td&gt;Gini Index&lt;/td&gt;
+ &lt;td&gt;Has a slight preference for multi-valued features, tends towards unbalanced splits&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Given a simple text classification training set used to determine whether an email is &amp;ldquo;Spam&amp;rdquo;. The dictionary contains the following 5 words:&lt;/strong&gt;
+&lt;code&gt;[&amp;quot;deal&amp;quot;, &amp;quot;money&amp;quot;, &amp;quot;urgent&amp;quot;, &amp;quot;meeting&amp;quot;, &amp;quot;free&amp;quot;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Training data:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Spam (Spam, S)&lt;/strong&gt;:
+&lt;ol&gt;
+&lt;li&gt;&amp;ldquo;deal free money&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;urgent free deal&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;money urgent free&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Non-spam (Ham, H)&lt;/strong&gt;:
+&lt;ol&gt;
+&lt;li&gt;&amp;ldquo;meeting deal&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;urgent meeting&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The contents of the new email to be classified are:&lt;/strong&gt;
+&amp;ldquo;free urgent meeting&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Task requirements:&lt;/strong&gt;
+Use the multinomial Naive Bayes model (applying Laplace smoothing, where the smoothing parameter $\lambda=1$) to classify the email. Please complete the following calculations step-by-step:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Calculate the prior probabilities $P(Spam)$ and $P(Ham)$.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Total number of documents:
+$N_{\text{doc}} = 3 + 2 = 5$&lt;/p&gt;
+&lt;p&gt;$P(S) = \frac{3}{5} = 0.6$&lt;br&gt;
+$P(H) = \frac{2}{5} = 0.4$&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Prior probability results:&lt;/strong&gt;&lt;br&gt;
+$P(S) = 0.6, \quad P(H) = 0.4$&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Calculate the class-conditional probability of each word under the Spam and Ham categories.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Dictionary size $|V| = 5$&lt;/p&gt;
+&lt;p&gt;Spam:&lt;/p&gt;
+&lt;p&gt;deal: 2, money: 2, urgent: 2, meeting: 0, free: 3&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Total number of words: $2+2+2+0+3 = 9$&lt;/li&gt;
+&lt;li&gt;Denominator: $9 + 5 = 14$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$P(\text{deal}|S) = \frac{2+1}{14} = \frac{3}{14}$&lt;br&gt;
+$P(\text{money}|S) = \frac{2+1}{14} = \frac{3}{14}$&lt;br&gt;
+$P(\text{urgent}|S) = \frac{2+1}{14} = \frac{3}{14}$&lt;br&gt;
+$P(\text{meeting}|S) = \frac{0+1}{14} = \frac{1}{14}$&lt;br&gt;
+$P(\text{free}|S) = \frac{3+1}{14} = \frac{4}{14}$&lt;/p&gt;
+&lt;p&gt;Ham:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;deal: 1, money: 0, urgent: 1, meeting: 2, free: 0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Total number of words: $1+0+1+2+0 = 4$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Denominator: $4 + 5 = 9$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$P(\text{deal}|H) = \frac{1+1}{9} = \frac{2}{9}$&lt;br&gt;
+$P(\text{money}|H) = \frac{0+1}{9} = \frac{1}{9}$&lt;br&gt;
+$P(\text{urgent}|H) = \frac{1+1}{9} = \frac{2}{9}$&lt;br&gt;
+$P(\text{meeting}|H) = \frac{2+1}{9} = \frac{3}{9}$&lt;br&gt;
+$P(\text{free}|H) = \frac{0+1}{9} = \frac{1}{9}$&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Express the new email &amp;ldquo;free urgent meeting&amp;rdquo; as a term frequency vector.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Term frequency vector for &amp;ldquo;free urgent meeting&amp;rdquo; (in dictionary order: deal, money, urgent, meeting, free):&lt;br&gt;
+$[0, 0, 1, 1, 1]$&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Calculate the posterior probabilities of the email belonging to Spam and Ham.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Spam:&lt;/p&gt;
+&lt;p&gt;$P(S|d) \propto P(S) \times P(\text{urgent}|S) \times P(\text{meeting}|S) \times P(\text{free}|S)$&lt;br&gt;
+$= 0.6 \times \frac{3}{14} \times \frac{1}{14} \times \frac{4}{14}$&lt;br&gt;
+$= 0.6 \times \frac{12}{2744} \approx 0.002624$&lt;/p&gt;
+&lt;p&gt;Ham:&lt;/p&gt;
+&lt;p&gt;$P(H|d) \propto P(H) \times P(\text{urgent}|H) \times P(\text{meeting}|H) \times P(\text{free}|H)$&lt;br&gt;
+$= 0.4 \times \frac{2}{9} \times \frac{3}{9} \times \frac{1}{9}$&lt;br&gt;
+$= 0.4 \times \frac{6}{729} \approx 0.003292$&lt;/p&gt;
+&lt;p&gt;Normalization:&lt;/p&gt;
+&lt;p&gt;$P(S|d) = \frac{0.002624}{0.002624 + 0.003292} \approx 0.444$&lt;br&gt;
+$P(H|d) = \frac{0.003292}{0.002624 + 0.003292} \approx 0.556$&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Determine its final category based on the posterior probabilities.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Since $P(H|d) &gt; P(S|d)$, the new email is classified as:&lt;/p&gt;
+&lt;p&gt;$\boxed{Ham}$&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="214-types-of-attributes"&gt;2.1.4 Types of Attributes
+&lt;/h4&gt;&lt;p&gt;Nominal, Ordinal, Interval, Ratio&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;&lt;strong&gt;Attribute Type&lt;/strong&gt;&lt;/th&gt;
+ &lt;th&gt;&lt;/th&gt;
+ &lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+ &lt;th&gt;&lt;strong&gt;Examples&lt;/strong&gt;&lt;/th&gt;
+ &lt;th&gt;&lt;strong&gt;Operations&lt;/strong&gt;&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Categorical (Qualitative)&lt;/td&gt;
+ &lt;td&gt;Nominal&lt;/td&gt;
+ &lt;td&gt;The values of a nominal attribute are just different names, meaning nominal values only provide enough information to distinguish objects (=, ≠)&lt;/td&gt;
+ &lt;td&gt;Zip code, employee ID number, gender&lt;/td&gt;
+ &lt;td&gt;Mode, entropy, contingency correlation, chi-square test&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;Ordinal&lt;/td&gt;
+ &lt;td&gt;The values of an ordinal attribute provide enough information to determine the order of objects (&amp;lt;, &amp;gt;)&lt;/td&gt;
+ &lt;td&gt;Ore hardness {good, average}, grade levels, street numbers&lt;/td&gt;
+ &lt;td&gt;Median, percentiles, rank correlation, run test, sign test&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Numeric (Quantitative)&lt;/td&gt;
+ &lt;td&gt;Interval&lt;/td&gt;
+ &lt;td&gt;For interval attributes, the differences between values are meaningful, meaning a unit of measurement exists (+, -)&lt;/td&gt;
+ &lt;td&gt;Calendar dates, Celsius or Fahrenheit temperatures&lt;/td&gt;
+ &lt;td&gt;Mean, standard deviation, Pearson correlation coefficient, t and F tests&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;Ratio&lt;/td&gt;
+ &lt;td&gt;For ratio attributes, both differences and ratios are meaningful (+, -, *, /)&lt;/td&gt;
+ &lt;td&gt;Absolute temperature, monetary amounts, counts, age, mass, length, electrical current&lt;/td&gt;
+ &lt;td&gt;Geometric mean, harmonic mean, percent variation&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="221-measures-of-central-tendency"&gt;2.2.1 Measures of Central Tendency
+&lt;/h4&gt;&lt;p&gt;Mean, median, and mode&lt;/p&gt;
+&lt;p&gt;$Mean-mode = 3 * (mean - median)$&lt;/p&gt;
+&lt;h4 id="222-interquartile-range"&gt;2.2.2 Interquartile Range
+&lt;/h4&gt;&lt;p&gt;The first quartile, i.e., the data at the 25th percentile is $(n-1)/4$ (This is only for the first quartile; if it is the third quartile, it needs to be multiplied by 3).&lt;/p&gt;
+&lt;p&gt;If n is even, we need $+0.25\times (d_{n+1}-d_n)$ (This is only for the first quartile; if it is the third quartile, it&amp;rsquo;s 0.75).&lt;/p&gt;
+&lt;h4 id="244-proximity-measures-for-numeric-attributes"&gt;&lt;strong&gt;2.4.4&lt;/strong&gt; Proximity Measures for Numeric Attributes
+&lt;/h4&gt;&lt;p&gt;The Minkowski distance between two $p$-dimensional variables $x_1 = \{x_{11}, x_{12}, \ldots, x_{1p}\}$ and $x_2 = \{x_{21}, x_{22}, \ldots, x_{2p}\}$ is defined as:&lt;/p&gt;
+$$
+d(i,j) = \sqrt[q]{|x_{i1} - x_{j1}|^q + |x_{i2} - x_{j2}|^q + \cdots + |x_{ip} - x_{jp}|^q}
+$$&lt;p&gt;When $q=1$, it represents the Manhattan distance:&lt;/p&gt;
+$$
+d(i,j) = |x_{i1} - x_{j1}| + |x_{i2} - x_{j2}| + \cdots + |x_{ip} - x_{jp}|
+$$&lt;p&gt;When $q=2$, it represents the Euclidean distance:&lt;/p&gt;
+$$
+d(i,j) = \sqrt{|x_{i1} - x_{j1}|^2 + |x_{i2} - x_{j2}|^2 + \cdots + |x_{ip} - x_{jp}|^2}
+$$&lt;p&gt;When $q \to \infty$, it represents the Chebyshev distance:&lt;/p&gt;
+$$
+d(i,j) = \lim_{q \to \infty} \left( \sum_{k=1}^p |x_{ik} - x_{jk}|^q \right)^{\frac{1}{q}} = \max_{1 \le k \le p} |x_{ik} - x_{jk}|
+$$&lt;p&gt;n Euclidean and Manhattan distances satisfy the following mathematical properties&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Positive definiteness: the distance is a non-negative number d(i,j)&amp;gt;0, if i≠j d(i,i)=0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Symmetry: d(i,j)=d(j,i)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Triangle inequality&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="248-cosine-similarity"&gt;2.4.8 Cosine Similarity
+&lt;/h4&gt;&lt;p&gt;Cosine similarity can be used to compare the similarity of documents&lt;/p&gt;
+$$
+s(x, y) = \frac{x^T y}{\|x\|_2 \|y\|_2} \quad x = [1, 1, 0, 0] \quad y = [0, 1, 1, 0]
+$$$$
+s(x, y) = \frac{0 + 1 + 0 + 0}{\sqrt{2} \sqrt{2}} = 0.5
+$$&lt;h4 id="32-data-preprocessing"&gt;3.2 Data Preprocessing
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Data cleaning&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fill in missing values, smooth noisy data, identify or remove outliers, and resolve inconsistencies&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data integration&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Integrate multiple databases, data cubes, or files&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data reduction&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dimensionality reduction, data compression, Numerosity Reduction&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data transformation and data discretization&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Normalization&lt;/li&gt;
+&lt;li&gt;Concept hierarchy generation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="321-how-to-handle-missing-data"&gt;3.2.1 How to Handle Missing Data
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Ignore the tuple
+&lt;ul&gt;
+&lt;li&gt;When the class label is missing, in supervised learning&lt;/li&gt;
+&lt;li&gt;When the proportion of missing values for a specific attribute is large&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Manually fill in the missing value, which is computationally expensive&lt;/li&gt;
+&lt;li&gt;Automatically fill in
+&lt;ul&gt;
+&lt;li&gt;Use a global constant&lt;/li&gt;
+&lt;li&gt;Use the attribute mean to fill in the missing value
+&lt;ul&gt;
+&lt;li&gt;Global attribute mean&lt;/li&gt;
+&lt;li&gt;Mean of the attribute for data objects belonging to the same class&lt;/li&gt;
+&lt;li&gt;The most probable value: inference based on Bayesian formula or decision tree, regression, nearest neighbor strategy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="324-correlation-analysis"&gt;3.2.4 Correlation Analysis
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/data-mining/Screenshot_2025-11-22_152834.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h4 id="327-data-reduction-strategies"&gt;3.2.7 Data Reduction Strategies
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Why perform data reduction?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Because a data warehouse can store terabytes of data, complex data analysis on a complete dataset may take a very long time.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Generally, data reduction is required during data preprocessing.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Replaces the original data with a smaller dataset.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Common data reduction strategies&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Dimensionality reduction&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data reduction&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data compression&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="328-dimensionality-reduction"&gt;3.2.8 Dimensionality Reduction
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;PCA (Principal Component Analysis) method&lt;/li&gt;
+&lt;li&gt;Non-negative Matrix Factorization (NMF)&lt;/li&gt;
+&lt;li&gt;Linear Discriminant Analysis (LDA)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Feature Selection&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Select a representative subset of features from the original feature set&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Single-feature importance evaluation&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Model-based feature importance evaluation&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3211-normalization"&gt;3.2.11 Normalization
+&lt;/h4&gt;&lt;p&gt;Min-Max Normalization&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Normalizes an attribute $A$ from interval $[\min_A, \max_A]$ to $[new_{\min_A}, new_{\max_A}]$
+
+$$
+ v' = \frac{v - \min_A}{\max_A - \min_A} (new_{\max_A} - new_{\min_A}) + new_{\min_A}
+ $$&lt;/li&gt;
+&lt;li&gt;Example: Normalize income from the interval $12000$ to $98000$ to between $[0,1]$, what is the normalized value of $73600$?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Z-score Normalization
+&lt;/p&gt;
+$$
+ v' = \frac{v - \mu_A}{\sigma_A}
+$$&lt;ul&gt;
+&lt;li&gt;Example: The mean of attribute $A$ is $\mu_A = 54000$, the standard deviation is $\sigma_A = 16000$, what is the normalized value of $73600$?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Decimal Scaling Normalization&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Move the position of the decimal point; the number of places to move depends on the maximum absolute value of attribute $A$, defined by the formula
+
+$$
+ v' = \frac{v}{10^j}
+ $$&lt;/li&gt;
+&lt;li&gt;$j$ is the smallest integer such that $\max(|v'|) &lt; 1$&lt;/li&gt;
+&lt;li&gt;For example: the minimum value of a dataset is $12000$, maximum value is $98000$, then the value of $j$ is $5$
+
+$$
+ [12000, 98000] \rightarrow [0.12, 0.98]
+ $$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="432-decision-tree-construction"&gt;4.3.2 Decision Tree Construction
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Decision Tree: A tree-like structured model learned from training data. It is a predictive analysis model expressed in the form of a tree structure (including binary trees and multi-way trees).&lt;/li&gt;
+&lt;li&gt;A decision tree is a supervised learning algorithm and belongs to discriminative models.&lt;/li&gt;
+&lt;li&gt;A decision tree is also known as a classification capability tree and is an important classification and regression method in data mining technology.&lt;/li&gt;
+&lt;li&gt;There are two types of decision trees: classification trees and regression trees.&lt;/li&gt;
+&lt;li&gt;Decision tree learning typically consists of 3 steps: feature selection, decision tree generation, and decision tree pruning.&lt;/li&gt;
+&lt;li&gt;Commonly used methods: ID3, C4.5, CART&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="45-knn-algorithm"&gt;4.5 KNN Algorithm
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;The k-Nearest Neighbor (kNN) method is a relatively mature and also the simplest machine learning algorithm, which can be used for basic &lt;strong&gt;classification and regression&lt;/strong&gt; methods.&lt;/li&gt;
+&lt;li&gt;The main idea of the algorithm: If a sample is most similar (i.e., its nearest neighbors in the feature space) to $k$ instances in the feature space, then whichever category the majority of these $k$ instances belong to, the sample will also belong to that category.&lt;/li&gt;
+&lt;li&gt;Three fundamental elements of the $k$-nearest neighbor algorithm: the choice of $k$ value, distance metric, and classification decision rule.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="differences-between-knn-and-k-means"&gt;Differences Between KNN and K-Means
+&lt;/h5&gt;&lt;p&gt;K-NN is a classification algorithm in supervised learning where Categories are known. It trains and learns from classified data to find the features of these different classes, and then classifies unclassified data.&lt;/p&gt;
+&lt;p&gt;K-Means is a clustering algorithm in unsupervised learning. It is unknown beforehand how the data will be classified. Through cluster analysis, data is grouped into several clusters. Clustering doesn&amp;rsquo;t require training and learning over data.&lt;/p&gt;
+&lt;h5 id="supervised-learning-and-unsupervised-learning"&gt;Supervised Learning and Unsupervised Learning
+&lt;/h5&gt;&lt;p&gt;Supervised learning is a machine learning method which utilizes labeled data for training. Every input data has a corresponding output label, and the model predicts by learning the relationship between these inputs and outputs.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Characteristics&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Requires extensive labeled data.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The training process has a definite objective, and the model can continuously adjust through feedback.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Common algorithms include linear regression, logistic regression, support vector machines (SVM), decision trees, etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Application Scenarios&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Suitable for classification and regression problems, such as image recognition, speech recognition, and financial forecasting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Unsupervised learning is a machine learning method in which training is performed using unlabeled data. The model automatically discovers patterns and structures from the input data without relying on any labels.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Characteristics&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Does not require labeled data, making it suitable for processing large amounts of unlabeled data.&lt;/li&gt;
+&lt;li&gt;The training process lacks an explicit goal; the model learns through the intrinsic structure of the data.&lt;/li&gt;
+&lt;li&gt;Common algorithms include clustering (e.g., K-Means), association rule learning (e.g., Apriori algorithm), etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Application Scenarios&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;Suitable for data clustering, market segmentation, anomaly detection, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="53-density-based-clustering-methods"&gt;5.3 Density-Based Clustering Methods
+&lt;/h4&gt;&lt;p&gt;DBSCAN Algorithm Description&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Input: A database containing $n$ objects, radius $\varepsilon$ (Eps), and minimum number MinPts&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Output: All generated clusters that meet density requirements&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Repeat&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Extract an unprocessed point from the data&lt;/li&gt;
+&lt;li&gt;If the extracted point is a core point Then find all objects density-reachable from this point to form a cluster&lt;/li&gt;
+&lt;li&gt;Else the extracted point is a border point (non-core object), exit the current iteration, and seek the next point&lt;/li&gt;
+&lt;li&gt;EndIf&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Until all points are processed&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Core object: If the $\varepsilon$-neighborhood of an object contains at least a minimum number of objects, MinPts, the object is called a core object.&lt;/p&gt;
+&lt;p&gt;A border point&amp;rsquo;s &amp;ldquo;Eps&amp;rdquo; ($\varepsilon$) neighborhood contains fewer than MinPts objects, but a core object exists within its neighborhood.&lt;/p&gt;
+&lt;h4 id="61-confusion-matrix"&gt;6.1 Confusion Matrix
+&lt;/h4&gt;&lt;p&gt;Confusion Matrix&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Actual Class \ Predicted Class&lt;/th&gt;
+ &lt;th&gt;Class=Yes&lt;/th&gt;
+ &lt;th&gt;Class=No&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Class=Yes&lt;/td&gt;
+ &lt;td&gt;a (TP)&lt;/td&gt;
+ &lt;td&gt;b (FN)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Class=No&lt;/td&gt;
+ &lt;td&gt;c (FP)&lt;/td&gt;
+ &lt;td&gt;d (TN)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;$a+d$ represents the number of correctly classified samples among all samples&lt;/li&gt;
+&lt;li&gt;$b+c$ represents the number of incorrectly classified samples among all samples&lt;/li&gt;
+&lt;li&gt;$a+b+c+d$ represents the total number of samples&lt;/li&gt;
+&lt;li&gt;Accuracy&lt;/li&gt;
+&lt;/ul&gt;
+$$
+Accuracy = \frac{a+d}{a+b+c+d} = \frac{TP+TN}{TP+TN+FP+FN}
+$$&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Recall&lt;/p&gt;
+$$
+ recall = \frac{TP}{TP+FN}
+ $$&lt;ul&gt;
+&lt;li&gt;Represents the proportion of positive samples that are correctly predicted, that is, how many positive samples are correctly identified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Precision&lt;/p&gt;
+$$
+ precision = \frac{TP}{TP+FP}
+ $$&lt;ul&gt;
+&lt;li&gt;Represents the proportion of truly positive samples out of those predicted as positive, that is, how many of the predicted true sample predictions are actually correct positive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="65-overfitting-and-underfitting"&gt;6.5 Overfitting and Underfitting
+&lt;/h4&gt;&lt;p&gt;Causes of Overfitting:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Noise: The training set contains a massive volume of noisy data.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Lack of representative samples: The size of the training set is comparatively small, resulting in overly complex training models.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="71-advantages-of-ensemble-learning"&gt;7.1 Advantages of Ensemble Learning
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Can effectively reduce prediction error&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Suppose an ensemble classifier consists of 3 individual classifiers, where the error rate of each classifier is 40%. Let C denote a correct prediction, I denote an incorrect prediction, and Probability denote the probability of the final prediction result. The total number of combinations is $2^3=8$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The model&amp;rsquo;s error rate is: 0.096+0.096+0.096+0.064=35.2% &amp;lt; 40%&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Let the number of models be $m$, and the error rate of each model be $r$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The general formula for calculating error is:
+&lt;/p&gt;
+$$
+ p(error) = \sum_{i=(m+1)/2}^{m} C_{m}^{i} r^{i}(1-r)^{m-i}
+ $$&lt;ul&gt;
+&lt;li&gt;When over half of the $m$ models misclassify -&amp;gt; the final result is wrong, $i$ ranges from $(m+1)/2$ to $m$.&lt;/li&gt;
+&lt;li&gt;Randomly selecting $i$ out of $m$, the remaining $m-i$ models classify correctly.&lt;/li&gt;
+&lt;li&gt;The figure below depicts the relations between error rates and model scales when $r=0.4$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
