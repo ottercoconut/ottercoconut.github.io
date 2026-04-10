@@ -1,1 +1,129 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tags on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/</link><description>Recent content in Tags on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 16 Feb 2026 11:12:15 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Networking</title><link>https://ottercoconut.github.io/en/tags/networking/</link><pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/networking/</guid><description/></item><item><title>Proxy</title><link>https://ottercoconut.github.io/en/tags/proxy/</link><pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/proxy/</guid><description/></item><item><title>Dataset</title><link>https://ottercoconut.github.io/en/tags/dataset/</link><pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/dataset/</guid><description/></item><item><title>TensorBoard</title><link>https://ottercoconut.github.io/en/tags/tensorboard/</link><pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/tensorboard/</guid><description/></item><item><title>Transformer</title><link>https://ottercoconut.github.io/en/tags/transformer/</link><pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/transformer/</guid><description/></item><item><title>Clustering Methods</title><link>https://ottercoconut.github.io/en/tags/clustering-methods/</link><pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/clustering-methods/</guid><description/></item><item><title>Data Preprocessing</title><link>https://ottercoconut.github.io/en/tags/data-preprocessing/</link><pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/data-preprocessing/</guid><description/></item><item><title>KNN Algorithm</title><link>https://ottercoconut.github.io/en/tags/knn-algorithm/</link><pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/knn-algorithm/</guid><description/></item><item><title>Java</title><link>https://ottercoconut.github.io/en/tags/java/</link><pubDate>Tue, 01 Apr 2025 14:49:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/java/</guid><description/></item><item><title>Project Management</title><link>https://ottercoconut.github.io/en/tags/project-management/</link><pubDate>Tue, 01 Apr 2025 14:49:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/project-management/</guid><description/></item><item><title>Concurrency</title><link>https://ottercoconut.github.io/en/tags/concurrency/</link><pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/concurrency/</guid><description/></item><item><title>JVM</title><link>https://ottercoconut.github.io/en/tags/jvm/</link><pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/jvm/</guid><description/></item><item><title>Multithreading</title><link>https://ottercoconut.github.io/en/tags/multithreading/</link><pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/multithreading/</guid><description/></item><item><title>Linux</title><link>https://ottercoconut.github.io/en/tags/linux/</link><pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/linux/</guid><description/></item><item><title>Minecraft</title><link>https://ottercoconut.github.io/en/tags/minecraft/</link><pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/minecraft/</guid><description/></item><item><title>Server</title><link>https://ottercoconut.github.io/en/tags/server/</link><pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/server/</guid><description/></item><item><title>Cache</title><link>https://ottercoconut.github.io/en/tags/cache/</link><pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/cache/</guid><description/></item><item><title>Database</title><link>https://ottercoconut.github.io/en/tags/database/</link><pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/database/</guid><description/></item><item><title>Persistence</title><link>https://ottercoconut.github.io/en/tags/persistence/</link><pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/persistence/</guid><description/></item><item><title>MySQL</title><link>https://ottercoconut.github.io/en/tags/mysql/</link><pubDate>Mon, 17 Mar 2025 20:06:34 +0800</pubDate><guid>https://ottercoconut.github.io/en/tags/mysql/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on ottercoconut&#39;s Blog</title>
+        <link>http://localhost:1313/en/tags/</link>
+        <description>Recent content in Tags on ottercoconut&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-US</language>
+        <lastBuildDate>Mon, 16 Feb 2026 11:12:15 +0800</lastBuildDate><atom:link href="http://localhost:1313/en/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+            <title>Networking</title>
+            <link>http://localhost:1313/en/tags/networking/</link>
+            <pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/networking/</guid>
+            <description></description>
+        </item><item>
+            <title>Proxy</title>
+            <link>http://localhost:1313/en/tags/proxy/</link>
+            <pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/proxy/</guid>
+            <description></description>
+        </item><item>
+            <title>Dataset</title>
+            <link>http://localhost:1313/en/tags/dataset/</link>
+            <pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/dataset/</guid>
+            <description></description>
+        </item><item>
+            <title>TensorBoard</title>
+            <link>http://localhost:1313/en/tags/tensorboard/</link>
+            <pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/tensorboard/</guid>
+            <description></description>
+        </item><item>
+            <title>Transformer</title>
+            <link>http://localhost:1313/en/tags/transformer/</link>
+            <pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/transformer/</guid>
+            <description></description>
+        </item><item>
+            <title>Clustering Methods</title>
+            <link>http://localhost:1313/en/tags/clustering-methods/</link>
+            <pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/clustering-methods/</guid>
+            <description></description>
+        </item><item>
+            <title>Data Preprocessing</title>
+            <link>http://localhost:1313/en/tags/data-preprocessing/</link>
+            <pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/data-preprocessing/</guid>
+            <description></description>
+        </item><item>
+            <title>KNN Algorithm</title>
+            <link>http://localhost:1313/en/tags/knn-algorithm/</link>
+            <pubDate>Sun, 23 Nov 2025 21:42:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/knn-algorithm/</guid>
+            <description></description>
+        </item><item>
+            <title>Java</title>
+            <link>http://localhost:1313/en/tags/java/</link>
+            <pubDate>Tue, 01 Apr 2025 14:49:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/java/</guid>
+            <description></description>
+        </item><item>
+            <title>Project Management</title>
+            <link>http://localhost:1313/en/tags/project-management/</link>
+            <pubDate>Tue, 01 Apr 2025 14:49:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/project-management/</guid>
+            <description></description>
+        </item><item>
+            <title>Concurrency</title>
+            <link>http://localhost:1313/en/tags/concurrency/</link>
+            <pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/concurrency/</guid>
+            <description></description>
+        </item><item>
+            <title>JVM</title>
+            <link>http://localhost:1313/en/tags/jvm/</link>
+            <pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/jvm/</guid>
+            <description></description>
+        </item><item>
+            <title>Multithreading</title>
+            <link>http://localhost:1313/en/tags/multithreading/</link>
+            <pubDate>Fri, 21 Mar 2025 14:50:07 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/multithreading/</guid>
+            <description></description>
+        </item><item>
+            <title>Linux</title>
+            <link>http://localhost:1313/en/tags/linux/</link>
+            <pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/linux/</guid>
+            <description></description>
+        </item><item>
+            <title>Minecraft</title>
+            <link>http://localhost:1313/en/tags/minecraft/</link>
+            <pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/minecraft/</guid>
+            <description></description>
+        </item><item>
+            <title>Server</title>
+            <link>http://localhost:1313/en/tags/server/</link>
+            <pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/server/</guid>
+            <description></description>
+        </item><item>
+            <title>Cache</title>
+            <link>http://localhost:1313/en/tags/cache/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/cache/</guid>
+            <description></description>
+        </item><item>
+            <title>Database</title>
+            <link>http://localhost:1313/en/tags/database/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/database/</guid>
+            <description></description>
+        </item><item>
+            <title>Persistence</title>
+            <link>http://localhost:1313/en/tags/persistence/</link>
+            <pubDate>Tue, 18 Mar 2025 15:41:00 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/persistence/</guid>
+            <description></description>
+        </item><item>
+            <title>MySQL</title>
+            <link>http://localhost:1313/en/tags/mysql/</link>
+            <pubDate>Mon, 17 Mar 2025 20:06:34 +0800</pubDate>
+            <guid>http://localhost:1313/en/tags/mysql/</guid>
+            <description></description>
+        </item></channel>
+</rss>
