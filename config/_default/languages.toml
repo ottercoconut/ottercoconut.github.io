@@ -16,4 +16,5 @@
     languagedirection = "ltr"
     title             = "ottercoconut's Blog"
     weight            = 2
-
+    [en.params.sidebar]
+        subtitle = "Life is like a dream, trading that dream for a fleeting moment. The moment lingers for the rolling years, while the rolling years fade into a boundless haze."
