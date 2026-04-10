@@ -133,7 +133,15 @@ toc = true
    insmod /lib/modules/ip6table_mangle.ko
    ~~~
 
-   但是系统重启后，模块可能需要重新加载。而笔者不再使用透明代理，所以没再研究。
+   但是系统重启后，模块需要重新加载，所以用以上内容生成脚本在`/usr/local/bin/load_v2raya_mods.sh`
+   
+   然后重启v2rayA服务:
+   
+   ```shell
+   sudo systemctl restart v2raya
+   ```
+   
+   
 
 ## Emby
 
