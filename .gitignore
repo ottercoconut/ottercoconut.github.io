@@ -1,7 +1,25 @@
-public
-resources
+# ---- Hugo ----
+public/
+resources/
 .hugo_build.lock
+
+# ---- OS ----
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Custom/Project specifics ----
 assets/jsconfig.json
 translation_prompt.md
-.gitignore
+
+# ---- IDE / Editor ----
+# .vscode/
+# .idea/
+*.swp
+
+# ---- Node ----
+node_modules/
+
+# ---- Env ----
+.env
+.env.*
