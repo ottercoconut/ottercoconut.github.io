@@ -1,4 +1,272 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Practical Tech on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/categories/practical-tech/</link><description>Recent content in Practical Tech on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 30 Jan 2026 16:31:20 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/categories/practical-tech/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Use Host Proxy on WSL2</title><link>https://ottercoconut.github.io/en/p/how-to-use-host-proxy-on-wsl2/</link><pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/how-to-use-host-proxy-on-wsl2/</guid><description>&lt;p&gt;Since I&amp;rsquo;ve been frequently downloading various models with Python recently, I finally decided to solve the long-standing issue of WSL2 not being able to use the Windows host&amp;rsquo;s proxy. After wasting half an afternoon, I finally got it working. With the help of my capable assistant Gemini, the main steps are as follows:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Practical Tech on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/categories/practical-tech/</link><description>Recent content in Practical Tech on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 16 Feb 2026 11:12:15 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/categories/practical-tech/index.xml" rel="self" type="application/rss+xml"/><item><title>Synology NAS Proxy and Emby Configuration</title><link>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</link><pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</guid><description>&lt;p&gt;Recently, when using v2rayA on my Synology NAS, I encountered an issue where incorrect time synchronization caused it to stop working properly, which in turn prevented Emby from scraping metadata. Although I don&amp;rsquo;t know the exact reason, it&amp;rsquo;s an old problem. The version was very old, and I was using a Docker image from a third-party application store; currently, Docker can&amp;rsquo;t pull images via direct connection either. Here is my experience with solving this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Reinstall v2rayA&lt;/li&gt;
+&lt;li&gt;Configure the Docker version of Emby.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Reference Websites:&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://v2raya.org/docs/prologue/installation/linux/" target="_blank" rel="noopener"
+ &gt;Linux Backup Installation Method - v2rayA&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/XTLS/Xray-core" target="_blank" rel="noopener"
+ &gt;XTLS/Xray-core: Xray, Penetrates Everything. Also the best v2ray-core. Where the magic happens. An open platform for various uses.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://v2raya.org/docs/advanced-application/synology-transparent-proxy/" target="_blank" rel="noopener"
+ &gt;Implementing Transparent Proxy on Synology - v2rayA&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/sjtuross/syno-iptables" target="_blank" rel="noopener"
+ &gt;sjtuross/syno-iptables: Some missing iptables modules for Synology&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://blog.csdn.net/caca_66/article/details/150264099" target="_blank" rel="noopener"
+ &gt;Setting up Proxy for Container Manager (Docker) on Synology DSM 7.2 - CSDN Blog&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="v2raya"&gt;v2rayA
+&lt;/h2&gt;&lt;p&gt;According to the official v2rayA documentation, there is no specially adapted version for Synology, so we use the generic binary file for installation. Since we cannot pull files from GitHub over a direct connection, we download it on our computer and transfer it to the NAS. In addition, the installation steps below are actually slightly different from the official documentation.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Copy v2rayA and xray&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cp v2raya_linux_x64 /usr/local/bin/v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cp xray /usr/local/bin/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chmod +x /usr/local/bin/v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chmod +x /usr/local/bin/xray
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Copy the GFWList proxy rule files included with xray: &lt;code&gt;geoip.dat&lt;/code&gt; and &lt;code&gt;geosite.dat&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /usr/local/share
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir xray
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cp .../g* xray
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Modify the &lt;code&gt;service&lt;/code&gt; configuration file&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo vi /etc/systemd/system/v2raya.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The content was generated by ChatGPT combined with the official documentation:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;v2rayA Service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;network.target
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;simple
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Environment&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;V2RAYA_CONFIG=/usr/local/etc/v2raya&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Environment&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;V2RAYA_LOG_FILE=/tmp/v2raya.log&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Environment&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;XRAY_LOCATION_ASSET=/usr/local/share/xray&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/local/bin/v2raya --passcheckroot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;on-failure
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1000000&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Activate v2rayA. According to the official documentation, run it as a service&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl start v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl status v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Configure it to start up automatically on boot. Theoretically, the configuration is complete after this step. Along the way, I also solved the issue of transparency proxy not working on Synology.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl is-enabled v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Activate Transparent Proxy&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;arch&lt;/th&gt;
+ &lt;th&gt;kernel&lt;/th&gt;
+ &lt;th&gt;iptables version&lt;/th&gt;
+ &lt;th&gt;system model&lt;/th&gt;
+ &lt;th&gt;platform version&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;apollolake&lt;/td&gt;
+ &lt;td&gt;4.4.180+&lt;/td&gt;
+ &lt;td&gt;v1.8.3&lt;/td&gt;
+ &lt;td&gt;DS918+&lt;/td&gt;
+ &lt;td&gt;7.0.1-42218&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;apollolake&lt;/td&gt;
+ &lt;td&gt;4.4.59+&lt;/td&gt;
+ &lt;td&gt;v1.6.0&lt;/td&gt;
+ &lt;td&gt;DS918+&lt;/td&gt;
+ &lt;td&gt;6.2.3-25426&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;broadwell&lt;/td&gt;
+ &lt;td&gt;3.10.105&lt;/td&gt;
+ &lt;td&gt;v1.6.0&lt;/td&gt;
+ &lt;td&gt;DS3617xs&lt;/td&gt;
+ &lt;td&gt;6.2.3-25426&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;bromolow&lt;/td&gt;
+ &lt;td&gt;3.10.105&lt;/td&gt;
+ &lt;td&gt;v1.6.0&lt;/td&gt;
+ &lt;td&gt;DS3615xs&lt;/td&gt;
+ &lt;td&gt;6.2.3-25426&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;geminilake&lt;/td&gt;
+ &lt;td&gt;4.4.180+&lt;/td&gt;
+ &lt;td&gt;v1.8.3&lt;/td&gt;
+ &lt;td&gt;DS920+&lt;/td&gt;
+ &lt;td&gt;7.1-42661&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;geminilake&lt;/td&gt;
+ &lt;td&gt;4.4.302+&lt;/td&gt;
+ &lt;td&gt;v1.8.3&lt;/td&gt;
+ &lt;td&gt;DS220+&lt;/td&gt;
+ &lt;td&gt;7.2-64570&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Due to the characteristics of the Synology system, first determine the architecture based on your model, then select the appropriate files for your machine from the downloaded modules from the GitHub repository (for example, my DS224 is geminilake).&lt;/p&gt;
+&lt;p&gt;Upload the corresponding ko modules to &lt;code&gt;/lib/modules/&lt;/code&gt;, and upload the corresponding so modules to &lt;code&gt;/usr/lib/iptables/&lt;/code&gt;, and that&amp;rsquo;s it.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo -i&lt;/code&gt; and then run the following &lt;code&gt;insmod&lt;/code&gt; commands to attempt loading the ko kernel modules. Because the modules depend on each other, they must be loaded in a specific order.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/nfnetlink.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip_set.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip_set_hash_ip.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_set.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip_set_hash_net.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_mark.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_connmark.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_comment.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_TPROXY.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_socket.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/iptable_mangle.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/textsearch.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ts_bm.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/xt_string.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/nf_nat_ipv6.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/nf_nat_masquerade_ipv6.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip6t_MASQUERADE.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip6table_nat.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip6table_raw.ko
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip6table_mangle.ko
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;However, after a system reboot, the modules need to be reloaded, so generate a script with the above content at &lt;code&gt;/usr/local/bin/load_v2raya_mods.sh&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Then restart the v2rayA service:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="emby"&gt;Emby
+&lt;/h2&gt;&lt;p&gt;After configuring v2rayA, even though I used the method of modifying the configuration file, Emby&amp;rsquo;s traffic still couldn&amp;rsquo;t successfully pass through v2rayA. After various fruitless attempts to modify the IP configuration, it naturally occurred to me that this was caused by Docker running as a host service.&lt;/p&gt;
+&lt;p&gt;After modifying the configuration on v2rayA multiple times, I finally found that enabling the transparent proxy solved the problem, and it also fixed the issue of being unable to connect to the Docker repository. But a bigger problem arose: enabling the transparent proxy caused all external network access to fail (fortunately, local network connections still worked). I think &amp;ldquo;transparent proxy&amp;rdquo; can be understood as a &amp;ldquo;global proxy&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;For the issue of setting up a proxy specifically for Docker (Container Manager), please refer to the links in the preface.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Select Emby in &amp;ldquo;Images&amp;rdquo; and run it. Add the path to the media library in &amp;ldquo;Volume Settings&amp;rdquo;, add three environment variables in &amp;ldquo;Environment&amp;rdquo;, and select &lt;code&gt;host&lt;/code&gt; mode in &amp;ldquo;Network&amp;rdquo;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;HTTP_PROXY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; http://127.0.0.1:20171
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;HTTPS_PROXY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; http://127.0.0.1:20171
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;NO_PROXY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; localhost,127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Complete the basic setup, install the previous anime-related plugins, and the scraping was successful.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>How to Use Host Proxy on WSL2</title><link>https://ottercoconut.github.io/en/p/how-to-use-host-proxy-on-wsl2/</link><pubDate>Fri, 30 Jan 2026 16:31:20 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/how-to-use-host-proxy-on-wsl2/</guid><description>&lt;p&gt;Since I&amp;rsquo;ve been frequently downloading various models with Python recently, I finally decided to solve the long-standing issue of WSL2 not being able to use the Windows host&amp;rsquo;s proxy. After wasting half an afternoon, I finally got it working. With the help of my capable assistant Gemini, the main steps are as follows:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;.wslconfig&lt;/code&gt; settings in Windows&lt;/li&gt;
 &lt;li&gt;Core settings of v2rayN&lt;/li&gt;
@@ -205,4 +473,284 @@
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -v https://www.google.com
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;Then feed the output result to an AI, and it will tell you what to do.&lt;/p&gt;</description></item></channel></rss>
+&lt;/div&gt;&lt;p&gt;Then feed the output result to an AI, and it will tell you what to do.&lt;/p&gt;</description></item><item><title>Deploying a Minecraft Server on Linux (CentOS)</title><link>https://ottercoconut.github.io/en/p/deploying-a-minecraft-server-on-linux-centos/</link><pubDate>Wed, 19 Mar 2025 18:48:59 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/deploying-a-minecraft-server-on-linux-centos/</guid><description>&lt;p&gt;I recently set up a physical server and wanted to use it to host a Minecraft server. After staying up late researching, I succeeded and am sharing this guide in hopes that it helps everyone, especially Linux users without a public IP environment (like me).&lt;/p&gt;
+&lt;h3 id="reference-websites"&gt;Reference Websites
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://docs.redhat.com/zh-cn/documentation/red_hat_build_of_openjdk/21/html-single/installing_and_using_red_hat_build_of_openjdk_21_on_rhel/index#installing-jre-on-rhel-using-yum_openjdk" target="_blank" rel="noopener"
+ &gt;Installing and using Red Hat build of OpenJDK 21 on RHEL | Red Hat Product Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://doc.natfrp.com/launcher/usage.html" target="_blank" rel="noopener"
+ &gt;SakuraFrp Launcher Installation / Usage Guide | SakuraFrp Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/engine/install/centos/" target="_blank" rel="noopener"
+ &gt;CentOS | Docker Docs&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.bilibili.com/video/BV1iv4y1P7wJ/?spm_id_from=333.1007.top_right_bar_window_history.content.click&amp;amp;vd_source=c8beb52bf015e61e5378008c684545a4" target="_blank" rel="noopener"
+ &gt;Linux Terminal Server Hosting Tutorial ★ No Panel ★ Minecraft_bilibili&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;From the Bilibili uploader &lt;code&gt;翱翔大使&lt;/code&gt;, which is the main source of ideas for this whole article.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="java-configuration"&gt;Java Configuration
+&lt;/h2&gt;&lt;p&gt;Running Minecraft requires the corresponding version of the Java environment; here I installed OpenJDK 21.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo yum install java-21-openjdk
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;java -version // verify &lt;span class="k"&gt;if&lt;/span&gt; successfully installed
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;If the server has multiple Java versions, you can use &lt;code&gt;alternatives&lt;/code&gt; to switch versions.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;alternatives --config java
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;As shown below, we enter &lt;code&gt;2&lt;/code&gt; and press Enter to switch to the required version.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_191616.png" alt="Screenshot_2025-03-19_191616.png" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h2 id="game-deployment"&gt;Game Deployment
+&lt;/h2&gt;&lt;p&gt;First, download the Minecraft server software from the following URL. Here I downloaded Banner (1.20.1), which supports Fabric.&lt;/p&gt;
+&lt;p&gt;[MohistMC](&lt;a class="link" href="https://www.mohistmc.com/" target="_blank" rel="noopener"
+ &gt;MohistMC - Home&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_185204.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_185231.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Once downloaded, you will get a file like &lt;code&gt;banner-1.20.1-800-server.jar&lt;/code&gt;. Next, open your SSH client to operate on the server:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; /home/username // switch to personal directory or desired installation location
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir Minecraft // create a folder &lt;span class="k"&gt;for&lt;/span&gt; the game
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; Minecraft
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Using the SFTP feature in your SSH client (or any other file transfer method), copy the game file &lt;code&gt;banner-1.20.1-800-server.jar&lt;/code&gt; you just downloaded into the newly created &lt;code&gt;/home/username/Minecraft&lt;/code&gt; folder.&lt;/p&gt;
+&lt;p&gt;Next, let&amp;rsquo;s write a startup script for the server.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;nano start.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Fill in the following content, but note the purpose of each parameter:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-Xmx&lt;/code&gt; is the maximum allocated memory, &lt;code&gt;-Xms&lt;/code&gt; is the minimum allocated memory. I have 32GB of memory and allocated 6GB to the game (feel free to allocate more).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;banner-1.20.1-800-server.jar&lt;/code&gt; is the name of the game file you just downloaded.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;java -Xmx6144M -Xms6144m -jar banner-1.20.1-800-server.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;stty &lt;span class="nb"&gt;echo&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Press &lt;code&gt;Ctrl + O&lt;/code&gt; to write, &lt;code&gt;Enter&lt;/code&gt; to confirm, and &lt;code&gt;Ctrl + X&lt;/code&gt; to exit.&lt;/p&gt;
+&lt;p&gt;Next, grant execution permissions to &lt;code&gt;start.sh&lt;/code&gt; to avoid permission denied issues.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chmod &lt;span class="m"&gt;777&lt;/span&gt; start.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then install &lt;code&gt;screen&lt;/code&gt;. Simply put, &lt;code&gt;screen&lt;/code&gt; is a tool that helps users create independent sessions that can be resumed at any time.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;yum install screen
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;screen&lt;/code&gt; has the following common commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;screen -S &lt;span class="o"&gt;[&lt;/span&gt;name&lt;span class="o"&gt;]&lt;/span&gt; // create a new screen named &lt;span class="s2"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;screen -ls // list names and ports of all running screens
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;screen -r &lt;span class="o"&gt;[&lt;/span&gt;port&lt;span class="o"&gt;]&lt;/span&gt; // attach to the screen with the specified port
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Next, create a new &lt;code&gt;screen&lt;/code&gt; to run the script.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;screen -S Minecraft
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;In the newly appeared session, run &lt;code&gt;start.sh&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./start.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then everything should go smoothly. I didn&amp;rsquo;t encounter any errors here. Finally, it comes to &lt;code&gt;...EULA...&lt;/code&gt; asking us to agree to the EULA. Enter &lt;code&gt;true&lt;/code&gt; and press Enter. After a short wait, the game server will run successfully on port &lt;code&gt;25565&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To leave this Minecraft &lt;code&gt;screen&lt;/code&gt;, just press &lt;code&gt;Ctrl+A+D&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For game rule changes (like &amp;lsquo;whether cracked players are allowed to join&amp;rsquo;), you need to modify the contents of &lt;code&gt;server.properties&lt;/code&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Regarding connection: If it&amp;rsquo;s a cloud server, map the port in the administration panel, then connect to &lt;code&gt;domain:port&lt;/code&gt; in your Minecraft client.&lt;/p&gt;
+&lt;p&gt;However, for a physical server like mine, or a Linux device, or a personal PC without a public IP, we need to proceed with Intranet Penetration.&lt;/p&gt;
+&lt;h2 id="intranet-penetration"&gt;Intranet Penetration
+&lt;/h2&gt;&lt;p&gt;Here I am using &lt;code&gt;SakuraFrp&lt;/code&gt;, which is well-known and reliable in the Minecraft community, for intranet penetration. Other tools are mostly similar.&lt;/p&gt;
+&lt;h3 id="docker"&gt;Docker
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;SakuraFrp&lt;/code&gt; on Linux runs on Docker, so let&amp;rsquo;s deploy Docker first. The operations entirely follow the official documentation.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo dnf -y install dnf-plugins-core
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;I encountered very slow installation speeds and download failures here. Running the command again solved the problem.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After the installation is complete:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; --now docker
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker run hello-world
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The &lt;code&gt;run hello-world&lt;/code&gt; test above is very likely to fail. Let&amp;rsquo;s solve this issue by referring to the following two articles:&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://blog.csdn.net/Fengdf666/article/details/140236208" target="_blank" rel="noopener"
+ &gt;[Complete Solution] Failed to run hello-world image after Docker installation: Unable to find image &amp;lsquo;hello-world:latest&amp;rsquo; locally - CSDN Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.cnblogs.com/paul-liang/p/18384633" target="_blank" rel="noopener"
+ &gt;Failed or Timeout Running hello-world Image in Docker - Paul7777 - cnblogs&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Combining the two above will eventually solve the problem. First, let&amp;rsquo;s configure the &lt;code&gt;daemon&lt;/code&gt; file.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;nano /etc/docker/daemon.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Copy the following content into it:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;At the time of my testing (2025/3/19), the following mirrors are still working.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;registry-mirrors&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://h59pkpv6.mirror.aliyuncs.com&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://registry.docker-cn.com&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://docker.mirrors.ustc.edu.cn&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://hub-mirror.c.163.com&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://mirror.baidubce.com&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://do.nark.eu.org&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://dc.j8.work&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://docker.m.daocloud.io&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://dockerproxy.com&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;https://docker.nju.edu.cn&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Save + Exit. Next, restart docker, and execute the test once more.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl daemon-reload
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart docker
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run hello-world
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;I successfully installed docker up to this point. If the test still fails, please check the content of &lt;code&gt;daemon.json&lt;/code&gt; to see if there are missing or extra commas and brackets.&lt;/p&gt;
+&lt;h3 id="sakurafrp"&gt;SakuraFrp
+&lt;/h3&gt;&lt;p&gt;For deploying &lt;code&gt;SakuraFrp&lt;/code&gt; on Linux, the official documentation provides a detailed solution.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_203047.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;First, run the following command as an administrator in the terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo bash -c &lt;span class="s2"&gt;&amp;#34;. &amp;lt;(curl -sSL https://doc.natfrp.com/launcher.sh)&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After installation, it should automatically output logs and prompt you to fill in the access token. This (or the subsequent operations) can be found in the management panel on the &lt;code&gt;SakuraFrp&lt;/code&gt; official website.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_203530.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;After logging in, you will be able to see its log files. Below are the common operations to start it and view logs:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker start natfrp-service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker logs natfrp-service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;As shown below, we now need to physically operate the server.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Image_146159838978722.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Open a browser (Linux usually comes with Firefox) and access the URL after &amp;ldquo;Usage&amp;rdquo; to open the &lt;code&gt;WebUI&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Then you will see there is nothing under &amp;ldquo;Tunnels&amp;rdquo;, only a plus sign. At this time, we enter the &lt;code&gt;SakuraFrp&lt;/code&gt; management panel, find &lt;code&gt;Tunnel List&lt;/code&gt; under Services, and create two new tunnels as shown below:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_204855.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Screenshot_2025-03-19_205010.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;The first one with port 7102 is the &lt;code&gt;WebUI&lt;/code&gt; for &lt;code&gt;SakuraFrp&lt;/code&gt; on the server, intended for remote management.&lt;/p&gt;
+&lt;p&gt;The second one with port 25565 is for the Minecraft server.&lt;/p&gt;
+&lt;p&gt;Return to the &lt;code&gt;WebUI&lt;/code&gt; interface and refresh, you will see the two tunnels just created. Double-click them respectively, and then go back to the terminal log interface.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/Image_146585201484185.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;The links in red characters as shown in the image are the remote access links for the &lt;code&gt;WebUI&lt;/code&gt; and Minecraft. Just copy the Minecraft one into the game, and you can connect to it.&lt;/p&gt;
+&lt;h2 id="conclusion"&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;We are done! (A screenshot of my server&amp;rsquo;s spawn point &amp;gt;w&amp;lt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/Minecraft-server/792C7ECDA8518FCCDC8FA8E5E4E726CF.png" alt="" loading="lazy" /&gt;&lt;/p&gt;</description></item></channel></rss>
