@@ -110,7 +110,9 @@
 </span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_nat.ko
 </span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_raw.ko
 </span></span><span class=line><span class=cl>insmod /lib/modules/ip6table_mangle.ko
-</span></span></code></pre></td></tr></table></div></div><p>但是系统重启后，模块可能需要重新加载。而笔者不再使用透明代理，所以没再研究。</p></li></ol><h2 id=emby>Emby</h2><p>在配置好v2rayA后，即使采用了改配置文件的办法，emby的流量仍不能成功地通过v2rayA来走，各种修改配置ip后无果，于是自然想到是docker变成本机服务导致的。</p><p>在v2rayA上多次修改配置后，终于发现开启透明代理解决问题，同时也解决了连接不上Docker仓库的问题，但更大的问题是启用透明代理会使外网访问全部失败（亏好内网还能连接）。“透明代理”我想可以理解为“全局代理”。</p><p>Docker(Container Manager)单独设置代理的问题详见前言链接。</p><ol><li><p>在“映像”中选中emby并运行，在“存储空间设置”中加入媒体库的路径，在“环境”中加入三个环境变量，“网络”中选择<code>host</code>模式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p>但是系统重启后，模块需要重新加载，所以用以上内容生成脚本在<code>/usr/local/bin/load_v2raya_mods.sh</code></p><p>然后重启v2rayA服务:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo systemctl restart v2raya
+</span></span></code></pre></td></tr></table></div></div></li></ol><h2 id=emby>Emby</h2><p>在配置好v2rayA后，即使采用了改配置文件的办法，emby的流量仍不能成功地通过v2rayA来走，各种修改配置ip后无果，于是自然想到是docker变成本机服务导致的。</p><p>在v2rayA上多次修改配置后，终于发现开启透明代理解决问题，同时也解决了连接不上Docker仓库的问题，但更大的问题是启用透明代理会使外网访问全部失败（亏好内网还能连接）。“透明代理”我想可以理解为“全局代理”。</p><p>Docker(Container Manager)单独设置代理的问题详见前言链接。</p><ol><li><p>在“映像”中选中emby并运行，在“存储空间设置”中加入媒体库的路径，在“环境”中加入三个环境变量，“网络”中选择<code>host</code>模式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>HTTP_PROXY</span> <span class=o>=</span> http://127.0.0.1:20171

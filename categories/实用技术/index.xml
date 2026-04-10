@@ -231,8 +231,17 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;insmod /lib/modules/ip6table_mangle.ko
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;但是系统重启后，模块可能需要重新加载。而笔者不再使用透明代理，所以没再研究。&lt;/p&gt;
-&lt;/li&gt;
+&lt;/div&gt;&lt;p&gt;但是系统重启后，模块需要重新加载，所以用以上内容生成脚本在&lt;code&gt;/usr/local/bin/load_v2raya_mods.sh&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;然后重启v2rayA服务:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart v2raya
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="emby"&gt;Emby
 &lt;/h2&gt;&lt;p&gt;在配置好v2rayA后，即使采用了改配置文件的办法，emby的流量仍不能成功地通过v2rayA来走，各种修改配置ip后无果，于是自然想到是docker变成本机服务导致的。&lt;/p&gt;
