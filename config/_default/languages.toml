@@ -17,11 +17,3 @@
     title             = "ottercoconut's Blog"
     weight            = 2
 
-[ja]
-    contentDir = 'content/ja'
-    disabled = false
-    languageName = "日本語"
-    languageCode = "ja-JP"
-    languagedirection = "ltr"
-    title = "ottercoconutのブログ"
-    weight = 3
