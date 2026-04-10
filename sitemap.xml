@@ -15,11 +15,4 @@
     
   </sitemap>
   
-  <sitemap>
-    <loc>http://localhost:1313/ja/sitemap.xml</loc>
-    
-      <lastmod>2026-03-10T23:00:00+08:00</lastmod>
-    
-  </sitemap>
-  
 </sitemapindex>

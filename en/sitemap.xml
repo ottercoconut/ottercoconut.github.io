@@ -11,11 +11,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/about/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/about/"
                 />
@@ -26,11 +21,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -47,11 +37,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/page/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/page/"
                 />
@@ -62,11 +47,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/tags/408/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/tags/408/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -83,11 +63,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/categories/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/categories/"
                 />
@@ -98,11 +73,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/post/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/post/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -119,11 +89,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/tags/"
                 />
@@ -134,11 +99,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/categories/%E7%90%86%E8%AE%BA/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/categories/%E7%90%86%E8%AE%BA/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -155,11 +115,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/tags/%E7%BD%91%E7%BB%9C/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/tags/%E7%BD%91%E7%BB%9C/"
                 />
@@ -170,11 +125,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -191,11 +141,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/archives/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/archives/"
                 />
@@ -208,11 +153,6 @@
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/links/"
-                />
-    <xhtml:link
-                rel="alternate"
                 hreflang="en-US"
                 href="http://localhost:1313/en/links/"
                 />
@@ -222,11 +162,6 @@
                 rel="alternate"
                 hreflang="zh-CN"
                 href="http://localhost:1313/search/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja-JP"
-                href="http://localhost:1313/ja/search/"
                 />
     <xhtml:link
                 rel="alternate"
