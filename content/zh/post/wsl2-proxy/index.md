@@ -40,17 +40,15 @@ toc = true
    [wsl2]
    # 开启镜像网络模式
    networkingMode=mirrored
-   # 允许 WSL2 访问 Windows 本地服务
-   localhostForwarding=true
    # 自动同步代理设置（可选true/false）
    autoProxy=true
    ```
-
+   
    需注意的是：`autoProxy`这个参数决定了wsl2代理的方式，设置为`true`可以不再配置`~/.bashrc`，但是问题在于：
 
    1. 当我们使用`env | grep -i proxy`命令，会看到很多奇怪的和网络有关的变量，虽然确实能成功实现代理。
-   2. 不能在wsl2中开关代理，导致很多流量都通过代理来走
-
+2. 不能在wsl2中开关代理，导致很多流量都通过代理来走
+   
    后面我们将其设置为`false`，以便于在wsl2内部可以方便地控制代理的开关，保证wsl2系统的清晰透明。
 
 4. 在Windows终端中输入`wsl --shutdown`关闭wsl2
