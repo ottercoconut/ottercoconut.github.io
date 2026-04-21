@@ -206,12 +206,6 @@ $$
 
 > 训练过程使用了**交叉熵损失 (Cross Entropy Loss)** 函数。简单来说，交叉熵会去对比 $\mathbf{P}_t$ 和 $\mathbf{g}_t$ (one-hot vector)之间的差距。计算出损失 $J_t(\theta)$ 之后，在接下来的代码实现中，模型就会利用反向传播机制，顺着网络一路往回找，去微调那些导致错误的参数 $\theta$。
 
-
-
-### Setting up Cloud GPU-powered Virtual Machine
-
-
-
 ### Implementation and written questions
 
 #### `__init__()`
@@ -370,4 +364,252 @@ if enc_masks is not None:
 
 **为什么必须这样做：** 由于 batch 内各句子长度不一，短句会被 `<pad>` 填充到统一长度。如果不加掩码，`<pad>` 对应位置的编码器隐藏状态（本质上是无意义的噪声）会分走一部分注意力权重，从而污染上下文向量，导致翻译质量下降。
 
+#### Training
+
+问题 (h) 是在代码工作完成后，进入训练阶段。由于我没有海外支付方式，用不了cs224n指定的Google Cloud，所以使用本机显卡进行训练（速度快于文档的预估值）
+
+```bash
+bash run.sh train
+```
+
+观察`tensorboard`可见loss曲线并无异常，待训练完成后进行测试评估：
+![](/uploads/posts/cs224n-a3/figure2.png)
+
+```bash
+bash run.sh test
+```
+
+结果：the model’s corpus BLEU Score is larger than 18, tests passed.
+
+#### Attention Comparison
+
+最后问题 (i) 是点积注意力、加性注意力分别与乘性注意力进行比较：
+
+##### Dot Product vs. Multiplicative
+
+- Dot Product Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{h}_i$
+- Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$
+
+点积注意力的优势：
+
+- **计算速度更快，显存占用更小。** 点积注意力没有任何可学习的权重矩阵 $\mathbf{W}$，它仅仅是两个向量的内积。在 GPU 上，这种纯粹的向量点积运算被优化到了极致，没有任何额外的内存开销和参数更新负担。
+
+点积注意力的劣势：
+
+- **强制要求维度严格一致，且表达能力较弱。** 要做点积，解码器状态 $\mathbf{s}_t$ 和编码器状态 $\mathbf{h}_i$ 的维度必须**完全相同**。更致命的是，它假设这两个空间天然就是对齐的。而乘性注意力多了一个矩阵 $\mathbf{W}$，不仅允许两者的维度不同（$\mathbf{W}$ 可以做维度转换），还能通过学习 $\mathbf{W}$ 将它们投影到一个更好的共享特征空间中再进行比较。
+
+##### Additive vs. Multiplicative
+
+- Additive Attention: $\mathbf{e}_{t,i} = \mathbf{v}^T \tanh(\mathbf{W}_1 \mathbf{h}_i + \mathbf{W}_2 \mathbf{s}_t)$
+- Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$
+
+> (注：Additive Attention 也就是大名鼎鼎的 Bahdanau Attention，它是 Attention 机制的开山鼻祖；而 Multiplicative 则是 Luong Attention 的核心。)
+
+加性注意力的优势：
+
+- **在特征维度很大时，表现通常更好（模型容量大）。** 乘性注意力在维度很大时，点积的结果方差会变得极其巨大，容易把 Softmax 推向梯度消失的边缘（也就是后来 Transformer 引入缩放因子的原因）。而加性注意力通过 $\tanh$ 激活函数将内部数值稳稳地压制在 $[-1, 1]$ 之间，天然具有极好的数值稳定性，对超大维度的宽容度更高。
+
+加性注意力的劣势：
+
+- **计算效率较低，难以发挥底层矩阵乘法的极致加速。** 乘性注意力可以极其优雅地打包成一个巨大的矩阵乘法（在 Transformer 里就是 $\mathbf{Q}\mathbf{K}^T$），这正是现代 GPU 最擅长的事情。而加性注意力不仅要做两次独立的线性变换，还要过一遍非线性激活函数 $\tanh$，最后再乘一个向量 $\mathbf{v}$。这种复杂的计算图打破了矩阵乘法的纯粹性，导致它在实际工程中的运行速度明显慢于乘性注意力。
+
+## Analyzing NMT Systems
+
+问题 (a) 是为什么在embedding层后加1D卷积后，再输入双向encoder效果会好一些？
+
+添加一维卷积层可以作为 n-gram 特征提取器，用于捕捉局部组合性。由于中文词语通常由多个词素组成（例如，“电”+“脑”=“电脑”），一维卷积神经网络的滑动窗口会在序列建模之前，将相邻字符/子词的嵌入向量显式地组合成更高层次的语义表示（一个词或短语）。这提供了一种层级结构，其中卷积神经网络处理局部词汇语义（充当软分词器），从而使双向编码器能够专注于学习全局的、长程的句法依存关系。
+
+问题 (b) 是分析四句中文为什么翻译错了，那么作为普通话母语者不难解答：
+
+i. (2 points) **Source Sentence:** 贼人其后被警方拘捕及被判处盗窃罪名成立。 
+**Reference Translation:** <u>*the culprits were*</u> *subsequently arrested and convicted.* 
+**NMT Translation:** <u>*the culprit was*</u> *subsequently arrested and sentenced to theft.*
+
+ii. (2 points) **Source Sentence:** 几乎已经没有地方容纳这些人, 资源已经用尽。 
+**Reference Translation:** *there is almost no space to accommodate these people, and resources have run out.* 
+**NMT Translation:** *the resources have been exhausted and* <u>*resources have been exhausted*</u>.
+
+iii. (2 points) **Source Sentence:** 当局已经宣布今天是国殇日。 
+**Reference Translation:** *authorities have announced* <u>*a national mourning today.*</u> **NMT Translation:** the administration has announced today's day.
+**NMT Translation:** *the administration has announced* <u>*today's day.*</u>
+
+iv. (2 points) **Source Sentence**: 俗语有云:“唔做唔错”。 
+**Reference Translation:** <u>*“ act not, err not ”*</u>, *so a saying goes.* 
+**NMT Translation:** *as the saying goes,* <u>*“ it's not wrong. ”*</u>
+
+- (i) 是单/复数的问题，缺少上下文以及整体理解，难以判断“贼人”是复数还是单数。
+- (ii) “资源已经用尽”被重复翻译了两遍，简单来说是注意力先偏移到了后半句，然后NMT不知道前半句没有翻译，加上前面错译出的"...and"，导致重复翻译后半句。
+- (iii) `src.vocab`没有记录“国殇”，所以NMT越过了这个词。
+- (iv) 本质是句俗语，或者说是粤语，而多数模型都是基于普通话训练的。
+
+### BLEU
+
+BLEU score is the most commonly used automatic evaluation metric for NMT systems.
+It is usually calculated across the entire test set, but here we will consider BLEU defined for a single
+example. Suppose we have a source sentence s, a set of k reference translations $\mathbf{r}_1,\dots,\mathbf{r}_k$, and a
+candidate translation c. To compute the BLEU score of c, we first compute the modified n-gram
+precision pn of c, for each of n = 1,2,3,4, where n is the n in n-gram:
+
+> BLEU 分数是 NMT (神经机器翻译) 系统中最常用的自动评估指标。它通常在整个测试集上计算，但在这里我们将考虑为单个示例定义的 BLEU。假设我们有一个源句子 $\mathbf{s}$，一组 $k$ 个参考翻译 $\mathbf{r}_1,\dots,\mathbf{r}_k$，以及一个候选翻译 $\mathbf{c}$。为了计算 $\mathbf{c}$ 的 BLEU 分数，我们首先计算 $\mathbf{c}$ 的*修正 n-gram 精确度 (modified n-gram precision)* $p_n$，其中 $n = 1, 2, 3, 4$，$n$ 是 n-gram 中的 $n$：
+
+$$
+p_n = \frac{\sum_{\text{ngram} \in \mathbf{c}} \min \left( \max_{i=1,\dots,k} \text{Count}_{\mathbf{r}_i}(\text{ngram}), \text{Count}_{\mathbf{c}}(\text{ngram}) \right)}{\sum_{\text{ngram} \in \mathbf{c}} \text{Count}_{\mathbf{c}}(\text{ngram})}
+$$
+
+Here, for each of the n-grams that appear in the candidate translation c, we count the maxi
+mum number of times it appears in any one reference translation, capped by the number of times
+it appears in c (this is the numerator). We divide this by the number of n-grams in c (denominator).
+
+> 这里，对于出现在候选翻译 $\mathbf{c}$ 中的每一个 $n$-gram，我们计算它在任何一个参考翻译中出现的最大次数，上限为它在 $\mathbf{c}$ 中出现的次数（这是分子）。我们将其除以 $\mathbf{c}$ 中 $n$-gram 的数量（分母）。
+>
+> $p_n$ 公式的分母部分比较清晰，分子部分我们继续拆解：
+>
+> $\text{Count}_{\mathbf{c}}(\text{ngram})$ : 该词组在模型输出中出现几次。
+>
+> $\max_{i=1,\dots,k} \text{Count}_{\mathbf{r}_i}(\text{ngram})$ : 该词组在**所有参考答案**中出现次数最多的那一次。比如三个参考答案里，`the` 分别出现了 1、2、1 次，那么这个值就是 2。
+>
+> $\min(\dots)$ : 这是**截断（Clipping）**机制。它规定：即便你在输出里写了 10 个 `the`，如果参考答案里最多只出现了 2 个，那我也只算你命中了 2 个。
+>
+> 综上，公式可以被翻译成：
+> $$
+> p_n = \frac{\text{被认可的 n-gram 匹配总数}}{\text{候选翻译中总共生成的 n-gram 数量}}
+> $$
+
+Next, we compute the brevity penalty BP. Let $len(\mathbf{c})$ be the length of c and let $len(\mathbf{r})$ be the
+length of the reference translation that is closest to $len(\mathbf{c})$ (in the case of two equally-close reference
+translation lengths, choose $len(\mathbf{r})$ as the shorter one).
+
+> 接下来，我们计算*长度惩罚 (brevity penalty)* $BP$。令 $len(\mathbf{c})$ 为 $\mathbf{c}$ 的长度，令 $len(\mathbf{r})$ 为最接近 $len(\mathbf{c})$ 的参考翻译的长度（在有两个同样接近的参考翻译长度的情况下，选择较短的那个作为 $len(\mathbf{r})$）。
+
+$$
+BP = \begin{cases} 1 & \text{if } len(\mathbf{c}) \geq len(\mathbf{r}) \\ \exp\left(1 - \frac{len(\mathbf{r})}{len(\mathbf{c})}\right) & \text{otherwise} \end{cases}
+$$
+
+> 那么引入 $BP$ 有什么用？首先 $len(\mathbf{c}) \geq len(\mathbf{r})$ 时 $BP=1$ ，这是在NMT输出较长时，$BP$ 不需要惩罚它，而会在 $p_n$ 的分母体现（分母变大，概率降低）。
+>
+> $len(\mathbf{c}) < len(\mathbf{r})$ 时引入指数惩罚，如果NMT只翻译最有把握的一个词（比如输出一个单词 `apple`），$p_n$ 可能是 100%，但这没有意义。这个指数函数 $\exp(1 - r/c)$ 在 $c$ 越小时，值会迅速接近 0，从而给短句一个沉重的打击。
+
+Lastly, the BLEU score for candidate c with respect to $\mathbf{r}_1,\dots,\mathbf{r}_k$ is:
+
+> 最后，候选 $\mathbf{c}$ 相对于 $\mathbf{r}_1,\dots,\mathbf{r}_k$ 的 BLEU 分数为：
+
+$$
+BLEU = BP \times \exp \left( \sum_{n=1}^4 \lambda_n \log p_n \right)
+$$
+
+> 本质上等同于：
+> $$
+> BLEU = BP \times (p_1^{\lambda_1} \cdot p_2^{\lambda_2} \cdot p_3^{\lambda_3} \cdot p_4^{\lambda_4})
+> $$
+
+where $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ are weights that sum to 1. The log here is natural log.
+
+> 其中 $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ 是总和为 1 的权重。此处的 $\log$ 是自然对数。
+>
+> 几何平均的一个特性是：**如果其中任何一项 $p_n$ 为 0，最终结果就会是 0**。所以模型的词汇和语序的正确性都会被计算。
+
+问题 (c) 结合实例运算：
+
+i. Source Sentence **s**: 需要有充足和可预测的资源。
+Reference Translation $r_1$ : *resources have to be sufficient and they have to be predictable*
+Reference Translation $r_2$ : *adequate and predictable resources are required*
+NMT Translation $c_1$ : there is a need for adequate and predictable resources
+NMT Translation $c_2$ : resources be sufficient and predictable to
+Please compute the BLEU scores for  and $c_1$ $c_2$. Let $\lambda_i = 0.5$ for $i \in \{1, 2\}$ and $\lambda_i = 0$ for $i \in \{3, 4\}$ (**this means we ignore 3-grams and 4-grams**, i.e., don't compute $p_3$ or $p_4$).
+When computing BLEU scores, show your work (i.e., show your computed values for $p_1$, $p_2$, $len(c)$, $len(r)$ and $BP$). Note that the BLEU scores can be expressed between 0 and 1 or between 0 and 100. The code is using the 0 to 100 scale while in this question we are using the **0 to 1** scale. Please round your responses to 3 decimal places.
+
+> 先计算 $c_1$ : $len(c_1)=9$ 更接近于 $len(r_1)=11$ , $BP=exp(1-\frac{11}{9})$ 
+>
+> $p_1$ 匹配的Unigrams 为 {adequate, and, predictable, resources}，共 4 个。 $p_1=4/9$
+>
+> $p_2$ 匹配的Bigrams 为 {adequate and, and predictable, predictable resources}，共 3 个。 $p_2=3/8$
+>
+> $BLEU_{c1} = BP \times \sqrt{p_1 \times p_2}$
+>
+> $c_2$ 同理。
+
+ii. Our hard drive was corrupted and we lost Reference Translation $r_1$. Please recom
+pute BLEU scores for $c_1$ and $c_2$, this time with respect to $r_2$ only. Which of the two NMT
+translations now receives the higher BLEU score? Do you agree that it is the better translation?
+
+> 计算方式不变，但是在去掉了 $r_1$ 后， ${BLEU}_{c_1}$ 不变， ${BLEU}_{c_2}$ 大幅缩小（由于 $p_1$ 和 $p_2$ 下降）
+>
+> 这说明了 **$c_1$ 的鲁棒性更强**，它使用了更通用的词汇（如 `adequate`），即使在参考答案有限的情况下，依然能保持较合理的得分，这更符合人类对“好翻译”的评价标准。
+
+iv. List two advantages and two disadvantages of BLEU, compared to human evaluation,
+as an evaluation metric for Machine Translation.
+
+> 优点不列了，缺点：BLEU 仅进行**字面上的 N-gram 匹配**，缺乏语义理解。由于 BLEU 主要关注局部词汇的重合度，它往往无法识别严重的语法错误或逻辑扭曲。一个逻辑完全相反、但在词汇上高度重合的句子可能获得极高的 BLEU 分，却无法被人类理解，所以它无法准确衡量语言质量。
+
+问题 (d) 是Beam Search相关的，关于训练次数与其“假设”质量的问题，比如i. 要求进行三个对比：
+
+```json
+// iteration 200
+{
+            "hypothesis": [
+                "▁it",
+                "▁is",
+                "▁not",
+                "▁that",
+                "▁the",
+                "▁united",
+                "▁nations",
+                "▁of",
+                "▁the",
+                "▁united",
+                "▁nations",
+                "▁of",
+                "▁the",
+                "▁united",
+                "▁nations",
+                "."
+            ],
+            "score": -31.211565017700195
+        }
+```
+
+```json
+// iteration 3000
+{
+            "hypothesis": [
+                "▁i",
+                "▁would",
+                "▁also",
+                "▁like",
+                "▁to",
+                "▁clarify",
+                "▁the",
+                "▁number",
+                "▁of",
+                "▁cases",
+                "▁in",
+                "▁the",
+                "▁conference",
+                "."
+            ],
+            "score": -15.013087272644043
+        }
+```
+
+```json
+// iteration 17200 (last)
+{
+            "hypothesis": [
+                "▁i",
+                "▁have",
+                "▁also",
+                "▁clarified",
+                "▁a",
+                "▁number",
+                "▁of",
+                "▁matters",
+                "▁raised",
+                "▁by",
+                "▁the",
+                "▁conference",
+                "."
+            ],
+            "score": -7.69414758682251
+        }
+```
 
