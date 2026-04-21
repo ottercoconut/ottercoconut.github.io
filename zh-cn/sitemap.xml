@@ -400,6 +400,8 @@
                 href="http://localhost:1313/archives/"
                 />
   </url><url>
+    <loc>http://localhost:1313/p/</loc>
+  </url><url>
     <loc>http://localhost:1313/links/</loc>
     <xhtml:link
                 rel="alternate"
