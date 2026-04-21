@@ -1,1294 +1,249 @@
-<!DOCTYPE html>
-<html lang="zh-CN" dir="ltr">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n">
-<title>CS224N Assignment3 NMT</title>
-
-
-<link rel="canonical" href="http://localhost:1313/p/cs224n-assignment3-nmt/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-
-
-<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="CS224N Assignment3 NMT">
-<meta property='og:description' content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n">
-<meta property='og:url' content='http://localhost:1313/p/cs224n-assignment3-nmt/'>
-<meta property='og:site_name' content='边个濑椰的博客'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Seq2Seq' /><meta property='article:tag' content='LSTM' /><meta property='article:tag' content='Attention' /><meta property='article:published_time' content='2026-04-08T09:46:07&#43;08:00'/><meta property='article:modified_time' content='2026-04-08T09:46:07&#43;08:00'/>
-<meta name="twitter:title" content="CS224N Assignment3 NMT">
-<meta name="twitter:description" content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n">
-    <link rel="shortcut icon" href="/img/favicon.png" />
-
-    </head>
-    <body class="
-    article-page
-    ">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
-        }
-    })();
-</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header>
-        <figure class="site-avatar">
-                <a href="/">
-                    <img src="/img/avatar.png" 
-                        width="150"
-                        height="150"
-                        class="site-logo"
-                        loading="lazy"
-                        alt="Avatar">
-                </a>
-                
-                    <span class="emoji">🍥</span>
-                
-            </figure>
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">边个濑椰的博客</a></h1>
-            <h2 class="site-description">人生如一梦，一梦换须臾，须臾待流年，流年似崆蒙</h2>
-        </div>
-    </header><ol class="menu-social">
-            
-                <li>
-                    <a 
-                        href='https://github.com/ottercoconut/'
-                        
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-        <li >
-            <a href='/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>首页</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/archives/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>归档</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/search/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>搜索</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/links/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-                    <li id="i18n-switch">  
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
-                            
-                                
-                                
-                                    
-                                        
-                                    
-                                
-                                <option value="/p/cs224n-assignment3-nmt/" selected>简体中文</option>
-                            
-                                
-                                
-                                    
-                                
-                                <option value="/en/" >English</option>
-                            
-                        </select>
-                    </li>
-                
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span></span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                
-    <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title"></h2>
-        
-        <div class="widget--toc">
-            <nav class="toc-nav" id="TableOfContents">
-                
-  <ol>
-    <li><a href="#neural-machine-translation-with-rnns">Neural Machine Translation with RNNs</a>
-      <ol>
-        <li><a href="#model-description-training-procedure">Model description (training procedure)</a></li>
-        <li><a href="#implementation-and-written-questions">Implementation and written questions</a>
-          <ol>
-            <li><a href="#__init__"><code>__init__()</code></a></li>
-            <li><a href="#encode"><code>encode</code></a></li>
-            <li><a href="#decode"><code>decode</code></a></li>
-            <li><a href="#step"><code>step</code></a></li>
-            <li><a href="#attention-masking">Attention Masking</a></li>
-            <li><a href="#training">Training</a></li>
-            <li><a href="#attention-comparison">Attention Comparison</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-    <li><a href="#analyzing-nmt-systems">Analyzing NMT Systems</a>
-      <ol>
-        <li><a href="#bleu">BLEU</a></li>
-      </ol>
-    </li>
-  </ol>
-
-            </nav>
-        </div>
-    </section>
-
-            
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <article class="main-article">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            
-            
-            
-            <a href="/categories/%E6%8A%80%E6%9C%AF/" style="background-color: hsl(154, 60%, 84%); color: hsl(154, 60%, 15%);">
-                技术
-            </a>
-        
-            
-            
-            
-            <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="background-color: hsl(353, 60%, 84%); color: hsl(353, 60%, 15%);">
-                深度学习
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/cs224n-assignment3-nmt/">CS224N Assignment3 NMT</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    
-    
-    
-    <footer class="article-meta">
-        
-            <div class="inline-meta">
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                    <time class="article-time--published" datetime='2026-04-08T09:46:07&#43;08:00'>Wednesday, April 8, 2026</time>
-                
-
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                    <time class="article-time--reading">
-                        
-                    </time>
-                
-            </div>
-        
-
-        
-
-        
-    </footer>
-    
-</div>
-
-</header>
-
-    
-    <aside class="article-toc">
-        <details>
-            <summary>
-                <div class="article-toc-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
-                    <span></span>
-                </div>
-            </summary>
-            <nav class="toc-nav">
-                
-  <ol>
-    <li><a href="#neural-machine-translation-with-rnns">Neural Machine Translation with RNNs</a>
-      <ol>
-        <li><a href="#model-description-training-procedure">Model description (training procedure)</a></li>
-        <li><a href="#implementation-and-written-questions">Implementation and written questions</a>
-          <ol>
-            <li><a href="#__init__"><code>__init__()</code></a></li>
-            <li><a href="#encode"><code>encode</code></a></li>
-            <li><a href="#decode"><code>decode</code></a></li>
-            <li><a href="#step"><code>step</code></a></li>
-            <li><a href="#attention-masking">Attention Masking</a></li>
-            <li><a href="#training">Training</a></li>
-            <li><a href="#attention-comparison">Attention Comparison</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-    <li><a href="#analyzing-nmt-systems">Analyzing NMT Systems</a>
-      <ol>
-        <li><a href="#bleu">BLEU</a></li>
-      </ol>
-    </li>
-  </ol>
-
-            </nav>
-        </details>
-    </aside>
-    
-
-    <section class="article-content">
-    
-    
-    <h1 id="cs-224n-spring-2024-assignment-3">CS 224n Spring 2024: Assignment #3
-</h1><p><a class="link" href="https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/assignments/a3_spr24_student_handout.pdf"  target="_blank" rel="noopener"
-    >a3_spr24_student_handout.pdf</a></p>
-<p>本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。</p>
-<p>参考论文：</p>
-<p><a class="link" href="https://arxiv.org/pdf/1409.0473"  target="_blank" rel="noopener"
-    >NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a></p>
-<h2 id="neural-machine-translation-with-rnns">Neural Machine Translation with RNNs
-</h2><p><img src="/uploads/posts/cs224n-a3/figure1.png" alt="" loading="lazy" /></p>
-<h3 id="model-description-training-procedure">Model description (training procedure)
-</h3><p>Given a sentence in the source language, we look up the character or word embeddings from an <strong>embeddings matrix</strong>, yielding $\mathbf{x}_1, \ldots, \mathbf{x}_m$ ($\mathbf{x}_i \in \mathbb{R}^{e \times 1}$), where $m$ is the length of the source sentence and $e$ is the embedding size.</p>
-
-    <blockquote>
-        <p>我们手里的一条源语言句子，由于计算机无法直接理解文字，我们首先要进行“查表”操作，也就是文本中提到的<strong>获取词嵌入</strong>（look up &hellip; embeddings matrix）。假设句子有 $m$ 个词，经过这一步，每个词都被映射成了一个长度为 $e$ 的列向量 $\mathbf{x}_i$。这样一来，整句话就被转换成了一个由实数向量构成的序列</p>
-
-    </blockquote>
-<p>We then feed the embeddings to a <strong>convolutional layer</strong>$^1$ while maintaining their shapes.</p>
-<p>$^1$ : Checkout <a class="link" href="https://cs231n.github.io/convolutional-networks"  target="_blank" rel="noopener"
-    >Convolutional Neural Networks</a> for an in-depth description for convolutional layers if you are not familiar.</p>
-
-    <blockquote>
-        <p>带着这些初步的向量表示，模型并没有直接把它们送入主要的编码器，而是先让它们穿过一个<strong>卷积层</strong>（convolutional layer）。文本中特别强调了这一步“保持了它们的形状”，这意味着经过卷积处理后，我们依然拥有 $m$ 个向量，且每个向量的维度依然是 $e$。这一步的作用通常是对局部的特征进行一次平滑和提取，为后续更深层的语义理解打好基础。</p>
-
-    </blockquote>
-<p>We feed the convolutional layer outputs to the <strong>bidirectional encoder</strong>, yielding hidden states and cell states for both the forwards ($\rightarrow$) and backwards ($\leftarrow$) LSTMs. The forwards and backwards versions are concatenated to give hidden states $\mathbf{h}_i^{\text{enc}}$ and cell states $\mathbf{c}_i^{\text{enc}}$:</p>
-
-    <blockquote>
-        <p>接下来，这些被初步加工过的特征向量正式进入了核心组件——<strong>双向编码器</strong>（bidirectional encoder）。这里其实包含了两条流水线：一条是前向 LSTM（在数学符号中用向右的箭头 $\rightarrow$ 表示），它顺着我们阅读的习惯，从第一个词读到最后一个词，负责收集每个词左侧的“上文”信息；另一条是后向 LSTM（用向左的箭头 $\leftarrow$ 表示），它逆着顺序，从最后一个词倒着读回来，负责收集每个词右侧的“下文”信息。当这两条流水线各自运转完毕后，对于句子中的任意第 $i$ 个位置，我们就得到了两个不同视角的隐藏状态 $\mathbf{h}_i^{\text{enc}}$ 和细胞状态 $\mathbf{c}_i^{\text{enc}}$，前向( $\overrightarrow{\mathbf{h}_i^{\text{enc}}}$ , $\overrightarrow{\mathbf{c}_i^{\text{enc}}}$ )或后向( $\overleftarrow{\mathbf{h}_i^{\text{enc}}}$ , $\overleftarrow{\mathbf{c}_i^{\text{enc}}}$ )分别的状态量，维度都是 $h \times 1$ 。</p>
-
-    </blockquote>
-$$
+<!doctype html><html lang=zh-CN dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n"><title>CS224N Assignment3 NMT</title><link rel=canonical href=https://ottercoconut.github.io/p/cs224n-assignment3-nmt/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="CS224N Assignment3 NMT"><meta property='og:description' content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n"><meta property='og:url' content='https://ottercoconut.github.io/p/cs224n-assignment3-nmt/'><meta property='og:site_name' content='边个濑椰的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Seq2Seq'><meta property='article:tag' content='LSTM'><meta property='article:tag' content='Attention'><meta property='article:published_time' content='2026-04-08T09:46:07+08:00'><meta property='article:modified_time' content='2026-04-08T09:46:07+08:00'><meta name=twitter:title content="CS224N Assignment3 NMT"><meta name=twitter:description content="CS 224n Spring 2024: Assignment #3 a3_spr24_student_handout.pdf\n本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>边个濑椰的博客</a></h1><h2 class=site-description>人生如一梦，一梦换须臾，须臾待流年，流年似崆蒙</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>首页</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/cs224n-assignment3-nmt/ selected>简体中文</option><option value=/en/>English</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav class=toc-nav id=TableOfContents><ol><li><a href=#neural-machine-translation-with-rnns>Neural Machine Translation with RNNs</a><ol><li><a href=#model-description-training-procedure>Model description (training procedure)</a></li><li><a href=#implementation-and-written-questions>Implementation and written questions</a><ol><li><a href=#__init__><code>__init__()</code></a></li><li><a href=#encode><code>encode</code></a></li><li><a href=#decode><code>decode</code></a></li><li><a href=#step><code>step</code></a></li><li><a href=#attention-masking>Attention Masking</a></li><li><a href=#training>Training</a></li><li><a href=#attention-comparison>Attention Comparison</a></li></ol></li></ol></li><li><a href=#analyzing-nmt-systems>Analyzing NMT Systems</a><ol><li><a href=#bleu>BLEU</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E6%8A%80%E6%9C%AF/ style=background-color:#beefd9;color:#0f3d29>技术
+</a><a href=/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/ style=background-color:#efbec3;color:#3d0f15>深度学习</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/cs224n-assignment3-nmt/>CS224N Assignment3 NMT</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-04-08T09:46:07+08:00>Wednesday, April 8, 2026</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><aside class=article-toc><details><summary><div class=article-toc-title><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6-6 6"/></svg>
+<span></span></div></summary><nav class=toc-nav><ol><li><a href=#neural-machine-translation-with-rnns>Neural Machine Translation with RNNs</a><ol><li><a href=#model-description-training-procedure>Model description (training procedure)</a></li><li><a href=#implementation-and-written-questions>Implementation and written questions</a><ol><li><a href=#__init__><code>__init__()</code></a></li><li><a href=#encode><code>encode</code></a></li><li><a href=#decode><code>decode</code></a></li><li><a href=#step><code>step</code></a></li><li><a href=#attention-masking>Attention Masking</a></li><li><a href=#training>Training</a></li><li><a href=#attention-comparison>Attention Comparison</a></li></ol></li></ol></li><li><a href=#analyzing-nmt-systems>Analyzing NMT Systems</a><ol><li><a href=#bleu>BLEU</a></li></ol></li></ol></nav></details></aside><section class=article-content><h1 id=cs-224n-spring-2024-assignment-3>CS 224n Spring 2024: Assignment #3</h1><p><a class=link href=https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/assignments/a3_spr24_student_handout.pdf target=_blank rel=noopener>a3_spr24_student_handout.pdf</a></p><p>本post从cs224n独立出来，旨在尽可能掌握Assignment3中基于RNN的NMT背后各步的数学原理，以及将代码部分和数学部分对应起来。</p><p>参考论文：</p><p><a class=link href=https://arxiv.org/pdf/1409.0473 target=_blank rel=noopener>NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a></p><h2 id=neural-machine-translation-with-rnns>Neural Machine Translation with RNNs</h2><p><img src=/uploads/posts/cs224n-a3/figure1.png alt loading=lazy></p><h3 id=model-description-training-procedure>Model description (training procedure)</h3><p>Given a sentence in the source language, we look up the character or word embeddings from an <strong>embeddings matrix</strong>, yielding $\mathbf{x}_1, \ldots, \mathbf{x}_m$ ($\mathbf{x}_i \in \mathbb{R}^{e \times 1}$), where $m$ is the length of the source sentence and $e$ is the embedding size.</p><blockquote><p>我们手里的一条源语言句子，由于计算机无法直接理解文字，我们首先要进行“查表”操作，也就是文本中提到的<strong>获取词嵌入</strong>（look up &mldr; embeddings matrix）。假设句子有 $m$ 个词，经过这一步，每个词都被映射成了一个长度为 $e$ 的列向量 $\mathbf{x}_i$。这样一来，整句话就被转换成了一个由实数向量构成的序列</p></blockquote><p>We then feed the embeddings to a <strong>convolutional layer</strong>$^1$ while maintaining their shapes.</p><p>$^1$ : Checkout <a class=link href=https://cs231n.github.io/convolutional-networks target=_blank rel=noopener>Convolutional Neural Networks</a> for an in-depth description for convolutional layers if you are not familiar.</p><blockquote><p>带着这些初步的向量表示，模型并没有直接把它们送入主要的编码器，而是先让它们穿过一个<strong>卷积层</strong>（convolutional layer）。文本中特别强调了这一步“保持了它们的形状”，这意味着经过卷积处理后，我们依然拥有 $m$ 个向量，且每个向量的维度依然是 $e$。这一步的作用通常是对局部的特征进行一次平滑和提取，为后续更深层的语义理解打好基础。</p></blockquote><p>We feed the convolutional layer outputs to the <strong>bidirectional encoder</strong>, yielding hidden states and cell states for both the forwards ($\rightarrow$) and backwards ($\leftarrow$) LSTMs. The forwards and backwards versions are concatenated to give hidden states $\mathbf{h}_i^{\text{enc}}$ and cell states $\mathbf{c}_i^{\text{enc}}$:</p><blockquote><p>接下来，这些被初步加工过的特征向量正式进入了核心组件——<strong>双向编码器</strong>（bidirectional encoder）。这里其实包含了两条流水线：一条是前向 LSTM（在数学符号中用向右的箭头 $\rightarrow$ 表示），它顺着我们阅读的习惯，从第一个词读到最后一个词，负责收集每个词左侧的“上文”信息；另一条是后向 LSTM（用向左的箭头 $\leftarrow$ 表示），它逆着顺序，从最后一个词倒着读回来，负责收集每个词右侧的“下文”信息。当这两条流水线各自运转完毕后，对于句子中的任意第 $i$ 个位置，我们就得到了两个不同视角的隐藏状态 $\mathbf{h}_i^{\text{enc}}$ 和细胞状态 $\mathbf{c}_i^{\text{enc}}$，前向( $\overrightarrow{\mathbf{h}_i^{\text{enc}}}$ , $\overrightarrow{\mathbf{c}_i^{\text{enc}}}$ )或后向( $\overleftarrow{\mathbf{h}_i^{\text{enc}}}$ , $\overleftarrow{\mathbf{c}_i^{\text{enc}}}$ )分别的状态量，维度都是 $h \times 1$ 。</p></blockquote>$$
 \mathbf{h}_i^{\text{enc}} = [\overleftarrow{\mathbf{h}_i^{\text{enc}}} ; \overrightarrow{\mathbf{h}_i^{\text{enc}}}] \quad \text{where} \quad \mathbf{h}_i^{\text{enc}} \in \mathbb{R}^{2h \times 1}, \overleftarrow{\mathbf{h}_i^{\text{enc}}}, \overrightarrow{\mathbf{h}_i^{\text{enc}}} \in \mathbb{R}^{h \times 1} \quad 1 \leq i \leq m \quad (1)
 $$$$
 \mathbf{c}_i^{\text{enc}} = [\overleftarrow{\mathbf{c}_i^{\text{enc}}} ; \overrightarrow{\mathbf{c}_i^{\text{enc}}}] \quad \text{where} \quad \mathbf{c}_i^{\text{enc}} \in \mathbb{R}^{2h \times 1}, \overleftarrow{\mathbf{c}_i^{\text{enc}}}, \overrightarrow{\mathbf{c}_i^{\text{enc}}} \in \mathbb{R}^{h \times 1} \quad 1 \leq i \leq m \quad (2)
-$$
-    <blockquote>
-        <p>$[ ; ]$ 在线性代数中通常表示向量或矩阵的拼接。<strong>为了让第 $i$ 个位置最终的表示既包含左侧上下文，又包含右侧上下文</strong>，模型将同一时刻 $i$ 的前向状态和后向状态直接“拼接”在一起。因为前向和后向状态都是 $h \times 1$ 的列向量，将它们沿行方向拼接后，最终的<strong>联合隐藏状态</strong> $\mathbf{h}_i^{\text{enc}}$ 和<strong>联合细胞状态</strong> $\mathbf{c}_i^{\text{enc}}$ 的维度就翻倍了，变成了 $(h+h) \times 1 = \mathbf{2h \times 1}$。</p>
-
-    </blockquote>
-<p>We then initialize the <strong>decoder</strong>&rsquo;s first hidden state $\mathbf{h}_0^{\text{dec}}$ and cell state $\mathbf{c}_0^{\text{dec}}$ with a linear projection of the encoder&rsquo;s final hidden state and final cell state.$^2$</p>
-<p>$^2$ : If it’s not obvious, think about why we regard  $[\overleftarrow{\mathbf{h}_1^{\text{enc}}} , \overrightarrow{\mathbf{h}_m^{\text{enc}}}]$ as the ‘final hidden state’ of the Encoder.</p>
-
-    <blockquote>
-        <p>双向编码器（Encoder）已经工作完毕，看完了整句源语言文本，并在每一个位置都留下了浓缩的上下文信息。接下来的任务就是把这些信息传递给<strong>解码器</strong>（Decoder），让它开始生成翻译。传递的过程就是通过下面公式中，<strong>初始化解码器</strong>在第0步的隐藏状态 $\mathbf{h}_0^{\text{dec}}$ 和细胞状态 $\mathbf{c}_0^{\text{dec}}$ 来完成的。解码器的初始状态是从编码器那里继承来的“最终状态”。</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>$[ ; ]$ 在线性代数中通常表示向量或矩阵的拼接。<strong>为了让第 $i$ 个位置最终的表示既包含左侧上下文，又包含右侧上下文</strong>，模型将同一时刻 $i$ 的前向状态和后向状态直接“拼接”在一起。因为前向和后向状态都是 $h \times 1$ 的列向量，将它们沿行方向拼接后，最终的<strong>联合隐藏状态</strong> $\mathbf{h}_i^{\text{enc}}$ 和<strong>联合细胞状态</strong> $\mathbf{c}_i^{\text{enc}}$ 的维度就翻倍了，变成了 $(h+h) \times 1 = \mathbf{2h \times 1}$。</p></blockquote><p>We then initialize the <strong>decoder</strong>&rsquo;s first hidden state $\mathbf{h}_0^{\text{dec}}$ and cell state $\mathbf{c}_0^{\text{dec}}$ with a linear projection of the encoder&rsquo;s final hidden state and final cell state.$^2$</p><p>$^2$ : If it’s not obvious, think about why we regard $[\overleftarrow{\mathbf{h}_1^{\text{enc}}} , \overrightarrow{\mathbf{h}_m^{\text{enc}}}]$ as the ‘final hidden state’ of the Encoder.</p><blockquote><p>双向编码器（Encoder）已经工作完毕，看完了整句源语言文本，并在每一个位置都留下了浓缩的上下文信息。接下来的任务就是把这些信息传递给<strong>解码器</strong>（Decoder），让它开始生成翻译。传递的过程就是通过下面公式中，<strong>初始化解码器</strong>在第0步的隐藏状态 $\mathbf{h}_0^{\text{dec}}$ 和细胞状态 $\mathbf{c}_0^{\text{dec}}$ 来完成的。解码器的初始状态是从编码器那里继承来的“最终状态”。</p></blockquote>$$
 \mathbf{h}_0^{\text{dec}} = \mathbf{W}_h [\overleftarrow{\mathbf{h}_1^{\text{enc}}} ; \overrightarrow{\mathbf{h}_m^{\text{enc}}}] \quad \text{where} \quad \mathbf{h}_0^{\text{dec}} \in \mathbb{R}^{h \times 1}, \mathbf{W}_h \in \mathbb{R}^{h \times 2h} \quad (3)
 $$$$
 \mathbf{c}_0^{\text{dec}} = \mathbf{W}_c [\overleftarrow{\mathbf{c}_1^{\text{enc}}} ; \overrightarrow{\mathbf{c}_m^{\text{enc}}}] \quad \text{where} \quad \mathbf{c}_0^{\text{dec}} \in \mathbb{R}^{h \times 1}, \mathbf{W}_c \in \mathbb{R}^{h \times 2h} \quad (4)
-$$
-    <blockquote>
-        <p>编码器在“读完”整句话后的最终状态，可见公式：前向 LSTM 是顺着语序从左到右读的，所以当它读完最后一个词时，它的最终状态自然就落在了句尾，也就是第 $m$ 个位置，记作 $\overrightarrow{\mathbf{h}_m^{\text{enc}}}$。相反，后向 LSTM 是倒着从右向左读的，它“通读全文”后的最后一站其实是句子的开头，也就是第 $1$ 个位置，记作 $\overleftarrow{\mathbf{h}_1^{\text{enc}}}$。</p>
-<p>为了把前向和后向这两股贯穿全文的“记忆”汇聚起来，我们按照公式将它们进行了拼接操作 $[\overleftarrow{\mathbf{h}_1^{\text{enc}}} ; \overrightarrow{\mathbf{h}_m^{\text{enc}}}]$。（需注意，在Decoder这一步和公式 (1) (2) 的上下文状态量不一样）</p>
-<p>通过这个拼接，我们得到了一个维度为 $2h \times 1$ 的长向量。同样地，对于细胞状态 $\mathbf{c}$，我们用完全相同的逻辑提取出 $[\overleftarrow{\mathbf{c}_1^{\text{enc}}} ; \overrightarrow{\mathbf{c}_m^{\text{enc}}}]$。那么对于 $2h \times 1$ 的向量，我们要将其转换成 $h\times 1$ 才能满足解码器的隐藏层容量。</p>
-<p>所以引入权重（投影）矩阵，用来做线性投影(linear projection)，维度是 $h \times 2h$ ，再通过矩阵相乘，映射出 $h\times 1$ 的向量。</p>
-
-    </blockquote>
-<p>With the decoder initialized, we must now feed it a target sentence.</p>
-
-    <blockquote>
-        <p>成功初始化了解码器的第 0 步状态（$\mathbf{h}_0^{\text{dec}}$ 和 $\mathbf{c}_0^{\text{dec}}$）之后。现在，解码器已经准备好生成（或在训练时接收）目标语言的句子了。下面内容讲的就是在任意的第 $t$ 步，解码器是如何“吃进”数据并更新自己状态的。</p>
-
-    </blockquote>
-<p>On the $t^{th}$ step, we look up the embedding for the $t^{th}$ subword, $\mathbf{y}_t \in \mathbb{R}^{e \times 1}$.</p>
-
-    <blockquote>
-        <p>要让解码器在第 $t$ 步进行工作，我们首先得给它提供当前的输入词，同样需要查表，把目标语言的第 $t$ 个子词（subword）变成一个维度为 $e$ 的词嵌入向量，记作 $\mathbf{y}_t$。</p>
-
-    </blockquote>
-<p>We then concatenate $\mathbf{y}_t$ with the <em>combined-output vector</em> $\mathbf{o}_{t-1} \in \mathbb{R}^{h \times 1}$ from the previous timestep (we will explain what this is later down this page!) to produce $\overline{\mathbf{y}_t} \in \mathbb{R}^{(e+h) \times 1}$.</p>
-
-    <blockquote>
-        <p>但是，如果只把 $\mathbf{y}_t$ 喂给解码器，它会缺乏连贯性。为了让解码器知道“我刚才干了什么”，文本中引入了一个非常关键的设计：把当前的词向量 $\mathbf{y}_t$ 与上一步（第 $t-1$ 步）的维度为 $h$ 的<strong>联合输出向量 (combined-output vector)</strong> $\mathbf{o}_{t-1}$ 拼接在一起，得到新的输入向量 $\overline{\mathbf{y}_t}$，它的维度变成了 $e+h$。</p>
-
-    </blockquote>
-<p>Note that for the first target subword (i.e. the start token) $\mathbf{o}_0$ is a zero-vector. We then feed $\overline{\mathbf{y}_t}$ as input to the decoder.</p>
-
-    <blockquote>
-        <p>注意到当 $t=1$ ，也就是解码器刚开始吐出第一个词（或者接收 start token）时，因为前面还没有任何输出，所以初始的 $\mathbf{o}_0$ 就简单地设定为一个全零向量。</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>编码器在“读完”整句话后的最终状态，可见公式：前向 LSTM 是顺着语序从左到右读的，所以当它读完最后一个词时，它的最终状态自然就落在了句尾，也就是第 $m$ 个位置，记作 $\overrightarrow{\mathbf{h}_m^{\text{enc}}}$。相反，后向 LSTM 是倒着从右向左读的，它“通读全文”后的最后一站其实是句子的开头，也就是第 $1$ 个位置，记作 $\overleftarrow{\mathbf{h}_1^{\text{enc}}}$。</p><p>为了把前向和后向这两股贯穿全文的“记忆”汇聚起来，我们按照公式将它们进行了拼接操作 $[\overleftarrow{\mathbf{h}_1^{\text{enc}}} ; \overrightarrow{\mathbf{h}_m^{\text{enc}}}]$。（需注意，在Decoder这一步和公式 (1) (2) 的上下文状态量不一样）</p><p>通过这个拼接，我们得到了一个维度为 $2h \times 1$ 的长向量。同样地，对于细胞状态 $\mathbf{c}$，我们用完全相同的逻辑提取出 $[\overleftarrow{\mathbf{c}_1^{\text{enc}}} ; \overrightarrow{\mathbf{c}_m^{\text{enc}}}]$。那么对于 $2h \times 1$ 的向量，我们要将其转换成 $h\times 1$ 才能满足解码器的隐藏层容量。</p><p>所以引入权重（投影）矩阵，用来做线性投影(linear projection)，维度是 $h \times 2h$ ，再通过矩阵相乘，映射出 $h\times 1$ 的向量。</p></blockquote><p>With the decoder initialized, we must now feed it a target sentence.</p><blockquote><p>成功初始化了解码器的第 0 步状态（$\mathbf{h}_0^{\text{dec}}$ 和 $\mathbf{c}_0^{\text{dec}}$）之后。现在，解码器已经准备好生成（或在训练时接收）目标语言的句子了。下面内容讲的就是在任意的第 $t$ 步，解码器是如何“吃进”数据并更新自己状态的。</p></blockquote><p>On the $t^{th}$ step, we look up the embedding for the $t^{th}$ subword, $\mathbf{y}_t \in \mathbb{R}^{e \times 1}$.</p><blockquote><p>要让解码器在第 $t$ 步进行工作，我们首先得给它提供当前的输入词，同样需要查表，把目标语言的第 $t$ 个子词（subword）变成一个维度为 $e$ 的词嵌入向量，记作 $\mathbf{y}_t$。</p></blockquote><p>We then concatenate $\mathbf{y}_t$ with the <em>combined-output vector</em> $\mathbf{o}_{t-1} \in \mathbb{R}^{h \times 1}$ from the previous timestep (we will explain what this is later down this page!) to produce $\overline{\mathbf{y}_t} \in \mathbb{R}^{(e+h) \times 1}$.</p><blockquote><p>但是，如果只把 $\mathbf{y}_t$ 喂给解码器，它会缺乏连贯性。为了让解码器知道“我刚才干了什么”，文本中引入了一个非常关键的设计：把当前的词向量 $\mathbf{y}_t$ 与上一步（第 $t-1$ 步）的维度为 $h$ 的<strong>联合输出向量 (combined-output vector)</strong> $\mathbf{o}_{t-1}$ 拼接在一起，得到新的输入向量 $\overline{\mathbf{y}_t}$，它的维度变成了 $e+h$。</p></blockquote><p>Note that for the first target subword (i.e. the start token) $\mathbf{o}_0$ is a zero-vector. We then feed $\overline{\mathbf{y}_t}$ as input to the decoder.</p><blockquote><p>注意到当 $t=1$ ，也就是解码器刚开始吐出第一个词（或者接收 start token）时，因为前面还没有任何输出，所以初始的 $\mathbf{o}_0$ 就简单地设定为一个全零向量。</p></blockquote>$$
 \mathbf{h}_t^{\text{dec}}, \mathbf{c}_t^{\text{dec}} = \text{Decoder}(\overline{\mathbf{y}_t}, \mathbf{h}_{t-1}^{\text{dec}}, \mathbf{c}_{t-1}^{\text{dec}}) \quad \text{where} \quad \mathbf{h}_t^{\text{dec}} \in \mathbb{R}^{h \times 1}, \mathbf{c}_t^{\text{dec}} \in \mathbb{R}^{h \times 1} \quad (5)
-$$
-    <blockquote>
-        <p>关于向Decoder中输入了三个变量后，在LSTM的Decoder里进行了什么计算，需结合<a class="link" href="https://ottercoconut.github.io/p/cs224n/"  target="_blank" rel="noopener"
-    >CS224N</a>中LSTM的部分进行理解：(generated by Gemini)</p>
-<ul>
-<li>遗忘门 (Forget Gate)
-<ul>
-<li><strong>参与者：</strong> 新输入$\overline{\mathbf{y}_t}$和旧的短期记忆$\mathbf{h}_{t-1}^{\text{dec}}$。</li>
-<li><strong>动作：</strong> 把这两个变量拼接在一起，乘上一个权重矩阵，加上偏置，然后送入一个 <strong>Sigmoid 激活函数</strong>。</li>
-<li><strong>产出：</strong> 得到一个介于 0 到 1 之间的向量 $f_t$。</li>
-<li><strong>意义：</strong> 这个 $f_t$ 会盯着传送带上的旧长期记忆 $\mathbf{c}_{t-1}^{\text{dec}}$ 看。0 代表“彻底忘掉”，1 代表“完全保留”。比如遇到新的主语，它可能就会决定忘掉旧主语的单复数信息。</li>
-</ul>
-</li>
-<li>输入门与候选记忆 (Input Gate &amp; Candidate Memory)
-<ul>
-<li><strong>参与者：</strong> 依然是 $\overline{\mathbf{y}_t}$ 和 $\mathbf{h}_{t-1}^{\text{dec}}$。</li>
-<li><strong>动作：</strong> 这里分两头行动：
-<ol>
-<li><strong>输入门 $i_t$：</strong> 再次经过一个 Sigmoid 函数，产生 0 到 1 的值，决定我们<strong>有多希望</strong>把新信息存进去。</li>
-<li><strong>候选记忆 $\tilde{\mathbf{c}}_t$：</strong> 经过一个 <strong>tanh 激活函数</strong>，产生 -1 到 1 的值，这代表从当前输入中提取出的<strong>全部潜在新知识</strong>。</li>
-</ol>
-</li>
-<li><strong>意义：</strong> 这两步结合，就是要把提炼出的新知识（$\tilde{\mathbf{c}}_t$）按照我们的渴望程度（$i_t$）进行打包，准备放到传送带上。</li>
-</ul>
-</li>
-<li>状态更新 (Cell State Update)
-<ul>
-<li><strong>参与者：</strong> 旧记忆 $\mathbf{c}_{t-1}^{\text{dec}}$，遗忘门 $f_t$，输入门 $i_t$，候选记忆 $\tilde{\mathbf{c}}_t$。</li>
-<li><strong>动作：</strong> 纯粹的数学运算。首先用旧记忆乘以遗忘门：$f_t * \mathbf{c}_{t-1}^{\text{dec}}$ （执行“丢弃”动作）；然后加上新的包裹：$i_t * \tilde{\mathbf{c}}_t$ （执行“装载”动作）。</li>
-<li><strong>产出：</strong> 我们得到了<strong>当前时刻的全新细胞状态 $\mathbf{c}_t^{\text{dec}}$</strong>。</li>
-<li><strong>意义：</strong> 长期记忆的传送带在这里完成了向前推进，旧的糟粕被剔除，新的信息被注入。这就是 LSTM 能够跨越长距离保持梯度的核心。</li>
-</ul>
-</li>
-<li>输出门与隐藏状态 (Output Gate &amp; Hidden State)
-<ul>
-<li><strong>参与者：</strong> $\overline{\mathbf{y}_t}$，$\mathbf{h}_{t-1}^{\text{dec}}$，以及刚刚出炉的新细胞状态 $\mathbf{c}_t^{\text{dec}}$。</li>
-<li><strong>动作：</strong>
-<ol>
-<li>用 $\overline{\mathbf{y}_t}$ 和 $\mathbf{h}_{t-1}^{\text{dec}}$ 经过 Sigmoid 算出一个输出门 $o_t$（决定展示的比例）。</li>
-<li>把刚刚做好的新细胞状态 $\mathbf{c}_t^{\text{dec}}$ 用 tanh 函数“压”到 -1 到 1 之间。</li>
-<li>两者相乘：$\mathbf{h}_t^{\text{dec}} = o_t * \tanh(\mathbf{c}_t^{\text{dec}})$。</li>
-</ol>
-</li>
-<li><strong>产出：</strong> 我们得到了<strong>当前时刻的全新隐藏状态 $\mathbf{h}_t^{\text{dec}}$</strong>。</li>
-<li><strong>意义：</strong> 细胞状态 $\mathbf{c}_t$ 包含的信息太庞杂了（有些可能是给未来留的伏笔），我们不能全部暴露。输出门 $o_t$ 就像一个滤网，只把当前这一步预测下一个词<strong>最需要</strong>的那部分特征提取出来，作为对外的公开展示（$\mathbf{h}_t$）。</li>
-</ul>
-</li>
-</ul>
-
-    </blockquote>
-<p>We then use $\mathbf{h}_t^{\text{dec}}$ to compute multiplicative attention over $\mathbf{h}_1^{\text{enc}}, \dots, \mathbf{h}_m^{\text{enc}}$:
-</p>
-$$
+$$<blockquote><p>关于向Decoder中输入了三个变量后，在LSTM的Decoder里进行了什么计算，需结合<a class=link href=https://ottercoconut.github.io/p/cs224n/ target=_blank rel=noopener>CS224N</a>中LSTM的部分进行理解：(generated by Gemini)</p><ul><li>遗忘门 (Forget Gate)<ul><li><strong>参与者：</strong> 新输入$\overline{\mathbf{y}_t}$和旧的短期记忆$\mathbf{h}_{t-1}^{\text{dec}}$。</li><li><strong>动作：</strong> 把这两个变量拼接在一起，乘上一个权重矩阵，加上偏置，然后送入一个 <strong>Sigmoid 激活函数</strong>。</li><li><strong>产出：</strong> 得到一个介于 0 到 1 之间的向量 $f_t$。</li><li><strong>意义：</strong> 这个 $f_t$ 会盯着传送带上的旧长期记忆 $\mathbf{c}_{t-1}^{\text{dec}}$ 看。0 代表“彻底忘掉”，1 代表“完全保留”。比如遇到新的主语，它可能就会决定忘掉旧主语的单复数信息。</li></ul></li><li>输入门与候选记忆 (Input Gate & Candidate Memory)<ul><li><strong>参与者：</strong> 依然是 $\overline{\mathbf{y}_t}$ 和 $\mathbf{h}_{t-1}^{\text{dec}}$。</li><li><strong>动作：</strong> 这里分两头行动：<ol><li><strong>输入门 $i_t$：</strong> 再次经过一个 Sigmoid 函数，产生 0 到 1 的值，决定我们<strong>有多希望</strong>把新信息存进去。</li><li><strong>候选记忆 $\tilde{\mathbf{c}}_t$：</strong> 经过一个 <strong>tanh 激活函数</strong>，产生 -1 到 1 的值，这代表从当前输入中提取出的<strong>全部潜在新知识</strong>。</li></ol></li><li><strong>意义：</strong> 这两步结合，就是要把提炼出的新知识（$\tilde{\mathbf{c}}_t$）按照我们的渴望程度（$i_t$）进行打包，准备放到传送带上。</li></ul></li><li>状态更新 (Cell State Update)<ul><li><strong>参与者：</strong> 旧记忆 $\mathbf{c}_{t-1}^{\text{dec}}$，遗忘门 $f_t$，输入门 $i_t$，候选记忆 $\tilde{\mathbf{c}}_t$。</li><li><strong>动作：</strong> 纯粹的数学运算。首先用旧记忆乘以遗忘门：$f_t * \mathbf{c}_{t-1}^{\text{dec}}$ （执行“丢弃”动作）；然后加上新的包裹：$i_t * \tilde{\mathbf{c}}_t$ （执行“装载”动作）。</li><li><strong>产出：</strong> 我们得到了<strong>当前时刻的全新细胞状态 $\mathbf{c}_t^{\text{dec}}$</strong>。</li><li><strong>意义：</strong> 长期记忆的传送带在这里完成了向前推进，旧的糟粕被剔除，新的信息被注入。这就是 LSTM 能够跨越长距离保持梯度的核心。</li></ul></li><li>输出门与隐藏状态 (Output Gate & Hidden State)<ul><li><strong>参与者：</strong> $\overline{\mathbf{y}_t}$，$\mathbf{h}_{t-1}^{\text{dec}}$，以及刚刚出炉的新细胞状态 $\mathbf{c}_t^{\text{dec}}$。</li><li><strong>动作：</strong><ol><li>用 $\overline{\mathbf{y}_t}$ 和 $\mathbf{h}_{t-1}^{\text{dec}}$ 经过 Sigmoid 算出一个输出门 $o_t$（决定展示的比例）。</li><li>把刚刚做好的新细胞状态 $\mathbf{c}_t^{\text{dec}}$ 用 tanh 函数“压”到 -1 到 1 之间。</li><li>两者相乘：$\mathbf{h}_t^{\text{dec}} = o_t * \tanh(\mathbf{c}_t^{\text{dec}})$。</li></ol></li><li><strong>产出：</strong> 我们得到了<strong>当前时刻的全新隐藏状态 $\mathbf{h}_t^{\text{dec}}$</strong>。</li><li><strong>意义：</strong> 细胞状态 $\mathbf{c}_t$ 包含的信息太庞杂了（有些可能是给未来留的伏笔），我们不能全部暴露。输出门 $o_t$ 就像一个滤网，只把当前这一步预测下一个词<strong>最需要</strong>的那部分特征提取出来，作为对外的公开展示（$\mathbf{h}_t$）。</li></ul></li></ul></blockquote><p>We then use $\mathbf{h}_t^{\text{dec}}$ to compute multiplicative attention over $\mathbf{h}_1^{\text{enc}}, \dots, \mathbf{h}_m^{\text{enc}}$:</p>$$
 \mathbf{e}_{t,i} = (\mathbf{h}_t^{\text{dec}})^T \mathbf{W}_{\text{attProj}} \mathbf{h}_i^{\text{enc}} \quad \text{where} \quad \mathbf{e}_t \in \mathbb{R}^{m \times 1}, \mathbf{W}_{\text{attProj}} \in \mathbb{R}^{h \times 2h} \quad 1 \leq i \leq m \quad (6)
-$$<p>
-$\mathbf{e}_{t,i}$ is a scalar, the $i$ th element of $\mathbf{e}_t \in \mathbb{R}^{m \times 1}$, computed using the hidden state of the decoder at the $t$ th step, $\mathbf{h}_t^{\text{dec}} \in \mathbb{R}^{h \times 1}$, the attention projection $\mathbf{W}_{\text{attProj}} \in \mathbb{R}^{h \times 2h}$, and the hidden state of the encoder at the $i$ th step, $\mathbf{h}_i^{\text{enc}} \in \mathbb{R}^{2h \times 1}$.</p>
-
-    <blockquote>
-        <p>公式(6)是注意力机制的Scoring，解码器现在的状态是 $\mathbf{h}_t^{\text{dec}}$，它需要和字典里的每一个词 $\mathbf{h}_i^{\text{enc}}$进行比对，看看有多匹配。</p>
-<p>$(\mathbf{h}_t^{\text{dec}})^T$ , $\mathbf{W}_{\text{attProj}}$ , $\mathbf{h}_i^{\text{enc}}$ 这三者相乘后维度为 $1\times 1$ ，即Scoring出的标量 $\mathbf{e}_{t,i}$ ，它代表了在生成第 $t$ 个翻译词时，源语言句子中第 $i$ 个词的重要程度。 我们把对所有 $m$ 个词的打分收集起来，就得到了一个长度为 $m$ 的得分向量 $\mathbf{e}_t$ 。</p>
-
-    </blockquote>
-$$
+$$<p>$\mathbf{e}_{t,i}$ is a scalar, the $i$ th element of $\mathbf{e}_t \in \mathbb{R}^{m \times 1}$, computed using the hidden state of the decoder at the $t$ th step, $\mathbf{h}_t^{\text{dec}} \in \mathbb{R}^{h \times 1}$, the attention projection $\mathbf{W}_{\text{attProj}} \in \mathbb{R}^{h \times 2h}$, and the hidden state of the encoder at the $i$ th step, $\mathbf{h}_i^{\text{enc}} \in \mathbb{R}^{2h \times 1}$.</p><blockquote><p>公式(6)是注意力机制的Scoring，解码器现在的状态是 $\mathbf{h}_t^{\text{dec}}$，它需要和字典里的每一个词 $\mathbf{h}_i^{\text{enc}}$进行比对，看看有多匹配。</p><p>$(\mathbf{h}_t^{\text{dec}})^T$ , $\mathbf{W}_{\text{attProj}}$ , $\mathbf{h}_i^{\text{enc}}$ 这三者相乘后维度为 $1\times 1$ ，即Scoring出的标量 $\mathbf{e}_{t,i}$ ，它代表了在生成第 $t$ 个翻译词时，源语言句子中第 $i$ 个词的重要程度。 我们把对所有 $m$ 个词的打分收集起来，就得到了一个长度为 $m$ 的得分向量 $\mathbf{e}_t$ 。</p></blockquote>$$
 \alpha_t = \text{softmax}(\mathbf{e}_t) \quad \text{where} \quad \alpha_t \in \mathbb{R}^{m \times 1} \quad (7)
-$$
-    <blockquote>
-        <p>为了把公式 (6) 的得分变成标准的“注意力分配比例”，公式 (7) 引入了 <code>softmax</code> 函数。它把向量 $\mathbf{e}_t$ 里的所有数字全部转换为 $0$ 到 $1$ 之间的正数，并且保证它们的<strong>总和严格等于 $1$</strong>。转换后的结果就是 $\alpha_t$（被称为注意力分布 Attention Distribution）。</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>为了把公式 (6) 的得分变成标准的“注意力分配比例”，公式 (7) 引入了 <code>softmax</code> 函数。它把向量 $\mathbf{e}_t$ 里的所有数字全部转换为 $0$ 到 $1$ 之间的正数，并且保证它们的<strong>总和严格等于 $1$</strong>。转换后的结果就是 $\alpha_t$（被称为注意力分布 Attention Distribution）。</p></blockquote>$$
 \mathbf{a}_t = \sum_{i=1}^m \alpha_{t,i} \mathbf{h}_i^{\text{enc}} \quad \text{where} \quad \mathbf{a}_t \in \mathbb{R}^{2h \times 1} \quad (8)
-$$
-    <blockquote>
-        <p>公式 (8) 用刚算出来的注意力百分比 $\alpha_{t,i}$，去对字典里的词 $\mathbf{h}_i^{\text{enc}}$ 进行<strong>加权求和</strong>。把这 $m$ 个按比例缩放的向量全部加起来，我们就得到了最终的<strong>注意力输出向量</strong>（Attention Output / Context Vector），记作 $\mathbf{a}_t$。
-由于被加和的 $\mathbf{h}_i^{\text{enc}}$ 都是 $2h \times 1$ 维的，所以最终得到的 $\mathbf{a}_t$ 也是 <strong>$2h \times 1$</strong> 维。</p>
-
-    </blockquote>
-<p>We now concatenate the attention output $\mathbf{a}_t$ with the decoder hidden state $\mathbf{h}_t^{\text{dec}}$ and pass this through a linear layer, tanh, and dropout to attain the <em>combined-output</em> vector $\mathbf{o}_t$.
-</p>
-$$
+$$<blockquote><p>公式 (8) 用刚算出来的注意力百分比 $\alpha_{t,i}$，去对字典里的词 $\mathbf{h}_i^{\text{enc}}$ 进行<strong>加权求和</strong>。把这 $m$ 个按比例缩放的向量全部加起来，我们就得到了最终的<strong>注意力输出向量</strong>（Attention Output / Context Vector），记作 $\mathbf{a}_t$。
+由于被加和的 $\mathbf{h}_i^{\text{enc}}$ 都是 $2h \times 1$ 维的，所以最终得到的 $\mathbf{a}_t$ 也是 <strong>$2h \times 1$</strong> 维。</p></blockquote><p>We now concatenate the attention output $\mathbf{a}_t$ with the decoder hidden state $\mathbf{h}_t^{\text{dec}}$ and pass this through a linear layer, tanh, and dropout to attain the <em>combined-output</em> vector $\mathbf{o}_t$.</p>$$
 \mathbf{u}_t = [\mathbf{a}_t ; \mathbf{h}_t^{\text{dec}}] \quad \text{where} \quad \mathbf{u}_t \in \mathbb{R}^{3h \times 1} \quad (9)
-$$
-    <blockquote>
-        <p>将注意力输出向量和解码器隐藏状态结合，得到维度为 $3h\times 1$ 的 $u_t$</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>将注意力输出向量和解码器隐藏状态结合，得到维度为 $3h\times 1$ 的 $u_t$</p></blockquote>$$
 \mathbf{v}_t = \mathbf{W}_u \mathbf{u}_t \quad \text{where} \quad \mathbf{v}_t \in \mathbb{R}^{h \times 1}, \mathbf{W}_u \in \mathbb{R}^{h \times 3h} \quad (10)
-$$
-    <blockquote>
-        <p>加入了一个线性投影矩阵 $\mathbf{W}_u$（维度是 $h \times 3h$ ，当它和 $\mathbf{u}_t$ 相乘时，把维度压缩回了标准尺寸 $h \times 1$</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>加入了一个线性投影矩阵 $\mathbf{W}_u$（维度是 $h \times 3h$ ，当它和 $\mathbf{u}_t$ 相乘时，把维度压缩回了标准尺寸 $h \times 1$</p></blockquote>$$
 \mathbf{o}_t = \text{dropout}(\tanh(\mathbf{v}_t)) \quad \text{where} \quad \mathbf{o}_t \in \mathbb{R}^{h \times 1} \quad (11)
-$$
-    <blockquote>
-        <p>首先给它套上一个 <code>tanh</code> 激活函数，将其内部的数值平滑地压缩到 -1 到 1 之间，这赋予了模型非线性的表达能力。紧接着，再让它穿过一层 <code>dropout</code>。<code>dropout</code> 是一种防止模型过拟合的正则化技术，它在训练时会随机屏蔽掉一部分神经元，逼迫模型学到更鲁棒、更泛化的特征。</p>
-<p>最后得到<strong>联合输出向量</strong>(combined-output vector) $\mathbf{o}_t$</p>
-
-    </blockquote>
-<p>Then, we produce a probability distribution $\mathbf{P}_t$ over target subwords at the $t^{th}$ timestep:
-</p>
-$$
+$$<blockquote><p>首先给它套上一个 <code>tanh</code> 激活函数，将其内部的数值平滑地压缩到 -1 到 1 之间，这赋予了模型非线性的表达能力。紧接着，再让它穿过一层 <code>dropout</code>。<code>dropout</code> 是一种防止模型过拟合的正则化技术，它在训练时会随机屏蔽掉一部分神经元，逼迫模型学到更鲁棒、更泛化的特征。</p><p>最后得到<strong>联合输出向量</strong>(combined-output vector) $\mathbf{o}_t$</p></blockquote><p>Then, we produce a probability distribution $\mathbf{P}_t$ over target subwords at the $t^{th}$ timestep:</p>$$
 \mathbf{P}_t = \text{softmax}(\mathbf{W}_{\text{vocab}}\mathbf{o}_t) \quad \text{where} \quad \mathbf{P}_t \in \mathbb{R}^{V_t \times 1}, \mathbf{W}_{\text{vocab}} \in \mathbb{R}^{V_t \times h} \quad (12)
-$$
-    <blockquote>
-        <p>我们要把一个 $h$ 维的向量，变成目标语言词典里的一个具体词汇。我们的目标语言词典（Vocabulary）里一共有 $V_t$ 个单词。公式 (12) 引入了一个最终的变换矩阵 $\mathbf{W}_{\text{vocab}}$，它的维度是 $V_t \times h$。相乘后输出一个 $[V_t \times 1]$ 的列向量。这个向量里的每一个数字，就代表了模型对词典里对应单词的“打分”（Logits）。</p>
-
-    </blockquote>
-<p>Here, $V_t$ is the size of the target vocabulary. Finally, to train the network we then compute the cross entropy loss between $\mathbf{P}_t$ and $\mathbf{g}_t$, where $\mathbf{g}_t$ is the one-hot vector of the target subword at timestep $t$:
-</p>
-$$
+$$<blockquote><p>我们要把一个 $h$ 维的向量，变成目标语言词典里的一个具体词汇。我们的目标语言词典（Vocabulary）里一共有 $V_t$ 个单词。公式 (12) 引入了一个最终的变换矩阵 $\mathbf{W}_{\text{vocab}}$，它的维度是 $V_t \times h$。相乘后输出一个 $[V_t \times 1]$ 的列向量。这个向量里的每一个数字，就代表了模型对词典里对应单词的“打分”（Logits）。</p></blockquote><p>Here, $V_t$ is the size of the target vocabulary. Finally, to train the network we then compute the cross entropy loss between $\mathbf{P}_t$ and $\mathbf{g}_t$, where $\mathbf{g}_t$ is the one-hot vector of the target subword at timestep $t$:</p>$$
 J_t(\theta) = \text{CrossEntropy}(\mathbf{P}_t, \mathbf{g}_t) \quad (13)
-$$
-    <blockquote>
-        <p>训练过程使用了<strong>交叉熵损失 (Cross Entropy Loss)</strong> 函数。简单来说，交叉熵会去对比 $\mathbf{P}_t$ 和 $\mathbf{g}_t$ (one-hot vector)之间的差距。计算出损失 $J_t(\theta)$ 之后，在接下来的代码实现中，模型就会利用反向传播机制，顺着网络一路往回找，去微调那些导致错误的参数 $\theta$。</p>
-
-    </blockquote>
-<h3 id="implementation-and-written-questions">Implementation and written questions
-</h3><h4 id="__init__"><code>__init__()</code>
-</h4><p>在问题 (c) 的<code>nmt_model.py</code>的<code>__inti__()</code>中，关于神经网络各层的定义，其中<code>self.att_projection</code>的定义需注意，虽然它对应的是 $W_{attProj}$ ，但是在编写代码时，要拆解结合律，决定计算顺序。</p>
-<p>应该先算$\mathbf{W}_{\text{attProj}} $ 和 $\mathbf{h}_i^{\text{enc}}$ 相乘，再将其乘积与 $(\mathbf{h}_t^{dec})^T$ 相乘求最终结果，这是因为所有的编码器状态 $\mathbf{h}_i^{\text{enc}}$ 在 Decoder 开始工作前就已经全部计算好了。你可以<strong>一次性</strong>把整句话的 $\mathbf{h}^{\text{enc}}$ 丢进 <code>Linear</code> 层进行投影（这叫 Pre-computation 预计算）。但是在某一时刻只有一个 $\mathbf{h}_t^{dec}$ 而没有未来的量，导致不能一次性投影完成，而只能把线性层放到了循环中，引发严重的性能问题（虽然数学原理上没错）。下面是一个例子(generated by Gemini) :</p>
-
-    <blockquote>
-        <p>假设我们的模型参数如下：</p>
-<ul>
-<li>隐藏层大小 $h = 512$</li>
-<li>句子长度 $m = 50$</li>
-</ul>
-<p><strong>把 <code>Linear</code> 层塞进循环里</strong></p>
-<p>在这个路线里，<code>Linear</code> 层每次要干的活是：把解码器 $1 \times 512$ 的向量，乘以一个 $512 \times 1024$ 的巨大投影矩阵 $\mathbf{W}$。</p>
-<ul>
-<li><strong>计算量</strong>：这需要进行 $512 \times 1024 = \mathbf{524,288}$ 次乘加运算！</li>
-<li><strong>额外开销</strong>：每次循环，PyTorch 都要去内存里把这个包含 50 多万个参数的 $\mathbf{W}$ 矩阵重新搬出来读一遍，并且要经过一层完整的 <code>nn.Linear</code> 封装代码（包含各种维度检查、梯度跟踪的准备）。</li>
-</ul>
-<p>然后，算出投影结果后，还得再去和字典做点积：$1 \times 1024$ 的向量乘以 $1024 \times 50$ 的字典，又是 $\mathbf{51,200}$ 次运算。</p>
-<p>所以在这个路线下，解码器每走一步，都要背着将近 <strong>60万次运算</strong> 和一个巨大的矩阵跑。</p>
-<p><strong>预计算 + 循环内纯点积</strong></p>
-<p>我们把庞大的 <code>Linear</code> 投影放在循环外面，利用 GPU 的超级并行能力，**“一瞬间”**把整本字典从 $50 \times 1024$ 压成了 $50 \times 512$。我们把这本新字典称为 <strong>“投影后字典”</strong>。</p>
-<p>现在我们进入了 <code>for</code> 循环。在第 $t$ 步，我们需要做的乘法是什么呢？</p>
-<ul>
-<li><strong>计算量</strong>：我们直接拿解码器原生的 $1 \times 512$ 向量，去乘以准备好的“投影后字典”（$512 \times 50$）。只需要进行 $512 \times 50 = \mathbf{25,600}$ 次乘加运算！</li>
-<li><strong>没有额外的层开销</strong>：这里不需要调用 <code>nn.Linear</code>，我们在代码里只要写一个极其轻量的纯矩阵乘法指令（比如 <code>torch.matmul</code> 或 <code>@</code> 符号）就搞定了。不需要加载任何权重矩阵，因为权重矩阵的任务在循环外已经完成了！</li>
-</ul>
-
-    </blockquote>
-<h4 id="encode"><code>encode</code>
-</h4><p>问题 (d) 是encoder部分，以及对decoder部分的初始化：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">model_embeddings</span> <span class="o">=</span> <span class="n">ModelEmbeddings</span><span class="p">(</span><span class="n">embed_size</span><span class="p">,</span> <span class="n">vocab</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>self.model_embeddings</code>是对<code>ModelEmbeddings</code>的一个实例化，而回到问题 (a) 发现<code>.source</code>是一个<code>nn.Embedding</code>对象：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_embeddings</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="o">.</span><span class="n">src</span><span class="p">),</span><span class="n">embedding_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embed_size</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                                   <span class="n">padding_idx</span><span class="o">=</span><span class="n">src_pad_token_idx</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>但是在问题 (a) 中只是对它的实例化，在内存中申请了一个形状为 <code>(num_embeddings, embedding_dim)</code> 的<strong>大矩阵</strong>。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_embeddings</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">source_padded</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>又因为 <code>nn.Embedding</code> 继承自 <code>nn.Module</code>，而 <code>nn.Module</code> 重写了 <code>__call__</code> 方法，所以你可以像函数一样使用它（调用），参数设为<code>source_padded</code>这样一个Tensor，它把 Tensor 里的每一个数字当成“行号”，去刚才创建的那个大矩阵里把对应的行找出来，然后输出包含词向量的 Tensor。</p>
-<p>下面在将Tensor送进Encoder之前，要用<code>torch.permute</code>变换形状，从<code>(src_len, b, e)</code>变到<code>(b, e, src_len)</code>。那么<code>torch.permute</code>的参数，只是参数位置（索引号）。如下，将原来索引为1的<code>b</code>放到第0个位置，原来索引为2的放到第1个位置，原来索引为0的放到第2个位置。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>之后将Tensor <code>X</code>送进LSTM的Encoder后，得到输出：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">output</span><span class="p">,(</span><span class="n">last_hidden</span><span class="p">,</span><span class="n">last_cell</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>output</code>对应的就是双向LSTM的全局上下文向量： $\mathbf{h}_1^{\text{enc}}, \ldots, \mathbf{h}_m^{\text{enc}}$</p>
-<p><code>last_hidden</code>对应的是：$\overrightarrow{\mathbf{h}_m^{\text{enc}}}$ 和 $\overleftarrow{\mathbf{h}_1^{\text{enc}}}$ ，它的形状是 <code>(num_layers * num_directions, batch_size, hidden_size)</code> ，由于它是双向的，所以索引0和索引1分别对应，我们需要将其分离再拼接，形成我们需要的$\overleftarrow{\mathbf{h}_1^{\text{enc}}} ; \overrightarrow{\mathbf{h}_m^{\text{enc}}}$ 。注意<code>torch.cat</code>的参数<code>dim=1</code>表示为横向拼接，即拼接好的向量的列数变成了<code>2 * hidden_size</code></p>
-<p>与投影矩阵相乘的部分，由实例化好的线性层<code>self.h_projection</code>完成。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">init_decoder_hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_projection</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">last_hidden</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">last_hidden</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>last_cell</code>同理，不再赘述。</p>
-<h4 id="decode"><code>decode</code>
-</h4><p>问题 (e) 是decode部分：
-<code>enc_hiddens_proj = self.att_projection(enc_hiddens)</code> 对应公式 (6) 中 $\mathbf{W}_{\text{attProj}} \mathbf{h}_i^{\text{enc}}$ 的部分。正如在 <code>__init__()</code> 部分讨论的，编码器的全部隐藏状态在进入 <code>decode</code> 时已经固定，所以可以<strong>在循环外一次性</strong>完成投影预计算，将 <code>enc_hiddens</code> 从 <code>(b, src_len, 2h)</code> 投影为 <code>(b, src_len, h)</code>。</p>
-<p><code>Y = self.model_embeddings.target(target_padded)</code> 和 <code>encode</code> 中对源语言做查表的操作对称，这里调用<strong>目标语言</strong>的嵌入矩阵，将 <code>target_padded</code> 中的词索引映射成词向量，得到形状为 <code>(tgt_len, b, e)</code> 的张量 <code>Y</code>。</p>
-<p><code>torch.split(Y, 1)</code> 沿第 0 维（时间维度）将 <code>Y</code> 切成一系列 <code>(1, b, e)</code> 的张量。<code>squeeze(Y_t, 0)</code> 去掉多余的维度变为 <code>(b, e)</code>。注意<strong>必须指定 <code>dim=0</code></strong>，否则当 <code>batch_size = 1</code> 时会误删 batch 维度。</p>
-<p><code>torch.cat((Y_t, o_prev), dim=1)</code> 对应前文的拼接操作：将 $\mathbf{y}_t$（维度 $e$）与 $\mathbf{o}_{t-1}$（维度 $h$）拼接为 $\overline{\mathbf{y}_t} \in \mathbb{R}^{(e+h)}$。</p>
-<p><code>self.step(...)</code> 内部一次性完成公式 (5)-(11) 的计算：Decoder LSTM 前向传播 → 注意力评分与分布 → 加权求和得到上下文向量 → 线性投影、tanh、dropout，最终产出联合输出向量 $\mathbf{o}_t$。每步将 $\mathbf{o}_t$ 存入列表并更新 <code>o_prev</code>。</p>
-<p><code>torch.stack(combined_outputs, dim=0)</code> 将列表中所有 <code>(b, h)</code> 的张量堆叠为 <code>(tgt_len, b, h)</code>，随后送入公式 (12) 的词汇投影层生成概率分布。</p>
-<h4 id="step"><code>step</code>
-</h4><p>问题 (f) 是step部分，即解码器单步计算，内部完成公式 (5)-(11)。核心代码分两段：</p>
-<p><strong>第一段（~3行）：Decoder LSTM 前向 + 注意力评分</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">dec_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">Ybar_t</span><span class="p">,</span> <span class="n">dec_state</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">dec_hidden</span><span class="p">,</span> <span class="n">dec_cell</span> <span class="o">=</span> <span class="n">dec_state</span>
-</span></span><span class="line"><span class="cl"><span class="n">e_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">enc_hiddens_proj</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dec_hidden</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>前两行直接对应公式 (5)：将 $\overline{\mathbf{y}_t}$ 和上一步状态送入 Decoder LSTM，得到新的 <code>dec_state</code>，再拆分为 <code>dec_hidden</code>（$\mathbf{h}_t^{\text{dec}}$）和 <code>dec_cell</code>（$\mathbf{c}_t^{\text{dec}}$），形状均为 <code>(b, h)</code>。</p>
-<p>第三行对应公式 (6) 中的注意力评分。这里的关键在于 <code>torch.bmm</code> 的形状要求——它执行<strong>批量矩阵乘法</strong>，要求输入严格为三维张量 <code>(b, n, m)</code> × <code>(b, m, p)</code> → <code>(b, n, p)</code>。而我们手里的张量：</p>
-<ul>
-<li><code>enc_hiddens_proj</code>：形状 <code>(b, src_len, h)</code> — 已经是三维，无需处理</li>
-<li><code>dec_hidden</code>：形状 <code>(b, h)</code> — 只有二维，不满足 <code>bmm</code> 的要求</li>
-</ul>
-<p>所以需要 <code>torch.unsqueeze(dec_hidden, 2)</code> 在第 2 维（最后）插入一个维度，将 <code>(b, h)</code> 变为 <code>(b, h, 1)</code>。这样 <code>bmm</code> 的乘法就变成了：</p>
-$$\underbrace{(b, \text{src\_len}, h)}_{\text{enc\_hiddens\_proj}} \times \underbrace{(b, h, 1)}_{\text{dec\_hidden}} = \underbrace{(b, \text{src\_len}, 1)}_{e_t}$$<p>这实质上就是对 batch 内的每一条样本，让 <code>enc_hiddens_proj</code> 的每一行（某个源词的投影）与 <code>dec_hidden</code> 做点积，得到该源词的注意力分数——正是公式 (6) 的 $(\mathbf{h}_t^{\text{dec}})^T \mathbf{W}_{\text{attProj}} \mathbf{h}_i^{\text{enc}}$。</p>
-<p>最后 <code>.squeeze(2)</code> 去掉末尾多余的维度 <code>1</code>，从 <code>(b, src_len, 1)</code> 变回 <code>(b, src_len)</code>，得到注意力得分向量 $\mathbf{e}_t$。</p>
-<p><strong>第二段（~6行）：注意力加权 → 联合输出</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">alpha_t</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">e_t</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">a_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">alpha_t</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">enc_hiddens</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">U_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">a_t</span><span class="p">,</span> <span class="n">dec_hidden</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">V_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_output_projection</span><span class="p">(</span><span class="n">U_t</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">O_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">V_t</span><span class="p">))</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>F.softmax(e_t, dim=1)</code> 对应公式 (7)，沿 <code>dim=1</code>（即 <code>src_len</code> 维度）做 softmax，将分数归一化为注意力分布 $\alpha_t$，形状仍为 <code>(b, src_len)</code>。</p>
-<p>计算上下文向量 $\mathbf{a}_t$（公式 (8)）时又遇到了 <code>bmm</code> 的三维要求。<code>alpha_t</code> 是 <code>(b, src_len)</code>，需要 <code>unsqueeze(alpha_t, 1)</code> 在第 1 维插入，变为 <code>(b, 1, src_len)</code>：</p>
-$$\underbrace{(b, 1, \text{src_len})}_{\alpha_t} \times \underbrace{(b, \text{src_len}, 2h)}_{\text{enc_hiddens}} = \underbrace{(b, 1, 2h)}_{a_t}$$<p>这就是用注意力权重对编码器隐藏状态做加权求和。<code>.squeeze(1)</code> 去掉中间的 <code>1</code>，得到 <code>(b, 2h)</code> 的上下文向量 $\mathbf{a}_t$。</p>
-<p>后三行依次对应公式 (9)(10)(11)：<code>torch.cat</code> 拼接 $\mathbf{a}_t$ 与 $\mathbf{h}_t^{\text{dec}}$ 得到 <code>(b, 3h)</code> 的 $\mathbf{u}_t$；线性层投影回 <code>(b, h)</code> 的 $\mathbf{v}_t$；最后 tanh + dropout 得到联合输出 $\mathbf{o}_t$。</p>
-<h4 id="attention-masking">Attention Masking
-</h4><p>问题 (g) 是关于 <code>step()</code> 中注意力掩码的作用。在 <code>step()</code> 的两段代码之间，有这样一段：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">enc_masks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">e_t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">enc_masks</span><span class="o">.</span><span class="n">bool</span><span class="p">(),</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>enc_masks</code> 由 <code>generate_sent_masks()</code> 生成：它创建一个 <code>(b, src_len)</code> 的零矩阵，然后对 batch 中每条句子，在其<strong>实际长度之后</strong>的位置全部填 <code>1</code>。换言之，<code>1</code> 标记的是 <code>&lt;pad&gt;</code> token 的位置，<code>0</code> 标记的是真实词的位置。</p>
-<p><strong>掩码对注意力计算的影响：</strong> <code>masked_fill_</code> 将 $\mathbf{e}_t$ 中所有对应 <code>&lt;pad&gt;</code> 位置的注意力分数替换为 $-\infty$。当这些 $-\infty$ 的值随后经过 <code>softmax</code> 时，$e^{-\infty} = 0$，因此 <code>&lt;pad&gt;</code> 位置的注意力权重 $\alpha_{t,i}$ 会变为 $0$，而所有真实词的权重之和仍归一化为 $1$。这意味着在公式 (8) 的加权求和中，<code>&lt;pad&gt;</code> 位置的编码器隐藏状态对上下文向量 $\mathbf{a}_t$ 完全没有贡献。</p>
-<p><strong>为什么必须这样做：</strong> 由于 batch 内各句子长度不一，短句会被 <code>&lt;pad&gt;</code> 填充到统一长度。如果不加掩码，<code>&lt;pad&gt;</code> 对应位置的编码器隐藏状态（本质上是无意义的噪声）会分走一部分注意力权重，从而污染上下文向量，导致翻译质量下降。</p>
-<h4 id="training">Training
-</h4><p>问题 (h) 是在代码工作完成后，进入训练阶段。由于我没有海外支付方式，用不了cs224n指定的Google Cloud，所以使用本机显卡进行训练（速度快于文档的预估值）</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bash run.sh train
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>观察<code>tensorboard</code>可见loss曲线并无异常，待训练完成后进行测试评估：
-<img src="/uploads/posts/cs224n-a3/figure2.png" alt="" loading="lazy" /></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bash run.sh <span class="nb">test</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>结果：the model’s corpus BLEU Score is larger than 18, tests passed.</p>
-<h4 id="attention-comparison">Attention Comparison
-</h4><p>最后问题 (i) 是点积注意力、加性注意力分别与乘性注意力进行比较：</p>
-<h5 id="dot-product-vs-multiplicative">Dot Product vs. Multiplicative
-</h5><ul>
-<li>Dot Product Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{h}_i$</li>
-<li>Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$</li>
-</ul>
-<p>点积注意力的优势：</p>
-<ul>
-<li><strong>计算速度更快，显存占用更小。</strong> 点积注意力没有任何可学习的权重矩阵 $\mathbf{W}$，它仅仅是两个向量的内积。在 GPU 上，这种纯粹的向量点积运算被优化到了极致，没有任何额外的内存开销和参数更新负担。</li>
-</ul>
-<p>点积注意力的劣势：</p>
-<ul>
-<li><strong>强制要求维度严格一致，且表达能力较弱。</strong> 要做点积，解码器状态 $\mathbf{s}_t$ 和编码器状态 $\mathbf{h}_i$ 的维度必须<strong>完全相同</strong>。更致命的是，它假设这两个空间天然就是对齐的。而乘性注意力多了一个矩阵 $\mathbf{W}$，不仅允许两者的维度不同（$\mathbf{W}$ 可以做维度转换），还能通过学习 $\mathbf{W}$ 将它们投影到一个更好的共享特征空间中再进行比较。</li>
-</ul>
-<h5 id="additive-vs-multiplicative">Additive vs. Multiplicative
-</h5><ul>
-<li>Additive Attention: $\mathbf{e}_{t,i} = \mathbf{v}^T \tanh(\mathbf{W}_1 \mathbf{h}_i + \mathbf{W}_2 \mathbf{s}_t)$</li>
-<li>Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$</li>
-</ul>
-
-    <blockquote>
-        <p>(注：Additive Attention 也就是大名鼎鼎的 Bahdanau Attention，它是 Attention 机制的开山鼻祖；而 Multiplicative 则是 Luong Attention 的核心。)</p>
-
-    </blockquote>
-<p>加性注意力的优势：</p>
-<ul>
-<li><strong>在特征维度很大时，表现通常更好（模型容量大）。</strong> 乘性注意力在维度很大时，点积的结果方差会变得极其巨大，容易把 Softmax 推向梯度消失的边缘（也就是后来 Transformer 引入缩放因子的原因）。而加性注意力通过 $\tanh$ 激活函数将内部数值稳稳地压制在 $[-1, 1]$ 之间，天然具有极好的数值稳定性，对超大维度的宽容度更高。</li>
-</ul>
-<p>加性注意力的劣势：</p>
-<ul>
-<li><strong>计算效率较低，难以发挥底层矩阵乘法的极致加速。</strong> 乘性注意力可以极其优雅地打包成一个巨大的矩阵乘法（在 Transformer 里就是 $\mathbf{Q}\mathbf{K}^T$），这正是现代 GPU 最擅长的事情。而加性注意力不仅要做两次独立的线性变换，还要过一遍非线性激活函数 $\tanh$，最后再乘一个向量 $\mathbf{v}$。这种复杂的计算图打破了矩阵乘法的纯粹性，导致它在实际工程中的运行速度明显慢于乘性注意力。</li>
-</ul>
-<h2 id="analyzing-nmt-systems">Analyzing NMT Systems
-</h2><p>问题 (a) 是为什么在embedding层后加1D卷积后，再输入双向encoder效果会好一些？</p>
-<p>添加一维卷积层可以作为 n-gram 特征提取器，用于捕捉局部组合性。由于中文词语通常由多个词素组成（例如，“电”+“脑”=“电脑”），一维卷积神经网络的滑动窗口会在序列建模之前，将相邻字符/子词的嵌入向量显式地组合成更高层次的语义表示（一个词或短语）。这提供了一种层级结构，其中卷积神经网络处理局部词汇语义（充当软分词器），从而使双向编码器能够专注于学习全局的、长程的句法依存关系。</p>
-<p>问题 (b) 是分析四句中文为什么翻译错了，那么作为普通话母语者不难解答：</p>
-<p>i. (2 points) <strong>Source Sentence:</strong> 贼人其后被警方拘捕及被判处盗窃罪名成立。
+$$<blockquote><p>训练过程使用了<strong>交叉熵损失 (Cross Entropy Loss)</strong> 函数。简单来说，交叉熵会去对比 $\mathbf{P}_t$ 和 $\mathbf{g}_t$ (one-hot vector)之间的差距。计算出损失 $J_t(\theta)$ 之后，在接下来的代码实现中，模型就会利用反向传播机制，顺着网络一路往回找，去微调那些导致错误的参数 $\theta$。</p></blockquote><h3 id=implementation-and-written-questions>Implementation and written questions</h3><h4 id=__init__><code>__init__()</code></h4><p>在问题 (c) 的<code>nmt_model.py</code>的<code>__inti__()</code>中，关于神经网络各层的定义，其中<code>self.att_projection</code>的定义需注意，虽然它对应的是 $W_{attProj}$ ，但是在编写代码时，要拆解结合律，决定计算顺序。</p><p>应该先算$\mathbf{W}_{\text{attProj}} $ 和 $\mathbf{h}_i^{\text{enc}}$ 相乘，再将其乘积与 $(\mathbf{h}_t^{dec})^T$ 相乘求最终结果，这是因为所有的编码器状态 $\mathbf{h}_i^{\text{enc}}$ 在 Decoder 开始工作前就已经全部计算好了。你可以<strong>一次性</strong>把整句话的 $\mathbf{h}^{\text{enc}}$ 丢进 <code>Linear</code> 层进行投影（这叫 Pre-computation 预计算）。但是在某一时刻只有一个 $\mathbf{h}_t^{dec}$ 而没有未来的量，导致不能一次性投影完成，而只能把线性层放到了循环中，引发严重的性能问题（虽然数学原理上没错）。下面是一个例子(generated by Gemini) :</p><blockquote><p>假设我们的模型参数如下：</p><ul><li>隐藏层大小 $h = 512$</li><li>句子长度 $m = 50$</li></ul><p><strong>把 <code>Linear</code> 层塞进循环里</strong></p><p>在这个路线里，<code>Linear</code> 层每次要干的活是：把解码器 $1 \times 512$ 的向量，乘以一个 $512 \times 1024$ 的巨大投影矩阵 $\mathbf{W}$。</p><ul><li><strong>计算量</strong>：这需要进行 $512 \times 1024 = \mathbf{524,288}$ 次乘加运算！</li><li><strong>额外开销</strong>：每次循环，PyTorch 都要去内存里把这个包含 50 多万个参数的 $\mathbf{W}$ 矩阵重新搬出来读一遍，并且要经过一层完整的 <code>nn.Linear</code> 封装代码（包含各种维度检查、梯度跟踪的准备）。</li></ul><p>然后，算出投影结果后，还得再去和字典做点积：$1 \times 1024$ 的向量乘以 $1024 \times 50$ 的字典，又是 $\mathbf{51,200}$ 次运算。</p><p>所以在这个路线下，解码器每走一步，都要背着将近 <strong>60万次运算</strong> 和一个巨大的矩阵跑。</p><p><strong>预计算 + 循环内纯点积</strong></p><p>我们把庞大的 <code>Linear</code> 投影放在循环外面，利用 GPU 的超级并行能力，**“一瞬间”**把整本字典从 $50 \times 1024$ 压成了 $50 \times 512$。我们把这本新字典称为 <strong>“投影后字典”</strong>。</p><p>现在我们进入了 <code>for</code> 循环。在第 $t$ 步，我们需要做的乘法是什么呢？</p><ul><li><strong>计算量</strong>：我们直接拿解码器原生的 $1 \times 512$ 向量，去乘以准备好的“投影后字典”（$512 \times 50$）。只需要进行 $512 \times 50 = \mathbf{25,600}$ 次乘加运算！</li><li><strong>没有额外的层开销</strong>：这里不需要调用 <code>nn.Linear</code>，我们在代码里只要写一个极其轻量的纯矩阵乘法指令（比如 <code>torch.matmul</code> 或 <code>@</code> 符号）就搞定了。不需要加载任何权重矩阵，因为权重矩阵的任务在循环外已经完成了！</li></ul></blockquote><h4 id=encode><code>encode</code></h4><p>问题 (d) 是encoder部分，以及对decoder部分的初始化：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>model_embeddings</span> <span class=o>=</span> <span class=n>ModelEmbeddings</span><span class=p>(</span><span class=n>embed_size</span><span class=p>,</span> <span class=n>vocab</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>self.model_embeddings</code>是对<code>ModelEmbeddings</code>的一个实例化，而回到问题 (a) 发现<code>.source</code>是一个<code>nn.Embedding</code>对象：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>source</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>Embedding</span><span class=p>(</span><span class=n>num_embeddings</span><span class=o>=</span><span class=nb>len</span><span class=p>(</span><span class=n>vocab</span><span class=o>.</span><span class=n>src</span><span class=p>),</span><span class=n>embedding_dim</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>embed_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                                   <span class=n>padding_idx</span><span class=o>=</span><span class=n>src_pad_token_idx</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>但是在问题 (a) 中只是对它的实例化，在内存中申请了一个形状为 <code>(num_embeddings, embedding_dim)</code> 的<strong>大矩阵</strong>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>X</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>model_embeddings</span><span class=o>.</span><span class=n>source</span><span class=p>(</span><span class=n>source_padded</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>又因为 <code>nn.Embedding</code> 继承自 <code>nn.Module</code>，而 <code>nn.Module</code> 重写了 <code>__call__</code> 方法，所以你可以像函数一样使用它（调用），参数设为<code>source_padded</code>这样一个Tensor，它把 Tensor 里的每一个数字当成“行号”，去刚才创建的那个大矩阵里把对应的行找出来，然后输出包含词向量的 Tensor。</p><p>下面在将Tensor送进Encoder之前，要用<code>torch.permute</code>变换形状，从<code>(src_len, b, e)</code>变到<code>(b, e, src_len)</code>。那么<code>torch.permute</code>的参数，只是参数位置（索引号）。如下，将原来索引为1的<code>b</code>放到第0个位置，原来索引为2的放到第1个位置，原来索引为0的放到第2个位置。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>X</span> <span class=o>=</span> <span class=n>X</span><span class=o>.</span><span class=n>permute</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>之后将Tensor <code>X</code>送进LSTM的Encoder后，得到输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>output</span><span class=p>,(</span><span class=n>last_hidden</span><span class=p>,</span><span class=n>last_cell</span><span class=p>)</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>encoder</span><span class=p>(</span><span class=n>X</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>output</code>对应的就是双向LSTM的全局上下文向量： $\mathbf{h}_1^{\text{enc}}, \ldots, \mathbf{h}_m^{\text{enc}}$</p><p><code>last_hidden</code>对应的是：$\overrightarrow{\mathbf{h}_m^{\text{enc}}}$ 和 $\overleftarrow{\mathbf{h}_1^{\text{enc}}}$ ，它的形状是 <code>(num_layers * num_directions, batch_size, hidden_size)</code> ，由于它是双向的，所以索引0和索引1分别对应，我们需要将其分离再拼接，形成我们需要的$\overleftarrow{\mathbf{h}_1^{\text{enc}}} ; \overrightarrow{\mathbf{h}_m^{\text{enc}}}$ 。注意<code>torch.cat</code>的参数<code>dim=1</code>表示为横向拼接，即拼接好的向量的列数变成了<code>2 * hidden_size</code></p><p>与投影矩阵相乘的部分，由实例化好的线性层<code>self.h_projection</code>完成。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>init_decoder_hidden</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>h_projection</span><span class=p>(</span><span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>((</span><span class=n>last_hidden</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span><span class=n>last_hidden</span><span class=p>[</span><span class=mi>1</span><span class=p>]),</span><span class=n>dim</span><span class=o>=</span><span class=mi>1</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>last_cell</code>同理，不再赘述。</p><h4 id=decode><code>decode</code></h4><p>问题 (e) 是decode部分：
+<code>enc_hiddens_proj = self.att_projection(enc_hiddens)</code> 对应公式 (6) 中 $\mathbf{W}_{\text{attProj}} \mathbf{h}_i^{\text{enc}}$ 的部分。正如在 <code>__init__()</code> 部分讨论的，编码器的全部隐藏状态在进入 <code>decode</code> 时已经固定，所以可以<strong>在循环外一次性</strong>完成投影预计算，将 <code>enc_hiddens</code> 从 <code>(b, src_len, 2h)</code> 投影为 <code>(b, src_len, h)</code>。</p><p><code>Y = self.model_embeddings.target(target_padded)</code> 和 <code>encode</code> 中对源语言做查表的操作对称，这里调用<strong>目标语言</strong>的嵌入矩阵，将 <code>target_padded</code> 中的词索引映射成词向量，得到形状为 <code>(tgt_len, b, e)</code> 的张量 <code>Y</code>。</p><p><code>torch.split(Y, 1)</code> 沿第 0 维（时间维度）将 <code>Y</code> 切成一系列 <code>(1, b, e)</code> 的张量。<code>squeeze(Y_t, 0)</code> 去掉多余的维度变为 <code>(b, e)</code>。注意<strong>必须指定 <code>dim=0</code></strong>，否则当 <code>batch_size = 1</code> 时会误删 batch 维度。</p><p><code>torch.cat((Y_t, o_prev), dim=1)</code> 对应前文的拼接操作：将 $\mathbf{y}_t$（维度 $e$）与 $\mathbf{o}_{t-1}$（维度 $h$）拼接为 $\overline{\mathbf{y}_t} \in \mathbb{R}^{(e+h)}$。</p><p><code>self.step(...)</code> 内部一次性完成公式 (5)-(11) 的计算：Decoder LSTM 前向传播 → 注意力评分与分布 → 加权求和得到上下文向量 → 线性投影、tanh、dropout，最终产出联合输出向量 $\mathbf{o}_t$。每步将 $\mathbf{o}_t$ 存入列表并更新 <code>o_prev</code>。</p><p><code>torch.stack(combined_outputs, dim=0)</code> 将列表中所有 <code>(b, h)</code> 的张量堆叠为 <code>(tgt_len, b, h)</code>，随后送入公式 (12) 的词汇投影层生成概率分布。</p><h4 id=step><code>step</code></h4><p>问题 (f) 是step部分，即解码器单步计算，内部完成公式 (5)-(11)。核心代码分两段：</p><p><strong>第一段（~3行）：Decoder LSTM 前向 + 注意力评分</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>dec_state</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>decoder</span><span class=p>(</span><span class=n>Ybar_t</span><span class=p>,</span> <span class=n>dec_state</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>dec_hidden</span><span class=p>,</span> <span class=n>dec_cell</span> <span class=o>=</span> <span class=n>dec_state</span>
+</span></span><span class=line><span class=cl><span class=n>e_t</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>bmm</span><span class=p>(</span><span class=n>enc_hiddens_proj</span><span class=p>,</span> <span class=n>torch</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=n>dec_hidden</span><span class=p>,</span> <span class=mi>2</span><span class=p>))</span><span class=o>.</span><span class=n>squeeze</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>前两行直接对应公式 (5)：将 $\overline{\mathbf{y}_t}$ 和上一步状态送入 Decoder LSTM，得到新的 <code>dec_state</code>，再拆分为 <code>dec_hidden</code>（$\mathbf{h}_t^{\text{dec}}$）和 <code>dec_cell</code>（$\mathbf{c}_t^{\text{dec}}$），形状均为 <code>(b, h)</code>。</p><p>第三行对应公式 (6) 中的注意力评分。这里的关键在于 <code>torch.bmm</code> 的形状要求——它执行<strong>批量矩阵乘法</strong>，要求输入严格为三维张量 <code>(b, n, m)</code> × <code>(b, m, p)</code> → <code>(b, n, p)</code>。而我们手里的张量：</p><ul><li><code>enc_hiddens_proj</code>：形状 <code>(b, src_len, h)</code> — 已经是三维，无需处理</li><li><code>dec_hidden</code>：形状 <code>(b, h)</code> — 只有二维，不满足 <code>bmm</code> 的要求</li></ul><p>所以需要 <code>torch.unsqueeze(dec_hidden, 2)</code> 在第 2 维（最后）插入一个维度，将 <code>(b, h)</code> 变为 <code>(b, h, 1)</code>。这样 <code>bmm</code> 的乘法就变成了：</p>$$\underbrace{(b, \text{src\_len}, h)}_{\text{enc\_hiddens\_proj}} \times \underbrace{(b, h, 1)}_{\text{dec\_hidden}} = \underbrace{(b, \text{src\_len}, 1)}_{e_t}$$<p>这实质上就是对 batch 内的每一条样本，让 <code>enc_hiddens_proj</code> 的每一行（某个源词的投影）与 <code>dec_hidden</code> 做点积，得到该源词的注意力分数——正是公式 (6) 的 $(\mathbf{h}_t^{\text{dec}})^T \mathbf{W}_{\text{attProj}} \mathbf{h}_i^{\text{enc}}$。</p><p>最后 <code>.squeeze(2)</code> 去掉末尾多余的维度 <code>1</code>，从 <code>(b, src_len, 1)</code> 变回 <code>(b, src_len)</code>，得到注意力得分向量 $\mathbf{e}_t$。</p><p><strong>第二段（~6行）：注意力加权 → 联合输出</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>alpha_t</span> <span class=o>=</span> <span class=n>F</span><span class=o>.</span><span class=n>softmax</span><span class=p>(</span><span class=n>e_t</span><span class=p>,</span> <span class=n>dim</span><span class=o>=</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>a_t</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>bmm</span><span class=p>(</span><span class=n>torch</span><span class=o>.</span><span class=n>unsqueeze</span><span class=p>(</span><span class=n>alpha_t</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span> <span class=n>enc_hiddens</span><span class=p>)</span><span class=o>.</span><span class=n>squeeze</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>U_t</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>((</span><span class=n>a_t</span><span class=p>,</span> <span class=n>dec_hidden</span><span class=p>),</span> <span class=n>dim</span><span class=o>=</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>V_t</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>combined_output_projection</span><span class=p>(</span><span class=n>U_t</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>O_t</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>dropout</span><span class=p>(</span><span class=n>torch</span><span class=o>.</span><span class=n>tanh</span><span class=p>(</span><span class=n>V_t</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>F.softmax(e_t, dim=1)</code> 对应公式 (7)，沿 <code>dim=1</code>（即 <code>src_len</code> 维度）做 softmax，将分数归一化为注意力分布 $\alpha_t$，形状仍为 <code>(b, src_len)</code>。</p><p>计算上下文向量 $\mathbf{a}_t$（公式 (8)）时又遇到了 <code>bmm</code> 的三维要求。<code>alpha_t</code> 是 <code>(b, src_len)</code>，需要 <code>unsqueeze(alpha_t, 1)</code> 在第 1 维插入，变为 <code>(b, 1, src_len)</code>：</p>$$\underbrace{(b, 1, \text{src_len})}_{\alpha_t} \times \underbrace{(b, \text{src_len}, 2h)}_{\text{enc_hiddens}} = \underbrace{(b, 1, 2h)}_{a_t}$$<p>这就是用注意力权重对编码器隐藏状态做加权求和。<code>.squeeze(1)</code> 去掉中间的 <code>1</code>，得到 <code>(b, 2h)</code> 的上下文向量 $\mathbf{a}_t$。</p><p>后三行依次对应公式 (9)(10)(11)：<code>torch.cat</code> 拼接 $\mathbf{a}_t$ 与 $\mathbf{h}_t^{\text{dec}}$ 得到 <code>(b, 3h)</code> 的 $\mathbf{u}_t$；线性层投影回 <code>(b, h)</code> 的 $\mathbf{v}_t$；最后 tanh + dropout 得到联合输出 $\mathbf{o}_t$。</p><h4 id=attention-masking>Attention Masking</h4><p>问题 (g) 是关于 <code>step()</code> 中注意力掩码的作用。在 <code>step()</code> 的两段代码之间，有这样一段：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=n>enc_masks</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>e_t</span><span class=o>.</span><span class=n>data</span><span class=o>.</span><span class=n>masked_fill_</span><span class=p>(</span><span class=n>enc_masks</span><span class=o>.</span><span class=n>bool</span><span class=p>(),</span> <span class=o>-</span><span class=nb>float</span><span class=p>(</span><span class=s1>&#39;inf&#39;</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>enc_masks</code> 由 <code>generate_sent_masks()</code> 生成：它创建一个 <code>(b, src_len)</code> 的零矩阵，然后对 batch 中每条句子，在其<strong>实际长度之后</strong>的位置全部填 <code>1</code>。换言之，<code>1</code> 标记的是 <code>&lt;pad></code> token 的位置，<code>0</code> 标记的是真实词的位置。</p><p><strong>掩码对注意力计算的影响：</strong> <code>masked_fill_</code> 将 $\mathbf{e}_t$ 中所有对应 <code>&lt;pad></code> 位置的注意力分数替换为 $-\infty$。当这些 $-\infty$ 的值随后经过 <code>softmax</code> 时，$e^{-\infty} = 0$，因此 <code>&lt;pad></code> 位置的注意力权重 $\alpha_{t,i}$ 会变为 $0$，而所有真实词的权重之和仍归一化为 $1$。这意味着在公式 (8) 的加权求和中，<code>&lt;pad></code> 位置的编码器隐藏状态对上下文向量 $\mathbf{a}_t$ 完全没有贡献。</p><p><strong>为什么必须这样做：</strong> 由于 batch 内各句子长度不一，短句会被 <code>&lt;pad></code> 填充到统一长度。如果不加掩码，<code>&lt;pad></code> 对应位置的编码器隐藏状态（本质上是无意义的噪声）会分走一部分注意力权重，从而污染上下文向量，导致翻译质量下降。</p><h4 id=training>Training</h4><p>问题 (h) 是在代码工作完成后，进入训练阶段。由于我没有海外支付方式，用不了cs224n指定的Google Cloud，所以使用本机显卡进行训练（速度快于文档的预估值）</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bash run.sh train
+</span></span></code></pre></td></tr></table></div></div><p>观察<code>tensorboard</code>可见loss曲线并无异常，待训练完成后进行测试评估：
+<img src=/uploads/posts/cs224n-a3/figure2.png alt loading=lazy></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bash run.sh <span class=nb>test</span>
+</span></span></code></pre></td></tr></table></div></div><p>结果：the model’s corpus BLEU Score is larger than 18, tests passed.</p><h4 id=attention-comparison>Attention Comparison</h4><p>最后问题 (i) 是点积注意力、加性注意力分别与乘性注意力进行比较：</p><h5 id=dot-product-vs-multiplicative>Dot Product vs. Multiplicative</h5><ul><li>Dot Product Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{h}_i$</li><li>Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$</li></ul><p>点积注意力的优势：</p><ul><li><strong>计算速度更快，显存占用更小。</strong> 点积注意力没有任何可学习的权重矩阵 $\mathbf{W}$，它仅仅是两个向量的内积。在 GPU 上，这种纯粹的向量点积运算被优化到了极致，没有任何额外的内存开销和参数更新负担。</li></ul><p>点积注意力的劣势：</p><ul><li><strong>强制要求维度严格一致，且表达能力较弱。</strong> 要做点积，解码器状态 $\mathbf{s}_t$ 和编码器状态 $\mathbf{h}_i$ 的维度必须<strong>完全相同</strong>。更致命的是，它假设这两个空间天然就是对齐的。而乘性注意力多了一个矩阵 $\mathbf{W}$，不仅允许两者的维度不同（$\mathbf{W}$ 可以做维度转换），还能通过学习 $\mathbf{W}$ 将它们投影到一个更好的共享特征空间中再进行比较。</li></ul><h5 id=additive-vs-multiplicative>Additive vs. Multiplicative</h5><ul><li>Additive Attention: $\mathbf{e}_{t,i} = \mathbf{v}^T \tanh(\mathbf{W}_1 \mathbf{h}_i + \mathbf{W}_2 \mathbf{s}_t)$</li><li>Multiplicative Attention: $\mathbf{e}_{t,i} = \mathbf{s}_t^T \mathbf{W} \mathbf{h}_i$</li></ul><blockquote><p>(注：Additive Attention 也就是大名鼎鼎的 Bahdanau Attention，它是 Attention 机制的开山鼻祖；而 Multiplicative 则是 Luong Attention 的核心。)</p></blockquote><p>加性注意力的优势：</p><ul><li><strong>在特征维度很大时，表现通常更好（模型容量大）。</strong> 乘性注意力在维度很大时，点积的结果方差会变得极其巨大，容易把 Softmax 推向梯度消失的边缘（也就是后来 Transformer 引入缩放因子的原因）。而加性注意力通过 $\tanh$ 激活函数将内部数值稳稳地压制在 $[-1, 1]$ 之间，天然具有极好的数值稳定性，对超大维度的宽容度更高。</li></ul><p>加性注意力的劣势：</p><ul><li><strong>计算效率较低，难以发挥底层矩阵乘法的极致加速。</strong> 乘性注意力可以极其优雅地打包成一个巨大的矩阵乘法（在 Transformer 里就是 $\mathbf{Q}\mathbf{K}^T$），这正是现代 GPU 最擅长的事情。而加性注意力不仅要做两次独立的线性变换，还要过一遍非线性激活函数 $\tanh$，最后再乘一个向量 $\mathbf{v}$。这种复杂的计算图打破了矩阵乘法的纯粹性，导致它在实际工程中的运行速度明显慢于乘性注意力。</li></ul><h2 id=analyzing-nmt-systems>Analyzing NMT Systems</h2><p>问题 (a) 是为什么在embedding层后加1D卷积后，再输入双向encoder效果会好一些？</p><p>添加一维卷积层可以作为 n-gram 特征提取器，用于捕捉局部组合性。由于中文词语通常由多个词素组成（例如，“电”+“脑”=“电脑”），一维卷积神经网络的滑动窗口会在序列建模之前，将相邻字符/子词的嵌入向量显式地组合成更高层次的语义表示（一个词或短语）。这提供了一种层级结构，其中卷积神经网络处理局部词汇语义（充当软分词器），从而使双向编码器能够专注于学习全局的、长程的句法依存关系。</p><p>问题 (b) 是分析四句中文为什么翻译错了，那么作为普通话母语者不难解答：</p><p>i. (2 points) <strong>Source Sentence:</strong> 贼人其后被警方拘捕及被判处盗窃罪名成立。
 <strong>Reference Translation:</strong> <u><em>the culprits were</em></u> <em>subsequently arrested and convicted.</em>
-<strong>NMT Translation:</strong> <u><em>the culprit was</em></u> <em>subsequently arrested and sentenced to theft.</em></p>
-<p>ii. (2 points) <strong>Source Sentence:</strong> 几乎已经没有地方容纳这些人, 资源已经用尽。
+<strong>NMT Translation:</strong> <u><em>the culprit was</em></u> <em>subsequently arrested and sentenced to theft.</em></p><p>ii. (2 points) <strong>Source Sentence:</strong> 几乎已经没有地方容纳这些人, 资源已经用尽。
 <strong>Reference Translation:</strong> <em>there is almost no space to accommodate these people, and resources have run out.</em>
-<strong>NMT Translation:</strong> <em>the resources have been exhausted and</em> <u><em>resources have been exhausted</em></u>.</p>
-<p>iii. (2 points) <strong>Source Sentence:</strong> 当局已经宣布今天是国殇日。
+<strong>NMT Translation:</strong> <em>the resources have been exhausted and</em> <u><em>resources have been exhausted</em></u>.</p><p>iii. (2 points) <strong>Source Sentence:</strong> 当局已经宣布今天是国殇日。
 <strong>Reference Translation:</strong> <em>authorities have announced</em> <u><em>a national mourning today.</em></u> <strong>NMT Translation:</strong> the administration has announced today&rsquo;s day.
-<strong>NMT Translation:</strong> <em>the administration has announced</em> <u><em>today&rsquo;s day.</em></u></p>
-<p>iv. (2 points) <strong>Source Sentence</strong>: 俗语有云:“唔做唔错”。
+<strong>NMT Translation:</strong> <em>the administration has announced</em> <u><em>today&rsquo;s day.</em></u></p><p>iv. (2 points) <strong>Source Sentence</strong>: 俗语有云:“唔做唔错”。
 <strong>Reference Translation:</strong> <u><em>“ act not, err not ”</em></u>, <em>so a saying goes.</em>
-<strong>NMT Translation:</strong> <em>as the saying goes,</em> <u><em>“ it&rsquo;s not wrong. ”</em></u></p>
-<ul>
-<li>(i) 是单/复数的问题，缺少上下文以及整体理解，难以判断“贼人”是复数还是单数。</li>
-<li>(ii) “资源已经用尽”被重复翻译了两遍，简单来说是注意力先偏移到了后半句，然后NMT不知道前半句没有翻译，加上前面错译出的&quot;&hellip;and&quot;，导致重复翻译后半句。</li>
-<li>(iii) <code>src.vocab</code>没有记录“国殇”，所以NMT越过了这个词。</li>
-<li>(iv) 本质是句俗语，或者说是粤语，而多数模型都是基于普通话训练的。</li>
-</ul>
-<h3 id="bleu">BLEU
-</h3><p>BLEU score is the most commonly used automatic evaluation metric for NMT systems.
+<strong>NMT Translation:</strong> <em>as the saying goes,</em> <u><em>“ it&rsquo;s not wrong. ”</em></u></p><ul><li>(i) 是单/复数的问题，缺少上下文以及整体理解，难以判断“贼人”是复数还是单数。</li><li>(ii) “资源已经用尽”被重复翻译了两遍，简单来说是注意力先偏移到了后半句，然后NMT不知道前半句没有翻译，加上前面错译出的"&mldr;and"，导致重复翻译后半句。</li><li>(iii) <code>src.vocab</code>没有记录“国殇”，所以NMT越过了这个词。</li><li>(iv) 本质是句俗语，或者说是粤语，而多数模型都是基于普通话训练的。</li></ul><h3 id=bleu>BLEU</h3><p>BLEU score is the most commonly used automatic evaluation metric for NMT systems.
 It is usually calculated across the entire test set, but here we will consider BLEU defined for a single
 example. Suppose we have a source sentence s, a set of k reference translations $\mathbf{r}_1,\dots,\mathbf{r}_k$, and a
 candidate translation c. To compute the BLEU score of c, we first compute the modified n-gram
-precision pn of c, for each of n = 1,2,3,4, where n is the n in n-gram:</p>
-
-    <blockquote>
-        <p>BLEU 分数是 NMT (神经机器翻译) 系统中最常用的自动评估指标。它通常在整个测试集上计算，但在这里我们将考虑为单个示例定义的 BLEU。假设我们有一个源句子 $\mathbf{s}$，一组 $k$ 个参考翻译 $\mathbf{r}_1,\dots,\mathbf{r}_k$，以及一个候选翻译 $\mathbf{c}$。为了计算 $\mathbf{c}$ 的 BLEU 分数，我们首先计算 $\mathbf{c}$ 的<em>修正 n-gram 精确度 (modified n-gram precision)</em> $p_n$，其中 $n = 1, 2, 3, 4$，$n$ 是 n-gram 中的 $n$：</p>
-
-    </blockquote>
-$$
+precision pn of c, for each of n = 1,2,3,4, where n is the n in n-gram:</p><blockquote><p>BLEU 分数是 NMT (神经机器翻译) 系统中最常用的自动评估指标。它通常在整个测试集上计算，但在这里我们将考虑为单个示例定义的 BLEU。假设我们有一个源句子 $\mathbf{s}$，一组 $k$ 个参考翻译 $\mathbf{r}_1,\dots,\mathbf{r}_k$，以及一个候选翻译 $\mathbf{c}$。为了计算 $\mathbf{c}$ 的 BLEU 分数，我们首先计算 $\mathbf{c}$ 的<em>修正 n-gram 精确度 (modified n-gram precision)</em> $p_n$，其中 $n = 1, 2, 3, 4$，$n$ 是 n-gram 中的 $n$：</p></blockquote>$$
 p_n = \frac{\sum_{\text{ngram} \in \mathbf{c}} \min \left( \max_{i=1,\dots,k} \text{Count}_{\mathbf{r}_i}(\text{ngram}), \text{Count}_{\mathbf{c}}(\text{ngram}) \right)}{\sum_{\text{ngram} \in \mathbf{c}} \text{Count}_{\mathbf{c}}(\text{ngram})}
 $$<p>Here, for each of the n-grams that appear in the candidate translation c, we count the maxi
 mum number of times it appears in any one reference translation, capped by the number of times
-it appears in c (this is the numerator). We divide this by the number of n-grams in c (denominator).</p>
-
-    <blockquote>
-        <p>这里，对于出现在候选翻译 $\mathbf{c}$ 中的每一个 $n$-gram，我们计算它在任何一个参考翻译中出现的最大次数，上限为它在 $\mathbf{c}$ 中出现的次数（这是分子）。我们将其除以 $\mathbf{c}$ 中 $n$-gram 的数量（分母）。</p>
-<p>$p_n$ 公式的分母部分比较清晰，分子部分我们继续拆解：</p>
-<p>$\text{Count}_{\mathbf{c}}(\text{ngram})$ : 该词组在模型输出中出现几次。</p>
-<p>$\max_{i=1,\dots,k} \text{Count}_{\mathbf{r}_i}(\text{ngram})$ : 该词组在<strong>所有参考答案</strong>中出现次数最多的那一次。比如三个参考答案里，<code>the</code> 分别出现了 1、2、1 次，那么这个值就是 2。</p>
-<p>$\min(\dots)$ : 这是**截断（Clipping）**机制。它规定：即便你在输出里写了 10 个 <code>the</code>，如果参考答案里最多只出现了 2 个，那我也只算你命中了 2 个。</p>
-<p>综上，公式可以被翻译成：
-</p>
-$$
+it appears in c (this is the numerator). We divide this by the number of n-grams in c (denominator).</p><blockquote><p>这里，对于出现在候选翻译 $\mathbf{c}$ 中的每一个 $n$-gram，我们计算它在任何一个参考翻译中出现的最大次数，上限为它在 $\mathbf{c}$ 中出现的次数（这是分子）。我们将其除以 $\mathbf{c}$ 中 $n$-gram 的数量（分母）。</p><p>$p_n$ 公式的分母部分比较清晰，分子部分我们继续拆解：</p><p>$\text{Count}_{\mathbf{c}}(\text{ngram})$ : 该词组在模型输出中出现几次。</p><p>$\max_{i=1,\dots,k} \text{Count}_{\mathbf{r}_i}(\text{ngram})$ : 该词组在<strong>所有参考答案</strong>中出现次数最多的那一次。比如三个参考答案里，<code>the</code> 分别出现了 1、2、1 次，那么这个值就是 2。</p><p>$\min(\dots)$ : 这是**截断（Clipping）**机制。它规定：即便你在输出里写了 10 个 <code>the</code>，如果参考答案里最多只出现了 2 个，那我也只算你命中了 2 个。</p><p>综上，公式可以被翻译成：</p>$$
 > p_n = \frac{\text{被认可的 n-gram 匹配总数}}{\text{候选翻译中总共生成的 n-gram 数量}}
-> $$
-    </blockquote>
-<p>Next, we compute the brevity penalty BP. Let $len(\mathbf{c})$ be the length of c and let $len(\mathbf{r})$ be the
+> $$</blockquote><p>Next, we compute the brevity penalty BP. Let $len(\mathbf{c})$ be the length of c and let $len(\mathbf{r})$ be the
 length of the reference translation that is closest to $len(\mathbf{c})$ (in the case of two equally-close reference
-translation lengths, choose $len(\mathbf{r})$ as the shorter one).</p>
-
-    <blockquote>
-        <p>接下来，我们计算<em>长度惩罚 (brevity penalty)</em> $BP$。令 $len(\mathbf{c})$ 为 $\mathbf{c}$ 的长度，令 $len(\mathbf{r})$ 为最接近 $len(\mathbf{c})$ 的参考翻译的长度（在有两个同样接近的参考翻译长度的情况下，选择较短的那个作为 $len(\mathbf{r})$）。</p>
-
-    </blockquote>
-$$
+translation lengths, choose $len(\mathbf{r})$ as the shorter one).</p><blockquote><p>接下来，我们计算<em>长度惩罚 (brevity penalty)</em> $BP$。令 $len(\mathbf{c})$ 为 $\mathbf{c}$ 的长度，令 $len(\mathbf{r})$ 为最接近 $len(\mathbf{c})$ 的参考翻译的长度（在有两个同样接近的参考翻译长度的情况下，选择较短的那个作为 $len(\mathbf{r})$）。</p></blockquote>$$
 BP = \begin{cases} 1 & \text{if } len(\mathbf{c}) \geq len(\mathbf{r}) \\ \exp\left(1 - \frac{len(\mathbf{r})}{len(\mathbf{c})}\right) & \text{otherwise} \end{cases}
-$$
-    <blockquote>
-        <p>那么引入 $BP$ 有什么用？首先 $len(\mathbf{c}) \geq len(\mathbf{r})$ 时 $BP=1$ ，这是在NMT输出较长时，$BP$ 不需要惩罚它，而会在 $p_n$ 的分母体现（分母变大，概率降低）。</p>
-<p>$len(\mathbf{c}) < len(\mathbf{r})$ 时引入指数惩罚，如果NMT只翻译最有把握的一个词（比如输出一个单词 <code>apple</code>），$p_n$ 可能是 100%，但这没有意义。这个指数函数 $\exp(1 - r/c)$ 在 $c$ 越小时，值会迅速接近 0，从而给短句一个沉重的打击。</p>
-
-    </blockquote>
-<p>Lastly, the BLEU score for candidate c with respect to $\mathbf{r}_1,\dots,\mathbf{r}_k$ is:</p>
-
-    <blockquote>
-        <p>最后，候选 $\mathbf{c}$ 相对于 $\mathbf{r}_1,\dots,\mathbf{r}_k$ 的 BLEU 分数为：</p>
-
-    </blockquote>
-$$
+$$<blockquote><p>那么引入 $BP$ 有什么用？首先 $len(\mathbf{c}) \geq len(\mathbf{r})$ 时 $BP=1$ ，这是在NMT输出较长时，$BP$ 不需要惩罚它，而会在 $p_n$ 的分母体现（分母变大，概率降低）。</p><p>$len(\mathbf{c}) < len(\mathbf{r})$ 时引入指数惩罚，如果NMT只翻译最有把握的一个词（比如输出一个单词 <code>apple</code>），$p_n$ 可能是 100%，但这没有意义。这个指数函数 $\exp(1 - r/c)$ 在 $c$ 越小时，值会迅速接近 0，从而给短句一个沉重的打击。</p></blockquote><p>Lastly, the BLEU score for candidate c with respect to $\mathbf{r}_1,\dots,\mathbf{r}_k$ is:</p><blockquote><p>最后，候选 $\mathbf{c}$ 相对于 $\mathbf{r}_1,\dots,\mathbf{r}_k$ 的 BLEU 分数为：</p></blockquote>$$
 BLEU = BP \times \exp \left( \sum_{n=1}^4 \lambda_n \log p_n \right)
-$$
-    <blockquote>
-        <p>本质上等同于：
-</p>
-$$
+$$<blockquote><p>本质上等同于：</p>$$
 > BLEU = BP \times (p_1^{\lambda_1} \cdot p_2^{\lambda_2} \cdot p_3^{\lambda_3} \cdot p_4^{\lambda_4})
-> $$
-    </blockquote>
-<p>where $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ are weights that sum to 1. The log here is natural log.</p>
-
-    <blockquote>
-        <p>其中 $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ 是总和为 1 的权重。此处的 $\log$ 是自然对数。</p>
-<p>几何平均的一个特性是：<strong>如果其中任何一项 $p_n$ 为 0，最终结果就会是 0</strong>。所以模型的词汇和语序的正确性都会被计算。</p>
-
-    </blockquote>
-<p>问题 (c) 结合实例运算：</p>
-<p>i. Source Sentence <strong>s</strong>: 需要有充足和可预测的资源。
+> $$</blockquote><p>where $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ are weights that sum to 1. The log here is natural log.</p><blockquote><p>其中 $\lambda_1, \lambda_2, \lambda_3, \lambda_4$ 是总和为 1 的权重。此处的 $\log$ 是自然对数。</p><p>几何平均的一个特性是：<strong>如果其中任何一项 $p_n$ 为 0，最终结果就会是 0</strong>。所以模型的词汇和语序的正确性都会被计算。</p></blockquote><p>问题 (c) 结合实例运算：</p><p>i. Source Sentence <strong>s</strong>: 需要有充足和可预测的资源。
 Reference Translation $r_1$ : <em>resources have to be sufficient and they have to be predictable</em>
 Reference Translation $r_2$ : <em>adequate and predictable resources are required</em>
 NMT Translation $c_1$ : there is a need for adequate and predictable resources
 NMT Translation $c_2$ : resources be sufficient and predictable to
-Please compute the BLEU scores for  and $c_1$ $c_2$. Let $\lambda_i = 0.5$ for $i \in \{1, 2\}$ and $\lambda_i = 0$ for $i \in \{3, 4\}$ (<strong>this means we ignore 3-grams and 4-grams</strong>, i.e., don&rsquo;t compute $p_3$ or $p_4$).
-When computing BLEU scores, show your work (i.e., show your computed values for $p_1$, $p_2$, $len(c)$, $len(r)$ and $BP$). Note that the BLEU scores can be expressed between 0 and 1 or between 0 and 100. The code is using the 0 to 100 scale while in this question we are using the <strong>0 to 1</strong> scale. Please round your responses to 3 decimal places.</p>
-
-    <blockquote>
-        <p>先计算 $c_1$ : $len(c_1)=9$ 更接近于 $len(r_1)=11$ , $BP=exp(1-\frac{11}{9})$</p>
-<p>$p_1$ 匹配的Unigrams 为 {adequate, and, predictable, resources}，共 4 个。 $p_1=4/9$</p>
-<p>$p_2$ 匹配的Bigrams 为 {adequate and, and predictable, predictable resources}，共 3 个。 $p_2=3/8$</p>
-<p>$BLEU_{c1} = BP \times \sqrt{p_1 \times p_2}$</p>
-<p>$c_2$ 同理。</p>
-
-    </blockquote>
-<p>ii. Our hard drive was corrupted and we lost Reference Translation $r_1$. Please recom
+Please compute the BLEU scores for and $c_1$ $c_2$. Let $\lambda_i = 0.5$ for $i \in \{1, 2\}$ and $\lambda_i = 0$ for $i \in \{3, 4\}$ (<strong>this means we ignore 3-grams and 4-grams</strong>, i.e., don&rsquo;t compute $p_3$ or $p_4$).
+When computing BLEU scores, show your work (i.e., show your computed values for $p_1$, $p_2$, $len(c)$, $len(r)$ and $BP$). Note that the BLEU scores can be expressed between 0 and 1 or between 0 and 100. The code is using the 0 to 100 scale while in this question we are using the <strong>0 to 1</strong> scale. Please round your responses to 3 decimal places.</p><blockquote><p>先计算 $c_1$ : $len(c_1)=9$ 更接近于 $len(r_1)=11$ , $BP=exp(1-\frac{11}{9})$</p><p>$p_1$ 匹配的Unigrams 为 {adequate, and, predictable, resources}，共 4 个。 $p_1=4/9$</p><p>$p_2$ 匹配的Bigrams 为 {adequate and, and predictable, predictable resources}，共 3 个。 $p_2=3/8$</p><p>$BLEU_{c1} = BP \times \sqrt{p_1 \times p_2}$</p><p>$c_2$ 同理。</p></blockquote><p>ii. Our hard drive was corrupted and we lost Reference Translation $r_1$. Please recom
 pute BLEU scores for $c_1$ and $c_2$, this time with respect to $r_2$ only. Which of the two NMT
-translations now receives the higher BLEU score? Do you agree that it is the better translation?</p>
-
-    <blockquote>
-        <p>计算方式不变，但是在去掉了 $r_1$ 后， ${BLEU}_{c_1}$ 不变， ${BLEU}_{c_2}$ 大幅缩小（由于 $p_1$ 和 $p_2$ 下降）</p>
-<p>这说明了 <strong>$c_1$ 的鲁棒性更强</strong>，它使用了更通用的词汇（如 <code>adequate</code>），即使在参考答案有限的情况下，依然能保持较合理的得分，这更符合人类对“好翻译”的评价标准。</p>
-
-    </blockquote>
-<p>iv. List two advantages and two disadvantages of BLEU, compared to human evaluation,
-as an evaluation metric for Machine Translation.</p>
-
-    <blockquote>
-        <p>优点不列了，缺点：BLEU 仅进行<strong>字面上的 N-gram 匹配</strong>，缺乏语义理解。由于 BLEU 主要关注局部词汇的重合度，它往往无法识别严重的语法错误或逻辑扭曲。一个逻辑完全相反、但在词汇上高度重合的句子可能获得极高的 BLEU 分，却无法被人类理解，所以它无法准确衡量语言质量。</p>
-
-    </blockquote>
-<p>问题 (d) 是Beam Search相关的，关于训练次数与其“假设”质量的问题，比如i. 要求进行三个对比：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// iteration 200
-</span></span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;hypothesis&#34;</span><span class="p">:</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁it&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁is&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁not&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁that&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁united&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁nations&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁of&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁united&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁nations&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁of&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁united&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁nations&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;.&#34;</span>
-</span></span><span class="line"><span class="cl">            <span class="p">],</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mf">-31.211565017700195</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// iteration 3000
-</span></span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;hypothesis&#34;</span><span class="p">:</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁i&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁would&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁also&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁like&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁to&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁clarify&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁number&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁of&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁cases&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁in&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁conference&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;.&#34;</span>
-</span></span><span class="line"><span class="cl">            <span class="p">],</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mf">-15.013087272644043</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// iteration 17200 (last)
-</span></span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;hypothesis&#34;</span><span class="p">:</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁i&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁have&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁also&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁clarified&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁a&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁number&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁of&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁matters&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁raised&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁by&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁the&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;▁conference&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                <span class="s2">&#34;.&#34;</span>
-</span></span><span class="line"><span class="cl">            <span class="p">],</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mf">-7.69414758682251</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div>
-</section>
-
-
-    <footer class="article-meta article-footer">
-    
-    <section class="article-tags">
-        
-            <a href="/tags/seq2seq/">Seq2Seq</a>
-        
-            <a href="/tags/lstm/">LSTM</a>
-        
-            <a href="/tags/attention/">Attention</a>
-        
-    </section>
-
-
-    
-    <section class="article-copyright inline-meta">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
-</svg>
-
-
-
-        <span>Licensed under CC BY-NC-SA 4.0</span>
-    </section>
-    </footer>
-
-
-    
-        <link 
-                rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
-            ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
-                defer
-                >
-            </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
-                defer
-                >
-            </script><script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const elementsToRender = [".main-article", ".widget--toc"];
-
-        elementsToRender.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) {
-                renderMathInElement(element, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false }
-                    ],
-                    ignoredClasses: ["gist"]
-                });
-            }
-        });
-    });
-</script>
-
-    
-</article>
-
-    
-
-    
-
-<aside>
-    <h2 class="section-title"></h2>
-    <div class="subsection-list">
-        <div class="article-list--tile">
-            
-                
-<article class="">
-    <a href="/p/cs224n/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">CS224N</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/pytorch%E5%9F%BA%E7%A1%80/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Pytorch基础</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">群晖NAS代理及Emby配置</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">如何在WSL2上使用本机代理</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/maven-%E5%9F%BA%E7%A1%80/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Maven 基础</h2>
-        </div>
-    </a>
-</article>
-            
-        </div>
-    </div>
-</aside>
-
-     
-    
-        
-        <div class="disqus-container">
-    <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
-
-<style>
-    .disqus-container {
-        background-color: var(--card-background);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--shadow-l1);
-        padding: var(--card-padding);
-    }
-</style>
-
-<script>
-    window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
-            DISQUS.reset({
-                reload: true
-            });
-        }
-    })
-</script>
-    
-
-    <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
-        
-            2020 - 
-        
-        2026 边个濑椰的博客
-    </section>
-    
-    <section class="powerby">
-         <br />
-        
-    </section>
-</footer>
-
-
-    
-
-
-
-<script type="module">
+translations now receives the higher BLEU score? Do you agree that it is the better translation?</p><blockquote><p>计算方式不变，但是在去掉了 $r_1$ 后， ${BLEU}_{c_1}$ 不变， ${BLEU}_{c_2}$ 大幅缩小（由于 $p_1$ 和 $p_2$ 下降）</p><p>这说明了 <strong>$c_1$ 的鲁棒性更强</strong>，它使用了更通用的词汇（如 <code>adequate</code>），即使在参考答案有限的情况下，依然能保持较合理的得分，这更符合人类对“好翻译”的评价标准。</p></blockquote><p>iv. List two advantages and two disadvantages of BLEU, compared to human evaluation,
+as an evaluation metric for Machine Translation.</p><blockquote><p>优点不列了，缺点：BLEU 仅进行<strong>字面上的 N-gram 匹配</strong>，缺乏语义理解。由于 BLEU 主要关注局部词汇的重合度，它往往无法识别严重的语法错误或逻辑扭曲。一个逻辑完全相反、但在词汇上高度重合的句子可能获得极高的 BLEU 分，却无法被人类理解，所以它无法准确衡量语言质量。</p></blockquote><p>问题 (d) 是Beam Search相关的，关于训练次数与其“假设”质量的问题，比如i. 要求进行三个对比：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=c1>// iteration 200
+</span></span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;hypothesis&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁it&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁is&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁not&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁that&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁united&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁nations&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁of&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁united&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁nations&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁of&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁united&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁nations&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;.&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=p>],</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;score&#34;</span><span class=p>:</span> <span class=mf>-31.211565017700195</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=c1>// iteration 3000
+</span></span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;hypothesis&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁i&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁would&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁also&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁like&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁to&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁clarify&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁number&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁of&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁cases&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁in&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁conference&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;.&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=p>],</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;score&#34;</span><span class=p>:</span> <span class=mf>-15.013087272644043</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=c1>// iteration 17200 (last)
+</span></span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;hypothesis&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁i&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁have&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁also&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁clarified&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁a&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁number&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁of&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁matters&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁raised&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁by&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁the&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;▁conference&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;.&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=p>],</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;score&#34;</span><span class=p>:</span> <span class=mf>-7.69414758682251</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/seq2seq/>Seq2Seq</a>
+<a href=/tags/lstm/>LSTM</a>
+<a href=/tags/attention/>Attention</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title></h2><div class=subsection-list><div class=article-list--tile><article><a href=/p/cs224n/><div class=article-details><h2 class=article-title>CS224N</h2></div></a></article><article><a href=/p/pytorch%E5%9F%BA%E7%A1%80/><div class=article-details><h2 class=article-title>Pytorch基础</h2></div></a></article><article><a href=/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/><div class=article-details><h2 class=article-title>RAGFlow切片策略解析</h2></div></a></article><article><a href=/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/><div class=article-details><h2 class=article-title>群晖NAS代理及Emby配置</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/><div class=article-details><h2 class=article-title>如何在WSL2上使用本机代理</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 边个濑椰的博客</section><section class=powerby><br></section></footer><script type=module>
     import gallery from '\/ts\/gallery.js';
 
     const articleContent = document.querySelector('.article-content');
@@ -1312,14 +267,4 @@ as an evaluation metric for Machine Translation.</p>
         });
         lightbox.init();
     }
-</script>
-    
-
-            </main>
-        </div>
-        
-<script type="text/javascript" src="/ts/main.cb7a123540d26af6863483a994e00134749a05b073820fd7c04b3a3c15b4f89c.js" defer></script>
-
-
-    </body>
-</html>
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>

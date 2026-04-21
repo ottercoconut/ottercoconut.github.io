@@ -1,1205 +1,251 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n">
-<title>Maven Fundamentals</title>
-
-
-<link rel="canonical" href="http://localhost:1313/en/p/maven-fundamentals/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-
-
-<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="Maven Fundamentals">
-<meta property='og:description' content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n">
-<meta property='og:url' content='http://localhost:1313/en/p/maven-fundamentals/'>
-<meta property='og:site_name' content='ottercoconut&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:tag' content='Project Management' /><meta property='article:published_time' content='2025-04-01T14:49:00&#43;08:00'/><meta property='article:modified_time' content='2025-04-01T14:49:00&#43;08:00'/>
-<meta name="twitter:title" content="Maven Fundamentals">
-<meta name="twitter:description" content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n">
-    <link rel="shortcut icon" href="/img/favicon.png" />
-
-    </head>
-    <body class="
-    article-page
-    ">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
-        }
-    })();
-</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header>
-        <figure class="site-avatar">
-                <a href="/en/">
-                    <img src="/img/avatar.png" 
-                        width="150"
-                        height="150"
-                        class="site-logo"
-                        loading="lazy"
-                        alt="Avatar">
-                </a>
-                
-                    <span class="emoji">🍥</span>
-                
-            </figure>
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/en/">ottercoconut&#39;s Blog</a></h1>
-            <h2 class="site-description">Life is like a dream, trading that dream for a fleeting moment. The moment lingers for the rolling years, while the rolling years fade into a boundless haze.</h2>
-        </div>
-    </header><ol class="menu-social">
-            
-                <li>
-                    <a 
-                        href='https://github.com/ottercoconut/'
-                        
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-        <li >
-            <a href='/en/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>Home</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/en/archives/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>Archives</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/en/search/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>Search</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/en/links/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-                    <li id="i18n-switch">  
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
-                            
-                                
-                                
-                                    
-                                        
-                                    
-                                
-                                    
-                                
-                                <option value="/p/maven-%E5%9F%BA%E7%A1%80/" >简体中文</option>
-                            
-                                
-                                
-                                    
-                                
-                                    
-                                        
-                                    
-                                
-                                <option value="/en/p/maven-fundamentals/" selected>English</option>
-                            
-                        </select>
-                    </li>
-                
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span>Dark Mode</span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                
-    <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title">Table of contents</h2>
-        
-        <div class="widget--toc">
-            <nav class="toc-nav" id="TableOfContents">
-                
-  <ol>
-    <li>
-      <ol>
-        <li><a href="#reference-websites">Reference Websites</a></li>
-      </ol>
-    </li>
-    <li><a href="#maven-fundamentals">Maven Fundamentals</a>
-      <ol>
-        <li><a href="#introduction-to-maven">Introduction to Maven</a>
-          <ol>
-            <li><a href="#maven-project-structure">Maven Project Structure</a></li>
-            <li><a href="#summary">Summary</a></li>
-          </ol>
-        </li>
-        <li><a href="#dependency-management">Dependency Management</a></li>
-        <li><a href="#dependency-relationships">Dependency Relationships</a>
-          <ol>
-            <li><a href="#unique-id">Unique ID</a></li>
-            <li><a href="#maven-mirrors">Maven Mirrors</a></li>
-            <li><a href="#searching-for-third-party-components">Searching for Third-Party Components</a></li>
-            <li><a href="#command-line-compilation">Command Line Compilation</a></li>
-            <li><a href="#using-maven-in-an-ide">Using Maven in an IDE</a></li>
-            <li><a href="#summary-1">Summary</a></li>
-          </ol>
-        </li>
-        <li><a href="#build-process">Build Process</a>
-          <ol>
-            <li><a href="#lifecycle-and-phase">Lifecycle and Phase</a></li>
-            <li><a href="#goal">Goal</a></li>
-            <li><a href="#summary-2">Summary</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-  </ol>
-
-            </nav>
-        </div>
-    </section>
-
-            
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <article class="main-article">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            
-            
-            
-            <a href="/en/categories/tech/" style="background-color: hsl(145, 60%, 84%); color: hsl(145, 60%, 15%);">
-                Tech
-            </a>
-        
-            
-            
-            
-            <a href="/en/categories/backend-development/" style="background-color: hsl(282, 60%, 84%); color: hsl(282, 60%, 15%);">
-                Backend Development
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/en/p/maven-fundamentals/">Maven Fundamentals</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    
-    
-    
-    <footer class="article-meta">
-        
-            <div class="inline-meta">
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                    <time class="article-time--published" datetime='2025-04-01T14:49:00&#43;08:00'>Tuesday, April 1, 2025</time>
-                
-
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                    <time class="article-time--reading">
-                        12 minutes read
-                    </time>
-                
-            </div>
-        
-
-        
-            <div class="inline-meta">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                
-                    <a href="/p/maven-%E5%9F%BA%E7%A1%80/" class="link">简体中文</a>
-                
-            </div>
-        
-
-        
-    </footer>
-    
-</div>
-
-</header>
-
-    
-    <aside class="article-toc">
-        <details>
-            <summary>
-                <div class="article-toc-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
-                    <span>Table of contents</span>
-                </div>
-            </summary>
-            <nav class="toc-nav">
-                
-  <ol>
-    <li>
-      <ol>
-        <li><a href="#reference-websites">Reference Websites</a></li>
-      </ol>
-    </li>
-    <li><a href="#maven-fundamentals">Maven Fundamentals</a>
-      <ol>
-        <li><a href="#introduction-to-maven">Introduction to Maven</a>
-          <ol>
-            <li><a href="#maven-project-structure">Maven Project Structure</a></li>
-            <li><a href="#summary">Summary</a></li>
-          </ol>
-        </li>
-        <li><a href="#dependency-management">Dependency Management</a></li>
-        <li><a href="#dependency-relationships">Dependency Relationships</a>
-          <ol>
-            <li><a href="#unique-id">Unique ID</a></li>
-            <li><a href="#maven-mirrors">Maven Mirrors</a></li>
-            <li><a href="#searching-for-third-party-components">Searching for Third-Party Components</a></li>
-            <li><a href="#command-line-compilation">Command Line Compilation</a></li>
-            <li><a href="#using-maven-in-an-ide">Using Maven in an IDE</a></li>
-            <li><a href="#summary-1">Summary</a></li>
-          </ol>
-        </li>
-        <li><a href="#build-process">Build Process</a>
-          <ol>
-            <li><a href="#lifecycle-and-phase">Lifecycle and Phase</a></li>
-            <li><a href="#goal">Goal</a></li>
-            <li><a href="#summary-2">Summary</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-  </ol>
-
-            </nav>
-        </details>
-    </aside>
-    
-
-    <section class="article-content">
-    
-    
-    <h3 id="reference-websites">Reference Websites
-</h3><p><a class="link" href="https://liaoxuefeng.com/books/java/maven/index.html"  target="_blank" rel="noopener"
-    >Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website</a></p>
-<h2 id="maven-fundamentals">Maven Fundamentals
-</h2><h3 id="introduction-to-maven">Introduction to Maven
-</h3><p>Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use <a class="link" href="https://commons.apache.org/proper/commons-logging/"  target="_blank" rel="noopener"
-    >commons logging</a>, we must put the commons logging jar package into the classpath. If we also need <a class="link" href="https://logging.apache.org/log4j/"  target="_blank" rel="noopener"
-    >log4j</a>, we need to put all log4j-related jar packages into the classpath. This is dependency management.</p>
-<p>Secondly, we must determine the directory structure of the project. For example, the <code>src</code> directory stores Java source code, the <code>resources</code> directory stores configuration files, and the <code>bin</code> directory stores the compiled <code>.class</code> files.</p>
-<p>Furthermore, we also need to configure the environment, such as the JDK version, the compilation and packaging process, and the version number of the current code.</p>
-<p>Finally, in addition to using IDEs like Eclipse for compilation, we must also be able to compile via command-line tools so that the project can be compiled, tested, and deployed on an independent server.</p>
-<p>These tasks are not difficult, but they are very tedious and time-consuming. If every project had its own set of configurations, it would certainly be a mess. What we need is a standardized Java project management and build tool.</p>
-<p>Maven is a management and build tool specifically created for Java projects. Its main features include:</p>
-<ul>
-<li>Providing a standardized project structure;</li>
-<li>Providing a standardized build process (compilation, testing, packaging, publishing&hellip;);</li>
-<li>Providing a dependency management mechanism.</li>
-</ul>
-<h4 id="maven-project-structure">Maven Project Structure
-</h4><p>A typical Java project managed using Maven has the following default directory structure:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">a-maven-project
-</span></span><span class="line"><span class="cl">├── pom.xml
-</span></span><span class="line"><span class="cl">├── src
-</span></span><span class="line"><span class="cl">│   ├── main
-</span></span><span class="line"><span class="cl">│   │   ├── java
-</span></span><span class="line"><span class="cl">│   │   └── resources
-</span></span><span class="line"><span class="cl">│   └── test
-</span></span><span class="line"><span class="cl">│       ├── java
-</span></span><span class="line"><span class="cl">│       └── resources
-</span></span><span class="line"><span class="cl">└── target
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>The root directory of the project <code>a-maven-project</code> is the project name. It has a project description file <code>pom.xml</code>. The directory storing Java source code is <code>src/main/java</code>, the directory storing resource files is <code>src/main/resources</code>, the directory storing test source code is <code>src/test/java</code>, and the directory storing test resources is <code>src/test/resources</code>. Finally, all files generated by compilation and packaging are placed in the <code>target</code> directory. These constitute the standard directory structure of a Maven project.</p>
-<p>All directory structures are agreed-upon standard structures, and we must never modify the directory structure arbitrarily. Using the standard structure requires no configuration, and Maven can be utilized normally.</p>
-<p>Let&rsquo;s look at the most critical project description file, <code>pom.xml</code>. Its content looks like the following:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;project</span> <span class="err">...</span><span class="nt">&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;groupId&gt;</span>com.itranswarp.learnjava<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;artifactId&gt;</span>hello<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;properties&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
-</span></span><span class="line"><span class="cl">		<span class="nt">&lt;maven.compiler.release&gt;</span>17<span class="nt">&lt;/maven.compiler.release&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;/properties&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;dependencies&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;artifactId&gt;</span>slf4j-simple<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;version&gt;</span>2.0.16<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/dependency&gt;</span>
-</span></span><span class="line"><span class="cl">	<span class="nt">&lt;/dependencies&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/project&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Here, <code>groupId</code> is similar to Java&rsquo;s package name, typically the name of a company or organization. <code>artifactId</code> is similar to a Java class name, typically the project name. Together with <code>version</code>, a Maven project is uniquely identified by <code>groupId</code>, <code>artifactId</code>, and <code>version</code>.</p>
-<p>When we reference other third-party libraries, it is also determined through these 3 variables. For example, depending on <code>org.slfj4:slf4j-simple:2.0.16</code>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>slf4j-simple<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>2.0.16<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>After declaring a dependency using <code>&lt;dependency&gt;</code>, Maven will automatically download this dependency package and put it into the classpath.</p>
-<p>Additionally, note that <code>&lt;properties&gt;</code> defines some properties. Commonly used properties are:</p>
-<ul>
-<li><code>project.build.sourceEncoding</code>: Indicates the character encoding of the project source code, typically set to <code>UTF-8</code>;</li>
-<li><code>maven.compiler.release</code>: Indicates the JDK version to use, for example, <code>21</code>;</li>
-<li><code>maven.compiler.source</code>: Indicates the source code version read by the Java compiler;</li>
-<li><code>maven.compiler.target</code>: Indicates the Class version compiled by the Java compiler.</li>
-</ul>
-<p>Starting from Java 9, it is recommended to use the <code>maven.compiler.release</code> property to ensure that the input source code and the compiled output version are consistent during compilation. If the source code and output versions are different, <code>maven.compiler.source</code> and <code>maven.compiler.target</code> should be set respectively.</p>
-<p>By defining properties via <code>&lt;properties&gt;</code>, the JDK version can be fixed, preventing different developers of the same project from using different versions of the JDK.</p>
-<h4 id="summary">Summary
-</h4><p>Maven is a management and build tool for Java projects:</p>
-<ul>
-<li>Maven uses <code>pom.xml</code> to define project content and utilizes a preset directory structure;</li>
-<li>Declaring a dependency in Maven can automatically download and import it into the classpath;</li>
-<li>Maven uses <code>groupId</code>, <code>artifactId</code>, and <code>version</code> to uniquely locate a dependency.</li>
-</ul>
-<hr>
-<h3 id="dependency-management">Dependency Management
-</h3><p>If our project depends on third-party jar packages, such as commons logging, the question arises: where do we download the published jar package for commons logging?</p>
-<p>If we also want to depend on log4j, what jar packages are needed to use log4j?</p>
-<p>Similar dependencies include: JUnit, JavaMail, MySQL driver, etc. A feasible method is to search for the project&rsquo;s official website via a search engine, manually download the zip package, extract it, and put it into the classpath. However, this process is very tedious.</p>
-<p>Maven solves the dependency management problem. For example, our project depends on the jar package <code>abc</code>, and <code>abc</code> depends on the jar package <code>xyz</code>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">┌──────────────┐
-</span></span><span class="line"><span class="cl">│Sample Project│
-</span></span><span class="line"><span class="cl">└──────────────┘
-</span></span><span class="line"><span class="cl">        │
-</span></span><span class="line"><span class="cl">        ▼
-</span></span><span class="line"><span class="cl">┌──────────────┐
-</span></span><span class="line"><span class="cl">│     abc      │
-</span></span><span class="line"><span class="cl">└──────────────┘
-</span></span><span class="line"><span class="cl">        │
-</span></span><span class="line"><span class="cl">        ▼
-</span></span><span class="line"><span class="cl">┌──────────────┐
-</span></span><span class="line"><span class="cl">│     xyz      │
-</span></span><span class="line"><span class="cl">└──────────────┘
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>When we declare the dependency for <code>abc</code>, Maven automatically adds both <code>abc</code> and <code>xyz</code> to our project dependencies. We don&rsquo;t need to manually investigate whether <code>abc</code> requires <code>xyz</code>.</p>
-<p>Therefore, the first role of Maven is to resolve dependency management. We declare that our project needs <code>abc</code>, Maven will automatically import the jar package of <code>abc</code>, then determine that <code>abc</code> needs <code>xyz</code>, and will automatically import the jar package of <code>xyz</code>. Thus, ultimately, our project will depend on both <code>abc</code> and <code>xyz</code> jar packages.</p>
-<p>Let&rsquo;s look at a complex dependency example:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.4.2.RELEASE<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>When we declare a <code>spring-boot-starter-web</code> dependency, Maven will automatically parse and determine that approximately twenty or thirty other dependencies are ultimately required:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">spring-boot-starter-web
-</span></span><span class="line"><span class="cl">  spring-boot-starter
-</span></span><span class="line"><span class="cl">    spring-boot
-</span></span><span class="line"><span class="cl">    sprint-boot-autoconfigure
-</span></span><span class="line"><span class="cl">    spring-boot-starter-logging
-</span></span><span class="line"><span class="cl">      logback-classic
-</span></span><span class="line"><span class="cl">        logback-core
-</span></span><span class="line"><span class="cl">        slf4j-api
-</span></span><span class="line"><span class="cl">      jcl-over-slf4j
-</span></span><span class="line"><span class="cl">        slf4j-api
-</span></span><span class="line"><span class="cl">      jul-to-slf4j
-</span></span><span class="line"><span class="cl">        slf4j-api
-</span></span><span class="line"><span class="cl">      log4j-over-slf4j
-</span></span><span class="line"><span class="cl">        slf4j-api
-</span></span><span class="line"><span class="cl">    spring-core
-</span></span><span class="line"><span class="cl">    snakeyaml
-</span></span><span class="line"><span class="cl">  spring-boot-starter-tomcat
-</span></span><span class="line"><span class="cl">    tomcat-embed-core
-</span></span><span class="line"><span class="cl">    tomcat-embed-el
-</span></span><span class="line"><span class="cl">    tomcat-embed-websocket
-</span></span><span class="line"><span class="cl">      tomcat-embed-core
-</span></span><span class="line"><span class="cl">  jackson-databind
-</span></span><span class="line"><span class="cl">  ...
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>If we try to manually manage these dependencies ourselves, it is extremely time-consuming, laborious, and the probability of errors is very high.</p>
-<h3 id="dependency-relationships">Dependency Relationships
-</h3><p>Maven defines several dependency relationships, namely <code>compile</code>, <code>test</code>, <code>runtime</code>, and <code>provided</code>:</p>
-<div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>scope</th>
-          <th>Description</th>
-          <th>Example</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>compile</td>
-          <td>This jar package is needed during compilation (default)</td>
-          <td>commons-logging</td>
-      </tr>
-      <tr>
-          <td>test</td>
-          <td>This jar package is needed when compiling tests</td>
-          <td>junit</td>
-      </tr>
-      <tr>
-          <td>runtime</td>
-          <td>Not needed during compilation, but required at runtime</td>
-          <td>mysql</td>
-      </tr>
-      <tr>
-          <td>provided</td>
-          <td>Needed during compilation, but provided by JDK or a server at runtime</td>
-          <td>servlet-api</td>
-      </tr>
-  </tbody>
-</table></div>
-<p>Among them, the default <code>compile</code> is the most commonly used, and Maven will place dependencies of this type directly into the classpath.</p>
-<p><code>test</code> dependencies indicate they are only used during testing and are not needed during normal execution. The most common <code>test</code> dependency is JUnit:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>junit-jupiter-api<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>5.3.2<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>runtime</code> dependencies indicate they are not needed during compilation but are required at runtime. The most typical <code>runtime</code> dependencies are JDBC drivers, such as the MySQL driver:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>mysql<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>mysql-connector-java<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>5.1.48<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>provided</code> dependencies indicate they are needed during compilation but not at runtime. The most typical <code>provided</code> dependency is the Servlet API, which is needed during compilation; however, at runtime, the Servlet server has built-in related jars, so they are not needed during the execution phase:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>jakarta.servlet<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>jakarta.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>The last question is, how does Maven know where to download the required dependencies? That is, the related jar packages? The answer is that Maven maintains a central repository (<a class="link" href="https://repo1.maven.org/"  target="_blank" rel="noopener"
-    >repo1.maven.org</a>), where all third-party libraries upload their own jars and related information. Maven can download the required dependencies from the central repository to the local machine.</p>
-<p>Maven does not download jar packages from the central repository every time. Once a jar package has been downloaded, it is automatically cached by Maven in a local directory (the <code>.m2</code> directory in the user&rsquo;s home directory). Therefore, apart from the first compilation being relatively slow due to the time needed for downloading, subsequent processes will not repeatedly download the same jar packages because of the local cache.</p>
-<h4 id="unique-id">Unique ID
-</h4><p>For any given dependency, Maven only needs 3 variables to uniquely identify a jar package:</p>
-<ul>
-<li>groupId: The name of the organization it belongs to, similar to a Java package name;</li>
-<li>artifactId: The name of the jar package itself, similar to a Java class name;</li>
-<li>version: The version of the jar package.</li>
-</ul>
-<p>Through the above 3 variables, a certain jar package can be uniquely determined. Maven ensures that any jar package cannot be modified once published by performing PGP signing on the jar packages. The only way to modify a published jar package is to publish a new version.</p>
-<p>Therefore, once a jar package has been downloaded by Maven, it can be permanently and safely cached locally.</p>
-<p>Note: Only version numbers ending with <code>-SNAPSHOT</code> are regarded by Maven as development versions. Development versions are repeatedly downloaded every time. Such SNAPSHOT versions can only be used in internal private Maven repos, and publicly published versions are not allowed to be SNAPSHOTs.</p>
-
-    <blockquote>
-        <p>Henceforth, when we represent Maven dependencies, we use the abbreviated form groupId:artifactId:version, for example: org.slf4j:slf4j-api:2.0.4.</p>
-
-    </blockquote>
-<h4 id="maven-mirrors">Maven Mirrors
-</h4><p>Besides downloading from Maven&rsquo;s central repository, you can also download from Maven mirror repositories. If accessing Maven&rsquo;s central repository is very slow, we can choose a faster Maven mirror repository. Maven mirror repositories synchronize periodically from the central repository:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">           slow    ┌───────────────────┐
-</span></span><span class="line"><span class="cl">    ┌─────────────▶│Maven Central Repo.│
-</span></span><span class="line"><span class="cl">    │              └───────────────────┘
-</span></span><span class="line"><span class="cl">    │                        │
-</span></span><span class="line"><span class="cl">    │                        │sync
-</span></span><span class="line"><span class="cl">    │                        ▼
-</span></span><span class="line"><span class="cl">┌───────┐  fast    ┌───────────────────┐
-</span></span><span class="line"><span class="cl">│ User  │─────────▶│Maven Mirror Repo. │
-</span></span><span class="line"><span class="cl">└───────┘          └───────────────────┘
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Users in the China region can use the Maven mirror repository provided by Alibaba Cloud. Using a Maven mirror repository requires configuration. In the user&rsquo;s home directory, enter the <code>.m2</code> directory and create a <code>settings.xml</code> configuration file with the following content:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;settings&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mirrors&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mirror&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;id&gt;</span>aliyun<span class="nt">&lt;/id&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;name&gt;</span>aliyun<span class="nt">&lt;/name&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;mirrorOf&gt;</span>central<span class="nt">&lt;/mirrorOf&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="c">&lt;!-- Alibaba Cloud&#39;s Maven mirror is recommended in China --&gt;</span>
-</span></span><span class="line"><span class="cl">            <span class="nt">&lt;url&gt;</span>https://maven.aliyun.com/repository/central<span class="nt">&lt;/url&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/mirror&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mirrors&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nt">&lt;/settings&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>After configuring the mirror repository, Maven&rsquo;s downloading speed will be very fast.</p>
-<h4 id="searching-for-third-party-components">Searching for Third-Party Components
-</h4><p>The final question: if we want to reference a third-party component, such as <code>okhttp</code>, how do we exactly acquire its <code>groupId</code>, <code>artifactId</code>, and <code>version</code>? The method is to search for keywords via <a class="link" href="https://search.maven.org/"  target="_blank" rel="noopener"
-    >search.maven.org</a>. After finding the corresponding component, directly copy it.</p>
-<h4 id="command-line-compilation">Command Line Compilation
-</h4><p>In the command line, navigate to the directory where <code>pom.xml</code> is located, and enter the following command:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">$ mvn clean package
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>If everything goes smoothly, you can obtain the automatically packaged jar after compilation in the <code>target</code> directory.</p>
-<h4 id="using-maven-in-an-ide">Using Maven in an IDE
-</h4><p>Almost all IDEs have built-in support for Maven. In Eclipse, you can directly create or import a Maven project. If the imported Maven project has errors, you can try selecting the project, right-clicking, and choosing Maven - Update Project&hellip; to update it.</p>
-<h4 id="summary-1">Summary
-</h4><p>Maven determines the jar packages required by the project through parsing dependency relationships. The 4 commonly used <code>scope</code>s are: <code>compile</code> (default), <code>test</code>, <code>runtime</code>, and <code>provided</code>;</p>
-<p>Maven downloads the required jar packages from the central repository and caches them locally;</p>
-<p>Downloading can be accelerated through mirror repositories.</p>
-<hr>
-<h3 id="build-process">Build Process
-</h3><p>Maven not only has a standardized project structure, but it also has a standardized build process that can automatically automate compiling, packaging, publishing, and more.</p>
-<h4 id="lifecycle-and-phase">Lifecycle and Phase
-</h4><p>When using Maven, we first need to understand what Maven&rsquo;s lifecycle is.</p>
-<p>Maven&rsquo;s lifecycle consists of a series of phases. Taking the built-in lifecycle <code>default</code> as an example, it includes the following phases:</p>
-<ul>
-<li>validate</li>
-<li>initialize</li>
-<li>generate-sources</li>
-<li>process-sources</li>
-<li>generate-resources</li>
-<li>process-resources</li>
-<li>compile</li>
-<li>process-classes</li>
-<li>generate-test-sources</li>
-<li>process-test-sources</li>
-<li>generate-test-resources</li>
-<li>process-test-resources</li>
-<li>test-compile</li>
-<li>process-test-classes</li>
-<li>test</li>
-<li>prepare-package</li>
-<li>package</li>
-<li>pre-integration-test</li>
-<li>integration-test</li>
-<li>post-integration-test</li>
-<li>verify</li>
-<li>install</li>
-<li>deploy</li>
-</ul>
-<p>If we run <code>mvn package</code>, Maven will execute the <code>default</code> lifecycle, and it will run consistently from the beginning up until the <code>package</code> phase:</p>
-<ul>
-<li>validate</li>
-<li>initialize</li>
-<li>&hellip;</li>
-<li>prepare-package</li>
-<li>package</li>
-</ul>
-<p>If we run <code>mvn compile</code>, Maven will also execute the <code>default</code> lifecycle, but this time it will only run up to <code>compile</code>, namely the following phases:</p>
-<ul>
-<li>validate</li>
-<li>initialize</li>
-<li>&hellip;</li>
-<li>process-resources</li>
-<li>compile</li>
-</ul>
-<p>Another commonly used lifecycle in Maven is <code>clean</code>, which executes 3 phases:</p>
-<ul>
-<li>pre-clean</li>
-<li>clean (note that this clean is a phase, not a lifecycle)</li>
-<li>post-clean</li>
-</ul>
-<p>Therefore, when we use the <code>mvn</code> command, the parameter following it is a phase, and Maven automatically runs up to the specified phase according to the lifecycle.</p>
-<p>A more complex example is specifying multiple phases. For example, running <code>mvn clean package</code>, Maven first executes the <code>clean</code> lifecycle and runs up to the <code>clean</code> phase, then it executes the <code>default</code> lifecycle and runs up to the <code>package</code> phase. The actually executed phases are as follows:</p>
-<ul>
-<li>pre-clean</li>
-<li>clean (note that this clean is a phase)</li>
-<li>validate (starts executing the first phase of the default lifecycle)</li>
-<li>initialize</li>
-<li>&hellip;</li>
-<li>prepare-package</li>
-<li>package</li>
-</ul>
-<p>During the actual development process, frequently used commands include:</p>
-<p><code>mvn clean</code>: Cleans up all generated classes and jars;</p>
-<p><code>mvn clean compile</code>: Cleans first, then executes up to <code>compile</code>;</p>
-<p><code>mvn clean test</code>: Cleans first, then executes up to <code>test</code>. Because <code>compile</code> must be executed before executing <code>test</code>, there is no need to specify <code>compile</code> here;</p>
-<p><code>mvn clean package</code>: Cleans first, then executes up to <code>package</code>.</p>
-<p>During the execution process of most phases, because we usually do not configure related settings in <code>pom.xml</code>, these phases effectively do nothing.</p>
-<p>The phases that are frequently used are actually only a few:</p>
-<ul>
-<li>clean: clean up</li>
-<li>compile: compile</li>
-<li>test: run tests</li>
-<li>package: package</li>
-</ul>
-<h4 id="goal">Goal
-</h4><p>Executing a phase subsequently triggers one or multiple goals:</p>
-<div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>Executed Phase</th>
-          <th>Corresponding Executed Goal</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>compile</td>
-          <td>compiler:compile</td>
-      </tr>
-      <tr>
-          <td>test</td>
-          <td>compiler:testCompile surefire:test</td>
-      </tr>
-  </tbody>
-</table></div>
-<p>The naming of a goal always takes the format of <code>abc:xyz</code>.</p>
-<p>Actually, if we draw an analogy, it becomes clear:</p>
-<ul>
-<li>lifecycle is equivalent to a Java package; it contains one or multiple phases;</li>
-<li>phase is equivalent to a Java class; it contains one or multiple goals;</li>
-<li>goal is equivalent to a class method; it is actually the one doing the real work.</li>
-</ul>
-<p>In most cases, we simply specify the phase, and it defaults to executing the goals bound by default to these phases. Only in a few instances do we directly specify running a goal, for example, starting a Tomcat server:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">$ mvn tomcat:run
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h4 id="summary-2">Summary
-</h4><p>Maven provides a standard build process through lifecycles, phases, and goals.</p>
-<p>The most commonly used build command entails specifying a phase, subsequently allowing Maven to execute up to the designated phase:</p>
-<ul>
-<li>mvn clean</li>
-<li>mvn clean compile</li>
-<li>mvn clean test</li>
-<li>mvn clean package</li>
-</ul>
-<p>Normally, we always execute the goals natively bound by default to the phase, so it is unnecessary to specify the goal.</p>
-<hr>
-
-</section>
-
-
-    <footer class="article-meta article-footer">
-    
-    <section class="article-tags">
-        
-            <a href="/en/tags/java/">Java</a>
-        
-            <a href="/en/tags/project-management/">Project Management</a>
-        
-    </section>
-
-
-    
-    <section class="article-copyright inline-meta">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
-</svg>
-
-
-
-        <span>Licensed under CC BY-NC-SA 4.0</span>
-    </section>
-    </footer>
-
-
-    
-        <link 
-                rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
-            ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
-                defer
-                >
-            </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
-                defer
-                >
-            </script><script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const elementsToRender = [".main-article", ".widget--toc"];
-
-        elementsToRender.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) {
-                renderMathInElement(element, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false }
-                    ],
-                    ignoredClasses: ["gist"]
-                });
-            }
-        });
-    });
-</script>
-
-    
-</article>
-
-    
-
-    
-
-<aside>
-    <h2 class="section-title">Related content</h2>
-    <div class="subsection-list">
-        <div class="article-list--tile">
-            
-                
-<article class="">
-    <a href="/en/p/java-multithreading/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Java Multithreading</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/en/p/redis/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Redis</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/en/p/mysql/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">MySQL</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/en/p/synology-nas-proxy-and-emby-configuration/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Synology NAS Proxy and Emby Configuration</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/en/p/how-to-use-host-proxy-on-wsl2/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">How to Use Host Proxy on WSL2</h2>
-        </div>
-    </a>
-</article>
-            
-        </div>
-    </div>
-</aside>
-
-     
-    
-        
-        <div class="disqus-container">
-    <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
-
-<style>
-    .disqus-container {
-        background-color: var(--card-background);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--shadow-l1);
-        padding: var(--card-padding);
-    }
-</style>
-
-<script>
-    window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
-            DISQUS.reset({
-                reload: true
-            });
-        }
-    })
-</script>
-    
-
-    <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
-        
-            2020 - 
-        
-        2026 ottercoconut&#39;s Blog
-    </section>
-    
-    <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
-    </section>
-</footer>
-
-
-    
-
-
-
-<script type="module">
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n"><title>Maven Fundamentals</title><link rel=canonical href=https://ottercoconut.github.io/en/p/maven-fundamentals/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="Maven Fundamentals"><meta property='og:description' content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n"><meta property='og:url' content='https://ottercoconut.github.io/en/p/maven-fundamentals/'><meta property='og:site_name' content="ottercoconut's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Java'><meta property='article:tag' content='Project Management'><meta property='article:published_time' content='2025-04-01T14:49:00+08:00'><meta property='article:modified_time' content='2025-04-01T14:49:00+08:00'><meta name=twitter:title content="Maven Fundamentals"><meta name=twitter:description content="Reference Websites Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website\nMaven Fundamentals Introduction to Maven Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use commons logging, we must put the commons logging jar package into the classpath. If we also need log4j, we need to put all log4j-related jar packages into the classpath. This is dependency management.\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/en/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/en/>ottercoconut's Blog</a></h1><h2 class=site-description>Life is like a dream, trading that dream for a fleeting moment. The moment lingers for the rolling years, while the rolling years fade into a boundless haze.</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/en/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/en/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/en/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/en/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/maven-%E5%9F%BA%E7%A1%80/>简体中文</option><option value=/en/p/maven-fundamentals/ selected>English</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav class=toc-nav id=TableOfContents><ol><li><ol><li><a href=#reference-websites>Reference Websites</a></li></ol></li><li><a href=#maven-fundamentals>Maven Fundamentals</a><ol><li><a href=#introduction-to-maven>Introduction to Maven</a><ol><li><a href=#maven-project-structure>Maven Project Structure</a></li><li><a href=#summary>Summary</a></li></ol></li><li><a href=#dependency-management>Dependency Management</a></li><li><a href=#dependency-relationships>Dependency Relationships</a><ol><li><a href=#unique-id>Unique ID</a></li><li><a href=#maven-mirrors>Maven Mirrors</a></li><li><a href=#searching-for-third-party-components>Searching for Third-Party Components</a></li><li><a href=#command-line-compilation>Command Line Compilation</a></li><li><a href=#using-maven-in-an-ide>Using Maven in an IDE</a></li><li><a href=#summary-1>Summary</a></li></ol></li><li><a href=#build-process>Build Process</a><ol><li><a href=#lifecycle-and-phase>Lifecycle and Phase</a></li><li><a href=#goal>Goal</a></li><li><a href=#summary-2>Summary</a></li></ol></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/en/categories/tech/ style=background-color:#beefd2;color:#0f3d22>Tech
+</a><a href=/en/categories/backend-development/ style=background-color:#e0beef;color:#2f0f3d>Backend Development</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/en/p/maven-fundamentals/>Maven Fundamentals</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-04-01T14:49:00+08:00>Tuesday, April 1, 2025</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>12 minutes read</time></div><div class=inline-meta><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<a href=/p/maven-%E5%9F%BA%E7%A1%80/ class=link>简体中文</a></div></footer></div></header><aside class=article-toc><details><summary><div class=article-toc-title><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6-6 6"/></svg>
+<span>Table of contents</span></div></summary><nav class=toc-nav><ol><li><ol><li><a href=#reference-websites>Reference Websites</a></li></ol></li><li><a href=#maven-fundamentals>Maven Fundamentals</a><ol><li><a href=#introduction-to-maven>Introduction to Maven</a><ol><li><a href=#maven-project-structure>Maven Project Structure</a></li><li><a href=#summary>Summary</a></li></ol></li><li><a href=#dependency-management>Dependency Management</a></li><li><a href=#dependency-relationships>Dependency Relationships</a><ol><li><a href=#unique-id>Unique ID</a></li><li><a href=#maven-mirrors>Maven Mirrors</a></li><li><a href=#searching-for-third-party-components>Searching for Third-Party Components</a></li><li><a href=#command-line-compilation>Command Line Compilation</a></li><li><a href=#using-maven-in-an-ide>Using Maven in an IDE</a></li><li><a href=#summary-1>Summary</a></li></ol></li><li><a href=#build-process>Build Process</a><ol><li><a href=#lifecycle-and-phase>Lifecycle and Phase</a></li><li><a href=#goal>Goal</a></li><li><a href=#summary-2>Summary</a></li></ol></li></ol></li></ol></nav></details></aside><section class=article-content><h3 id=reference-websites>Reference Websites</h3><p><a class=link href=https://liaoxuefeng.com/books/java/maven/index.html target=_blank rel=noopener>Maven Fundamentals - Java Tutorial - Liao Xuefeng&rsquo;s Official Website</a></p><h2 id=maven-fundamentals>Maven Fundamentals</h2><h3 id=introduction-to-maven>Introduction to Maven</h3><p>Before understanding Maven, let&rsquo;s look at what a Java project needs. First, we need to determine which dependency packages to introduce. For example, if we need to use <a class=link href=https://commons.apache.org/proper/commons-logging/ target=_blank rel=noopener>commons logging</a>, we must put the commons logging jar package into the classpath. If we also need <a class=link href=https://logging.apache.org/log4j/ target=_blank rel=noopener>log4j</a>, we need to put all log4j-related jar packages into the classpath. This is dependency management.</p><p>Secondly, we must determine the directory structure of the project. For example, the <code>src</code> directory stores Java source code, the <code>resources</code> directory stores configuration files, and the <code>bin</code> directory stores the compiled <code>.class</code> files.</p><p>Furthermore, we also need to configure the environment, such as the JDK version, the compilation and packaging process, and the version number of the current code.</p><p>Finally, in addition to using IDEs like Eclipse for compilation, we must also be able to compile via command-line tools so that the project can be compiled, tested, and deployed on an independent server.</p><p>These tasks are not difficult, but they are very tedious and time-consuming. If every project had its own set of configurations, it would certainly be a mess. What we need is a standardized Java project management and build tool.</p><p>Maven is a management and build tool specifically created for Java projects. Its main features include:</p><ul><li>Providing a standardized project structure;</li><li>Providing a standardized build process (compilation, testing, packaging, publishing&mldr;);</li><li>Providing a dependency management mechanism.</li></ul><h4 id=maven-project-structure>Maven Project Structure</h4><p>A typical Java project managed using Maven has the following default directory structure:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>a-maven-project
+</span></span><span class=line><span class=cl>├── pom.xml
+</span></span><span class=line><span class=cl>├── src
+</span></span><span class=line><span class=cl>│   ├── main
+</span></span><span class=line><span class=cl>│   │   ├── java
+</span></span><span class=line><span class=cl>│   │   └── resources
+</span></span><span class=line><span class=cl>│   └── test
+</span></span><span class=line><span class=cl>│       ├── java
+</span></span><span class=line><span class=cl>│       └── resources
+</span></span><span class=line><span class=cl>└── target
+</span></span></code></pre></td></tr></table></div></div><p>The root directory of the project <code>a-maven-project</code> is the project name. It has a project description file <code>pom.xml</code>. The directory storing Java source code is <code>src/main/java</code>, the directory storing resource files is <code>src/main/resources</code>, the directory storing test source code is <code>src/test/java</code>, and the directory storing test resources is <code>src/test/resources</code>. Finally, all files generated by compilation and packaging are placed in the <code>target</code> directory. These constitute the standard directory structure of a Maven project.</p><p>All directory structures are agreed-upon standard structures, and we must never modify the directory structure arbitrarily. Using the standard structure requires no configuration, and Maven can be utilized normally.</p><p>Let&rsquo;s look at the most critical project description file, <code>pom.xml</code>. Its content looks like the following:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;project</span> <span class=err>...</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;modelVersion&gt;</span>4.0.0<span class=nt>&lt;/modelVersion&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;groupId&gt;</span>com.itranswarp.learnjava<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;artifactId&gt;</span>hello<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;version&gt;</span>1.0<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;packaging&gt;</span>jar<span class=nt>&lt;/packaging&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;properties&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class=nt>&lt;/project.build.sourceEncoding&gt;</span>
+</span></span><span class=line><span class=cl>		<span class=nt>&lt;maven.compiler.release&gt;</span>17<span class=nt>&lt;/maven.compiler.release&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;/properties&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;dependencies&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.slf4j<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>slf4j-simple<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>2.0.16<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&lt;/dependency&gt;</span>
+</span></span><span class=line><span class=cl>	<span class=nt>&lt;/dependencies&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/project&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>Here, <code>groupId</code> is similar to Java&rsquo;s package name, typically the name of a company or organization. <code>artifactId</code> is similar to a Java class name, typically the project name. Together with <code>version</code>, a Maven project is uniquely identified by <code>groupId</code>, <code>artifactId</code>, and <code>version</code>.</p><p>When we reference other third-party libraries, it is also determined through these 3 variables. For example, depending on <code>org.slfj4:slf4j-simple:2.0.16</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>org.slf4j<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>slf4j-simple<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>2.0.16<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>After declaring a dependency using <code>&lt;dependency></code>, Maven will automatically download this dependency package and put it into the classpath.</p><p>Additionally, note that <code>&lt;properties></code> defines some properties. Commonly used properties are:</p><ul><li><code>project.build.sourceEncoding</code>: Indicates the character encoding of the project source code, typically set to <code>UTF-8</code>;</li><li><code>maven.compiler.release</code>: Indicates the JDK version to use, for example, <code>21</code>;</li><li><code>maven.compiler.source</code>: Indicates the source code version read by the Java compiler;</li><li><code>maven.compiler.target</code>: Indicates the Class version compiled by the Java compiler.</li></ul><p>Starting from Java 9, it is recommended to use the <code>maven.compiler.release</code> property to ensure that the input source code and the compiled output version are consistent during compilation. If the source code and output versions are different, <code>maven.compiler.source</code> and <code>maven.compiler.target</code> should be set respectively.</p><p>By defining properties via <code>&lt;properties></code>, the JDK version can be fixed, preventing different developers of the same project from using different versions of the JDK.</p><h4 id=summary>Summary</h4><p>Maven is a management and build tool for Java projects:</p><ul><li>Maven uses <code>pom.xml</code> to define project content and utilizes a preset directory structure;</li><li>Declaring a dependency in Maven can automatically download and import it into the classpath;</li><li>Maven uses <code>groupId</code>, <code>artifactId</code>, and <code>version</code> to uniquely locate a dependency.</li></ul><hr><h3 id=dependency-management>Dependency Management</h3><p>If our project depends on third-party jar packages, such as commons logging, the question arises: where do we download the published jar package for commons logging?</p><p>If we also want to depend on log4j, what jar packages are needed to use log4j?</p><p>Similar dependencies include: JUnit, JavaMail, MySQL driver, etc. A feasible method is to search for the project&rsquo;s official website via a search engine, manually download the zip package, extract it, and put it into the classpath. However, this process is very tedious.</p><p>Maven solves the dependency management problem. For example, our project depends on the jar package <code>abc</code>, and <code>abc</code> depends on the jar package <code>xyz</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>┌──────────────┐
+</span></span><span class=line><span class=cl>│Sample Project│
+</span></span><span class=line><span class=cl>└──────────────┘
+</span></span><span class=line><span class=cl>        │
+</span></span><span class=line><span class=cl>        ▼
+</span></span><span class=line><span class=cl>┌──────────────┐
+</span></span><span class=line><span class=cl>│     abc      │
+</span></span><span class=line><span class=cl>└──────────────┘
+</span></span><span class=line><span class=cl>        │
+</span></span><span class=line><span class=cl>        ▼
+</span></span><span class=line><span class=cl>┌──────────────┐
+</span></span><span class=line><span class=cl>│     xyz      │
+</span></span><span class=line><span class=cl>└──────────────┘
+</span></span></code></pre></td></tr></table></div></div><p>When we declare the dependency for <code>abc</code>, Maven automatically adds both <code>abc</code> and <code>xyz</code> to our project dependencies. We don&rsquo;t need to manually investigate whether <code>abc</code> requires <code>xyz</code>.</p><p>Therefore, the first role of Maven is to resolve dependency management. We declare that our project needs <code>abc</code>, Maven will automatically import the jar package of <code>abc</code>, then determine that <code>abc</code> needs <code>xyz</code>, and will automatically import the jar package of <code>xyz</code>. Thus, ultimately, our project will depend on both <code>abc</code> and <code>xyz</code> jar packages.</p><p>Let&rsquo;s look at a complex dependency example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>org.springframework.boot<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>spring-boot-starter-web<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>1.4.2.RELEASE<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>When we declare a <code>spring-boot-starter-web</code> dependency, Maven will automatically parse and determine that approximately twenty or thirty other dependencies are ultimately required:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>spring-boot-starter-web
+</span></span><span class=line><span class=cl>  spring-boot-starter
+</span></span><span class=line><span class=cl>    spring-boot
+</span></span><span class=line><span class=cl>    sprint-boot-autoconfigure
+</span></span><span class=line><span class=cl>    spring-boot-starter-logging
+</span></span><span class=line><span class=cl>      logback-classic
+</span></span><span class=line><span class=cl>        logback-core
+</span></span><span class=line><span class=cl>        slf4j-api
+</span></span><span class=line><span class=cl>      jcl-over-slf4j
+</span></span><span class=line><span class=cl>        slf4j-api
+</span></span><span class=line><span class=cl>      jul-to-slf4j
+</span></span><span class=line><span class=cl>        slf4j-api
+</span></span><span class=line><span class=cl>      log4j-over-slf4j
+</span></span><span class=line><span class=cl>        slf4j-api
+</span></span><span class=line><span class=cl>    spring-core
+</span></span><span class=line><span class=cl>    snakeyaml
+</span></span><span class=line><span class=cl>  spring-boot-starter-tomcat
+</span></span><span class=line><span class=cl>    tomcat-embed-core
+</span></span><span class=line><span class=cl>    tomcat-embed-el
+</span></span><span class=line><span class=cl>    tomcat-embed-websocket
+</span></span><span class=line><span class=cl>      tomcat-embed-core
+</span></span><span class=line><span class=cl>  jackson-databind
+</span></span><span class=line><span class=cl>  ...
+</span></span></code></pre></td></tr></table></div></div><p>If we try to manually manage these dependencies ourselves, it is extremely time-consuming, laborious, and the probability of errors is very high.</p><h3 id=dependency-relationships>Dependency Relationships</h3><p>Maven defines several dependency relationships, namely <code>compile</code>, <code>test</code>, <code>runtime</code>, and <code>provided</code>:</p><div class=table-wrapper><table><thead><tr><th>scope</th><th>Description</th><th>Example</th></tr></thead><tbody><tr><td>compile</td><td>This jar package is needed during compilation (default)</td><td>commons-logging</td></tr><tr><td>test</td><td>This jar package is needed when compiling tests</td><td>junit</td></tr><tr><td>runtime</td><td>Not needed during compilation, but required at runtime</td><td>mysql</td></tr><tr><td>provided</td><td>Needed during compilation, but provided by JDK or a server at runtime</td><td>servlet-api</td></tr></tbody></table></div><p>Among them, the default <code>compile</code> is the most commonly used, and Maven will place dependencies of this type directly into the classpath.</p><p><code>test</code> dependencies indicate they are only used during testing and are not needed during normal execution. The most common <code>test</code> dependency is JUnit:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>org.junit.jupiter<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>junit-jupiter-api<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>5.3.2<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;scope&gt;</span>test<span class=nt>&lt;/scope&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>runtime</code> dependencies indicate they are not needed during compilation but are required at runtime. The most typical <code>runtime</code> dependencies are JDBC drivers, such as the MySQL driver:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>mysql<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>mysql-connector-java<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>5.1.48<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;scope&gt;</span>runtime<span class=nt>&lt;/scope&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>provided</code> dependencies indicate they are needed during compilation but not at runtime. The most typical <code>provided</code> dependency is the Servlet API, which is needed during compilation; however, at runtime, the Servlet server has built-in related jars, so they are not needed during the execution phase:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>jakarta.servlet<span class=nt>&lt;/groupId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>jakarta.servlet-api<span class=nt>&lt;/artifactId&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>4.0.0<span class=nt>&lt;/version&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;scope&gt;</span>provided<span class=nt>&lt;/scope&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>The last question is, how does Maven know where to download the required dependencies? That is, the related jar packages? The answer is that Maven maintains a central repository (<a class=link href=https://repo1.maven.org/ target=_blank rel=noopener>repo1.maven.org</a>), where all third-party libraries upload their own jars and related information. Maven can download the required dependencies from the central repository to the local machine.</p><p>Maven does not download jar packages from the central repository every time. Once a jar package has been downloaded, it is automatically cached by Maven in a local directory (the <code>.m2</code> directory in the user&rsquo;s home directory). Therefore, apart from the first compilation being relatively slow due to the time needed for downloading, subsequent processes will not repeatedly download the same jar packages because of the local cache.</p><h4 id=unique-id>Unique ID</h4><p>For any given dependency, Maven only needs 3 variables to uniquely identify a jar package:</p><ul><li>groupId: The name of the organization it belongs to, similar to a Java package name;</li><li>artifactId: The name of the jar package itself, similar to a Java class name;</li><li>version: The version of the jar package.</li></ul><p>Through the above 3 variables, a certain jar package can be uniquely determined. Maven ensures that any jar package cannot be modified once published by performing PGP signing on the jar packages. The only way to modify a published jar package is to publish a new version.</p><p>Therefore, once a jar package has been downloaded by Maven, it can be permanently and safely cached locally.</p><p>Note: Only version numbers ending with <code>-SNAPSHOT</code> are regarded by Maven as development versions. Development versions are repeatedly downloaded every time. Such SNAPSHOT versions can only be used in internal private Maven repos, and publicly published versions are not allowed to be SNAPSHOTs.</p><blockquote><p>Henceforth, when we represent Maven dependencies, we use the abbreviated form groupId:artifactId:version, for example: org.slf4j:slf4j-api:2.0.4.</p></blockquote><h4 id=maven-mirrors>Maven Mirrors</h4><p>Besides downloading from Maven&rsquo;s central repository, you can also download from Maven mirror repositories. If accessing Maven&rsquo;s central repository is very slow, we can choose a faster Maven mirror repository. Maven mirror repositories synchronize periodically from the central repository:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>           slow    ┌───────────────────┐
+</span></span><span class=line><span class=cl>    ┌─────────────▶│Maven Central Repo.│
+</span></span><span class=line><span class=cl>    │              └───────────────────┘
+</span></span><span class=line><span class=cl>    │                        │
+</span></span><span class=line><span class=cl>    │                        │sync
+</span></span><span class=line><span class=cl>    │                        ▼
+</span></span><span class=line><span class=cl>┌───────┐  fast    ┌───────────────────┐
+</span></span><span class=line><span class=cl>│ User  │─────────▶│Maven Mirror Repo. │
+</span></span><span class=line><span class=cl>└───────┘          └───────────────────┘
+</span></span></code></pre></td></tr></table></div></div><p>Users in the China region can use the Maven mirror repository provided by Alibaba Cloud. Using a Maven mirror repository requires configuration. In the user&rsquo;s home directory, enter the <code>.m2</code> directory and create a <code>settings.xml</code> configuration file with the following content:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;settings&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;mirrors&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&lt;mirror&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;id&gt;</span>aliyun<span class=nt>&lt;/id&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;name&gt;</span>aliyun<span class=nt>&lt;/name&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;mirrorOf&gt;</span>central<span class=nt>&lt;/mirrorOf&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=c>&lt;!-- Alibaba Cloud&#39;s Maven mirror is recommended in China --&gt;</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&lt;url&gt;</span>https://maven.aliyun.com/repository/central<span class=nt>&lt;/url&gt;</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&lt;/mirror&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;/mirrors&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/settings&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>After configuring the mirror repository, Maven&rsquo;s downloading speed will be very fast.</p><h4 id=searching-for-third-party-components>Searching for Third-Party Components</h4><p>The final question: if we want to reference a third-party component, such as <code>okhttp</code>, how do we exactly acquire its <code>groupId</code>, <code>artifactId</code>, and <code>version</code>? The method is to search for keywords via <a class=link href=https://search.maven.org/ target=_blank rel=noopener>search.maven.org</a>. After finding the corresponding component, directly copy it.</p><h4 id=command-line-compilation>Command Line Compilation</h4><p>In the command line, navigate to the directory where <code>pom.xml</code> is located, and enter the following command:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-plain data-lang=plain><span class=line><span class=cl>$ mvn clean package
+</span></span></code></pre></td></tr></table></div></div><p>If everything goes smoothly, you can obtain the automatically packaged jar after compilation in the <code>target</code> directory.</p><h4 id=using-maven-in-an-ide>Using Maven in an IDE</h4><p>Almost all IDEs have built-in support for Maven. In Eclipse, you can directly create or import a Maven project. If the imported Maven project has errors, you can try selecting the project, right-clicking, and choosing Maven - Update Project&mldr; to update it.</p><h4 id=summary-1>Summary</h4><p>Maven determines the jar packages required by the project through parsing dependency relationships. The 4 commonly used <code>scope</code>s are: <code>compile</code> (default), <code>test</code>, <code>runtime</code>, and <code>provided</code>;</p><p>Maven downloads the required jar packages from the central repository and caches them locally;</p><p>Downloading can be accelerated through mirror repositories.</p><hr><h3 id=build-process>Build Process</h3><p>Maven not only has a standardized project structure, but it also has a standardized build process that can automatically automate compiling, packaging, publishing, and more.</p><h4 id=lifecycle-and-phase>Lifecycle and Phase</h4><p>When using Maven, we first need to understand what Maven&rsquo;s lifecycle is.</p><p>Maven&rsquo;s lifecycle consists of a series of phases. Taking the built-in lifecycle <code>default</code> as an example, it includes the following phases:</p><ul><li>validate</li><li>initialize</li><li>generate-sources</li><li>process-sources</li><li>generate-resources</li><li>process-resources</li><li>compile</li><li>process-classes</li><li>generate-test-sources</li><li>process-test-sources</li><li>generate-test-resources</li><li>process-test-resources</li><li>test-compile</li><li>process-test-classes</li><li>test</li><li>prepare-package</li><li>package</li><li>pre-integration-test</li><li>integration-test</li><li>post-integration-test</li><li>verify</li><li>install</li><li>deploy</li></ul><p>If we run <code>mvn package</code>, Maven will execute the <code>default</code> lifecycle, and it will run consistently from the beginning up until the <code>package</code> phase:</p><ul><li>validate</li><li>initialize</li><li>&mldr;</li><li>prepare-package</li><li>package</li></ul><p>If we run <code>mvn compile</code>, Maven will also execute the <code>default</code> lifecycle, but this time it will only run up to <code>compile</code>, namely the following phases:</p><ul><li>validate</li><li>initialize</li><li>&mldr;</li><li>process-resources</li><li>compile</li></ul><p>Another commonly used lifecycle in Maven is <code>clean</code>, which executes 3 phases:</p><ul><li>pre-clean</li><li>clean (note that this clean is a phase, not a lifecycle)</li><li>post-clean</li></ul><p>Therefore, when we use the <code>mvn</code> command, the parameter following it is a phase, and Maven automatically runs up to the specified phase according to the lifecycle.</p><p>A more complex example is specifying multiple phases. For example, running <code>mvn clean package</code>, Maven first executes the <code>clean</code> lifecycle and runs up to the <code>clean</code> phase, then it executes the <code>default</code> lifecycle and runs up to the <code>package</code> phase. The actually executed phases are as follows:</p><ul><li>pre-clean</li><li>clean (note that this clean is a phase)</li><li>validate (starts executing the first phase of the default lifecycle)</li><li>initialize</li><li>&mldr;</li><li>prepare-package</li><li>package</li></ul><p>During the actual development process, frequently used commands include:</p><p><code>mvn clean</code>: Cleans up all generated classes and jars;</p><p><code>mvn clean compile</code>: Cleans first, then executes up to <code>compile</code>;</p><p><code>mvn clean test</code>: Cleans first, then executes up to <code>test</code>. Because <code>compile</code> must be executed before executing <code>test</code>, there is no need to specify <code>compile</code> here;</p><p><code>mvn clean package</code>: Cleans first, then executes up to <code>package</code>.</p><p>During the execution process of most phases, because we usually do not configure related settings in <code>pom.xml</code>, these phases effectively do nothing.</p><p>The phases that are frequently used are actually only a few:</p><ul><li>clean: clean up</li><li>compile: compile</li><li>test: run tests</li><li>package: package</li></ul><h4 id=goal>Goal</h4><p>Executing a phase subsequently triggers one or multiple goals:</p><div class=table-wrapper><table><thead><tr><th>Executed Phase</th><th>Corresponding Executed Goal</th></tr></thead><tbody><tr><td>compile</td><td>compiler:compile</td></tr><tr><td>test</td><td>compiler:testCompile surefire:test</td></tr></tbody></table></div><p>The naming of a goal always takes the format of <code>abc:xyz</code>.</p><p>Actually, if we draw an analogy, it becomes clear:</p><ul><li>lifecycle is equivalent to a Java package; it contains one or multiple phases;</li><li>phase is equivalent to a Java class; it contains one or multiple goals;</li><li>goal is equivalent to a class method; it is actually the one doing the real work.</li></ul><p>In most cases, we simply specify the phase, and it defaults to executing the goals bound by default to these phases. Only in a few instances do we directly specify running a goal, for example, starting a Tomcat server:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-plain data-lang=plain><span class=line><span class=cl>$ mvn tomcat:run
+</span></span></code></pre></td></tr></table></div></div><h4 id=summary-2>Summary</h4><p>Maven provides a standard build process through lifecycles, phases, and goals.</p><p>The most commonly used build command entails specifying a phase, subsequently allowing Maven to execute up to the designated phase:</p><ul><li>mvn clean</li><li>mvn clean compile</li><li>mvn clean test</li><li>mvn clean package</li></ul><p>Normally, we always execute the goals natively bound by default to the phase, so it is unnecessary to specify the goal.</p><hr></section><footer class="article-meta article-footer"><section class=article-tags><a href=/en/tags/java/>Java</a>
+<a href=/en/tags/project-management/>Project Management</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title>Related content</h2><div class=subsection-list><div class=article-list--tile><article><a href=/en/p/java-multithreading/><div class=article-details><h2 class=article-title>Java Multithreading</h2></div></a></article><article><a href=/en/p/redis/><div class=article-details><h2 class=article-title>Redis</h2></div></a></article><article><a href=/en/p/mysql/><div class=article-details><h2 class=article-title>MySQL</h2></div></a></article><article><a href=/en/p/synology-nas-proxy-and-emby-configuration/><div class=article-details><h2 class=article-title>Synology NAS Proxy and Emby Configuration</h2></div></a></article><article><a href=/en/p/how-to-use-host-proxy-on-wsl2/><div class=article-details><h2 class=article-title>How to Use Host Proxy on WSL2</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 ottercoconut's Blog</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=4.0.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><script type=module>
     import gallery from '\/ts\/gallery.js';
 
     const articleContent = document.querySelector('.article-content');
@@ -1223,14 +269,4 @@
         });
         lightbox.init();
     }
-</script>
-    
-
-            </main>
-        </div>
-        
-<script type="text/javascript" src="/ts/main.cb7a123540d26af6863483a994e00134749a05b073820fd7c04b3a3c15b4f89c.js" defer></script>
-
-
-    </body>
-</html>
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>
