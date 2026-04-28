@@ -1,0 +1,605 @@
+<!doctype html><html lang=zh-CN dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="读懂 Python asyncio：协程与任务 本文基于 Python 3.11 的asyncio ，可能会缺失最新版本的特性\nasyncio 是用来编写 并发 代码的库，使用 async/await 语法。其被用作多个提供高性能 Python 异步框架的基础，包括网络和网站服务，数据库连接库，分布式任务队列等等。也往往是构建 IO 密集型和高层级 结构化 网络代码的最佳选择。\n"><title>读懂 Python asyncio：协程与任务</title><link rel=canonical href=https://ottercoconut.github.io/p/%E8%AF%BB%E6%87%82-python-asyncio%E5%8D%8F%E7%A8%8B%E4%B8%8E%E4%BB%BB%E5%8A%A1/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="读懂 Python asyncio：协程与任务"><meta property='og:description' content="读懂 Python asyncio：协程与任务 本文基于 Python 3.11 的asyncio ，可能会缺失最新版本的特性\nasyncio 是用来编写 并发 代码的库，使用 async/await 语法。其被用作多个提供高性能 Python 异步框架的基础，包括网络和网站服务，数据库连接库，分布式任务队列等等。也往往是构建 IO 密集型和高层级 结构化 网络代码的最佳选择。\n"><meta property='og:url' content='https://ottercoconut.github.io/p/%E8%AF%BB%E6%87%82-python-asyncio%E5%8D%8F%E7%A8%8B%E4%B8%8E%E4%BB%BB%E5%8A%A1/'><meta property='og:site_name' content='边个濑椰的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Python'><meta property='article:tag' content='asyncio'><meta property='article:published_time' content='2026-04-23T16:08:00+08:00'><meta property='article:modified_time' content='2026-04-23T16:08:00+08:00'><meta name=twitter:title content="读懂 Python asyncio：协程与任务"><meta name=twitter:description content="读懂 Python asyncio：协程与任务 本文基于 Python 3.11 的asyncio ，可能会缺失最新版本的特性\nasyncio 是用来编写 并发 代码的库，使用 async/await 语法。其被用作多个提供高性能 Python 异步框架的基础，包括网络和网站服务，数据库连接库，分布式任务队列等等。也往往是构建 IO 密集型和高层级 结构化 网络代码的最佳选择。\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>边个濑椰的博客</a></h1><h2 class=site-description>人生如一梦，一梦换须臾，须臾待流年，流年似崆蒙</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>首页</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/%E8%AF%BB%E6%87%82-python-asyncio%E5%8D%8F%E7%A8%8B%E4%B8%8E%E4%BB%BB%E5%8A%A1/ selected>简体中文</option><option value=/en/>English</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/ style=background-color:#e7beef;color:#360f3d>后端开发</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E8%AF%BB%E6%87%82-python-asyncio%E5%8D%8F%E7%A8%8B%E4%B8%8E%E4%BB%BB%E5%8A%A1/>读懂 Python asyncio：协程与任务</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-04-23T16:08:00+08:00>Thursday, April 23, 2026</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><section class=article-content><h1 id=读懂-python-asyncio协程与任务>读懂 Python asyncio：协程与任务</h1><blockquote><p>本文基于 <em>Python 3.11</em> 的asyncio ，可能会缺失最新版本的特性</p></blockquote><p>asyncio 是用来编写 <strong>并发</strong> 代码的库，使用 <code>async</code>/<code>await</code> 语法。其被用作多个提供高性能 Python 异步框架的基础，包括网络和网站服务，数据库连接库，分布式任务队列等等。也往往是构建 IO 密集型和高层级 <strong>结构化</strong> 网络代码的最佳选择。</p><p><code>asyncio</code> 提供一组 <strong>高层级</strong> API 用于:</p><ul><li>并发地 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#coroutine target=_blank rel=noopener>运行 Python 协程</a> 并对其执行过程实现完全控制;</li><li>执行 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-stream.html#asyncio-streams target=_blank rel=noopener>网络 IO 和 IPC</a>;</li><li>控制 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-subprocess.html#asyncio-subprocess target=_blank rel=noopener>子进程</a>;</li><li>通过 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-queue.html#asyncio-queues target=_blank rel=noopener>队列</a> 实现分布式任务;</li><li><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-sync.html#asyncio-sync target=_blank rel=noopener>同步</a> 并发代码;</li></ul><h2 id=参考网站>参考网站</h2><p><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html target=_blank rel=noopener>协程与任务 — Python 3.11.15 文档</a></p><p><a class=link href=https://www.runoob.com/python3/python-asyncio.html target=_blank rel=noopener>Python asyncio 模块 | 菜鸟教程</a></p><p><a class=link href=https://liaoxuefeng.com/books/python/async-io/coroutine/index.html target=_blank rel=noopener>协程 - Python教程 - 廖雪峰的官方网站</a></p><h2 id=协程>协程</h2><p>源码：<a class=link href=https://github.com/python/cpython/blob/3.11/Lib/asyncio/coroutines.py target=_blank rel=noopener>cpython/Lib/asyncio/coroutines.py at 3.11</a></p><p>通过 <code>async</code>/<code>await</code> 语法来声明协程是编写 asyncio 应用的推荐方式。 例如，以下代码段会打印 &ldquo;hello&rdquo;，等待 1 秒，再打印 &ldquo;world&rdquo;：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl><span class=o>...</span>    <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;hello&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>...</span>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>...</span>    <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;world&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=n>hello</span>
+</span></span><span class=line><span class=cl><span class=n>world</span>
+</span></span></code></pre></td></tr></table></div></div><p>注意：简单地调用一个协程并不会使其被调度执行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>main</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=n>coroutine</span> <span class=nb>object</span> <span class=n>main</span> <span class=n>at</span> <span class=mh>0x1053bb7c8</span><span class=o>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>要实际运行一个协程，asyncio 提供了以下几种机制:</p><ul><li><p><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-runner.html#asyncio.run target=_blank rel=noopener><code>asyncio.run()</code></a> 函数用来运行最高层级的入口点 &ldquo;main()&rdquo; 函数 (参见上面的示例。)</p></li><li><p>对协程执行 await。以下代码段会在等待 1 秒后打印 &ldquo;hello&rdquo;，然后 <em>再次</em> 等待 2 秒后打印 &ldquo;world&rdquo;：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>time</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>say_after</span><span class=p>(</span><span class=n>delay</span><span class=p>,</span> <span class=n>what</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=n>delay</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>what</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;started at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>say_after</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=s1>&#39;hello&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>say_after</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s1>&#39;world&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;finished at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>预期输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>started</span> <span class=n>at</span> <span class=mi>17</span><span class=p>:</span><span class=mi>13</span><span class=p>:</span><span class=mi>52</span>
+</span></span><span class=line><span class=cl><span class=n>hello</span>
+</span></span><span class=line><span class=cl><span class=n>world</span>
+</span></span><span class=line><span class=cl><span class=n>finished</span> <span class=n>at</span> <span class=mi>17</span><span class=p>:</span><span class=mi>13</span><span class=p>:</span><span class=mi>55</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.create_task target=_blank rel=noopener><code>asyncio.create_task()</code></a> 函数用来并发运行作为 asyncio <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task target=_blank rel=noopener><code>任务</code></a> 的多个协程。</p><p>让我们修改以上示例，<em>并发</em> 运行两个 <code>say_after</code> 协程:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>task1</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>say_after</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=s1>&#39;hello&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>task2</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>say_after</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s1>&#39;world&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;started at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Wait until both tasks are completed (should take</span>
+</span></span><span class=line><span class=cl>    <span class=c1># around 2 seconds.)</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>task1</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>task2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;finished at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.TaskGroup target=_blank rel=noopener><code>asyncio.TaskGroup</code></a> 类提供了 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.create_task target=_blank rel=noopener><code>create_task()</code></a> 的更现代化的替代。 使用此 API，之前的例子将变为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>async</span> <span class=k>with</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>TaskGroup</span><span class=p>()</span> <span class=k>as</span> <span class=n>tg</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>task1</span> <span class=o>=</span> <span class=n>tg</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>say_after</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=s1>&#39;hello&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>task2</span> <span class=o>=</span> <span class=n>tg</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>say_after</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s1>&#39;world&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;started at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># The await is implicit when the context manager exits.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;finished at </span><span class=si>{</span><span class=n>time</span><span class=o>.</span><span class=n>strftime</span><span class=p>(</span><span class=s1>&#39;</span><span class=si>%X</span><span class=s1>&#39;</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>现在看来，<code>asyncio.create_task()</code> 和 <code>asyncio.TaskGroup</code> 最大的区别在于是否需要手动等待(<code>await</code>)，其它的特性详见后文。</p></li></ul><h2 id=可等待对象>可等待对象</h2><p>如果一个对象可以在 <a class=link href=https://docs.python.org/zh-cn/3.11/reference/expressions.html#await target=_blank rel=noopener><code>await</code></a> 语句中使用，那么它就是 <strong>可等待</strong> 对象。许多 asyncio API 都被设计为接受可等待对象。</p><p><em>可等待</em> 对象有三种主要类型: <strong>协程</strong>，<strong>任务</strong>和<strong>Future</strong>。</p><ul><li><p><strong>协程</strong></p><p>Python 协程属于 <em>可等待</em> 对象，因此可以在其他协程中被等待：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>nested</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>42</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Nothing happens if we just call &#34;nested()&#34;.</span>
+</span></span><span class=line><span class=cl>    <span class=c1># A coroutine object is created but not awaited,</span>
+</span></span><span class=line><span class=cl>    <span class=n>nested</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=k>await</span> <span class=n>nested</span><span class=p>())</span>  <span class=c1># will print &#34;42&#34;.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>在本文档中 &ldquo;协程&rdquo; 可用来表示两个紧密关联的概念:</p><ul><li><em>协程函数</em>: 定义形式为 <a class=link href=https://docs.python.org/zh-cn/3.11/reference/compound_stmts.html#async-def target=_blank rel=noopener><code>async def</code></a> 的函数;</li><li><em>协程对象</em>: 调用 <em>协程函数</em> 所返回的对象。</li></ul></blockquote></li><li><p><strong>任务</strong></p><p><em>任务</em> 被用来“并行的”调度协程</p><p>当一个协程通过 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.create_task target=_blank rel=noopener><code>asyncio.create_task()</code></a> 等函数被封装为一个 <em>任务</em>，该协程会被自动调度执行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>nested</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>42</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Schedule nested() to run soon concurrently</span>
+</span></span><span class=line><span class=cl>    <span class=c1># with &#34;main()&#34;.</span>
+</span></span><span class=line><span class=cl>    <span class=n>task</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>nested</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># &#34;task&#34; can now be used to cancel &#34;nested()&#34;, or</span>
+</span></span><span class=line><span class=cl>    <span class=c1># can simply be awaited to wait until it is complete:</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>task</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>当用 <code>create_task()</code> 把一个协程包装成任务后，中途不想让这个任务继续执行了，就可以 <code>task.cancel()</code> 将其中止，它会在 <code>nested()</code> 下一次遇到 <code>await</code> 时，注入一个 <code>asyncio.CancelledError</code> 异常，详见<a class=link href=#%e4%bb%bb%e5%8a%a1%e5%8f%96%e6%b6%88>任务取消</a>节。</p><p>当 <code>task = asyncio.create_task(nested())</code> 执行后，<code>nested()</code> 自动开始运行，如果不写 <code>await task</code> ，<code>main()</code>通常结束得更快，导致 <code>nested()</code> 尚未运行完，协程就已经结束了。</p><p>由于其重要性，详细用法见<a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#id15 target=_blank rel=noopener>Task对象</a>。</p></li><li><p><strong>Futures</strong></p><p><a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-future.html#asyncio.Future target=_blank rel=noopener><code>Future</code></a> 是一种特殊的 <strong>低层级</strong> 可等待对象，表示一个异步操作的 <strong>最终结果</strong>。</p><p>当一个 Future 对象 <em>被等待</em>，这意味着协程将保持等待直到该 Future 对象在其他地方操作完毕。</p><p>在 asyncio 中需要 Future 对象以便允许通过 async/await 使用基于回调的代码。</p><p>通常情况下 <strong>没有必要</strong> 在应用层级的代码中创建 Future 对象。</p><p>Future 对象有时会由库和某些 asyncio API 暴露给用户，用作可等待对象：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>function_that_returns_a_future_object</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># this is also valid:</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>gather</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>function_that_returns_a_future_object</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl>        <span class=n>some_python_coroutine</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>一个很好的返回对象的低层级函数的示例是 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-eventloop.html#asyncio.loop.run_in_executor target=_blank rel=noopener><code>loop.run_in_executor()</code></a>。</p></li></ul><h2 id=休眠>休眠</h2><p><code>coroutine asyncio.sleep(delay, result=None)</code></p><p>阻塞 <em>delay</em> 指定的秒数。</p><p>如果指定了 <em>result</em>，则当协程完成时将其返回给调用者。</p><p><code>sleep()</code> 总是会<strong>挂起</strong>当前任务，以允许其他任务运行。</p><p>将 delay 设为 0 将提供一个经优化的路径以允许其他任务运行。 这可<strong>供长期间运行的函数使用</strong>以避免在函数调用的全过程中阻塞事件循环。</p><p>比如调用 <code>await asyncio.sleep(0)</code> 时：</p><ol><li><strong>当前任务挂起：</strong> 你的函数暂时停止执行，保存当前的寄存器和栈状态。</li><li><strong>排到队尾：</strong> 该任务并没有被放进“等待计时器”的名单，而是直接被放回了 Ready Queue 的末尾。</li><li><strong>循环轮转：</strong> 事件循环从 Ready Queue 的<strong>头部</strong>取出下一个任务开始运行。</li></ol><p>以下协程示例运行 5 秒，每秒显示一次当前日期：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>datetime</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>display_date</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>loop</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>get_running_loop</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=n>end_time</span> <span class=o>=</span> <span class=n>loop</span><span class=o>.</span><span class=n>time</span><span class=p>()</span> <span class=o>+</span> <span class=mf>5.0</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=o>.</span><span class=n>now</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>loop</span><span class=o>.</span><span class=n>time</span><span class=p>()</span> <span class=o>+</span> <span class=mf>1.0</span><span class=p>)</span> <span class=o>&gt;=</span> <span class=n>end_time</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>display_date</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=创建任务>创建任务</h2><p>源码：<a class=link href=https://github.com/python/cpython/blob/3.11/Lib/asyncio/tasks.py target=_blank rel=noopener>cpython/Lib/asyncio/tasks.py at 3.11</a></p><p><code>asyncio.create_task(coro, *, name=None, context=None)</code></p><p>将 <em>coro</em> <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#coroutine target=_blank rel=noopener>协程</a> 封装为一个 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task target=_blank rel=noopener><code>Task</code></a> 并调度其执行。返回 Task 对象。</p><p><em>name</em> 不为 <code>None</code>，它将使用 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task.set_name target=_blank rel=noopener><code>Task.set_name()</code></a> 来设为任务的名称。</p><p>可选的 <em>context</em> 参数允许指定自定义的 <a class=link href=https://docs.python.org/zh-cn/3.11/library/contextvars.html#contextvars.Context target=_blank rel=noopener><code>contextvars.Context</code></a> 供 <em>coro</em> 运行。 当未提供 <em>context</em> 时将创建当前上下文的副本。</p><p>该任务会在 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-eventloop.html#asyncio.get_running_loop target=_blank rel=noopener><code>get_running_loop()</code></a> 返回的循环中执行，如果当前线程没有在运行的循环则会引发 <a class=link href=https://docs.python.org/zh-cn/3.11/library/exceptions.html#RuntimeError target=_blank rel=noopener><code>RuntimeError</code></a>。</p><blockquote><p>保存一个指向此函数的结果的引用，以避免任务在执行过程中消失。 事件循环将只保留对任务的弱引用。 未在其他地方被引用的任务可能在任何时候被作为垃圾回收，即使是在它被完成之前。 如果需要可靠的“发射后不用管”后台任务，请将它们放到一个多项集中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>background_tasks</span> <span class=o>=</span> <span class=nb>set</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>10</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>task</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>some_coro</span><span class=p>(</span><span class=n>param</span><span class=o>=</span><span class=n>i</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># Add task to the set. This creates a strong reference.</span>
+</span></span><span class=line><span class=cl>    <span class=n>background_tasks</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>task</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># To prevent keeping references to finished tasks forever,</span>
+</span></span><span class=line><span class=cl>    <span class=c1># make each task remove its own reference from the set after</span>
+</span></span><span class=line><span class=cl>    <span class=c1># completion:</span>
+</span></span><span class=line><span class=cl>    <span class=n>task</span><span class=o>.</span><span class=n>add_done_callback</span><span class=p>(</span><span class=n>background_tasks</span><span class=o>.</span><span class=n>discard</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div></blockquote><p>这段文档触及了Python的“事件循环”和“垃圾回收”机制，下面简单解释一下，具体的学习可能会单独写篇文章：</p><h3 id=事件循环>事件循环</h3><p>为什么 <code>asyncio</code> 的事件循环（Event Loop）只对 Task 对象保留弱引用 <code>weakref</code> ？这是出于<strong>防止内存泄漏的防御性设计</strong>。</p><p>事件循环是一个长期运行的底层死循环（通常伴随整个进程的生命周期）。如果事件循环内部维护一个强引用列表来追踪所有被 <code>create_task()</code> 启动的后台任务：</p><ol><li>那些执行完毕或被取消的任务，必须由事件循环主动去清理它们。</li><li>如果清理机制存在任何延迟或缺陷，或者开发者创建了海量的“发射后不管”任务，事件循环的内部列表会无限膨胀，最终导致内存溢出 (OOM)。</li></ol><p>因此，<code>asyncio</code> 制定了明确的契约：<strong>事件循环只负责“调度”协程，不负责“维持” Task 对象的生命周期。</strong> 维持 Task 生命周期的责任被完全移交给了调用方（开发者）。事件循环通过弱引用来追踪任务状态，一旦调用方丢失了对 Task 的强引用，事件循环不会阻止该 Task 被销毁。</p><h3 id=垃圾回收>垃圾回收</h3><p>Python 会在底层追踪每一个内存对象被引用了多少次。根据引用状态的不同，GC (Garbage Collection) 的处理逻辑如下：</p><ul><li><p><strong>处理强引用对象</strong></p><p>当你将一个对象赋值给一个变量（如 <code>a = MyObject()</code>），或者将其加入到列表、字典等数据结构中时，就创建了一个强引用。那么该对象的内部属性“引用计数”会加 1。</p><p>只要一个对象的引用计数<strong>大于 0</strong>，垃圾回收机制就会判定该对象正在被使用。GC 会完全忽略它，确保其在内存中安全存活。</p></li><li><p><strong>处理非强引用对象</strong></p><p>当变量的作用域结束、变量被重新赋值，或者使用 <code>del</code> 显式删除变量时，原对象的强引用就会解除。此外，使用 <code>weakref</code> 模块创建的“弱引用”也属于非强引用。强引用的解除会导致对象的引用计数减 1。弱引用虽然指向该对象，但<strong>不会</strong>增加对象的引用计数。</p><p>一旦对象的强引用计数<strong>降为 0</strong>：</p><ol><li>GC 会<strong>立即</strong>介入，调用该对象的析构方法（<code>__del__</code>）。</li><li>立即释放该对象占用的内存空间。</li><li>所有指向该对象的弱引用会自动失效（返回值变为 <code>None</code>）。</li></ol><blockquote><p>如果两个对象互相强引用对方，导致计数永远不为 0，Python 的辅助机制“分代回收器”会定期扫描并销毁这种无法被外部访问的孤立对象簇。</p></blockquote></li></ul><h3 id=上下文变量>上下文变量</h3><p><code>create_task()</code> 的 <code>context</code> 参数是用来解决异步并发下**“数据隔离与传递”**的。默认（多数）情况下它会自动复印当前状态，保证子任务能拿到父任务的上下文数据；如果想阻断这种继承，就可以手动传一个自定义的 <code>context</code> 进去。</p><p>还需注意，上下文变量并不是在协程内部创建，而一般是在全局创建。下面只做一个简单示例，更复杂的内容（比如子协程临时修改上下文变量）可能要单独写篇文章：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>contextvars</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 1. 【全局】创建一个名为 &#39;user_id&#39; 的上下文变量（类似一把钥匙</span>
+</span></span><span class=line><span class=cl><span class=c1># 这把钥匙是专门用来存储和检索当前任务相关的数据的）</span>
+</span></span><span class=line><span class=cl><span class=n>user_id_var</span> <span class=o>=</span> <span class=n>contextvars</span><span class=o>.</span><span class=n>ContextVar</span><span class=p>(</span><span class=s1>&#39;user_id&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>write_log</span><span class=p>(</span><span class=n>action</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 3. 【底层函数】获取当前任务对应的 &#39;user_id&#39;（每个任务都有自己独立的“背包”）</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 张三的任务获取的是张三，李四的任务获取的是李四</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_user</span> <span class=o>=</span> <span class=n>user_id_var</span><span class=o>.</span><span class=n>get</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;[</span><span class=si>{</span><span class=n>current_user</span><span class=si>}</span><span class=s2>] 执行了操作: </span><span class=si>{</span><span class=n>action</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>handle_request</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 2. 【顶层入口】设置当前任务的 &#39;user_id&#39;（将数据放入当前任务的“背包”）</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 这里我们把用户名称（如张三或李四）赋值给当前任务的上下文变量</span>
+</span></span><span class=line><span class=cl>    <span class=n>user_id_var</span><span class=o>.</span><span class=n>set</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 模拟复杂的操作过程，任务间不需要传递数据！直接使用上下文变量。</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>write_log</span><span class=p>(</span><span class=s2>&#34;登录系统&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>  <span class=c1># 模拟任务的并发执行，控制权被交出</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>write_log</span><span class=p>(</span><span class=s2>&#34;退出系统&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 并发执行两个请求任务，确保每个任务独立，不会互相干扰</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 即使任务交替执行，上下文数据（如 &#39;user_id&#39;）也会保持准确</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>gather</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>handle_request</span><span class=p>(</span><span class=s2>&#34;张三&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>handle_request</span><span class=p>(</span><span class=s2>&#34;李四&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 运行主程序，启动异步任务</span>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 输出结果（交替打印，但每个任务的输出始终正确，保持隔离）：</span>
+</span></span><span class=line><span class=cl><span class=c1># [张三] 执行了操作: 登录系统</span>
+</span></span><span class=line><span class=cl><span class=c1># [李四] 执行了操作: 登录系统</span>
+</span></span><span class=line><span class=cl><span class=c1># [张三] 执行了操作: 退出系统</span>
+</span></span><span class=line><span class=cl><span class=c1># [李四] 执行了操作: 退出系统</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=并发运行任务>并发运行任务</h2><p>当多个协程之间没有依赖关系时，我们通常不希望它们一个接一个执行，而是希望它们同时开始，谁需要等待 I/O，谁就把控制权交还给事件循环，让其他任务继续运行。</p><p><code>asyncio.gather()</code> 就适合这种场景：<strong>并发运行一组可等待对象，并在它们全部完成后，一次性拿到结果。</strong></p><p>比如下面这个例子中，<code>factorial("A", 2)</code>、<code>factorial("B", 3)</code> 和 <code>factorial("C", 4)</code> 彼此之间没有依赖，因此可以并发执行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>factorial</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>number</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>f</span> <span class=o>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=n>number</span> <span class=o>+</span> <span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Task </span><span class=si>{</span><span class=n>name</span><span class=si>}</span><span class=s2>: Compute factorial(</span><span class=si>{</span><span class=n>number</span><span class=si>}</span><span class=s2>), currently i=</span><span class=si>{</span><span class=n>i</span><span class=si>}</span><span class=s2>...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>f</span> <span class=o>*=</span> <span class=n>i</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Task </span><span class=si>{</span><span class=n>name</span><span class=si>}</span><span class=s2>: factorial(</span><span class=si>{</span><span class=n>number</span><span class=si>}</span><span class=s2>) = </span><span class=si>{</span><span class=n>f</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>f</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>L</span> <span class=o>=</span> <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>gather</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;A&#34;</span><span class=p>,</span> <span class=mi>2</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;B&#34;</span><span class=p>,</span> <span class=mi>3</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;C&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>L</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>运行结果大致如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>Task</span> <span class=n>A</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>2</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>2.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>B</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>3</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>2.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>C</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>4</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>2.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>A</span><span class=p>:</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span> <span class=o>=</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>B</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>3</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>3.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>C</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>4</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>3.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>B</span><span class=p>:</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span> <span class=o>=</span> <span class=mi>6</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>C</span><span class=p>:</span> <span class=n>Compute</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>4</span><span class=p>),</span> <span class=n>currently</span> <span class=n>i</span><span class=o>=</span><span class=mf>4.</span><span class=o>..</span>
+</span></span><span class=line><span class=cl><span class=n>Task</span> <span class=n>C</span><span class=p>:</span> <span class=n>factorial</span><span class=p>(</span><span class=mi>4</span><span class=p>)</span> <span class=o>=</span> <span class=mi>24</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>24</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里最值得注意的是：虽然三个任务的打印顺序是交错的，但 <code>gather()</code> 返回结果的顺序仍然和传入顺序一致。</p><p>也就是说：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>L</span> <span class=o>=</span> <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>gather</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;A&#34;</span><span class=p>,</span> <span class=mi>2</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;B&#34;</span><span class=p>,</span> <span class=mi>3</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;C&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>最终得到的是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>[</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>24</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>而不是按照哪个任务先完成来排序。</p><p><code>gather()</code> 有几个常用规则：</p><ol><li>如果传入的是协程对象，它会自动被包装成任务并调度执行。</li><li>如果所有可等待对象都成功完成，返回值是一个列表。</li><li>返回列表的顺序和传入顺序一致。</li><li>如果 <code>gather()</code> 本身被取消，所有尚未完成的任务也会被取消。</li></ol><p>比较容易忽略的是异常处理。</p><p>默认情况下，如果其中某个任务抛出异常，异常会传播给正在 <code>await gather()</code> 的地方。但这并不意味着其他任务一定会立刻停止。对于已经提交给 <code>gather()</code> 的其他可等待对象，它们不会因为其中一个任务抛错就自动取消，而是会继续运行。</p><p>如果你希望把异常也当作结果收集起来，可以使用 <code>return_exceptions=True</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>results</span> <span class=o>=</span> <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>gather</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;A&#34;</span><span class=p>,</span> <span class=mi>2</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;B&#34;</span><span class=p>,</span> <span class=mi>3</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>factorial</span><span class=p>(</span><span class=s2>&#34;C&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>return_exceptions</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这样异常会作为列表中的一个元素返回，调用方需要自己判断哪些结果是正常值，哪些是异常。</p><p>因此，我对 <code>gather()</code> 的理解是：它更像是一个“结果收集器”。当你关心的是“一组任务都跑完之后，各自返回了什么”时，它很合适。</p><p>但如果你更关心的是“一组任务属于同一个生命周期，其中一个失败时其他任务也应该被取消”，那么 Python 3.11 之后更推荐使用 <code>TaskGroup</code>。这也是下一节要讨论的内容。</p><h2 id=任务组>任务组</h2><p>任务组合并了一套用于等待分组中所有任务完成的方便可靠方式的任务创建 API。</p><p><code>class asyncio.TaskGroup</code> : 持有一个任务分组的 <a class=link href=https://docs.python.org/zh-cn/3.11/reference/datamodel.html#async-context-managers target=_blank rel=noopener>异步上下文管理器</a>。 可以使用 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.create_task target=_blank rel=noopener><code>create_task()</code></a> 将任务添加到分组中。 当该上下文管理器退出时所有任务都将被等待。</p><p><code>TaskGroup.create_task(coro, *, name=None, context=None)</code> : 在该任务组中创建一个任务。 其签名与 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.create_task target=_blank rel=noopener><code>asyncio.create_task()</code></a> 的相匹配。</p><p>示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>async</span> <span class=k>with</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>TaskGroup</span><span class=p>()</span> <span class=k>as</span> <span class=n>tg</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>task1</span> <span class=o>=</span> <span class=n>tg</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>some_coro</span><span class=p>(</span><span class=o>...</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=n>task2</span> <span class=o>=</span> <span class=n>tg</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>another_coro</span><span class=p>(</span><span class=o>...</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Both tasks have completed now.&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>async with</code> 语句将等待分组中的所有任务结束。 在等待期间，仍可将新任务添加到分组中 (例如，通过将 <code>tg</code> 传入某个协程并在该协程中调用 <code>tg.create_task()</code>)。 一旦最后的任务完成并退出 <code>async with</code> 代码块，将无法再向分组添加新任务。</p><p>关于其异常处理，文档写的过于繁琐了，总结如下：</p><ul><li>如果任务因非 <code>asyncio.CancelledError</code> 异常失败，其他任务会被取消，且无法再添加任务。</li><li>失败的异常会被包装成 <code>ExceptionGroup</code> 或 <code>BaseExceptionGroup</code>，统一抛出。</li><li>如果任务失败时是 <code>KeyboardInterrupt</code> 或 <code>SystemExit</code>，它们会优先被抛出，而不会归入异常组。</li></ul><p>如果发生取消与等待：</p><ul><li>如果 <code>async with</code> 语句因异常退出，剩余任务会被取消并等待完成。</li><li>异常（除了 <code>CancelledError</code>）会被加入异常组，最终一起抛出。</li></ul><h3 id=异步上下文管理器>异步上下文管理器</h3><p>上面说 <code>TaskGroup</code> 是一个异步上下文管理器，关键就在这一句：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>with</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>TaskGroup</span><span class=p>()</span> <span class=k>as</span> <span class=n>tg</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span></code></pre></td></tr></table></div></div><p>它看起来只是普通的代码块，但实际上 Python 会在进入代码块之前调用 <code>__aenter__()</code>，在离开代码块时调用 <code>__aexit__()</code>。异步上下文管理器和普通上下文管理器的区别是：这两个方法的结果都要被 <code>await</code>。</p><p>可以把 <code>async with</code> 粗略理解成下面的展开形式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>manager</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>TaskGroup</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>tg</span> <span class=o>=</span> <span class=k>await</span> <span class=n>manager</span><span class=o>.</span><span class=fm>__aenter__</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=k>except</span> <span class=ne>BaseException</span> <span class=k>as</span> <span class=n>exc</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>suppress</span> <span class=o>=</span> <span class=k>await</span> <span class=n>manager</span><span class=o>.</span><span class=fm>__aexit__</span><span class=p>(</span><span class=nb>type</span><span class=p>(</span><span class=n>exc</span><span class=p>),</span> <span class=n>exc</span><span class=p>,</span> <span class=n>exc</span><span class=o>.</span><span class=n>__traceback__</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=ow>not</span> <span class=n>suppress</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>raise</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>manager</span><span class=o>.</span><span class=fm>__aexit__</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这段伪代码里有两个重点。</p><p>第一个重点是：<code>__aenter__()</code> 决定进入代码块时要准备什么，以及 <code>as tg</code> 拿到什么。对 <code>TaskGroup</code> 来说，<code>__aenter__()</code> 会让这个任务组进入可用状态，并把任务组对象本身返回给 <code>tg</code>，所以后面才能调用 <code>tg.create_task()</code>。</p><p>第二个重点是：<code>__aexit__()</code> 决定离开代码块时要收尾什么。对 <code>TaskGroup</code> 来说，真正重要的逻辑就在这里：它会等待组里的任务结束；如果有任务失败，它会取消其他任务；最后再把异常整理后抛出。</p><p>这里容易混淆 <code>__aexit__()</code> 和 <code>__await__()</code>。<code>async with</code> 协议本身调用的是 <code>__aenter__()</code> 和 <code>__aexit__()</code>，不是直接调用 <code>__await__()</code>。但由于这两个方法必须返回可等待对象，所以 Python 在执行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>await</span> <span class=n>manager</span><span class=o>.</span><span class=fm>__aexit__</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>时，会走普通 <code>await</code> 表达式的逻辑。对于 <code>async def __aexit__(...)</code> 来说，调用它会得到一个协程对象；这个协程对象本身是可等待对象，底层通过它的 <code>__await__()</code> 交给事件循环驱动执行。</p><p>换句话说，可以这样理解这几层关系：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>async with
+</span></span><span class=line><span class=cl>  -&gt; 调用 __aenter__ / __aexit__
+</span></span><span class=line><span class=cl>  -&gt; await 它们返回的可等待对象
+</span></span><span class=line><span class=cl>  -&gt; 可等待对象通过 __await__ 被事件循环推进
+</span></span></code></pre></td></tr></table></div></div><p>所以 <code>TaskGroup</code> 能在退出代码块时“自动等待所有任务”，并不是因为 <code>async with</code> 天生懂任务组，而是因为 <code>TaskGroup.__aexit__()</code> 把等待、取消和异常整理这些逻辑都写在了退出阶段。</p><h4 id=__aexit__><code>__aexit__()</code></h4><p>当离开 <code>async with</code> 代码块（或者代码块内部发生了错误）时，Python 会自动调用 <code>TaskGroup</code> 的 <code>__aexit__(self, exc_type, exc_value, traceback)</code>。</p><p>它也实现了处理 <code>TaskGroup</code> 中遇到异常等情况的逻辑：</p><ol><li><strong>等待所有任务</strong>：代码块里的语句执行完，并不代表任务组里的任务都结束了。<code>__aexit__()</code> 会在这里等待组里所有任务完成。</li><li><strong>接收代码块异常</strong>：如果 <code>async with</code> 内部本身抛出了异常，<code>exc_type, exc_value, traceback</code> 会把这个异常传进 <code>__aexit__()</code>。</li><li><strong>处理子任务异常</strong>：如果某个子任务抛出了非 <code>CancelledError</code> 异常，<code>TaskGroup</code> 会取消其他还在运行的任务。</li><li><strong>整理异常并抛出</strong>：多个异常会被收集进 <code>ExceptionGroup</code> 或 <code>BaseExceptionGroup</code>，再统一抛给外层代码。</li></ol><p>这也解释了为什么 <code>TaskGroup</code> 比裸用 <code>create_task()</code> 更“结构化”：任务不是散落在事件循环里各跑各的，而是被一个退出阶段统一收束。</p><h2 id=任务取消>任务取消</h2><p>任务可以便捷和安全地取消。 当任务被取消时，<a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>asyncio.CancelledError</code></a> 将在遇到机会时在任务中被引发。</p><p>推荐协程使用 <code>try/finally</code> 代码块来可靠地执行清理逻辑。 对于 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>asyncio.CancelledError</code></a> 被显式捕获的情况，它通常应当在清理完成时被传播。 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>asyncio.CancelledError</code></a> 会直接子类化 <a class=link href=https://docs.python.org/zh-cn/3.11/library/exceptions.html#BaseException target=_blank rel=noopener><code>BaseException</code></a> 因此大多数代码都不需要关心这一点。</p><p>启用结构化并发的 asyncio 组件，如 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.TaskGroup target=_blank rel=noopener><code>asyncio.TaskGroup</code></a> 和 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.timeout target=_blank rel=noopener><code>asyncio.timeout()</code></a>，在内部是使用撤销操作来实现的因而在协程屏蔽了 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>asyncio.CancelledError</code></a> 时可能无法正常工作。 类似地，用户代码通常也不应调用 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task.uncancel target=_blank rel=noopener><code>uncancel</code></a>。 但是，在确实想要屏蔽 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>asyncio.CancelledError</code></a> 的情况下，则还有必要调用 <code>uncancel()</code> 来完全移除撤销状态。</p><h2 id=超时>超时</h2><p>异步程序里，超时不是锦上添花，而是很重要的防御措施。</p><p>比如请求接口、读取文件、等待某个远端服务响应时，如果没有超时限制，一个任务可能会一直挂在那里。它未必占用 CPU，但会占住连接、内存、任务槽位等资源，也会让上层逻辑迟迟拿不到结果。</p><p>在 Python 3.11 里，我更倾向优先使用 <code>asyncio.timeout()</code>。它是一个异步上下文管理器，适合给“一段异步代码”设置时间限制：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>async</span> <span class=k>with</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>timeout</span><span class=p>(</span><span class=mi>10</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=k>await</span> <span class=n>long_running_task</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>TimeoutError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;The long operation timed out, but we&#39;ve handled it.&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;This statement will run regardless.&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里最容易写错的地方是：<code>TimeoutError</code> 要在 <code>async with</code> 外面捕获。</p><p>原因是 <code>asyncio.timeout()</code> 的内部机制大致是：</p><ol><li>时间到了，取消当前任务。</li><li>当前任务中会出现 <code>asyncio.CancelledError</code>。</li><li><code>timeout()</code> 在退出上下文管理器时把它转换成 <code>TimeoutError</code>。</li></ol><p>所以在 <code>async with</code> 代码块里面捕获 <code>TimeoutError</code> 是捕获不到的，因为转换发生在上下文退出时。</p><p>如果超时时间一开始还不能确定，可以先传入 <code>None</code>，之后再通过 <code>reschedule()</code> 调整。更精确地指定结束时间点时，也可以使用 <code>asyncio.timeout_at()</code>。这些属于更细的控制，日常使用里先掌握 <code>asyncio.timeout()</code> 就够了。</p><p>另一个常见 API 是 <code>asyncio.wait_for()</code>。它更适合给“单个可等待对象”设置超时：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>eternity</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>3600</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;yay!&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>wait_for</span><span class=p>(</span><span class=n>eternity</span><span class=p>(),</span> <span class=n>timeout</span><span class=o>=</span><span class=mf>1.0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>TimeoutError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;timeout!&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Expected output:</span>
+</span></span><span class=line><span class=cl><span class=c1>#</span>
+</span></span><span class=line><span class=cl><span class=c1>#     timeout!</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>wait_for()</code> 超时后也会取消传入的任务，并引发 <code>TimeoutError</code>。需要注意的是，它会等待底层任务确实完成取消流程，所以实际等待时间可能略微超过设置的 <code>timeout</code>。</p><p>简单来说：</p><div class=table-wrapper><table><thead><tr><th style=text-align:left>场景</th><th style=text-align:left>推荐写法</th></tr></thead><tbody><tr><td style=text-align:left>给一段异步代码加超时</td><td style=text-align:left><code>asyncio.timeout()</code></td></tr><tr><td style=text-align:left>给单个 awaitable 加超时</td><td style=text-align:left><code>asyncio.wait_for()</code></td></tr><tr><td style=text-align:left>不希望被超时取消影响内部任务</td><td style=text-align:left>配合 <code>asyncio.shield()</code></td></tr></tbody></table></div><p>不过最后一种情况要谨慎使用，因为“外层不等了，但内层任务还在跑”会让任务生命周期变得更难管理。</p><h2 id=屏蔽取消操作>屏蔽取消操作</h2><p><code>awaitable asyncio.shield(aw)</code></p><p>保护一个 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio-awaitables target=_blank rel=noopener>可等待对象</a> 防止其被 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task.cancel target=_blank rel=noopener><code>取消</code></a>。</p><p>如果 <em>aw</em> 是一个协程，它将自动被作为任务调度。</p><p>以下语句:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>task</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>something</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=n>res</span> <span class=o>=</span> <span class=k>await</span> <span class=n>shield</span><span class=p>(</span><span class=n>task</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>相当于:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>res</span> <span class=o>=</span> <span class=k>await</span> <span class=n>something</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p><em>不同之处</em> 在于如果包含它的协程被取消，在 <code>something()</code> 中运行的任务不会被取消。从 <code>something()</code> 的角度看来，取消操作并没有发生。然而其调用者已被取消，因此 &ldquo;await&rdquo; 表达式仍然会引发 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-exceptions.html#asyncio.CancelledError target=_blank rel=noopener><code>CancelledError</code></a>。</p><p>如果通过其他方式取消 <code>something()</code> (例如在其内部操作) 则 <code>shield()</code> 也会取消。</p><p>如果希望完全忽略取消操作 (不推荐) 则 <code>shield()</code> 函数需要配合一个 try/except 代码段，如下所示：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>task</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>something</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>res</span> <span class=o>=</span> <span class=k>await</span> <span class=n>shield</span><span class=p>(</span><span class=n>task</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>except</span> <span class=n>CancelledError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>res</span> <span class=o>=</span> <span class=kc>None</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>重要：保存一个传给此函数的任务的引用，以避免任务在执行过程中消失。事件循环将只保留对任务的弱引用。未在其他地方被引用的任务可能在任何时候被作为垃圾回收，即使是在它被完成之前。</p></blockquote><h2 id=简单等待>简单等待</h2><p><code>coroutine asyncio.wait(aws, *, timeout=None, return_when=ALL_COMPLETED)</code></p><p>并发地运行 <em>aws</em> 可迭代对象中的 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-future.html#asyncio.Future target=_blank rel=noopener><code>Future</code></a> 和 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.Task target=_blank rel=noopener><code>Task</code></a> 实例并进入阻塞状态直到满足 <em>return_when</em> 所指定的条件。</p><p>可迭代对象 <em>aws</em> 不能为空并且不接受产生任务的生成器。</p><p>返回两个 Task/Future 集合: <code>(done, pending)</code>。</p><p>用法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>done</span><span class=p>,</span> <span class=n>pending</span> <span class=o>=</span> <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>wait</span><span class=p>(</span><span class=n>aws</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>如指定 <em>timeout</em> (float 或 int 类型) 则它将被用于控制返回之前等待的最长秒数。</p><p>请注意此函数不会引发 <a class=link href=https://docs.python.org/zh-cn/3.11/library/exceptions.html#TimeoutError target=_blank rel=noopener><code>TimeoutError</code></a>。 当超时发生时尚未完成的 Future 或 Task 会在设定的秒数后被直接返回。</p><p><em>return_when</em> 指定此函数应在何时返回。它必须为以下常数之一:</p><div class=table-wrapper><table><thead><tr><th style=text-align:left>常量</th><th style=text-align:left>描述</th></tr></thead><tbody><tr><td style=text-align:left>asyncio.<strong>FIRST_COMPLETED</strong></td><td style=text-align:left>函数将在任意可等待对象结束或取消时返回。</td></tr><tr><td style=text-align:left>asyncio.<strong>FIRST_EXCEPTION</strong></td><td style=text-align:left>该函数将在任何 future 对象通过引发异常而结束时返回。 如果没有任何 future 对象引发引发那么它将等价于 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio.ALL_COMPLETED target=_blank rel=noopener><code>ALL_COMPLETED</code></a>。</td></tr><tr><td style=text-align:left>asyncio.<strong>ALL_COMPLETED</strong></td><td style=text-align:left>函数将在所有可等待对象结束或取消时返回。</td></tr></tbody></table></div><p><code>asyncio.as_completed(aws, *, timeout=None)</code></p><p>并发地运行可迭代对象 <em>aws</em> 中的 <a class=link href=https://docs.python.org/zh-cn/3.11/library/asyncio-task.html#asyncio-awaitables target=_blank rel=noopener>可等待对象</a>。 产生任务的生成器不可被用作 <em>aws</em> 可迭代对象。 返回一个产生协程的迭代器。 所返回的每个协程可被等待以便从剩余的可等待对象的可迭代对象中获得早最的下一个结果。</p><p>如果在所有 Future 对象完成之前发生超时则将引发 <a class=link href=https://docs.python.org/zh-cn/3.11/library/exceptions.html#TimeoutError target=_blank rel=noopener><code>TimeoutError</code></a>。</p><p>示例:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>coro</span> <span class=ow>in</span> <span class=n>as_completed</span><span class=p>(</span><span class=n>aws</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>earliest_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>coro</span>
+</span></span><span class=line><span class=cl>    <span class=c1># ...</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=在线程中运行>在线程中运行</h2><p><code>asyncio.to_thread()</code> 适合处理一种很常见的尴尬情况：你正在写异步代码，但手里有一个只能同步调用的阻塞函数。</p><p>如果直接在协程里调用这个函数，它会卡住事件循环，让其他任务也没法继续运行。<code>to_thread()</code> 的作用就是把这个同步函数丢到另一个线程里执行，然后在异步代码里用 <code>await</code> 等它的结果。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>asyncio</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>time</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>read_file_slowly</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>time</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=s2>&#34;file content&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>to_thread</span><span class=p>(</span><span class=n>read_file_slowly</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>asyncio</span><span class=o>.</span><span class=n>run</span><span class=p>(</span><span class=n>main</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>它通常用于文件读写、同步数据库驱动、旧 SDK 调用这类 <strong>IO 密集型</strong> 阻塞操作。由于 GIL 的存在，它一般不适合用来加速纯 Python 的 CPU 密集型计算。</p><h2 id=跨线程调度>跨线程调度</h2><p><code>asyncio.run_coroutine_threadsafe()</code> 用于从另一个线程向某个事件循环提交协程。</p><p>这个 API 平时不常用。只有当你的程序里同时存在普通线程和 asyncio 事件循环，并且某个线程需要把协程交给事件循环执行时，才会用到它。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>coro</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=n>result</span><span class=o>=</span><span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>future</span> <span class=o>=</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>run_coroutine_threadsafe</span><span class=p>(</span><span class=n>coro</span><span class=p>,</span> <span class=n>loop</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=n>future</span><span class=o>.</span><span class=n>result</span><span class=p>(</span><span class=n>timeout</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>它返回的是 <code>concurrent.futures.Future</code>，不是 <code>asyncio.Future</code>。因此获取结果时用的是同步世界里的 <code>future.result()</code>。如果等待超时，也可以取消它：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>future</span><span class=o>.</span><span class=n>result</span><span class=p>(</span><span class=n>timeout</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>except</span> <span class=ne>TimeoutError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>future</span><span class=o>.</span><span class=n>cancel</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，它要求显式传入事件循环 <code>loop</code>，而且应该从事件循环所在之外的线程调用。</p><h2 id=内省>内省</h2><p>内省 API 主要用于调试、监控或框架内部逻辑。日常业务代码一般不需要频繁使用。</p><p>常见的有三个：</p><div class=table-wrapper><table><thead><tr><th style=text-align:left>API</th><th style=text-align:left>用途</th></tr></thead><tbody><tr><td style=text-align:left><code>asyncio.current_task()</code></td><td style=text-align:left>获取当前正在运行的 <code>Task</code></td></tr><tr><td style=text-align:left><code>asyncio.all_tasks()</code></td><td style=text-align:left>获取当前事件循环中尚未完成的所有 <code>Task</code></td></tr><tr><td style=text-align:left><code>asyncio.iscoroutine(obj)</code></td><td style=text-align:left>判断对象是不是协程对象</td></tr></tbody></table></div><p>例如调试当前事件循环里还有哪些任务没结束：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>task</span> <span class=ow>in</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>all_tasks</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>task</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这些函数适合在排查任务泄漏、定位后台任务状态、编写异步框架时使用。对于普通应用代码来说，知道它们存在即可。</p></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/python/>Python</a>
+<a href=/tags/asyncio/>Asyncio</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title></h2><div class=subsection-list><div class=article-list--tile><article><a href=/p/maven-%E5%9F%BA%E7%A1%80/><div class=article-details><h2 class=article-title>Maven 基础</h2></div></a></article><article><a href=/p/java-%E5%A4%9A%E7%BA%BF%E7%A8%8B/><div class=article-details><h2 class=article-title>Java 多线程</h2></div></a></article><article><a href=/p/redis/><div class=article-details><h2 class=article-title>Redis</h2></div></a></article><article><a href=/p/mysql/><div class=article-details><h2 class=article-title>MySQL</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 边个濑椰的博客</section><section class=powerby><br></section></footer><script type=module>
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>

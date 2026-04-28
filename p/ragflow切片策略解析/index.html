@@ -1,1682 +1,573 @@
-<!DOCTYPE html>
-<html lang="zh-CN" dir="ltr">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n">
-<title>RAGFlow切片策略解析</title>
-
-
-<link rel="canonical" href="http://localhost:1313/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
-
-
-<link rel="stylesheet" href="/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css"><meta property='og:title' content="RAGFlow切片策略解析">
-<meta property='og:description' content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n">
-<meta property='og:url' content='http://localhost:1313/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/'>
-<meta property='og:site_name' content='边个濑椰的博客'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='切片' /><meta property='article:published_time' content='2026-04-14T20:06:34&#43;08:00'/><meta property='article:modified_time' content='2026-04-14T20:06:34&#43;08:00'/>
-<meta name="twitter:title" content="RAGFlow切片策略解析">
-<meta name="twitter:description" content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n">
-    <link rel="shortcut icon" href="/img/favicon.png" />
-
-    </head>
-    <body class="
-    article-page
-    ">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
-        }
-    })();
-</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header>
-        <figure class="site-avatar">
-                <a href="/">
-                    <img src="/img/avatar.png" 
-                        width="150"
-                        height="150"
-                        class="site-logo"
-                        loading="lazy"
-                        alt="Avatar">
-                </a>
-                
-                    <span class="emoji">🍥</span>
-                
-            </figure>
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">边个濑椰的博客</a></h1>
-            <h2 class="site-description">人生如一梦，一梦换须臾，须臾待流年，流年似崆蒙</h2>
-        </div>
-    </header><ol class="menu-social">
-            
-                <li>
-                    <a 
-                        href='https://github.com/ottercoconut/'
-                        
-                        title="GitHub"
-                        rel="me"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-        <li >
-            <a href='/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>首页</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/archives/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>归档</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/search/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>搜索</span>
-            </a>
-        </li>
-        
-        
-        <li >
-            <a href='/links/' >
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-        <li class="menu-bottom-section">
-            <ol class="menu">
-                    <li id="i18n-switch">  
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
-                            
-                                
-                                
-                                    
-                                        
-                                    
-                                
-                                <option value="/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" selected>简体中文</option>
-                            
-                                
-                                
-                                    
-                                
-                                <option value="/en/" >English</option>
-                            
-                        </select>
-                    </li>
-                
-
-                
-                    <li id="dark-mode-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                        <span></span>
-                    </li>
-                
-            </ol>
-        </li>
-    </ol>
-</aside>
-
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                
-    <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title"></h2>
-        
-        <div class="widget--toc">
-            <nav class="toc-nav" id="TableOfContents">
-                
-  <ol>
-    <li><a href="#ragappnaivepy"><code>rag/app/naive.py</code></a>
-      <ol>
-        <li><a href="#__call__"><code>__call()__</code></a>
-          <ol>
-            <li><a href="#extract_tables_and_remainder"><code>extract_tables_and_remainder()</code></a></li>
-            <li><a href="#markdownelementextractor"><code>MarkdownElementExtractor</code></a></li>
-          </ol>
-        </li>
-        <li><a href="#extract_image_urls_with_lines"><code>extract_image_urls_with_lines()</code></a></li>
-        <li><a href="#load_images_from_urls"><code>load_images_from_urls()</code></a></li>
-        <li><a href="#urls_in_section--"><code>urls_in_section = [...]</code></a>
-          <ol>
-            <li><a href="#表格处理细节">表格处理细节</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-    <li><a href="#chunk"><code>chunk()</code></a>
-      <ol>
-        <li><a href="#visionfigureparser"><code>VisionFigureParser</code></a></li>
-        <li><a href="#_extract_figures_info"><code>_extract_figures_info()</code></a></li>
-        <li><a href="#__call__-1"><code>__call__()</code></a></li>
-        <li><a href="#picture_vision_llm_chunk"><code>picture_vision_llm_chunk()</code></a></li>
-        <li><a href="#vision_llm_figure_describe_prompt"><code>vision_llm_figure_describe_prompt()</code></a></li>
-        <li><a href="#sectionsidx--"><code>sections[idx] = (...)</code></a></li>
-      </ol>
-    </li>
-    <li><a href="#小结">小结</a></li>
-  </ol>
-
-            </nav>
-        </div>
-    </section>
-
-            
-        
-    </aside>
-
-
-            <main class="main full-width">
-    <article class="main-article">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            
-            
-            
-            <a href="/categories/%E6%8A%80%E6%9C%AF/" style="background-color: hsl(154, 60%, 84%); color: hsl(154, 60%, 15%);">
-                技术
-            </a>
-        
-            
-            
-            
-            <a href="/categories/rag/" style="background-color: hsl(49, 60%, 84%); color: hsl(49, 60%, 15%);">
-                RAG
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/">RAGFlow切片策略解析</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    
-    
-    
-    <footer class="article-meta">
-        
-            <div class="inline-meta">
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                    <time class="article-time--published" datetime='2026-04-14T20:06:34&#43;08:00'>Tuesday, April 14, 2026</time>
-                
-
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                    <time class="article-time--reading">
-                        
-                    </time>
-                
-            </div>
-        
-
-        
-
-        
-    </footer>
-    
-</div>
-
-</header>
-
-    
-    <aside class="article-toc">
-        <details>
-            <summary>
-                <div class="article-toc-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
-                    <span></span>
-                </div>
-            </summary>
-            <nav class="toc-nav">
-                
-  <ol>
-    <li><a href="#ragappnaivepy"><code>rag/app/naive.py</code></a>
-      <ol>
-        <li><a href="#__call__"><code>__call()__</code></a>
-          <ol>
-            <li><a href="#extract_tables_and_remainder"><code>extract_tables_and_remainder()</code></a></li>
-            <li><a href="#markdownelementextractor"><code>MarkdownElementExtractor</code></a></li>
-          </ol>
-        </li>
-        <li><a href="#extract_image_urls_with_lines"><code>extract_image_urls_with_lines()</code></a></li>
-        <li><a href="#load_images_from_urls"><code>load_images_from_urls()</code></a></li>
-        <li><a href="#urls_in_section--"><code>urls_in_section = [...]</code></a>
-          <ol>
-            <li><a href="#表格处理细节">表格处理细节</a></li>
-          </ol>
-        </li>
-      </ol>
-    </li>
-    <li><a href="#chunk"><code>chunk()</code></a>
-      <ol>
-        <li><a href="#visionfigureparser"><code>VisionFigureParser</code></a></li>
-        <li><a href="#_extract_figures_info"><code>_extract_figures_info()</code></a></li>
-        <li><a href="#__call__-1"><code>__call__()</code></a></li>
-        <li><a href="#picture_vision_llm_chunk"><code>picture_vision_llm_chunk()</code></a></li>
-        <li><a href="#vision_llm_figure_describe_prompt"><code>vision_llm_figure_describe_prompt()</code></a></li>
-        <li><a href="#sectionsidx--"><code>sections[idx] = (...)</code></a></li>
-      </ol>
-    </li>
-    <li><a href="#小结">小结</a></li>
-  </ol>
-
-            </nav>
-        </details>
-    </aside>
-    
-
-    <section class="article-content">
-    
-    
-    <h1 id="ragflow-切片策略解析">RAGFlow 切片策略解析
-</h1><p>众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。</p>
-<h2 id="ragappnaivepy"><code>rag/app/naive.py</code>
-</h2><p><code>naive.py</code> 中支持很多文件的类型，比如<code>PDF</code>, <code>DOCX</code>, <code>Markdown</code>&hellip;&hellip;</p>
-<p>那么我们要学习的<code>markdown</code>类，主入口是<code>__call__()</code>，这是核心方法，编排了整个 Markdown 解析流程。</p>
-<h3 id="__call__"><code>__call()__</code>
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">separate_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_section_images</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th style="text-align: left">参数</th>
-          <th style="text-align: left">类型</th>
-          <th style="text-align: left">说明</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left"><code>filename</code></td>
-          <td style="text-align: left">str</td>
-          <td style="text-align: left">文件路径（当 <code>binary</code> 为空时用来读文件）</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><code>binary</code></td>
-          <td style="text-align: left">bytes</td>
-          <td style="text-align: left">文件二进制内容，优先使用</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><code>separate_tables</code></td>
-          <td style="text-align: left">bool</td>
-          <td style="text-align: left">是否将表格从正文中分离出来</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><code>delimiter</code></td>
-          <td style="text-align: left">str</td>
-          <td style="text-align: left">自定义分割符，如果指定则用分割符切分而非按元素类型切分</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><code>return_section_images</code></td>
-          <td style="text-align: left">bool</td>
-          <td style="text-align: left">是否额外返回每个 section 对应的图片</td>
-      </tr>
-  </tbody>
-</table></div>
-<p><strong>执行流程：</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="cl">Step 1: 文本解码
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ binary → find_codec() →    │
-</span></span><span class="line"><span class="cl">  │ decode(encoding)           │
-</span></span><span class="line"><span class="cl">  │ 或 open(filename).read()   │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 2: 表格提取（继承自父类）
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ self.extract_tables_and_remainder(txt+&#34;\n&#34;,         │
-</span></span><span class="line"><span class="cl">  │                           separate_tables)          │
-</span></span><span class="line"><span class="cl">  │ → (remainder, tables[])                             │
-</span></span><span class="line"><span class="cl">  │                                                     │
-</span></span><span class="line"><span class="cl">  │ 注意：这里传入的是 txt+&#34;\n&#34;（末尾补换行）             │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────────────────────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 3: 元素扫描
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ MarkdownElementExtractor(txt)                       │
-</span></span><span class="line"><span class="cl">  │   .extract_elements(delimiter, include_meta=True)   │
-</span></span><span class="line"><span class="cl">  │ → element_sections[]                                │
-</span></span><span class="line"><span class="cl">  │                                                     │
-</span></span><span class="line"><span class="cl">  │ ★ 关键：这里传入的是原始 txt，而非 remainder！        │
-</span></span><span class="line"><span class="cl">  │   （注释 L682-683 说明了原因：为避免重复表格）         │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────────────────────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 4: 图片 URL 提取
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ self.extract_image_urls_with_lines(txt)              │
-</span></span><span class="line"><span class="cl">  │ → image_refs = [{url, line}, ...]                   │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────────────────────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 5: 元素-图片关联（核心融合逻辑）
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ for element in element_sections:                    │
-</span></span><span class="line"><span class="cl">  │   ① 取 element 的 start_line ~ end_line            │
-</span></span><span class="line"><span class="cl">  │   ② 筛选行范围内的 image_refs                       │
-</span></span><span class="line"><span class="cl">  │   ③ load_images_from_urls() 下载图片（有缓存）      │
-</span></span><span class="line"><span class="cl">  │   ④ 多张图用 concat_img 合并为一张                  │
-</span></span><span class="line"><span class="cl">  │   ⑤ sections.append((content, &#34;&#34;))                  │
-</span></span><span class="line"><span class="cl">  │   ⑥ section_images.append(combined_image or None)   │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────────────────────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 6: 表格后处理
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ for table in tables:                                │
-</span></span><span class="line"><span class="cl">  │   markdown(table, extensions=[&#34;tables&#34;]) → html     │
-</span></span><span class="line"><span class="cl">  │   tbls.append(((None, html), &#34;&#34;))                   │
-</span></span><span class="line"><span class="cl">  └────────────┬───────────────────────────────────────┘
-</span></span><span class="line"><span class="cl">               ↓
-</span></span><span class="line"><span class="cl">Step 7: 返回结果
-</span></span><span class="line"><span class="cl">  ┌────────────────────────────────────────────────────┐
-</span></span><span class="line"><span class="cl">  │ if return_section_images:                           │
-</span></span><span class="line"><span class="cl">  │   return sections, tbls, section_images             │
-</span></span><span class="line"><span class="cl">  │ else:                                               │
-</span></span><span class="line"><span class="cl">  │   return sections, tbls                             │
-</span></span><span class="line"><span class="cl">  └────────────────────────────────────────────────────┘
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><strong>输出数据结构：</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="s2">&#34;## 标题</span><span class="se">\n</span><span class="s2">正文内容...&#34;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">),</span>      <span class="c1"># (文本, 位置标签—永远为空字符串)</span>
-</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="s2">&#34;```python</span><span class="se">\n</span><span class="s2">code</span><span class="se">\n</span><span class="s2">```&#34;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">),</span>       <span class="c1"># 代码块</span>
-</span></span><span class="line"><span class="cl">    <span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">tbls</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&#34;&lt;table&gt;...&lt;/table&gt;&#34;</span><span class="p">),</span> <span class="s2">&#34;&#34;</span><span class="p">),</span>  <span class="c1"># (None, HTML表格字符串)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">section_images</span> <span class="o">=</span> <span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>    <span class="c1"># 该 section 中所有图片合并后的图像对象</span>
-</span></span><span class="line"><span class="cl">    <span class="kc">None</span><span class="p">,</span>         <span class="c1"># 该 section 无图片</span>
-</span></span><span class="line"><span class="cl">    <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这其中最关键的是<strong>表格提取</strong>和<strong>元素扫描</strong>的部分：</p>
-<h4 id="extract_tables_and_remainder"><code>extract_tables_and_remainder()</code>
-</h4><p>这个方法定义于<code>deepdoc/parser/resume/markdown_parser.py</code>的<code>RAGFlowMarkdownParser</code>类中，用于将markdown中的表格提取出来</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">RAGFlowMarkdownParser</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_token_num</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_token_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk_token_num</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">extract_tables_and_remainder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markdown_text</span><span class="p">,</span> <span class="n">separate_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="c1"># 返回: (剩余正文, [表格列表])</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><strong>表格识别策略：</strong></p>
-<div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th style="text-align: left">类型</th>
-          <th style="text-align: left">正则</th>
-          <th style="text-align: left">示例</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left">有边框 Markdown 表格</td>
-          <td style="text-align: left">`</td>
-          <td style="text-align: left">&hellip;</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">无边框 Markdown 表格</td>
-          <td style="text-align: left">`text</td>
-          <td style="text-align: left">text` + 分隔行 + 数据行</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">HTML 表格</td>
-          <td style="text-align: left"><code>&lt;table&gt;...&lt;/table&gt;</code>，支持包裹在 <code>&lt;html&gt;&lt;body&gt;</code> 中</td>
-          <td style="text-align: left"><code>&lt;table&gt;&lt;tr&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</code></td>
-      </tr>
-  </tbody>
-</table></div>
-<p>当 <code>separate_tables=True</code> 时，表格从正文里移除并单独返回；为 <code>False</code> 时则就地转为 HTML。</p>
-<h4 id="markdownelementextractor"><code>MarkdownElementExtractor</code>
-</h4><p>该类位于<code>deepdoc/parser/markdown_parser.py</code>，实现了一个简易的 Markdown 元素识别器，将文本按行扫描并归类为不同的块类型。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MarkdownElementExtractor</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markdown_content</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">markdown_content</span> <span class="o">=</span> <span class="n">markdown_content</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="n">markdown_content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">extract_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_meta</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;提取各种元素(headers, code blocks, lists, 等)&#34;&#34;&#34;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><strong>输出元素结构：</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;header&#34;</span> <span class="o">|</span> <span class="s2">&#34;code_block&#34;</span> <span class="o">|</span> <span class="s2">&#34;list_block&#34;</span> <span class="o">|</span> <span class="s2">&#34;blockquote&#34;</span> <span class="o">|</span> <span class="s2">&#34;text_block&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;具体文本内容&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;start_line&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>   <span class="c1"># 起始行号</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;end_line&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>      <span class="c1"># 结束行号</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ul>
-<li><code>_extract_header()</code> : 返回单行的&quot;header&quot;</li>
-<li><code>_extract_code_block()</code> : 直到遇到&quot; ``` &ldquo;返回多行的代码块&quot;code_block&rdquo;</li>
-<li><code>_extract_list_block()</code> : 吞入满足以下条件的行：
-<ul>
-<li>以 <code>-</code>, <code>*</code>, <code>+</code> 或 <code>数字.</code> 开头（列表项）</li>
-<li>空行（列表项间隙）</li>
-<li>以 2+ 空格缩进的子列表或续行</li>
-</ul>
-</li>
-<li><code>_extract_blockquote()</code> : 持续吞入&quot;&gt;&ldquo;开头的行或内部的空行</li>
-<li><code>_extract_text_block()</code> : 处理不属于上面几种类型的普通文本&quot;text_block&rdquo;，直到符合上面类型的元素再次出现</li>
-</ul>
-<h3 id="extract_image_urls_with_lines"><code>extract_image_urls_with_lines()</code>
-</h3><p>这个方法用于找出 Markdown 文本中所有图片引用及其所在行号。行号用于后续将图片关联到对应的 section。</p>
-<p><strong>三阶段提取策略：</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="cl">阶段 1: Markdown 语法图片
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  正则: ![alt](url)  →  提取 url
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  模式: r&#34;!\[[^\]]*\]\(([^)\s]+)&#34;
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">阶段 2: HTML 内联图片（单行）
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  正则: src=&#34;url&#34; / src=&#39;url&#39;  →  提取 url
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  模式: r&#39;src=[&#34;\\\&#39;&#34;]([^&#34;\\\&#39;&gt;\\s]+)&#39;
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">阶段 3: HTML 跨行图片（BeautifulSoup 兜底）
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  解析整个文本为 HTML，查找所有 &lt;img&gt; 标签的 src
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  通过字符偏移量计算行号
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  用 seen 集合避免与阶段 1/2 重复
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><strong>返回值：</strong></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[</span>
-</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s2">&#34;url&#34;</span><span class="p">:</span> <span class="s2">&#34;https://example.com/img.png&#34;</span><span class="p">,</span> <span class="s2">&#34;line&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s2">&#34;url&#34;</span><span class="p">:</span> <span class="s2">&#34;./assets/diagram.svg&#34;</span><span class="p">,</span> <span class="s2">&#34;line&#34;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="load_images_from_urls"><code>load_images_from_urls()</code>
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">load_images_from_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">urls</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># 返回: (images[], cache{})</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th style="text-align: left">功能</th>
-          <th style="text-align: left">细节</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left">HTTP 图片</td>
-          <td style="text-align: left"><code>requests.get(url, timeout=30)</code>，校验 <code>Content-Type</code> 为 <code>image/</code></td>
-      </tr>
-      <tr>
-          <td style="text-align: left">本地图片</td>
-          <td style="text-align: left"><code>Path(url).exists()</code> 检查后用 <code>PIL.Image.open()</code></td>
-      </tr>
-      <tr>
-          <td style="text-align: left">缓存机制</td>
-          <td style="text-align: left"><code>cache</code> dict 避免重复下载同一 URL</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">统一格式</td>
-          <td style="text-align: left">所有图片转为 <code>RGB</code> 模式 (<code>convert(&quot;RGB&quot;)</code>)</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">错误处理</td>
-          <td style="text-align: left">失败时 <code>cache[url] = None</code>，不中断流程</td>
-      </tr>
-  </tbody>
-</table></div>
-<p>这里的思路比较朴素，但很实用：</p>
-<ol>
-<li>先根据 <code>url</code> 判断是网络图片还是本地图片</li>
-<li>统一加载成 <code>PIL.Image</code></li>
-<li>放入缓存，避免同一张图在多个 section 中重复读取</li>
-<li>后续如果某个 section 对应多张图片，再交给 <code>concat_img</code> 合并</li>
-</ol>
-<p>也就是说，RAGFlow 在 Markdown 中并不是把每一张图片都单独当成一个 chunk，而是先尝试把<strong>同一个 section 内的图片聚合</strong>起来，再与文本一起进入后续流程。</p>
-<h3 id="urls_in_section--"><code>urls_in_section = [...]</code>
-</h3><p>在 <code>Markdown.__call__()</code> 中，真正把文本 section 和图片联系起来的代码是这一段：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">element_sections</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">content</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="s2">&#34;content&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">start_line</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="s2">&#34;start_line&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">end_line</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="s2">&#34;end_line&#34;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">urls_in_section</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref</span><span class="p">[</span><span class="s2">&#34;url&#34;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">image_refs</span> <span class="k">if</span> <span class="n">start_line</span> <span class="o">&lt;=</span> <span class="n">ref</span><span class="p">[</span><span class="s2">&#34;line&#34;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end_line</span><span class="p">]</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>其核心思想非常直接：<strong>按行号做区间归属</strong>。</p>
-<ul>
-<li>一个 Markdown 元素先被标记 <code>start_line</code> 和 <code>end_line</code></li>
-<li>所有图片引用也带有自己的 <code>line</code></li>
-<li>只要图片所在行落在元素区间内，就认为这张图属于这个 section</li>
-</ul>
-<p>这是一种很工程化的做法。它不追求复杂语义理解，而是利用 Markdown 本身“按行组织”的特点，以较低成本建立图文关联。</p>
-<p>例如下面这段 Markdown：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl"><span class="gu">## 模型结构
-</span></span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">这里介绍整体流程。
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">![<span class="nt">pipeline</span>](<span class="na">./pipeline.png</span>)
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">接着说明各模块职责。
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>如果这一整段被 <code>MarkdownElementExtractor</code> 视为同一个 <code>text_block</code>，那么图片就会和这一段正文绑定在一起；如果标题和正文被分成两个元素，则图片通常会归到正文所在的 section，而不会归到标题 section。</p>
-<h4 id="表格处理细节">表格处理细节
-</h4><p>前面提到，<code>Markdown.__call__()</code> 中虽然调用了：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">remainder</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_tables_and_remainder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">txt</span><span class="si">}</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">separate_tables</span><span class="o">=</span><span class="n">separate_tables</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>但后面真正做元素扫描时，使用的是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">extractor</span> <span class="o">=</span> <span class="n">MarkdownElementExtractor</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>而不是 <code>remainder</code>。</p>
-<p>源码里其实已经留了注释：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># To eliminate duplicate tables in chunking result, uncomment code below and set separate_tables to True ...</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># extractor = MarkdownElementExtractor(remainder)</span>
-</span></span><span class="line"><span class="cl"><span class="n">extractor</span> <span class="o">=</span> <span class="n">MarkdownElementExtractor</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这说明作者其实也意识到了一个现象：<strong>表格可能同时出现在 section chunk 和 table result 中</strong>。</p>
-<p>从实现角度看，这未必是 bug，更像是一种偏保守的召回策略：</p>
-<ul>
-<li>正文 chunk 中保留表格原始上下文</li>
-<li><code>tables</code> 中再额外保留结构化表格内容</li>
-</ul>
-<p>这样做可能带来一定冗余，但也提高了检索时命中表格信息的概率。</p>
-<h2 id="chunk"><code>chunk()</code>
-</h2><p>看到这里，其实还只是完成了解析和预处理。真正决定最终 chunk 长什么样的，不在 <code>Markdown.__call__()</code>，而在 <code>rag/app/naive.py</code> 下面的 <code>chunk()</code> 函数里。</p>
-<p>Markdown 文件分支一开始会先调用前面的解析器：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">markdown_parser</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">parser_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;chunk_token_num&#34;</span><span class="p">,</span> <span class="mi">128</span><span class="p">)))</span>
-</span></span><span class="line"><span class="cl"><span class="n">sections</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">section_images</span> <span class="o">=</span> <span class="n">markdown_parser</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">filename</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">binary</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">separate_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">delimiter</span><span class="o">=</span><span class="n">parser_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;delimiter&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">!?;。；！？&#34;</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">    <span class="n">return_section_images</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里有两个细节值得注意：</p>
-<ul>
-<li><code>return_section_images=True</code>
-说明 Markdown 解析阶段生成的图片不会丢，而是继续带到后面的 chunk 合并流程中。</li>
-<li><code>separate_tables=False</code>
-说明这里并没有把表格完全从正文切走，而是倾向于让表格继续留在 Markdown 上下文里，同时又额外生成 <code>tables</code> 供表格索引使用。</li>
-</ul>
-<p>接着，如果当前租户存在 <code>IMAGE2TEXT</code> 模型，<code>chunk()</code> 会尝试给 Markdown 中的图片补一段描述文本：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">try</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">vision_model_config</span> <span class="o">=</span> <span class="n">get_tenant_default_model_by_type</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&#34;tenant_id&#34;</span><span class="p">],</span> <span class="n">LLMType</span><span class="o">.</span><span class="n">IMAGE2TEXT</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">vision_model</span> <span class="o">=</span> <span class="n">LLMBundle</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&#34;tenant_id&#34;</span><span class="p">],</span> <span class="n">vision_model_config</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Failed to detect figure extraction: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">vision_model</span> <span class="o">=</span> <span class="kc">None</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>如果视觉模型可用，则继续遍历每个 section：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">section_text</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sections</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">section_images</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">section_images</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">idx</span> <span class="ow">and</span> <span class="n">section_images</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section_images</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">images</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">combined_image</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="n">concat_img</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">        <span class="n">markdown_vision_parser</span> <span class="o">=</span> <span class="n">VisionFigureParser</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">            <span class="n">vision_model</span><span class="o">=</span><span class="n">vision_model</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">            <span class="n">figures_data</span><span class="o">=</span><span class="p">[((</span><span class="n">combined_image</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;markdown image&#34;</span><span class="p">]),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])],</span>
-</span></span><span class="line"><span class="cl">            <span class="o">**</span><span class="n">kwargs</span>
-</span></span><span class="line"><span class="cl">        <span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">boosted_figures</span> <span class="o">=</span> <span class="n">markdown_vision_parser</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">sections</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">            <span class="n">section_text</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n\n</span><span class="s2">&#34;</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n\n</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">boosted_figures</span><span class="p">]),</span>
-</span></span><span class="line"><span class="cl">            <span class="n">sections</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">        <span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里可以看出 Markdown 图片增强的几个特点：</p>
-<ul>
-<li>粒度是 <strong>section 级别</strong></li>
-<li>输入图片是前面已经聚合好的 <code>section_images[idx]</code></li>
-<li>输出不是新的 chunk，而是把图片描述文本直接追加回原 <code>section_text</code></li>
-</ul>
-<h3 id="visionfigureparser"><code>VisionFigureParser</code>
-</h3><p>该类定义在 <code>deepdoc/parser/figure_parser.py</code> 中：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">VisionFigureParser</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vision_model</span><span class="p">,</span> <span class="n">figures_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">vision_model</span> <span class="o">=</span> <span class="n">vision_model</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">figure_contexts</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;figure_contexts&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">context_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;context_size&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_figures_info</span><span class="p">(</span><span class="n">figures_data</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这个类的职责并不复杂，可以理解为一个“图片描述批处理器”：</p>
-<ul>
-<li>接收图片列表 <code>figures_data</code></li>
-<li>整理出图片、描述、位置信息</li>
-<li>调用视觉模型生成描述</li>
-<li>再把结果重新组装回原来的数据结构</li>
-</ul>
-<p>Markdown 分支给它传入的 <code>figures_data</code> 形式是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[((</span><span class="n">combined_image</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;markdown image&#34;</span><span class="p">]),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])]</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>也就是说，每次只处理当前 section 对应的一张聚合图，原始描述先放一个占位值 <code>&quot;markdown image&quot;</code>，位置则放一个 dummy tuple。</p>
-<h3 id="_extract_figures_info"><code>_extract_figures_info()</code>
-</h3><p>这个方法负责把 <code>figures_data</code> 拆成内部使用的三个列表：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">_extract_figures_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figures_data</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>其中核心分支是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">img_desc</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">img</span> <span class="o">=</span> <span class="n">ensure_pil_image</span><span class="p">(</span><span class="n">img_desc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_desc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>因此传入的：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">((</span><span class="n">combined_image</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;markdown image&#34;</span><span class="p">]),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>会被拆成：</p>
-<ul>
-<li><code>self.figures</code> : <code>[combined_image]</code></li>
-<li><code>self.descriptions</code> : <code>[[&quot;markdown image&quot;]]</code></li>
-<li><code>self.positions</code> : <code>[[(0, 0, 0, 0, 0)]]</code></li>
-</ul>
-<p>这里的 <code>ensure_pil_image()</code> 负责把输入统一成 <code>PIL.Image</code> 对象，因此前面无论传入的是普通图片对象还是惰性图片对象，到了这里都会被标准化。</p>
-<h3 id="__call__-1"><code>__call__()</code>
-</h3><p><code>VisionFigureParser.__call__()</code> 才是真正执行视觉增强的入口：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;callback&#34;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">prog</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>它内部先定义了一个 <code>process()</code>，用于处理单张图片：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">figure_idx</span><span class="p">,</span> <span class="n">figure_binary</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">context_above</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">context_below</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">figure_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure_contexts</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="n">context_above</span><span class="p">,</span> <span class="n">context_below</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_contexts</span><span class="p">[</span><span class="n">figure_idx</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">context_above</span> <span class="ow">or</span> <span class="n">context_below</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">prompt</span> <span class="o">=</span> <span class="n">vision_llm_figure_describe_prompt_with_context</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">            <span class="n">context_above</span><span class="o">=</span><span class="n">context_above</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">            <span class="n">context_below</span><span class="o">=</span><span class="n">context_below</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">        <span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">prompt</span> <span class="o">=</span> <span class="n">vision_llm_figure_describe_prompt</span><span class="p">()</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后通过线程池并发调用：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img_binary</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span> <span class="ow">or</span> <span class="p">[]):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shared_executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img_binary</span><span class="p">))</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>等所有任务完成之后，将返回的描述文本写回：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">figure_num</span><span class="p">,</span> <span class="n">txt</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">descriptions</span><span class="p">[</span><span class="n">figure_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptions</span><span class="p">[</span><span class="n">figure_num</span><span class="p">])</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>最后再调用 <code>_assemble()</code> 重新组装：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">_assemble</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assembled</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>对于 Markdown 分支来说，这里有两个细节：</p>
-<ul>
-<li>没有显式传入 <code>figure_contexts</code>，因此默认使用 <code>vision_llm_figure_describe_prompt()</code></li>
-<li>回填时会把模型输出和原始描述拼在一起，因此最终描述中理论上可能保留 <code>&quot;markdown image&quot;</code> 这个占位文本</li>
-</ul>
-<h3 id="picture_vision_llm_chunk"><code>picture_vision_llm_chunk()</code>
-</h3><p><code>process()</code> 里真正调用视觉模型的函数是 <code>rag/app/picture.py</code> 中的：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">vision_llm_chunk</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">vision_model</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>虽然名字叫 <code>vision_llm_chunk</code>，但其作用其实很直接，就是把图片交给 VLM 并返回描述文本。</p>
-<p>其主要步骤如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">img_binary</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">img_binary</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&#34;JPEG&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">img_binary</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">img_binary</span><span class="o">.</span><span class="n">truncate</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">img_binary</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&#34;PNG&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">img_binary</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">ans</span> <span class="o">=</span> <span class="n">clean_markdown_block</span><span class="p">(</span><span class="n">vision_model</span><span class="o">.</span><span class="n">describe_with_prompt</span><span class="p">(</span><span class="n">img_binary</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">prompt</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">    <span class="n">txt</span> <span class="o">+=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span> <span class="o">+</span> <span class="n">ans</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">txt</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里做了几件事：</p>
-<ul>
-<li>先把 <code>PIL.Image</code> 编码成二进制</li>
-<li>优先尝试保存为 <code>JPEG</code>，失败则退回 <code>PNG</code></li>
-<li>调用 <code>vision_model.describe_with_prompt()</code> 生成描述</li>
-<li>用 <code>clean_markdown_block()</code> 清理模型输出中的 Markdown 包裹</li>
-</ul>
-<p>因此这个函数返回的是一段纯文本，而不是结构化对象。</p>
-<h3 id="vision_llm_figure_describe_prompt"><code>vision_llm_figure_describe_prompt()</code>
-</h3><p>在 <code>VisionFigureParser.__call__()</code> 中，无上下文情况下使用的是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">prompt</span> <span class="o">=</span> <span class="n">vision_llm_figure_describe_prompt</span><span class="p">()</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>而如果存在上下文，则切换到：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">prompt</span> <span class="o">=</span> <span class="n">vision_llm_figure_describe_prompt_with_context</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">context_above</span><span class="o">=</span><span class="n">context_above</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">context_below</span><span class="o">=</span><span class="n">context_below</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这两组 prompt 都定义在 <code>rag/prompts/</code> 下。其核心约束是：</p>
-<ul>
-<li>只根据图中可见内容生成文本</li>
-<li>如果是表格、柱状图、折线图这类“可枚举数据图”，则按固定字段输出</li>
-<li>如果不是结构化数据图，则按空间顺序描述可见内容</li>
-<li>不允许额外推断流程、功能或语义</li>
-</ul>
-<p>也就是说，这一步生成的不是泛化摘要，而是偏向<strong>检索友好</strong>的图片文本表示。</p>
-<h3 id="sectionsidx--"><code>sections[idx] = (...)</code>
-</h3><p>最终在 <code>rag/app/naive.py</code> 中，增强结果是这样写回 section 的：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">sections</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">section_text</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n\n</span><span class="s2">&#34;</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n\n</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">boosted_figures</span><span class="p">]),</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sections</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>因此 Markdown 图像增强不会引入新的切片层级，而是把图片描述文本直接拼回现有 section。</p>
-<p>在这一轮增强之后，<code>chunk()</code> 才会真正进入 Markdown 专属的 chunk 合并逻辑：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">is_markdown</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">merged_chunks</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">merged_images</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">chunk_limit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">parser_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;chunk_token_num&#34;</span><span class="p">,</span> <span class="mi">128</span><span class="p">)))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">current_text</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_tokens</span> <span class="o">=</span> <span class="mi">0</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_image</span> <span class="o">=</span> <span class="kc">None</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sections</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="n">text</span> <span class="o">=</span> <span class="n">sec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">sec</span>
-</span></span><span class="line"><span class="cl">        <span class="n">sec_tokens</span> <span class="o">=</span> <span class="n">num_tokens_from_string</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">sec_image</span> <span class="o">=</span> <span class="n">section_images</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">section_images</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">section_images</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这段代码表明，Markdown 的切片单位不是“原始全文直接按分隔符硬切”，而是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="cl">Markdown 文本
-</span></span><span class="line"><span class="cl">  ↓
-</span></span><span class="line"><span class="cl">按元素扫描成多个 section
-</span></span><span class="line"><span class="cl">  ↓
-</span></span><span class="line"><span class="cl">每个 section 绑定对应图片
-</span></span><span class="line"><span class="cl">  ↓
-</span></span><span class="line"><span class="cl">图片描述增强（如果启用）
-</span></span><span class="line"><span class="cl">  ↓
-</span></span><span class="line"><span class="cl">按 token 上限逐个累积合并
-</span></span><span class="line"><span class="cl">  ↓
-</span></span><span class="line"><span class="cl">得到最终 chunk
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>RAGFlow 对 Markdown 没有直接调用通用的 <code>naive_merge_with_images()</code>，而是单独写了一套更简单的逻辑。其规则是：</p>
-<ul>
-<li>如果加入下一个 section 后仍未超过 <code>chunk_token_num</code>，则继续追加</li>
-<li>如果会超过上限，就先把当前 chunk 落盘，再开启一个新的 chunk</li>
-<li>如果开启新 chunk 时配置了 <code>overlapped_percent</code>，则保留上一 chunk 尾部的一部分文本作为重叠上下文</li>
-<li>与此同时，当前 chunk 内涉及的所有图片会被不断 <code>concat_img</code> 合并</li>
-</ul>
-<p>关键代码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">current_text</span> <span class="ow">and</span> <span class="n">current_tokens</span> <span class="o">+</span> <span class="n">sec_tokens</span> <span class="o">&gt;</span> <span class="n">chunk_limit</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">merged_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">merged_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_image</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">overlap_part</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">overlapped_percent</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">overlap_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span> <span class="o">*</span> <span class="n">overlapped_percent</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">overlap_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">            <span class="n">overlap_part</span> <span class="o">=</span> <span class="n">current_text</span><span class="p">[</span><span class="o">-</span><span class="n">overlap_len</span><span class="p">:]</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_text</span> <span class="o">=</span> <span class="n">overlap_part</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_tokens</span> <span class="o">=</span> <span class="n">num_tokens_from_string</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_image</span> <span class="o">=</span> <span class="n">current_image</span> <span class="k">if</span> <span class="n">overlap_part</span> <span class="k">else</span> <span class="kc">None</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里可以看出两个特点：</p>
-<ul>
-<li>重叠是按<strong>字符长度</strong>截尾，而不是按 section 粒度重叠</li>
-<li>图片是按 chunk 聚合的，只要 section 被并入同一个 chunk，其图片也会被拼到同一张图上</li>
-</ul>
-<p>因此，一个最终的 Markdown chunk，本质上是：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="s2">&#34;若干相邻 section 合并后的文本&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;image&#34;</span><span class="p">:</span> <span class="s2">&#34;这些 section 内图片拼接后的结果（如果有）&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>在 chunk 合并完成之后，RAGFlow 会根据该批 chunk 是否含图走两条不同路径：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">has_images</span> <span class="o">=</span> <span class="n">merged_images</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">merged_images</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">has_images</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tokenize_chunks_with_images</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">is_english</span><span class="p">,</span> <span class="n">merged_images</span><span class="p">,</span> <span class="n">child_delimiters_pattern</span><span class="o">=</span><span class="n">child_deli</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tokenize_chunks</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">is_english</span><span class="p">,</span> <span class="n">pdf_parser</span><span class="p">,</span> <span class="n">child_delimiters_pattern</span><span class="o">=</span><span class="n">child_deli</span><span class="p">))</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>其中：</p>
-<ul>
-<li><code>tokenize_chunks()</code> 负责纯文本 chunk 的分词和字段封装</li>
-<li><code>tokenize_chunks_with_images()</code> 则会把对应图片写入文档对象的 <code>image</code> 字段</li>
-<li>表格则另外通过 <code>tokenize_table(tables, doc, is_english)</code> 进入结果集</li>
-</ul>
-<p>也就是说，Markdown 在 RAGFlow 中最后会被拆成三类可检索对象：</p>
-<ol>
-<li>普通文本 chunk</li>
-<li>携带图片的多模态 chunk</li>
-<li>表格对象</li>
-</ol>
-<h2 id="小结">小结
-</h2><p>至此，RAGFlow 对 Markdown 的“切片”逻辑就比较清楚了。它并不是简单地按固定长度裁文本，而是分成了几层：</p>
-<ol>
-<li>先识别表格、标题、代码块、列表、引用块和普通文本块</li>
-<li>再根据图片引用所在行号，把图片绑定到对应 section</li>
-<li>然后按 token 上限把多个相邻 section 合并为 chunk</li>
-<li>最后把文本、图片、表格分别包装成可检索对象</li>
-</ol>
-<p>从工程实现上看，这套方案的优点是：</p>
-<ul>
-<li>实现简单，可维护性高</li>
-<li>比纯分隔符切片更保留 Markdown 结构</li>
-<li>能较自然地支持图文混合检索</li>
-<li>表格被单独抽出后，也便于做专门处理</li>
-</ul>
-<p>当然，它也有一些局限，例如：</p>
-<ul>
-<li>图片归属依赖行号，精度有限</li>
-<li>section 的粒度较粗，未做更深层的语义切分</li>
-<li>表格与正文可能存在信息重复</li>
-</ul>
-<p>但对一个通用 RAG 系统来说，这样的取舍是相当合理的。它没有追求复杂而昂贵的 Markdown AST 解析，而是用较低复杂度完成了“结构感知切片”。</p>
-<p>笔者认为，这也是 RAGFlow 值得学习的一点：很多时候，切片策略不一定要非常“聪明”，但一定要足够稳定、可解释，并且方便与后续检索流程对接。</p>
-
-</section>
-
-
-    <footer class="article-meta article-footer">
-    
-    <section class="article-tags">
-        
-            <a href="/tags/%E5%88%87%E7%89%87/">切片</a>
-        
-    </section>
-
-
-    
-    <section class="article-copyright inline-meta">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
-</svg>
-
-
-
-        <span>Licensed under CC BY-NC-SA 4.0</span>
-    </section>
-    </footer>
-
-
-    
-        <link 
-                rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
-            ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
-                defer
-                >
-            </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
-                defer
-                >
-            </script><script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const elementsToRender = [".main-article", ".widget--toc"];
-
-        elementsToRender.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) {
-                renderMathInElement(element, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false }
-                    ],
-                    ignoredClasses: ["gist"]
-                });
-            }
-        });
-    });
-</script>
-
-    
-</article>
-
-    
-
-    
-
-<aside>
-    <h2 class="section-title"></h2>
-    <div class="subsection-list">
-        <div class="article-list--tile">
-            
-                
-<article class="">
-    <a href="/p/cs224n-assignment3-nmt/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">CS224N Assignment3 NMT</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">群晖NAS代理及Emby配置</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">如何在WSL2上使用本机代理</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/cs224n/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">CS224N</h2>
-        </div>
-    </a>
-</article>
-            
-                
-<article class="">
-    <a href="/p/pytorch%E5%9F%BA%E7%A1%80/">
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Pytorch基础</h2>
-        </div>
-    </a>
-</article>
-            
-        </div>
-    </div>
-</aside>
-
-     
-    
-        
-        <div class="disqus-container">
-    <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
-
-<style>
-    .disqus-container {
-        background-color: var(--card-background);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--shadow-l1);
-        padding: var(--card-padding);
-    }
-</style>
-
-<script>
-    window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
-            DISQUS.reset({
-                reload: true
-            });
-        }
-    })
-</script>
-    
-
-    <footer class="site-footer">
-    <section class="copyright">
-        &copy; 
-        
-            2020 - 
-        
-        2026 边个濑椰的博客
-    </section>
-    
-    <section class="powerby">
-         <br />
-        
-    </section>
-</footer>
-
-
-    
-
-
-
-<script type="module">
+<!doctype html><html lang=zh-CN dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n"><title>RAGFlow切片策略解析</title><link rel=canonical href=https://ottercoconut.github.io/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"><link rel=stylesheet href=/scss/style.min.389e156f5e9bb13df5a924cfa99dfb9c39f3e01e68d9e146cd65bdae963be145.css><meta property='og:title' content="RAGFlow切片策略解析"><meta property='og:description' content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n"><meta property='og:url' content='https://ottercoconut.github.io/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/'><meta property='og:site_name' content='边个濑椰的博客'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='切片'><meta property='article:published_time' content='2026-04-14T20:06:34+08:00'><meta property='article:modified_time' content='2026-04-14T20:06:34+08:00'><meta name=twitter:title content="RAGFlow切片策略解析"><meta name=twitter:description content="RAGFlow 切片策略解析 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。\n"><link rel="shortcut icon" href=/img/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar.png width=150 height=150 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>边个濑椰的博客</a></h1><h2 class=site-description>人生如一梦，一梦换须臾，须臾待流年，流年似崆蒙</h2></div></header><ol class=menu-social><li><a href=https://github.com/ottercoconut/ title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>首页</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>归档</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/ selected>简体中文</option><option value=/en/>English</option></select></li><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav class=toc-nav id=TableOfContents><ol><li><a href=#ragappnaivepy><code>rag/app/naive.py</code></a><ol><li><a href=#__call__><code>__call()__</code></a><ol><li><a href=#extract_tables_and_remainder><code>extract_tables_and_remainder()</code></a></li><li><a href=#markdownelementextractor><code>MarkdownElementExtractor</code></a></li></ol></li><li><a href=#extract_image_urls_with_lines><code>extract_image_urls_with_lines()</code></a></li><li><a href=#load_images_from_urls><code>load_images_from_urls()</code></a></li><li><a href=#urls_in_section--><code>urls_in_section = [...]</code></a><ol><li><a href=#表格处理细节>表格处理细节</a></li></ol></li></ol></li><li><a href=#chunk><code>chunk()</code></a><ol><li><a href=#visionfigureparser><code>VisionFigureParser</code></a></li><li><a href=#_extract_figures_info><code>_extract_figures_info()</code></a></li><li><a href=#__call__-1><code>__call__()</code></a></li><li><a href=#picture_vision_llm_chunk><code>picture_vision_llm_chunk()</code></a></li><li><a href=#vision_llm_figure_describe_prompt><code>vision_llm_figure_describe_prompt()</code></a></li><li><a href=#sectionsidx--><code>sections[idx] = (...)</code></a></li></ol></li><li><a href=#小结>小结</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/%E6%8A%80%E6%9C%AF/ style=background-color:#beefd9;color:#0f3d29>技术
+</a><a href=/categories/rag/ style=background-color:#efe6be;color:#3d350f>RAG</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/ragflow%E5%88%87%E7%89%87%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/>RAGFlow切片策略解析</a></h2></div><footer class=article-meta><div class=inline-meta><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-04-14T20:06:34+08:00>Tuesday, April 14, 2026</time>
+<svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><aside class=article-toc><details><summary><div class=article-toc-title><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6-6 6"/></svg>
+<span></span></div></summary><nav class=toc-nav><ol><li><a href=#ragappnaivepy><code>rag/app/naive.py</code></a><ol><li><a href=#__call__><code>__call()__</code></a><ol><li><a href=#extract_tables_and_remainder><code>extract_tables_and_remainder()</code></a></li><li><a href=#markdownelementextractor><code>MarkdownElementExtractor</code></a></li></ol></li><li><a href=#extract_image_urls_with_lines><code>extract_image_urls_with_lines()</code></a></li><li><a href=#load_images_from_urls><code>load_images_from_urls()</code></a></li><li><a href=#urls_in_section--><code>urls_in_section = [...]</code></a><ol><li><a href=#表格处理细节>表格处理细节</a></li></ol></li></ol></li><li><a href=#chunk><code>chunk()</code></a><ol><li><a href=#visionfigureparser><code>VisionFigureParser</code></a></li><li><a href=#_extract_figures_info><code>_extract_figures_info()</code></a></li><li><a href=#__call__-1><code>__call__()</code></a></li><li><a href=#picture_vision_llm_chunk><code>picture_vision_llm_chunk()</code></a></li><li><a href=#vision_llm_figure_describe_prompt><code>vision_llm_figure_describe_prompt()</code></a></li><li><a href=#sectionsidx--><code>sections[idx] = (...)</code></a></li></ol></li><li><a href=#小结>小结</a></li></ol></nav></details></aside><section class=article-content><h1 id=ragflow-切片策略解析>RAGFlow 切片策略解析</h1><p>众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。</p><h2 id=ragappnaivepy><code>rag/app/naive.py</code></h2><p><code>naive.py</code> 中支持很多文件的类型，比如<code>PDF</code>, <code>DOCX</code>, <code>Markdown</code>&mldr;&mldr;</p><p>那么我们要学习的<code>markdown</code>类，主入口是<code>__call__()</code>，这是核心方法，编排了整个 Markdown 解析流程。</p><h3 id=__call__><code>__call()__</code></h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=fm>__call__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>filename</span><span class=p>,</span> <span class=n>binary</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>separate_tables</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>delimiter</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>return_section_images</span><span class=o>=</span><span class=kc>False</span><span class=p>):</span>
+</span></span></code></pre></td></tr></table></div></div><div class=table-wrapper><table><thead><tr><th style=text-align:left>参数</th><th style=text-align:left>类型</th><th style=text-align:left>说明</th></tr></thead><tbody><tr><td style=text-align:left><code>filename</code></td><td style=text-align:left>str</td><td style=text-align:left>文件路径（当 <code>binary</code> 为空时用来读文件）</td></tr><tr><td style=text-align:left><code>binary</code></td><td style=text-align:left>bytes</td><td style=text-align:left>文件二进制内容，优先使用</td></tr><tr><td style=text-align:left><code>separate_tables</code></td><td style=text-align:left>bool</td><td style=text-align:left>是否将表格从正文中分离出来</td></tr><tr><td style=text-align:left><code>delimiter</code></td><td style=text-align:left>str</td><td style=text-align:left>自定义分割符，如果指定则用分割符切分而非按元素类型切分</td></tr><tr><td style=text-align:left><code>return_section_images</code></td><td style=text-align:left>bool</td><td style=text-align:left>是否额外返回每个 section 对应的图片</td></tr></tbody></table></div><p><strong>执行流程：</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-plaintext data-lang=plaintext><span class=line><span class=cl>Step 1: 文本解码
+</span></span><span class=line><span class=cl>  ┌────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ binary → find_codec() →    │
+</span></span><span class=line><span class=cl>  │ decode(encoding)           │
+</span></span><span class=line><span class=cl>  │ 或 open(filename).read()   │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 2: 表格提取（继承自父类）
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ self.extract_tables_and_remainder(txt+&#34;\n&#34;,         │
+</span></span><span class=line><span class=cl>  │                           separate_tables)          │
+</span></span><span class=line><span class=cl>  │ → (remainder, tables[])                             │
+</span></span><span class=line><span class=cl>  │                                                     │
+</span></span><span class=line><span class=cl>  │ 注意：这里传入的是 txt+&#34;\n&#34;（末尾补换行）             │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────────────────────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 3: 元素扫描
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ MarkdownElementExtractor(txt)                       │
+</span></span><span class=line><span class=cl>  │   .extract_elements(delimiter, include_meta=True)   │
+</span></span><span class=line><span class=cl>  │ → element_sections[]                                │
+</span></span><span class=line><span class=cl>  │                                                     │
+</span></span><span class=line><span class=cl>  │ ★ 关键：这里传入的是原始 txt，而非 remainder！        │
+</span></span><span class=line><span class=cl>  │   （注释 L682-683 说明了原因：为避免重复表格）         │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────────────────────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 4: 图片 URL 提取
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ self.extract_image_urls_with_lines(txt)              │
+</span></span><span class=line><span class=cl>  │ → image_refs = [{url, line}, ...]                   │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────────────────────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 5: 元素-图片关联（核心融合逻辑）
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ for element in element_sections:                    │
+</span></span><span class=line><span class=cl>  │   ① 取 element 的 start_line ~ end_line            │
+</span></span><span class=line><span class=cl>  │   ② 筛选行范围内的 image_refs                       │
+</span></span><span class=line><span class=cl>  │   ③ load_images_from_urls() 下载图片（有缓存）      │
+</span></span><span class=line><span class=cl>  │   ④ 多张图用 concat_img 合并为一张                  │
+</span></span><span class=line><span class=cl>  │   ⑤ sections.append((content, &#34;&#34;))                  │
+</span></span><span class=line><span class=cl>  │   ⑥ section_images.append(combined_image or None)   │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────────────────────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 6: 表格后处理
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ for table in tables:                                │
+</span></span><span class=line><span class=cl>  │   markdown(table, extensions=[&#34;tables&#34;]) → html     │
+</span></span><span class=line><span class=cl>  │   tbls.append(((None, html), &#34;&#34;))                   │
+</span></span><span class=line><span class=cl>  └────────────┬───────────────────────────────────────┘
+</span></span><span class=line><span class=cl>               ↓
+</span></span><span class=line><span class=cl>Step 7: 返回结果
+</span></span><span class=line><span class=cl>  ┌────────────────────────────────────────────────────┐
+</span></span><span class=line><span class=cl>  │ if return_section_images:                           │
+</span></span><span class=line><span class=cl>  │   return sections, tbls, section_images             │
+</span></span><span class=line><span class=cl>  │ else:                                               │
+</span></span><span class=line><span class=cl>  │   return sections, tbls                             │
+</span></span><span class=line><span class=cl>  └────────────────────────────────────────────────────┘
+</span></span></code></pre></td></tr></table></div></div><p><strong>输出数据结构：</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>sections</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=s2>&#34;## 标题</span><span class=se>\n</span><span class=s2>正文内容...&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>),</span>      <span class=c1># (文本, 位置标签—永远为空字符串)</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=s2>&#34;```python</span><span class=se>\n</span><span class=s2>code</span><span class=se>\n</span><span class=s2>```&#34;</span><span class=p>,</span> <span class=s2>&#34;&#34;</span><span class=p>),</span>       <span class=c1># 代码块</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>tbls</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>((</span><span class=kc>None</span><span class=p>,</span> <span class=s2>&#34;&lt;table&gt;...&lt;/table&gt;&#34;</span><span class=p>),</span> <span class=s2>&#34;&#34;</span><span class=p>),</span>  <span class=c1># (None, HTML表格字符串)</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>section_images</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=n>PIL</span><span class=o>.</span><span class=n>Image</span><span class=p>,</span>    <span class=c1># 该 section 中所有图片合并后的图像对象</span>
+</span></span><span class=line><span class=cl>    <span class=kc>None</span><span class=p>,</span>         <span class=c1># 该 section 无图片</span>
+</span></span><span class=line><span class=cl>    <span class=n>PIL</span><span class=o>.</span><span class=n>Image</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>这其中最关键的是<strong>表格提取</strong>和<strong>元素扫描</strong>的部分：</p><h4 id=extract_tables_and_remainder><code>extract_tables_and_remainder()</code></h4><p>这个方法定义于<code>deepdoc/parser/resume/markdown_parser.py</code>的<code>RAGFlowMarkdownParser</code>类中，用于将markdown中的表格提取出来</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>class</span> <span class=nc>RAGFlowMarkdownParser</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>chunk_token_num</span><span class=o>=</span><span class=mi>128</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>chunk_token_num</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=n>chunk_token_num</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>extract_tables_and_remainder</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>markdown_text</span><span class=p>,</span> <span class=n>separate_tables</span><span class=o>=</span><span class=kc>True</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 返回: (剩余正文, [表格列表])</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>表格识别策略：</strong></p><div class=table-wrapper><table><thead><tr><th style=text-align:left>类型</th><th style=text-align:left>正则</th><th style=text-align:left>示例</th></tr></thead><tbody><tr><td style=text-align:left>有边框 Markdown 表格</td><td style=text-align:left>`</td><td style=text-align:left>&mldr;</td></tr><tr><td style=text-align:left>无边框 Markdown 表格</td><td style=text-align:left>`text</td><td style=text-align:left>text` + 分隔行 + 数据行</td></tr><tr><td style=text-align:left>HTML 表格</td><td style=text-align:left><code>&lt;table>...&lt;/table></code>，支持包裹在 <code>&lt;html>&lt;body></code> 中</td><td style=text-align:left><code>&lt;table>&lt;tr>&lt;td>...&lt;/td>&lt;/tr>&lt;/table></code></td></tr></tbody></table></div><p>当 <code>separate_tables=True</code> 时，表格从正文里移除并单独返回；为 <code>False</code> 时则就地转为 HTML。</p><h4 id=markdownelementextractor><code>MarkdownElementExtractor</code></h4><p>该类位于<code>deepdoc/parser/markdown_parser.py</code>，实现了一个简易的 Markdown 元素识别器，将文本按行扫描并归类为不同的块类型。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>class</span> <span class=nc>MarkdownElementExtractor</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>markdown_content</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>markdown_content</span> <span class=o>=</span> <span class=n>markdown_content</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>lines</span> <span class=o>=</span> <span class=n>markdown_content</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>extract_elements</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>delimiter</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>include_meta</span><span class=o>=</span><span class=kc>False</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;&#34;&#34;提取各种元素(headers, code blocks, lists, 等)&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>输出元素结构：</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;type&#34;</span><span class=p>:</span> <span class=s2>&#34;header&#34;</span> <span class=o>|</span> <span class=s2>&#34;code_block&#34;</span> <span class=o>|</span> <span class=s2>&#34;list_block&#34;</span> <span class=o>|</span> <span class=s2>&#34;blockquote&#34;</span> <span class=o>|</span> <span class=s2>&#34;text_block&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;content&#34;</span><span class=p>:</span> <span class=s2>&#34;具体文本内容&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;start_line&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>,</span>   <span class=c1># 起始行号</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;end_line&#34;</span><span class=p>:</span> <span class=mi>5</span><span class=p>,</span>      <span class=c1># 结束行号</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>_extract_header()</code> : 返回单行的"header"</li><li><code>_extract_code_block()</code> : 直到遇到" ``` &ldquo;返回多行的代码块"code_block&rdquo;</li><li><code>_extract_list_block()</code> : 吞入满足以下条件的行：<ul><li>以 <code>-</code>, <code>*</code>, <code>+</code> 或 <code>数字.</code> 开头（列表项）</li><li>空行（列表项间隙）</li><li>以 2+ 空格缩进的子列表或续行</li></ul></li><li><code>_extract_blockquote()</code> : 持续吞入">&ldquo;开头的行或内部的空行</li><li><code>_extract_text_block()</code> : 处理不属于上面几种类型的普通文本"text_block&rdquo;，直到符合上面类型的元素再次出现</li></ul><h3 id=extract_image_urls_with_lines><code>extract_image_urls_with_lines()</code></h3><p>这个方法用于找出 Markdown 文本中所有图片引用及其所在行号。行号用于后续将图片关联到对应的 section。</p><p><strong>三阶段提取策略：</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-plaintext data-lang=plaintext><span class=line><span class=cl>阶段 1: Markdown 语法图片
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  正则: ![alt](url)  →  提取 url
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  模式: r&#34;!\[[^\]]*\]\(([^)\s]+)&#34;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>阶段 2: HTML 内联图片（单行）
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  正则: src=&#34;url&#34; / src=&#39;url&#39;  →  提取 url
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  模式: r&#39;src=[&#34;\\\&#39;&#34;]([^&#34;\\\&#39;&gt;\\s]+)&#39;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>阶段 3: HTML 跨行图片（BeautifulSoup 兜底）
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  解析整个文本为 HTML，查找所有 &lt;img&gt; 标签的 src
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  通过字符偏移量计算行号
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  用 seen 集合避免与阶段 1/2 重复
+</span></span></code></pre></td></tr></table></div></div><p><strong>返回值：</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span><span class=s2>&#34;url&#34;</span><span class=p>:</span> <span class=s2>&#34;https://example.com/img.png&#34;</span><span class=p>,</span> <span class=s2>&#34;line&#34;</span><span class=p>:</span> <span class=mi>5</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span><span class=s2>&#34;url&#34;</span><span class=p>:</span> <span class=s2>&#34;./assets/diagram.svg&#34;</span><span class=p>,</span> <span class=s2>&#34;line&#34;</span><span class=p>:</span> <span class=mi>12</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=load_images_from_urls><code>load_images_from_urls()</code></h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>load_images_from_urls</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>urls</span><span class=p>,</span> <span class=n>cache</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 返回: (images[], cache{})</span>
+</span></span></code></pre></td></tr></table></div></div><div class=table-wrapper><table><thead><tr><th style=text-align:left>功能</th><th style=text-align:left>细节</th></tr></thead><tbody><tr><td style=text-align:left>HTTP 图片</td><td style=text-align:left><code>requests.get(url, timeout=30)</code>，校验 <code>Content-Type</code> 为 <code>image/</code></td></tr><tr><td style=text-align:left>本地图片</td><td style=text-align:left><code>Path(url).exists()</code> 检查后用 <code>PIL.Image.open()</code></td></tr><tr><td style=text-align:left>缓存机制</td><td style=text-align:left><code>cache</code> dict 避免重复下载同一 URL</td></tr><tr><td style=text-align:left>统一格式</td><td style=text-align:left>所有图片转为 <code>RGB</code> 模式 (<code>convert("RGB")</code>)</td></tr><tr><td style=text-align:left>错误处理</td><td style=text-align:left>失败时 <code>cache[url] = None</code>，不中断流程</td></tr></tbody></table></div><p>这里的思路比较朴素，但很实用：</p><ol><li>先根据 <code>url</code> 判断是网络图片还是本地图片</li><li>统一加载成 <code>PIL.Image</code></li><li>放入缓存，避免同一张图在多个 section 中重复读取</li><li>后续如果某个 section 对应多张图片，再交给 <code>concat_img</code> 合并</li></ol><p>也就是说，RAGFlow 在 Markdown 中并不是把每一张图片都单独当成一个 chunk，而是先尝试把<strong>同一个 section 内的图片聚合</strong>起来，再与文本一起进入后续流程。</p><h3 id=urls_in_section--><code>urls_in_section = [...]</code></h3><p>在 <code>Markdown.__call__()</code> 中，真正把文本 section 和图片联系起来的代码是这一段：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>element</span> <span class=ow>in</span> <span class=n>element_sections</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>content</span> <span class=o>=</span> <span class=n>element</span><span class=p>[</span><span class=s2>&#34;content&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>start_line</span> <span class=o>=</span> <span class=n>element</span><span class=p>[</span><span class=s2>&#34;start_line&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>end_line</span> <span class=o>=</span> <span class=n>element</span><span class=p>[</span><span class=s2>&#34;end_line&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>urls_in_section</span> <span class=o>=</span> <span class=p>[</span><span class=n>ref</span><span class=p>[</span><span class=s2>&#34;url&#34;</span><span class=p>]</span> <span class=k>for</span> <span class=n>ref</span> <span class=ow>in</span> <span class=n>image_refs</span> <span class=k>if</span> <span class=n>start_line</span> <span class=o>&lt;=</span> <span class=n>ref</span><span class=p>[</span><span class=s2>&#34;line&#34;</span><span class=p>]</span> <span class=o>&lt;=</span> <span class=n>end_line</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>其核心思想非常直接：<strong>按行号做区间归属</strong>。</p><ul><li>一个 Markdown 元素先被标记 <code>start_line</code> 和 <code>end_line</code></li><li>所有图片引用也带有自己的 <code>line</code></li><li>只要图片所在行落在元素区间内，就认为这张图属于这个 section</li></ul><p>这是一种很工程化的做法。它不追求复杂语义理解，而是利用 Markdown 本身“按行组织”的特点，以较低成本建立图文关联。</p><p>例如下面这段 Markdown：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl><span class=gu>## 模型结构
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>这里介绍整体流程。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>![<span class=nt>pipeline</span>](<span class=na>./pipeline.png</span>)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>接着说明各模块职责。
+</span></span></code></pre></td></tr></table></div></div><p>如果这一整段被 <code>MarkdownElementExtractor</code> 视为同一个 <code>text_block</code>，那么图片就会和这一段正文绑定在一起；如果标题和正文被分成两个元素，则图片通常会归到正文所在的 section，而不会归到标题 section。</p><h4 id=表格处理细节>表格处理细节</h4><p>前面提到，<code>Markdown.__call__()</code> 中虽然调用了：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>remainder</span><span class=p>,</span> <span class=n>tables</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>extract_tables_and_remainder</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>txt</span><span class=si>}</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=n>separate_tables</span><span class=o>=</span><span class=n>separate_tables</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>但后面真正做元素扫描时，使用的是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>extractor</span> <span class=o>=</span> <span class=n>MarkdownElementExtractor</span><span class=p>(</span><span class=n>txt</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>而不是 <code>remainder</code>。</p><p>源码里其实已经留了注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># To eliminate duplicate tables in chunking result, uncomment code below and set separate_tables to True ...</span>
+</span></span><span class=line><span class=cl><span class=c1># extractor = MarkdownElementExtractor(remainder)</span>
+</span></span><span class=line><span class=cl><span class=n>extractor</span> <span class=o>=</span> <span class=n>MarkdownElementExtractor</span><span class=p>(</span><span class=n>txt</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这说明作者其实也意识到了一个现象：<strong>表格可能同时出现在 section chunk 和 table result 中</strong>。</p><p>从实现角度看，这未必是 bug，更像是一种偏保守的召回策略：</p><ul><li>正文 chunk 中保留表格原始上下文</li><li><code>tables</code> 中再额外保留结构化表格内容</li></ul><p>这样做可能带来一定冗余，但也提高了检索时命中表格信息的概率。</p><h2 id=chunk><code>chunk()</code></h2><p>看到这里，其实还只是完成了解析和预处理。真正决定最终 chunk 长什么样的，不在 <code>Markdown.__call__()</code>，而在 <code>rag/app/naive.py</code> 下面的 <code>chunk()</code> 函数里。</p><p>Markdown 文件分支一开始会先调用前面的解析器：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>markdown_parser</span> <span class=o>=</span> <span class=n>Markdown</span><span class=p>(</span><span class=nb>int</span><span class=p>(</span><span class=n>parser_config</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;chunk_token_num&#34;</span><span class=p>,</span> <span class=mi>128</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl><span class=n>sections</span><span class=p>,</span> <span class=n>tables</span><span class=p>,</span> <span class=n>section_images</span> <span class=o>=</span> <span class=n>markdown_parser</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>filename</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>binary</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>separate_tables</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>delimiter</span><span class=o>=</span><span class=n>parser_config</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;delimiter&#34;</span><span class=p>,</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>!?;。；！？&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=n>return_section_images</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里有两个细节值得注意：</p><ul><li><code>return_section_images=True</code>
+说明 Markdown 解析阶段生成的图片不会丢，而是继续带到后面的 chunk 合并流程中。</li><li><code>separate_tables=False</code>
+说明这里并没有把表格完全从正文切走，而是倾向于让表格继续留在 Markdown 上下文里，同时又额外生成 <code>tables</code> 供表格索引使用。</li></ul><p>接着，如果当前租户存在 <code>IMAGE2TEXT</code> 模型，<code>chunk()</code> 会尝试给 Markdown 中的图片补一段描述文本：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>vision_model_config</span> <span class=o>=</span> <span class=n>get_tenant_default_model_by_type</span><span class=p>(</span><span class=n>kwargs</span><span class=p>[</span><span class=s2>&#34;tenant_id&#34;</span><span class=p>],</span> <span class=n>LLMType</span><span class=o>.</span><span class=n>IMAGE2TEXT</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>vision_model</span> <span class=o>=</span> <span class=n>LLMBundle</span><span class=p>(</span><span class=n>kwargs</span><span class=p>[</span><span class=s2>&#34;tenant_id&#34;</span><span class=p>],</span> <span class=n>vision_model_config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>logging</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Failed to detect figure extraction: </span><span class=si>{</span><span class=n>e</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>vision_model</span> <span class=o>=</span> <span class=kc>None</span>
+</span></span></code></pre></td></tr></table></div></div><p>如果视觉模型可用，则继续遍历每个 section：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>idx</span><span class=p>,</span> <span class=p>(</span><span class=n>section_text</span><span class=p>,</span> <span class=n>_</span><span class=p>)</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=n>sections</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>images</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>section_images</span> <span class=ow>and</span> <span class=nb>len</span><span class=p>(</span><span class=n>section_images</span><span class=p>)</span> <span class=o>&gt;</span> <span class=n>idx</span> <span class=ow>and</span> <span class=n>section_images</span><span class=p>[</span><span class=n>idx</span><span class=p>]</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>images</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>section_images</span><span class=p>[</span><span class=n>idx</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>images</span> <span class=ow>and</span> <span class=nb>len</span><span class=p>(</span><span class=n>images</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>combined_image</span> <span class=o>=</span> <span class=n>reduce</span><span class=p>(</span><span class=n>concat_img</span><span class=p>,</span> <span class=n>images</span><span class=p>)</span> <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>images</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>1</span> <span class=k>else</span> <span class=n>images</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>markdown_vision_parser</span> <span class=o>=</span> <span class=n>VisionFigureParser</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>vision_model</span><span class=o>=</span><span class=n>vision_model</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>figures_data</span><span class=o>=</span><span class=p>[((</span><span class=n>combined_image</span><span class=p>,</span> <span class=p>[</span><span class=s2>&#34;markdown image&#34;</span><span class=p>]),</span> <span class=p>[(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>)])],</span>
+</span></span><span class=line><span class=cl>            <span class=o>**</span><span class=n>kwargs</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>boosted_figures</span> <span class=o>=</span> <span class=n>markdown_vision_parser</span><span class=p>(</span><span class=n>callback</span><span class=o>=</span><span class=n>callback</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>sections</span><span class=p>[</span><span class=n>idx</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>section_text</span> <span class=o>+</span> <span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span> <span class=o>+</span> <span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>([</span><span class=n>fig</span><span class=p>[</span><span class=mi>0</span><span class=p>][</span><span class=mi>1</span><span class=p>]</span> <span class=k>for</span> <span class=n>fig</span> <span class=ow>in</span> <span class=n>boosted_figures</span><span class=p>]),</span>
+</span></span><span class=line><span class=cl>            <span class=n>sections</span><span class=p>[</span><span class=n>idx</span><span class=p>][</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里可以看出 Markdown 图片增强的几个特点：</p><ul><li>粒度是 <strong>section 级别</strong></li><li>输入图片是前面已经聚合好的 <code>section_images[idx]</code></li><li>输出不是新的 chunk，而是把图片描述文本直接追加回原 <code>section_text</code></li></ul><h3 id=visionfigureparser><code>VisionFigureParser</code></h3><p>该类定义在 <code>deepdoc/parser/figure_parser.py</code> 中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>class</span> <span class=nc>VisionFigureParser</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>vision_model</span><span class=p>,</span> <span class=n>figures_data</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>vision_model</span> <span class=o>=</span> <span class=n>vision_model</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>figure_contexts</span> <span class=o>=</span> <span class=n>kwargs</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;figure_contexts&#34;</span><span class=p>)</span> <span class=ow>or</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>context_size</span> <span class=o>=</span> <span class=nb>max</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nb>int</span><span class=p>(</span><span class=n>kwargs</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;context_size&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>_extract_figures_info</span><span class=p>(</span><span class=n>figures_data</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个类的职责并不复杂，可以理解为一个“图片描述批处理器”：</p><ul><li>接收图片列表 <code>figures_data</code></li><li>整理出图片、描述、位置信息</li><li>调用视觉模型生成描述</li><li>再把结果重新组装回原来的数据结构</li></ul><p>Markdown 分支给它传入的 <code>figures_data</code> 形式是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>[((</span><span class=n>combined_image</span><span class=p>,</span> <span class=p>[</span><span class=s2>&#34;markdown image&#34;</span><span class=p>]),</span> <span class=p>[(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>)])]</span>
+</span></span></code></pre></td></tr></table></div></div><p>也就是说，每次只处理当前 section 对应的一张聚合图，原始描述先放一个占位值 <code>"markdown image"</code>，位置则放一个 dummy tuple。</p><h3 id=_extract_figures_info><code>_extract_figures_info()</code></h3><p>这个方法负责把 <code>figures_data</code> 拆成内部使用的三个列表：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>_extract_figures_info</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>figures_data</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>figures</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>descriptions</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>positions</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中核心分支是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>item</span><span class=p>)</span> <span class=o>==</span> <span class=mi>2</span> <span class=ow>and</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>item</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span> <span class=nb>tuple</span><span class=p>)</span> <span class=ow>and</span> <span class=nb>len</span><span class=p>(</span><span class=n>item</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span> <span class=o>==</span> <span class=mi>2</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>img_desc</span> <span class=o>=</span> <span class=n>item</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>img</span> <span class=o>=</span> <span class=n>ensure_pil_image</span><span class=p>(</span><span class=n>img_desc</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>figures</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>img</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>descriptions</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>img_desc</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>    <span class=bp>self</span><span class=o>.</span><span class=n>positions</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>item</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
+</span></span></code></pre></td></tr></table></div></div><p>因此传入的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>((</span><span class=n>combined_image</span><span class=p>,</span> <span class=p>[</span><span class=s2>&#34;markdown image&#34;</span><span class=p>]),</span> <span class=p>[(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>)])</span>
+</span></span></code></pre></td></tr></table></div></div><p>会被拆成：</p><ul><li><code>self.figures</code> : <code>[combined_image]</code></li><li><code>self.descriptions</code> : <code>[["markdown image"]]</code></li><li><code>self.positions</code> : <code>[[(0, 0, 0, 0, 0)]]</code></li></ul><p>这里的 <code>ensure_pil_image()</code> 负责把输入统一成 <code>PIL.Image</code> 对象，因此前面无论传入的是普通图片对象还是惰性图片对象，到了这里都会被标准化。</p><h3 id=__call__-1><code>__call__()</code></h3><p><code>VisionFigureParser.__call__()</code> 才是真正执行视觉增强的入口：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=fm>__call__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>callback</span> <span class=o>=</span> <span class=n>kwargs</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;callback&#34;</span><span class=p>,</span> <span class=k>lambda</span> <span class=n>prog</span><span class=p>,</span> <span class=n>msg</span><span class=p>:</span> <span class=kc>None</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>它内部先定义了一个 <code>process()</code>，用于处理单张图片：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>process</span><span class=p>(</span><span class=n>figure_idx</span><span class=p>,</span> <span class=n>figure_binary</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>context_above</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>context_below</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>figure_idx</span> <span class=o>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>figure_contexts</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>context_above</span><span class=p>,</span> <span class=n>context_below</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>figure_contexts</span><span class=p>[</span><span class=n>figure_idx</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>context_above</span> <span class=ow>or</span> <span class=n>context_below</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>prompt</span> <span class=o>=</span> <span class=n>vision_llm_figure_describe_prompt_with_context</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>context_above</span><span class=o>=</span><span class=n>context_above</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>context_below</span><span class=o>=</span><span class=n>context_below</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>prompt</span> <span class=o>=</span> <span class=n>vision_llm_figure_describe_prompt</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后通过线程池并发调用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>idx</span><span class=p>,</span> <span class=n>img_binary</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>figures</span> <span class=ow>or</span> <span class=p>[]):</span>
+</span></span><span class=line><span class=cl>    <span class=n>futures</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>shared_executor</span><span class=o>.</span><span class=n>submit</span><span class=p>(</span><span class=n>process</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=n>img_binary</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p>等所有任务完成之后，将返回的描述文本写回：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>for</span> <span class=n>future</span> <span class=ow>in</span> <span class=n>as_completed</span><span class=p>(</span><span class=n>futures</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>figure_num</span><span class=p>,</span> <span class=n>txt</span> <span class=o>=</span> <span class=n>future</span><span class=o>.</span><span class=n>result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>txt</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>descriptions</span><span class=p>[</span><span class=n>figure_num</span><span class=p>]</span> <span class=o>=</span> <span class=n>txt</span> <span class=o>+</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>descriptions</span><span class=p>[</span><span class=n>figure_num</span><span class=p>])</span>
+</span></span></code></pre></td></tr></table></div></div><p>最后再调用 <code>_assemble()</code> 重新组装：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>_assemble</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>assembled</span>
+</span></span></code></pre></td></tr></table></div></div><p>对于 Markdown 分支来说，这里有两个细节：</p><ul><li>没有显式传入 <code>figure_contexts</code>，因此默认使用 <code>vision_llm_figure_describe_prompt()</code></li><li>回填时会把模型输出和原始描述拼在一起，因此最终描述中理论上可能保留 <code>"markdown image"</code> 这个占位文本</li></ul><h3 id=picture_vision_llm_chunk><code>picture_vision_llm_chunk()</code></h3><p><code>process()</code> 里真正调用视觉模型的函数是 <code>rag/app/picture.py</code> 中的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>vision_llm_chunk</span><span class=p>(</span><span class=n>binary</span><span class=p>,</span> <span class=n>vision_model</span><span class=p>,</span> <span class=n>prompt</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>callback</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+</span></span></code></pre></td></tr></table></div></div><p>虽然名字叫 <code>vision_llm_chunk</code>，但其作用其实很直接，就是把图片交给 VLM 并返回描述文本。</p><p>其主要步骤如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>with</span> <span class=n>io</span><span class=o>.</span><span class=n>BytesIO</span><span class=p>()</span> <span class=k>as</span> <span class=n>img_binary</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>img</span><span class=o>.</span><span class=n>save</span><span class=p>(</span><span class=n>img_binary</span><span class=p>,</span> <span class=nb>format</span><span class=o>=</span><span class=s2>&#34;JPEG&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>Exception</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>img_binary</span><span class=o>.</span><span class=n>seek</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>img_binary</span><span class=o>.</span><span class=n>truncate</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=n>img</span><span class=o>.</span><span class=n>save</span><span class=p>(</span><span class=n>img_binary</span><span class=p>,</span> <span class=nb>format</span><span class=o>=</span><span class=s2>&#34;PNG&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>img_binary</span><span class=o>.</span><span class=n>seek</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>ans</span> <span class=o>=</span> <span class=n>clean_markdown_block</span><span class=p>(</span><span class=n>vision_model</span><span class=o>.</span><span class=n>describe_with_prompt</span><span class=p>(</span><span class=n>img_binary</span><span class=o>.</span><span class=n>read</span><span class=p>(),</span> <span class=n>prompt</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=n>txt</span> <span class=o>+=</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span> <span class=o>+</span> <span class=n>ans</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>txt</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里做了几件事：</p><ul><li>先把 <code>PIL.Image</code> 编码成二进制</li><li>优先尝试保存为 <code>JPEG</code>，失败则退回 <code>PNG</code></li><li>调用 <code>vision_model.describe_with_prompt()</code> 生成描述</li><li>用 <code>clean_markdown_block()</code> 清理模型输出中的 Markdown 包裹</li></ul><p>因此这个函数返回的是一段纯文本，而不是结构化对象。</p><h3 id=vision_llm_figure_describe_prompt><code>vision_llm_figure_describe_prompt()</code></h3><p>在 <code>VisionFigureParser.__call__()</code> 中，无上下文情况下使用的是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>prompt</span> <span class=o>=</span> <span class=n>vision_llm_figure_describe_prompt</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>而如果存在上下文，则切换到：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>prompt</span> <span class=o>=</span> <span class=n>vision_llm_figure_describe_prompt_with_context</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>context_above</span><span class=o>=</span><span class=n>context_above</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>context_below</span><span class=o>=</span><span class=n>context_below</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这两组 prompt 都定义在 <code>rag/prompts/</code> 下。其核心约束是：</p><ul><li>只根据图中可见内容生成文本</li><li>如果是表格、柱状图、折线图这类“可枚举数据图”，则按固定字段输出</li><li>如果不是结构化数据图，则按空间顺序描述可见内容</li><li>不允许额外推断流程、功能或语义</li></ul><p>也就是说，这一步生成的不是泛化摘要，而是偏向<strong>检索友好</strong>的图片文本表示。</p><h3 id=sectionsidx--><code>sections[idx] = (...)</code></h3><p>最终在 <code>rag/app/naive.py</code> 中，增强结果是这样写回 section 的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>sections</span><span class=p>[</span><span class=n>idx</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>section_text</span> <span class=o>+</span> <span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span> <span class=o>+</span> <span class=s2>&#34;</span><span class=se>\n\n</span><span class=s2>&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>([</span><span class=n>fig</span><span class=p>[</span><span class=mi>0</span><span class=p>][</span><span class=mi>1</span><span class=p>]</span> <span class=k>for</span> <span class=n>fig</span> <span class=ow>in</span> <span class=n>boosted_figures</span><span class=p>]),</span>
+</span></span><span class=line><span class=cl>    <span class=n>sections</span><span class=p>[</span><span class=n>idx</span><span class=p>][</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>因此 Markdown 图像增强不会引入新的切片层级，而是把图片描述文本直接拼回现有 section。</p><p>在这一轮增强之后，<code>chunk()</code> 才会真正进入 Markdown 专属的 chunk 合并逻辑：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=n>is_markdown</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>merged_chunks</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=n>merged_images</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=n>chunk_limit</span> <span class=o>=</span> <span class=nb>max</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nb>int</span><span class=p>(</span><span class=n>parser_config</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;chunk_token_num&#34;</span><span class=p>,</span> <span class=mi>128</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>current_text</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_tokens</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_image</span> <span class=o>=</span> <span class=kc>None</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>idx</span><span class=p>,</span> <span class=n>sec</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=n>sections</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>text</span> <span class=o>=</span> <span class=n>sec</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>sec</span><span class=p>,</span> <span class=nb>tuple</span><span class=p>)</span> <span class=k>else</span> <span class=n>sec</span>
+</span></span><span class=line><span class=cl>        <span class=n>sec_tokens</span> <span class=o>=</span> <span class=n>num_tokens_from_string</span><span class=p>(</span><span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>sec_image</span> <span class=o>=</span> <span class=n>section_images</span><span class=p>[</span><span class=n>idx</span><span class=p>]</span> <span class=k>if</span> <span class=n>section_images</span> <span class=ow>and</span> <span class=n>idx</span> <span class=o>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=n>section_images</span><span class=p>)</span> <span class=k>else</span> <span class=kc>None</span>
+</span></span></code></pre></td></tr></table></div></div><p>这段代码表明，Markdown 的切片单位不是“原始全文直接按分隔符硬切”，而是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-plaintext data-lang=plaintext><span class=line><span class=cl>Markdown 文本
+</span></span><span class=line><span class=cl>  ↓
+</span></span><span class=line><span class=cl>按元素扫描成多个 section
+</span></span><span class=line><span class=cl>  ↓
+</span></span><span class=line><span class=cl>每个 section 绑定对应图片
+</span></span><span class=line><span class=cl>  ↓
+</span></span><span class=line><span class=cl>图片描述增强（如果启用）
+</span></span><span class=line><span class=cl>  ↓
+</span></span><span class=line><span class=cl>按 token 上限逐个累积合并
+</span></span><span class=line><span class=cl>  ↓
+</span></span><span class=line><span class=cl>得到最终 chunk
+</span></span></code></pre></td></tr></table></div></div><p>RAGFlow 对 Markdown 没有直接调用通用的 <code>naive_merge_with_images()</code>，而是单独写了一套更简单的逻辑。其规则是：</p><ul><li>如果加入下一个 section 后仍未超过 <code>chunk_token_num</code>，则继续追加</li><li>如果会超过上限，就先把当前 chunk 落盘，再开启一个新的 chunk</li><li>如果开启新 chunk 时配置了 <code>overlapped_percent</code>，则保留上一 chunk 尾部的一部分文本作为重叠上下文</li><li>与此同时，当前 chunk 内涉及的所有图片会被不断 <code>concat_img</code> 合并</li></ul><p>关键代码如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=n>current_text</span> <span class=ow>and</span> <span class=n>current_tokens</span> <span class=o>+</span> <span class=n>sec_tokens</span> <span class=o>&gt;</span> <span class=n>chunk_limit</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>merged_chunks</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>current_text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>merged_images</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>current_image</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>overlap_part</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>overlapped_percent</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>overlap_len</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>current_text</span><span class=p>)</span> <span class=o>*</span> <span class=n>overlapped_percent</span> <span class=o>/</span> <span class=mi>100</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>overlap_len</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>overlap_part</span> <span class=o>=</span> <span class=n>current_text</span><span class=p>[</span><span class=o>-</span><span class=n>overlap_len</span><span class=p>:]</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_text</span> <span class=o>=</span> <span class=n>overlap_part</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_tokens</span> <span class=o>=</span> <span class=n>num_tokens_from_string</span><span class=p>(</span><span class=n>current_text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>current_image</span> <span class=o>=</span> <span class=n>current_image</span> <span class=k>if</span> <span class=n>overlap_part</span> <span class=k>else</span> <span class=kc>None</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里可以看出两个特点：</p><ul><li>重叠是按<strong>字符长度</strong>截尾，而不是按 section 粒度重叠</li><li>图片是按 chunk 聚合的，只要 section 被并入同一个 chunk，其图片也会被拼到同一张图上</li></ul><p>因此，一个最终的 Markdown chunk，本质上是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;text&#34;</span><span class=p>:</span> <span class=s2>&#34;若干相邻 section 合并后的文本&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;image&#34;</span><span class=p>:</span> <span class=s2>&#34;这些 section 内图片拼接后的结果（如果有）&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>在 chunk 合并完成之后，RAGFlow 会根据该批 chunk 是否含图走两条不同路径：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>has_images</span> <span class=o>=</span> <span class=n>merged_images</span> <span class=ow>and</span> <span class=nb>any</span><span class=p>(</span><span class=n>img</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span> <span class=k>for</span> <span class=n>img</span> <span class=ow>in</span> <span class=n>merged_images</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=n>has_images</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>res</span><span class=o>.</span><span class=n>extend</span><span class=p>(</span><span class=n>tokenize_chunks_with_images</span><span class=p>(</span><span class=n>chunks</span><span class=p>,</span> <span class=n>doc</span><span class=p>,</span> <span class=n>is_english</span><span class=p>,</span> <span class=n>merged_images</span><span class=p>,</span> <span class=n>child_delimiters_pattern</span><span class=o>=</span><span class=n>child_deli</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>res</span><span class=o>.</span><span class=n>extend</span><span class=p>(</span><span class=n>tokenize_chunks</span><span class=p>(</span><span class=n>chunks</span><span class=p>,</span> <span class=n>doc</span><span class=p>,</span> <span class=n>is_english</span><span class=p>,</span> <span class=n>pdf_parser</span><span class=p>,</span> <span class=n>child_delimiters_pattern</span><span class=o>=</span><span class=n>child_deli</span><span class=p>))</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中：</p><ul><li><code>tokenize_chunks()</code> 负责纯文本 chunk 的分词和字段封装</li><li><code>tokenize_chunks_with_images()</code> 则会把对应图片写入文档对象的 <code>image</code> 字段</li><li>表格则另外通过 <code>tokenize_table(tables, doc, is_english)</code> 进入结果集</li></ul><p>也就是说，Markdown 在 RAGFlow 中最后会被拆成三类可检索对象：</p><ol><li>普通文本 chunk</li><li>携带图片的多模态 chunk</li><li>表格对象</li></ol><h2 id=小结>小结</h2><p>至此，RAGFlow 对 Markdown 的“切片”逻辑就比较清楚了。它并不是简单地按固定长度裁文本，而是分成了几层：</p><ol><li>先识别表格、标题、代码块、列表、引用块和普通文本块</li><li>再根据图片引用所在行号，把图片绑定到对应 section</li><li>然后按 token 上限把多个相邻 section 合并为 chunk</li><li>最后把文本、图片、表格分别包装成可检索对象</li></ol><p>从工程实现上看，这套方案的优点是：</p><ul><li>实现简单，可维护性高</li><li>比纯分隔符切片更保留 Markdown 结构</li><li>能较自然地支持图文混合检索</li><li>表格被单独抽出后，也便于做专门处理</li></ul><p>当然，它也有一些局限，例如：</p><ul><li>图片归属依赖行号，精度有限</li><li>section 的粒度较粗，未做更深层的语义切分</li><li>表格与正文可能存在信息重复</li></ul><p>但对一个通用 RAG 系统来说，这样的取舍是相当合理的。它没有追求复杂而昂贵的 Markdown AST 解析，而是用较低复杂度完成了“结构感知切片”。</p><p>笔者认为，这也是 RAGFlow 值得学习的一点：很多时候，切片策略不一定要非常“聪明”，但一定要足够稳定、可解释，并且方便与后续检索流程对接。</p></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/%E5%88%87%E7%89%87/>切片</a></section><section class="article-copyright inline-meta"><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],ignoredClasses:["gist"]})})})</script></article><aside><h2 class=section-title></h2><div class=subsection-list><div class=article-list--tile><article><a href=/p/cs224n-assignment3-nmt/><div class=article-details><h2 class=article-title>CS224N Assignment3 NMT</h2></div></a></article><article><a href=/p/%E7%BE%A4%E6%99%96nas%E4%BB%A3%E7%90%86%E5%8F%8Aemby%E9%85%8D%E7%BD%AE/><div class=article-details><h2 class=article-title>群晖NAS代理及Emby配置</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E5%9C%A8wsl2%E4%B8%8A%E4%BD%BF%E7%94%A8%E6%9C%AC%E6%9C%BA%E4%BB%A3%E7%90%86/><div class=article-details><h2 class=article-title>如何在WSL2上使用本机代理</h2></div></a></article><article><a href=/p/cs224n/><div class=article-details><h2 class=article-title>CS224N</h2></div></a></article><article><a href=/p/pytorch%E5%9F%BA%E7%A1%80/><div class=article-details><h2 class=article-title>Pytorch基础</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 边个濑椰的博客</section><section class=powerby><br></section></footer><script type=module>
     import gallery from '\/ts\/gallery.js';
 
     const articleContent = document.querySelector('.article-content');
@@ -1700,14 +591,4 @@
         });
         lightbox.init();
     }
-</script>
-    
-
-            </main>
-        </div>
-        
-<script type="text/javascript" src="/ts/main.cb7a123540d26af6863483a994e00134749a05b073820fd7c04b3a3c15b4f89c.js" defer></script>
-
-
-    </body>
-</html>
+</script></main></div><script type=text/javascript src=/ts/main.acaf849f2b273f6a8368a58b001f336738d0c948d92e79b116467d0c7515f932.js defer></script></body></html>
