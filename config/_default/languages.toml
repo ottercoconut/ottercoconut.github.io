@@ -2,18 +2,18 @@
 [zh-cn]
     contentDir = 'content/zh'
     disabled = false
-    languageName = "简体中文"
-    languageCode = "zh-CN"
-    languagedirection = "ltr"
+    label = "简体中文"
+    locale = "zh-CN"
+    direction = "ltr"
     title = "边个濑椰的博客"
     weight = 1
 
 [en]
     contentDir = 'content/en'
     disabled = false
-    languageName      = "English"
-    languageCode = "en-US"
-    languagedirection = "ltr"
+    label             = "English"
+    locale = "en-US"
+    direction = "ltr"
     title             = "ottercoconut's Blog"
     weight            = 2
     [en.params.sidebar]
