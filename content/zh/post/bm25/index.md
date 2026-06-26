@@ -2,7 +2,7 @@
 
 title = "Practical BM25"
 date = 2026-05-09T13:30:00+08:00
-translationKey = "bm25l"
+translationKey = "bm25"
 tags = ["稀疏向量"]
 categories = ["技术"]
 

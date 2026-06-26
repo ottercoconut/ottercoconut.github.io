@@ -1,6 +1,6 @@
 +++
 
-title = "读懂 Python asyncio：协程与任务"
+title = "Python asyncio：协程与任务"
 date = 2026-04-23T16:08:00+08:00
 translationKey = "python-async"
 tags = ["Python", "asyncio"]
@@ -11,7 +11,7 @@ toc = false
 
 +++
 
-# 读懂 Python asyncio：协程与任务
+# Python asyncio：协程与任务
 
 > 本文基于 *Python 3.11* 的asyncio ，可能会缺失最新版本的特性
 
