@@ -1,7 +1,7 @@
 +++
-title = "TOEFL题目经验"
+title = "TOEFL学习经验"
 date = 2025-11-02T15:54:54+08:00
-translationKey = "tpo-experience"
+translationKey = "toefl-experience"
 tags = []
 categories = ["英语"]
 
@@ -9,13 +9,58 @@ categories = ["英语"]
 toc = true
 +++
 
-### Intro
+注：2026年1月后，托福进行了改革，旧的题型不再具有参考价值，故删减部分内容。
 
-TPO6-15作为25年9-10月份对托福题目的初见，整理完毕已经是11月的第二个周了，虽然只做了阅读和听力，且题目过时，但其难度是显而易见的，非常的细节，逻辑严谨，题材广泛。除去词汇量的不足，感觉上刷题越多越有题感（越能蒙对）下面是Reading Section和Listening Section的反思，或者说错题本罢。
+**考试时长大幅缩短**：总时长约1.5–2小时，流程更紧凑高效。
 
-TPO50+是11-12月的一些练习，虽说还是过时点了，但题目难度略有提升，重点是题型的变化。
+**自适应测试**：Reading和Listening采用多阶段自适应设计，根据考生前一阶段表现实时调整后续难度，测试更精准。
 
-2026年，一战前最后几天，做几套25年真题
+**全新评分体系**：改为**1–6分制**（0.5为增量），总分取四部分平均，直接对应CEFR语言能力框架（如5分≈C1）。过渡期2年内，成绩单同时显示可比的0–120总分，便于新旧对比。
+
+**内容与题型全面更新**：四大板块均引入更实用、贴近学术与日常生活的新任务类型，减少冷门偏题，强调真实沟通能力。
+
+## TOEFL
+
+### Reading
+
+**模块数量**：**2个模块**（Module 1 + Module 2）
+
+**总题量**：**约45–50题**（48题左右）
+
+**总时长**：**约30分钟**（整个Reading部分）
+
+自适应方式：多阶段自适应（MST）
+
+- **模块一（Routing Module）**：所有考生难度基本相同（路由模块），题量较多。
+- **模块二**：根据模块一的表现路由到**较高难度**或**较低难度**版本，题量较少，进入较难的模块二则代表高分数。
+
+| 模块       | 常见题量 | 建议时间分配  | 说明                                       |
+| ---------- | -------- | ------------- | ------------------------------------------ |
+| **模块一** | 25–30题  | **18–22分钟** | 决定你最终能拿到的分数上限                 |
+| **模块二** | 15–20题  | **8–12分钟**  | 根据模块一表现分流，题量减少               |
+| **总计**   | 45–50题  | **约30分钟**  | 会同时存在计分题和不计分题，但考生无法得知 |
+
+三种题型在阅读中通常按以下顺序出现：
+
+1. Complete the Words（语境填词）——占比最高
+   - 多个短段落（每个段落约10个空）
+   - 做题速度相对快，熟悉后每题平均15–25秒
+2. Read in Daily Life（日常阅读）
+   - 短文本（邮件、通知、聊天记录等）
+   - 每篇题量少（通常2–3题）
+3. Read an Academic Passage（学术阅读）
+   - 学术短文
+   - 每篇题量也较少（约5题）
+
+### Complete the Words
+
+### Read in Daily Life
+
+### Read an Academic Passage
+
+
+
+## TOEFL (before 2026 Jan.)
 
 ### Reading
 
@@ -1665,208 +1710,18 @@ Q1.
 
 ### Writing
 
-#### 20250315 - Integrated Writing
-
-##### Reading
-
-  Fluoride, a chemical compound derived from the element fluorine, is added to public water supplies in some areas of the United States. Most public health experts have concluded that fluoride should continue to be added to public supplies because fluoride has proven health benefits.
-
-It is well established, for example, that fluoride prevents dental cavities, a form of tooth decay. Many studies over the last 50 years have shown that people who have fluoride in their drinking water are considerably less likely to develop cavities than are people who drink nonfluoridated water. The apparent reason for this is that fluoride bonds to the surfaces of teeth, making teeth stronger and more resistant to the formation of cavities.
-
-Another reason fluoride is commonly added to public drinking water is that it destroys harmful bacteria and organisms in the water supply. Because fluoride is mildly toxic, low levels of fluoride can be used to kill harmful bacteria without hurting humans. Thus the addition of fluoride to purify drinking water can safely prevent people from drinking water that could potentially be harmful.
-
-Finally, fluoride can lower the risk of the bone disease known as osteoporosis, which is common in the elderly. People with osteoporosis are at high risk of bone fractures because they have low levels of bone mass and poor bone quality. Studies in Britain have shown that fluoride increases the activity of bone-forming cells called osteoblasts. Increased osteoblast activity can lead to greater bone density and therefore fewer bone fractures among the elderly.  
-
-##### Listening
-
-[00:00:00:7200] Narrator:
-
-Now listen to part of a lecture on the topic you just read about.
-
-[00:00:06:88200] Professor:
-
-As you discovered in the reading, fluoride has some potentially important health
-
-benefits, but that's not the issue. The issue is whether it's a good idea to add fluoride
-
-to public water supplies. A lot of people don't think so.
-
-[00:00:20:29700] Professor:
-
-First, there are a lot of ways to obtain fluoride besides adding it to the public water
-
-supply. For example, fluoride is often added to toothpaste. That makes sense
-
-because fluoride prevents cavities when it's applied to the surface of teeth. In fact,
-
-when the fluoride is in the drinking water, most of it is simply swallowed. So for the
-
-purpose of preventing cavities, it's inefficient and wasteful to add fluoride to the
-
-public water supply.
-
-[00:00:47:32400] Professor:
-
-Second, there are better ways to purify public water supplies than adding fluoride.
-
-You see, public water typically travels through metal pipes that often contain lead.
-
-Fluoride can react chemically with lead, and this chemical interaction, called leaching,
-
-causes lead in the water pipes to enter into the water. Lead is potentially harmful if
-
-ingested, and there's just no good reason to expose people to this risk. There are
-
-other, equally effective ways to purify water that do not raise the lead level of
-
-drinking water.
-
-[00:01:21:74700] Narrator:
-
-Finally, too much fluoride can actually increase the risk of bone fracture. High doses
-
-of fluoride can cause osteoblasts to become overactive, thereby making the bones
-
-brittle and inflexible, and therefore even more likely to break. When fluoride is in the
-
-water supply, individuals can't control how much fluoride they're taking in, and so
-
-they have fewer defenses against the bone problems. Too much fluoride can cause
-
-for fluoride to be effective as a preventative measure or treatment for bone disease.
-
-It must be administered in known, carefully calculated doses, not simply put in all
-
-supplies of drinking water.
-
----
-
-##### Write-up
-
-We can learn from the reading that fluoride is a chemical compound that is added to public water supplies in the United States and it has proven health benefits. Three theories are proposed in the reading showing its benefits, while all of them are refuted by the lecture, which states that it's not a good idea to add fluoride to public water.
-
-First, the reading claims that fluoride prevents dental cavities, a form of tooth decay, as fluoride bonds to the surface of teeth to make teeth stronger. However, the lecture claims that there is no need for people to obtain fluoride from public water. For example, toothpaste with fluoride can also prevent tooth decay and reduce the waste of fluoride. Besides, it's wasteful because most of the fluoride is swallowed but **does not remain on teeth**.
-
-Second, the reading indicates that fluoride destroys harmful bacteria and organisms since it's mildly toxic without hurting humans. Nevertheless, the lecture counteracts the idea: fluoride shouldn't be used to purify water as it reacts with other chemical elements in public water **pipes**, which **poses** potential risks **to** humans.
-
-Third, the reading demonstrates that fluoride lowers the risk of osteoporosis, a kind of bone disease, which is reflected by that fluoride increases the activity of osteoblasts, leading to greater bone density. Still, the lecture argues against such opinion - too much fluoride could increase the risk of osteoporosis. Even the worse, it's difficult for people to control how much fluoride they should obtain because it exists in public water.
-
-![](/uploads/posts//toefl-writing/Screenshot-2026-01-14-161243.png)
-
-##### Answer generated by LINGOLEAP AI
-
-The reading outlines the benefits of adding fluoride, a chemical compound, to public water supplies in the United States, citing its health advantages. However, the lecture challenges these claims by arguing against the addition of fluoride to public water.
-
-Firstly, the reading asserts that fluoride helps prevent dental cavities by bonding to tooth surfaces and strengthening them. In contrast, the lecture contends that obtaining fluoride from public water is unnecessary. It suggests that using fluoride toothpaste is a more efficient method for preventing tooth decay since it directly applies fluoride to teeth surfaces. Moreover, adding fluoride to water is deemed wasteful because most of it is ingested rather than retained on teeth.
-
-Secondly, while the reading posits that fluoride can eliminate harmful bacteria due to its mild toxicity without harming humans, the lecture disputes this claim. It highlights that using fluoride for water purification poses risks because it can chemically react with lead in metal pipes, leading to potential lead contamination in drinking water. The lecture suggests alternative purification methods that do not increase lead levels.
-
-Lastly, the reading argues that fluoride reduces osteoporosis risk by enhancing osteoblast activity and increasing bone density. However, the lecture refutes this by stating that excessive fluoride intake can make bones brittle and more prone to fractures. Since individuals cannot control their fluoride intake from public water supplies, they are at risk of consuming harmful amounts. Therefore, precise dosing is necessary for any therapeutic use of fluoride in bone disease prevention or treatment. (253 words)
-
-##### Mind-Map
-
-```
-Essay Structure:
-  - Introduction
-    - Topic: Fluoride in public water
-    - Reading's stance: Supports fluoride addition
-    - Lecture's stance: Opposes fluoride addition
-
-  - Body Paragraph 1: Dental Health
-    - Reading: 
-      - Fluoride prevents cavities
-      - Bonds to tooth surfaces
-    - Lecture:
-      - Unnecessary from water
-      - Toothpaste is more efficient
-      - Wasteful ingestion
-
-  - Body Paragraph 2: Water Purification
-    - Reading:
-      - Eliminates harmful bacteria
-      - Mild toxicity safe for humans
-    - Lecture:
-      - Risks of lead contamination
-      - Chemical reaction with pipes
-      - Suggests alternative methods
-
-  - Body Paragraph 3: Bone Health
-    - Reading:
-      - Reduces osteoporosis risk 
-      - Enhances osteoblast activity 
-    - Lecture:
-      - Excessive intake makes bones brittle 
-      - Risk of fractures 
-      - Need for precise dosing
-
-  Conclusion:
-    Summary of conflicting views on fluoride use in public water.
-```
-
-##### AI Evaluation
-
-1.Sub Scores
-
-- Task fulfillment: 4.0
-- Organization: 3.5
-- Coherence and Cohesion: 4.0
-- Language Use: 3.5
-
-2.Estimated Scores
-
-- Estimated Score: 25 (out of 30)
-
-3.Task completeness The essay does a good job of summarizing the points made in the lecture and explaining how they challenge the specific arguments presented in the reading passage. However, there is room for improvement in terms of providing more detailed explanations and examples from the lecture to support your points.
-
-Suggestions for improvement:
-
-- Expand on the examples provided in the lecture to better illustrate your points.
-- Make sure to directly address each argument from the reading passage and explain how it is challenged by the lecture.
-
-Examples:
-
-1. Instead of just stating that fluoride reacts with other chemical elements in public water pipes, you could mention that fluoride can react chemically with lead, causing lead to enter into the water, which is potentially harmful if ingested.
-2. You could mention that high doses of fluoride can cause osteoblasts to become overactive, making bones brittle and inflexible, increasing the risk of bone fractures.
-
-4.Essay structure and organization The essay has a clear structure with an introduction, body paragraphs addressing each point from the reading passage, and a conclusion. However, some transitions between ideas could be improved for better coherence.
-
-Suggestions for improvement:
-
-- Use clearer transitions between ideas within paragraphs.
-- Ensure that each paragraph focuses on one specific point from the reading passage and its corresponding challenge from the lecture.
-
-Examples:
-
-1. In your second paragraph, you could use a transition like "On the other hand" or "In contrast" before presenting the counterargument from the lecture.
-2. When discussing how fluoride reacts with other chemical elements in public water pipes, you could start a new paragraph focusing solely on this point instead of combining it with the previous point about purifying water.
-
----
-
 #### 20250315 - Academic Discussion
 
 ##### Reading
 
-Your professor is teaching a class on sociology.Write a post responding to the
-professor's question.In your response,you should do the following:express and
-support your personal opinion;make a contribution to the discussion in your own words.
+Your professor is teaching a class on sociology.Write a post responding to the professor's question.In your response,you should do the following:express and support your personal opinion;make a contribution to the discussion in your own words.
 An effective response will contain at least 100 words.
 
-Dr.Achebe:This week,we will be discussing space exploration.Some people think
-that it is a waste of money for governments to fund space exploration.Others disagree
-with this view arguing that space exploration is a valuable and necessary investment
-for our future.They think that it is worthy for governments to fund space exploration.
-I want to know what you think about this topic. Do you think that governments
-should fund space exploration?Why or why not?
+Dr.Achebe:This week,we will be discussing space exploration.Some people think that it is a waste of money for governments to fund space exploration.Others disagreewith this view arguing that space exploration is a valuable and necessary investment for our future.They think that it is worthy for governments to fund space exploration. I want to know what you think about this topic. Do you think that governments should fund space exploration?Why or why not?
 
-Kelly: I don't think that governments should fund space exploration because it will be
-too costly to build spaceships and develop related technologies.Though space
-exploration tech costs billions,it doesn't offer direct benefits to most people,which
-makes its funding a controversial issue
+Kelly: I don't think that governments should fund space exploration because it will be too costly to build spaceships and develop related technologies.Though space exploration tech costs billions,it doesn't offer direct benefits to most people,which makes its funding a controversial issue
 
-Andrew: Personally, I do think that all the costs will be worth it. The potential scientific
-discoveries and technological advancements could have far-reaching impacts that
-justify the initial investment.Imagine the new inventions that might come from this
-exploration.Such technology could greatly improve our everyday lives.
+Andrew: Personally, I do think that all the costs will be worth it. The potential scientific discoveries and technological advancements could have far-reaching impacts that justify the initial investment.Imagine the new inventions that might come from this exploration.Such technology could greatly improve our everyday lives.
 
 ##### Write-up
 
