@@ -1,6 +1,6 @@
 +++
 title = "TOEFL Writing"
-date = 2026-01-13T14:25:25+08:00
+date = 2026-06-24T11:02:00+08:00
 translationKey = "toefl-writing"
 tags = []
 categories = ["英语"]
@@ -8,117 +8,123 @@ categories = ["英语"]
 [params]
 toc = true
 +++
+# 托福写作
 
-## Integrated Writing
+| 题型 | 分值 |
+| :--- | :--- |
+| Build a Sentence | 10 |
+| Write an Email | 5 |
+| Academic Discussion | 5 |
 
-### Intro
+> 自2026.1.21托福改革后，“综合写作”取消，“学术写作”保留，新增了“造句”和“邮件”两种新题型。下面的内容，均总结自B站Vince9120的视频
 
-- The Reading
-  - About 300 words
-  - College intro-level academic topics
-  - Common in Life science & history
-  - One topic & three points
-- The Listening
-  - About 300 words / 2.5 minutes
-  - Always challenging the reading
-  - One counter topic & three counter points
-- The Write-Up
-  - Summarize how the points in the listening oppose the points in reading.
+[2026新托福写作：Build a Sentence 句子排序 句子重组 造句 组句](https://www.bilibili.com/video/BV1zrEr6cELz)
 
-- Grading Criteria
-  - Accurate reading 20%
-  - Adequate listening 40%
-  - Coherence 20%
-  - Good language 20%
+## Build A Sentence
 
----
+共10道题，需在6分50秒之内完成答题。
 
-### Reading
+### 分析情景
 
-- 例文：
+题目首先有一句情景句来模拟对话的场景。比如：he printer in the library keeps jamming. What should I do?  
+下面是需要填写的单词和空格，需要把单词按正确的顺序拖拽到空格中完成情景中的回答。我们作答的部分可能会有已有的提示词，也可能没有，即全是空格。此外，可选词的数量也可能比空格的数量更多。比如：
+___ ___ ___ ___ ___ ___ ___ right now.  
+需要填的词有：could, ask, for, help, you, IT service deck, the
+  
+那么这题干的情景句，有以下三种类型：
+- **特殊疑问句** (Wh- Questions): Why didn't you attend your morning class?
+- **一般疑问句** (Yes/No Questions): Are you planning to attend the conference next month?
+- **陈述句 / 信息分享** (Statements):The university's conference on climate change was very informative.
 
-A mysterious Etruscan **artifact** – a large, oval-shaped ceramic vessel with intricate carvings – was **discovered** in central Italy and has sparked debate among archaeologists regarding its **purpose**. The artifact is believed to date back to the 4th century BCE, while archaeologists have proposed three main theories regarding its purpose.
+那么我们可以按照下面的顺序作答：
+1. **确定语序**：根据题干情景句的类型，可以确认回答句应该是陈述句或者疑问句，从而确定语序。
+2. **确定主语**：根据可选词的词性，结合题干，从而确定主语
+3. **确定时态 / 确定意思**
 
-One theory is that the vessel was **used in religious ceremonies**. The carvings on the vessel depict scenes of offerings and deities, suggesting its role in sacred rituals. In the 4th century BCE, it was popular to **slaughter** sheep and chicken at large religious festivals in order to **sacrifice** them to the gods. The locals believed that sacrificing animals would **gain the trust and blessing of the gods**. Thus, the carvings on the pottery might **reflect such scenes** and it may have been a **container for animal sacrifices**.
+### 锚定主句
 
-Another theory is that the vessel was used to **store food or drink**. According to **historical records and findings at excavation sites**, ancient people in central Italy occasionally stored wheat and wine in large earthenware vessels and buried them in the ground in order to preserve them. The vessel’s **large size and sturdy construction** make it an ideal container for holding substantial quantities of food or drink, thus indicating the possibility of a container for utilitarian purposes.
+基本上，主句分为：主谓 / 主谓宾 / 主系表 这三种句式。
+那么我们可以按照下面的顺序作答：
+1. **确定主语**
+2. **确定谓语**
+3. **确定宾语 / 表语**
 
-A third theory suggests that the vessel was a **funerary object**. Actually, vessels **similar** in shape and size have been **found** in three burial sites near the land of excavation. In particular, the **intricate carvings** on the vessel are highly decorative, which could **represent a form of homage** to the deceased, or a way to **highlight the social status** of the deceased, such as a member of a royal family or a religious leader.
+- **主语**：  
 
-- Para.1 Topic :
-  - Artifact(large, oval with carvings) discovered purpose?
-  - 4th century BCE
+| 类别 | 示例内容 |
+| :--- | :--- |
+| **名词 (Nouns)** | The manager<br>The budget reports<br>Students |
+| **代词 (Pronouns)** | I, you, he/she/it, they, we, this/that.<br>me, you, him/her/it, them, us, this/that / myself |
+| **Doing / To do** | [ Reading books ] is fun.<br>[ To learn English ] takes time.<br>I like [ to learn English ]<br>I like [ learning English ] |
+| **名词性从句 Noun Clauses** | [ What he said ] made me angry.<br>I don't understand [ What he said ] |
 
-- Para.2 Topic :
-  - Religious ceremonies - carvings depict scenes
-  - Slaughter and sacrifice to gods for blessing
-  - Reflect scenes & container for sacrifice
+- **谓语**：
 
-- Para.3 Topic :
-  - Store food & drink
-  - Historical records & findings – store & bury
-  - Size & construction – utilitarian container
+| 类别 | 结构/形式 |
+| :--- | :--- |
+| **时态** | do/does<br>be doing<br>did<br>will do / be going to do<br>have done / had done |
+| **情态** | can / could / may / might / shall / should + do |
+| **语态** | be done |
+| **be动词单独出现** | is/am/are/was/were |
 
-- Para.4 Topic :
-  - Funerary object
-  - Similar from excavation
-  - Carving decorative – homage & social status, royal or religious
+例题：
 
----
+Did you enjoy the student film festival?
+___ ___ ___ ___ ___ ___ me.
+movies, to, the, none of, were, of interest
 
-### Listening
+- 按照词性判断，主语只能是 movies, 谓语只能是 were, 表语只能是 of interest。
+- 那么答案应该是：None of movies were of interest to me.
 
-- 例文：
+### 定位从句
 
-While all these theories about the actual purpose of this ceramic vessel are thought-provoking, each has its **flaws** that need to be considered, and **none can be definitively proven without more concrete evidence**.
+从句类型有名词性从句、定语从句、状语从句（不常考），那么我们可以按照下面的顺序作答：
+1. 确定从句类型
+2. 确定从句连词
+3. 确定从句语序
+4. 确定从句时态
 
-First, the idea that the vessel was a "ritual vessel" is questionable. The carvings, though depicting deities, do not necessarily imply a religious function. Such scenes were **common in everyday items** and could reflect cultural narratives rather than ritualistic use. Actually, this way of decoration is **still common today** – many of the daily items we use, say vases, teapots, and coffee mugs, a lot of times come with depictions of historical or mythical characters and events.
+| 从句类型 | 引导词/连接词 |
+| :--- | :--- |
+| **名词性从句** | if / whether<br>that<br>what, where, when, why, who, how<br>whatever, wherever, whenever, however, whoever |
+| **定语从句** | that/which/who/whom/where/when/why |
+| **状语从句** | because/since/when/while/if ... |
 
-Second, the theory of it being a "storage container" is not entirely convincing. The vessel's size and construction, combined with historical records, might suggest a storage purpose for food and drink, but its **intricate carvings would be impractical** for a container meant for everyday use in the 4th century BCE. The sophisticated carvings were certainly handmade with great effort, which made it unlikely for mundane purposes like storage. In addition, the vessel was **discovered in almost pristine condition** and did not show the wear and tear of daily handling.
+大致可以这么判断：
+- know, tell, ask, see, wonder + 宾语从句
+- 介词 (in/on/at...) + 宾语从句
+- 名词 + 定语从句
+- 句尾/句首 - 状语从句
 
-Lastly, the "funerary object" hypothesis also has weaknesses. Although three excavation sites have yielded similar pottery, this **number is too small to prove** the widespread use of such pottery as funerary objects by the local people. Actually, recent excavations have discovered that funerary objects of that time in that part of central Italy were **almost all stone tools**. It is possible that people of that time preferred funerary objects of practical purposes over symbolic values.
+- **名词性从句**：
 
-- Para.1 Topic :
-  - flaws
-  - None definitely proven
+| 句子结构情况 | 引导词 | 功能/含义 |
+| :--- | :--- | :--- |
+| **主谓宾完整** | that | 肯定事实 |
+| | If / whether | 不确定/是否 |
+| | when, where, why, how | 补充背景信息 |
+| **缺少主语/宾语/表语** | what, who, which+名词, whose+名词 | 指代某人某事 |
 
-- Para.2 Topic :
-  - Scenes common in everyday items - cultural narratives
-  - Still common today - daily items with depictions of historical or mythical characters & events
+- **定语从句**：
 
-- Para.3 Topic :
-  - Intricate carving - impractical for everyday use:
-  - Handmade with great effort - unlikely for mundane purpose
-  - Discovered in pristine condition - no wear & tear from handling
+| 名词（先行词） | 连词 | 从句内部结构 |
+| :--- | :--- | :--- |
+| **人 (Person)** | who / that (宾语可用 whom) | 缺主语 / 宾语/表语 |
+| **物 (Thing)** | which / that | |
+| **地点 (Place)** | where = in/at which | 主谓宾完美无缺 |
+| **时间 (Time)** | when = on/in which | |
+| **原因 (reason)** | why = for which | |
 
-- Para.4 Topic :
-  - Number is too small to prove wide use
-  - Recent excavations discovered funerary objects all stone tools
-  - Practical purpose > symbolic value
+- **如何区分 if 引导的从句类型**：
 
----
+| 类型 | 特征与规则 | 示例 |
+| :--- | :--- | :--- |
+| **名词性从句**<br>(当宾语) | - 前面有 **know, ask, wonder** 等<br>- **if** 后跟陈述语序<br>- 可用 **whether** 替换 | I wonder if she will come. |
+| **状语从句**<br>(表条件) | - 前面是主句，表条件<br>- **if** 后跟完整主谓宾<br>- **不能**用 whether 替换 | If she comes, I will tell you. |
 
-### Write-up
+前面的动词是 **know / ask / wonder / tell...** → **if** 就是引导宾语从句
 
-#### Template
-
-We can learn from the reading that ***R Fact***. Three theories are proposed in the reading ***R Point***, while all of them are refuted by the lecture, which states that ***L Point***. / However, the lecturer systematically **refutes these claims**, arguing that each piece of evidence is flawed.
-
-First, the reading claims that ***R1***. However, the lecture does not agree with the idea and claims that ***L1***. Therefore, ...
-
-Second, the reading indicates that ***R2***, which is reflected by ***R2***. Nevertheless, the lecture counteracts the idea: ***L2***. Since ...
-
-Third, the reading demonstrates that ***R3***, since ***R3***. Still, the lecture argues against such opinion – ***L3***. This strongly implies that ...
-
-#### Example
-
-**We can learn from the reading that a** large, oval-shaped ceramic **vessel** with intricate carvings **was discovered in central Italy**, possibly dating back to the 4th century BCE. **Three theories are proposed in the reading regarding its purpose, while all of them are refuted by the lecture**, which states that all these theories have flaws and none can be definitively proven.
-
-**First, the reading claims that the vessel was used in religious ceremonies as the carvings on the vessel depict scenes of offerings and deities**, possibly showing the purpose of a container for animal sacrifice to gods for blessing. **However, the lecture does not agree with the idea and claims that it was common to illustrate cultural narratives on everyday items**, denying the religious purpose of the vessel. **For example, many common items used today**, such as vases and teapots, **come with depictions of historical and mythical characters and events**.
-
-**Second, the reading indicates that the vessel was used for storing food and drink, which is reflected in historical records and findings and suggested by the large size and sturdy construction of the vessel. Nevertheless, the lecture counteracts the idea: the intricate carvings on the vessel required great effort**, and it was unlikely for people to use such an item for mundane purposes. **In addition, the vessel was discovered in pristine condition**, showing no wear and tear from daily handling.
-
-**Third, the reading demonstrates that the vessel might have been used as a funerary object since similar vessels were found in other burial sites. Furthermore, the intricate carvings on the vessel** are highly decorative, and they **possibly represented homage to the deceased. Still, the lecture argues against such opinion – the number of this type of pottery is too small to prove wide funerary use. Besides,** recent discoveries show that **funerary objects** in that part of Italy **were almost all stone tools, so the locals might have actually preferred practical items** over symbolic ones for funerary objects.
+### 检查修饰语
 
 ---
 
