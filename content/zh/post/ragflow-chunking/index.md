@@ -3,7 +3,7 @@
 title = "RAGFlow切片策略解析"
 date = 2026-04-14T20:06:34+08:00
 translationKey = "ragflow-chunking"
-tags = ["切片","RAG"]
+tags = ["RAG", "RAGFlow", "切片"]
 categories = ["技术" ]
 
 [params]

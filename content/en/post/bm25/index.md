@@ -2,7 +2,7 @@
 title = "Practical BM25"
 date = 2026-06-27T00:00:00+08:00
 translationKey = "bm25"
-tags = ["Sparse Vector"]
+tags = ["BM25", "RAG"]
 categories = ["Tech"]
 
 [params]
