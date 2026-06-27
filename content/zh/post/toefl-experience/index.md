@@ -52,13 +52,7 @@ toc = true
    - 学术短文
    - 每篇题量也较少（约5题）
 
-### Complete the Words
-
-### Read in Daily Life
-
-### Read an Academic Passage
-
-
+根据做模拟题的情况来看，"Complete the Words" 部分是最难的，反而学术阅读比之前简单一些。
 
 ## TOEFL (before 2026 Jan.)
 

@@ -124,7 +124,66 @@ movies, to, the, none of, were, of interest
 
 前面的动词是 **know / ask / wonder / tell...** → **if** 就是引导宾语从句
 
+例题：
+
+My sister ___ ___ ___ ___ ___ ___
+can, suggest, one, that, you, might interest, be
+
+先确定主句：My sister can suggest one ...
+one这里是代词，代指一本书，后面可以加定语从句。剩下的词当中，you的位置比较重要，应该是放在 interest 之后作宾语。若放在从句主语的位置则语义不通。
+答案应该是：My sister can suggest one that might interest you. 
+
 ### 检查修饰语
+
+那么我们可以按照下面的顺序作答：
+1. 检查定语
+2. 检查状语
+
+- **定语**
+
+| 分类 | 内容 / 示例 |
+| :--- | :--- |
+| 限定词 | a/an/the<br>this/my |
+| 数量词 | one/two<br>first/second<br>numerous |
+| 介词短语 | the impact of ... |
+| doing / done / to do 短语 | Information stored on computers<br>man sitting under the tree<br>the best way to prevent this |
+| 形容词短语 | Materials suitable for construction |
+| 名词/形容词 | climate change |
+| doing/done单独 | increasing pressure |
+| 定语从句 | The technology that was developed |
+
+- **句中状语** 频度 / 程度 / 否定副词的位置
+
+永远在实义动词前 或 be动词后。
+
+| 副词类型 | 常用词 | 位置规律 | 示例 |
+| :--- | :--- | :--- | :--- |
+| **频度副词** | always / usually / often / sometimes / never | 实义动词前，系动词后 | He **always** arrives on time.<br>She is **usually** busy. |
+| **程度副词** | totally / almost / nearly / quite | 助动词/be 后 + 实义动词前 | I **totally** agree.<br>They have **almost** finished. |
+| **否定副词** | hardly / barely / rarely / seldom | 助动词/be 后 + 实义动词前 | I can **hardly** hear you. |
+
+- **句末状语** 副词 / 介词短语 / to do / 状语从句
+
+多个句末状语共存时，一般顺序为：方式、地点、时间。
+
+| 状语类型 | 功能 | 示例 |
+| :--- | :--- | :--- |
+| **副词 (方式)** | 说明动作方式 | He solved the problem easily.<br>She goes to school by bus. |
+| **介词短语** | 地点 / 时间 / 方式 | They are playing in the park.<br>The meeting starts at 3 PM. |
+| **to do 短语** | 目的 / 结果 | I went to the store to buy milk.<br>She studied hard to pass the exam. |
+| **状语从句** | 时间 / 条件 / 原因等 | I will call you when I arrive.<br>He speaks so fast that I can't catch him. |
+
+例题：
+
+1. Wht didn't you attend the campus fair last night?
+We went to the restaurant that (opened downtown recently) / (recently opened downtown).
+可见副词 "recently" 前置或者后置，语法都是正确的，前置修饰 "opened" 后置修饰 "went" 或者 "opened"。
+但是关注context可以发现，问题问 "last night" 那么回答中，"recently" 后置就会在语义上奇怪。
+
+2. Why did the university adminstration email us about our upcoming conference?
+They wanted ___ ___ ___ ___ ___.
+conformed so, far, to know, which speakers, have been
+"so far" 连起来作为时间可以放到句末，"wanted" 后跟 "to know"。
 
 ---
 
