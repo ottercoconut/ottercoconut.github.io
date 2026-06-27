@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>RAG on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/rag/</link><description>Recent content in RAG on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/rag/index.xml" rel="self" type="application/rss+xml"/><item><title>Practical BM25</title><link>https://ottercoconut.github.io/en/p/practical-bm25/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/practical-bm25/</guid><description>&lt;h3 id="references"&gt;References
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-1-how-shards-affect-relevance-scoring-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 1: How Shards Affect Relevance Scoring in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 2: The BM25 Algorithm and its Variables | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-3-considerations-for-picking-b-and-k1-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 3: Considerations for Picking b and k1 in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf" target="_blank" rel="noopener"
+ &gt;tf-idf - Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="background"&gt;Background
+&lt;/h2&gt;&lt;p&gt;In Elasticsearch 5.0, the default similarity algorithm was changed to Okapi BM25, which is used to score the relevance between search results and a query. This post focuses on the practical side of BM25, including its available parameters and the factors that affect scoring.&lt;/p&gt;
+&lt;h3 id="understanding-how-shards-affect-scoring"&gt;Understanding How Shards Affect Scoring
+&lt;/h3&gt;&lt;p&gt;Before learning BM25, it is necessary to understand that an Elasticsearch index can be split into multiple shards, which are physical partitions of the index. This matters because BM25 relevance scores are not naturally calculated from global statistics across the entire index. By default, they may be calculated separately inside each shard. The more shards there are, and the less data each shard contains, the easier it is for scoring bias to appear.&lt;/p&gt;
+&lt;p&gt;Below, we follow the example from the reference article. The goal is to create an Elasticsearch index named &lt;code&gt;people&lt;/code&gt;, insert a few test documents, and repeatedly search for the same query term &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt; to observe how BM25 relevance scores change with document count and shard distribution.&lt;/p&gt;
+&lt;p&gt;The author creates an index named &lt;code&gt;people&lt;/code&gt;, sets it to have 5 primary shards, and uses BM25 as the default similarity algorithm:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;people&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;number_of_shards&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;index&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;similarity&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;default&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;BM25&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The author uses his own name as the example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The search looks for documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, so it naturally matches &lt;code&gt;/people/_doc/1&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane C&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane P Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then the same search is run again:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;At this point there are 4 &amp;ldquo;documents&amp;rdquo;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Shane&lt;/li&gt;
+&lt;li&gt;Shane C&lt;/li&gt;
+&lt;li&gt;Shane Connelly&lt;/li&gt;
+&lt;li&gt;Shane P Connelly&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The search finds documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;. Although all titles contain &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, their BM25 scores are not the same. The result is that &lt;code&gt;doc1&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; both score 0.2876821, while &lt;code&gt;doc2&lt;/code&gt; scores 0.19856805 and &lt;code&gt;doc4&lt;/code&gt; scores 0.16853254.&lt;/p&gt;
+&lt;p&gt;Although &lt;code&gt;doc2&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; look similar, their scores differ a lot. This is not mainly caused by the difference between &lt;code&gt;&amp;quot;C&amp;quot;&lt;/code&gt; and &lt;code&gt;&amp;quot;Connelly&amp;quot;&lt;/code&gt;, but by how documents are distributed across shards. So how can the scores become more consistent?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;The larger the dataset, the smaller the statistical difference between shards.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Reducing the number of shards can reduce scoring bias.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you want BM25 scores under multiple shards to be closer to &amp;ldquo;global statistics&amp;rdquo;, you can add &lt;code&gt;?search_type=dfs_query_then_fetch&lt;/code&gt; when querying. It collects term-frequency statistics from all shards first, then calculates scores in a unified way, so the result will be close to, or even the same as, the result when &lt;code&gt;number_of_shards=1&lt;/code&gt;.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;dfs_query_then_fetch&lt;/code&gt; first aggregates term-frequency statistics across shards and then calculates BM25 scores, making multi-shard scoring closer to single-shard global scoring. However, it adds one extra communication round, so it is only worth using when the dataset is small, there are many shards, the data distribution is uneven, and relevance scores matter a lot.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="algorithm-and-its-variables"&gt;Algorithm and its variables
+&lt;/h2&gt;&lt;p&gt;BM25 model:&lt;/p&gt;
+$$
+\sum_{i}^{n} IDF(q_i) \frac{f(q_i, D) * (k_1 + 1)}{f(q_i, D) + k_1 * (1 - b + b * \frac{fieldLen}{avgFieldLen})}
+$$&lt;ul&gt;
+&lt;li&gt;$q_i$: the $i$-th keyword in the query.&lt;/li&gt;
+&lt;li&gt;$IDF(q_i)$: the inverse document frequency of keyword $q_i$.&lt;/li&gt;
+&lt;li&gt;$f(q_i, D)$: the term frequency of keyword $q_i$ in document $D$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$fieldLen$&lt;/strong&gt;: the length of the current document field.&lt;/li&gt;
+&lt;li&gt;$avgFieldLen$: the average field length across all documents in the index.&lt;/li&gt;
+&lt;li&gt;$k_1$ and $b$: tunable parameters. Usually $k1 \in [1.2, 2.0]$, and $b = 0.75$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In simple terms, BM25 is a TF-IDF model that introduces nonlinearity and handles the frequency saturation problem. The TF-IDF model is:&lt;/p&gt;
+$$
+\text{Score} = f(q_i, D) \times \log\left(\frac{N}{n(q_i)}\right)
+$$&lt;h4 id=""&gt;$q_i$
+&lt;/h4&gt;&lt;p&gt;For example, if I search for &amp;ldquo;shane&amp;rdquo;, there is only one query term, so $q_0$ is &amp;ldquo;shane&amp;rdquo;. If I search for &amp;ldquo;shane connelly&amp;rdquo; in English, Elasticsearch recognizes the space and tokenizes the query into two terms: $q_0$ is &amp;ldquo;shane&amp;rdquo;, and $q_1$ is &amp;ldquo;connelly&amp;rdquo;. These query terms are substituted into the other parts of the formula, and the final results are summed.&lt;/p&gt;
+&lt;h4 id=""&gt;$IDF(q_i)$
+&lt;/h4&gt;&lt;p&gt;The &lt;strong&gt;IDF (Inverse Document Frequency)&lt;/strong&gt; part of the formula measures how frequently a term appears across all documents. It &amp;ldquo;penalizes&amp;rdquo; common terms by lowering their weight. In the Lucene/BM25 algorithm, the actual formula is:&lt;/p&gt;
+$$
+\ln \left( 1 + \frac{(docCount - f(q_i) + 0.5)}{f(q_i) + 0.5} \right)
+$$&lt;p&gt;Here, $docCount$ is the total number of documents in this shard that contain a value for this field. If the &lt;code&gt;search_type=dfs_query_then_fetch&lt;/code&gt; parameter is used, it is the count across all shards. $f(q_i)$ is the number of documents containing the $i$-th query term. In the example, the term &amp;ldquo;shane&amp;rdquo; appears in all 4 documents, so the inverse document frequency $IDF(\text{"shane"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 4 + 0.5)}{4 + 0.5}\right) = \ln\left(1 + \frac{0.5}{4.5}\right) = 0.105360515657826
+$$&lt;p&gt;$IDF(\text{"connelly"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 2 + 0.5)}{2 + 0.5}\right) = \ln\left(1 + \frac{2.5}{2.5}\right) = 0.693147180559945
+$$&lt;p&gt;We can see that queries containing rarer terms have a higher multiplier. In this 4-document corpus, &amp;ldquo;connelly&amp;rdquo; is rarer than &amp;ldquo;shane&amp;rdquo;, so it contributes more to the final score. This matches intuition: the word &amp;ldquo;the&amp;rdquo; may appear in almost every English document, so when a user searches for something like &amp;ldquo;the elephant&amp;rdquo;, &amp;ldquo;elephant&amp;rdquo; is clearly more important than &amp;ldquo;the&amp;rdquo;, and we also expect it to contribute more to the search score.&lt;/p&gt;
+&lt;h4 id=""&gt;$fieldLen/avgFieldLen$
+&lt;/h4&gt;&lt;p&gt;The more terms a document contains, at least terms that do not match the query, the lower the document score tends to be. This also matches intuition: if a 300-page document mentions my name only once, it is probably less relevant than a short tweet that also mentions my name once.&lt;/p&gt;
+&lt;h4 id=""&gt;$b$
+&lt;/h4&gt;&lt;p&gt;The larger the value of $b$, the more the document length ratio affects the score. To understand this, imagine setting $b$ to 0. In that case, the length ratio has no effect at all, and the score is only affected by term frequency. Document length does not affect scoring. If $b$ is set to 1, the score is affected only by the length ratio and not by frequency.&lt;/p&gt;
+&lt;h4 id=""&gt;$f(q_i, D)$
+&lt;/h4&gt;&lt;p&gt;This value corresponds to TF, or Term Frequency.&lt;/p&gt;
+&lt;p&gt;$f(q_i, D)$ means: how many times does the $i$-th query term appear in document $D$? In all of the example documents, $f(\text{"shane"}, D)$ is 1, but $f(\text{"connelly"}, D)$ differs: it is 1 in documents 3 and 4, and 0 in documents 1 and 2. If there were a 5th document whose text was &amp;ldquo;shane shane&amp;rdquo;, then $f(\text{"shane"}, D)$ would be 2. We can see that $f(q_i, D)$ appears in both the numerator and denominator, together with a special factor called &amp;ldquo;$k_1$&amp;rdquo;, which is discussed below. The basic intuition is that the more often a query term appears in a document, the higher the score becomes. A document that mentions our name multiple times is more likely to be relevant than one that mentions it only once.&lt;/p&gt;
+&lt;h4 id=""&gt;$k_1$
+&lt;/h4&gt;&lt;p&gt;In BM25, $k_1$ is the core parameter controlling term frequency saturation. It sets an asymptotic upper bound for the contribution of $f(q_i, D)$ to the relevance score, making the marginal gain decrease nonlinearly as term frequency increases. Compared with the almost linear weight growth in traditional TF-IDF, this mechanism effectively suppresses excessive ranking influence from high-frequency terms, such as keyword stuffing. The value of $k_1$ directly determines how quickly the score approaches saturation: a smaller $k_1$ makes term frequency contribution hit the bottleneck quickly, while a larger $k_1$ allows term frequency to maintain meaningful weight gains over a wider range.&lt;/p&gt;
+&lt;p&gt;If $k_1$ is set to 0, the score becomes fixed at 1. If $k_1$ is set to a very large value, such as 10000, the formula approximately degenerates into $\frac{TF \times k_1}{k_1} = TF$, becoming term frequency itself.&lt;/p&gt;
+&lt;h2 id="picking--and"&gt;Picking $b$ and $k_1$
+&lt;/h2&gt;&lt;p&gt;Regarding the values of $b$ and $k_1$, the Elasticsearch article also points out that the current defaults are empirical values that work for most cases, but &lt;strong&gt;there is no globally optimal b and k1. They must be evaluated together with the corpus and queries.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Also, when retrieval performance is not good enough, the following should be optimized before tuning $b$ and $k_1$:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Boost exact phrase matches.&lt;/li&gt;
+&lt;li&gt;Use synonyms to expand expressions that users may care about.&lt;/li&gt;
+&lt;li&gt;Use analysis components such as fuzziness, typeahead, phonetic matching, and stemming to handle spelling mistakes, language differences, and word-form variations.&lt;/li&gt;
+&lt;li&gt;Use function score to adjust document scores based on publish time, geographical distance, or business features.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As for the Explain API in the later part of the Elasticsearch article, I will not expand on it here.&lt;/p&gt;</description></item><item><title>Sparse Vectors and the SPLADE Model</title><link>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</guid><description>&lt;h2 id="references"&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/naver/splade" target="_blank" rel="noopener"
+ &gt;Naver SPLADE official repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://huggingface.co/naver/splade_v2_max" target="_blank" rel="noopener"
+ &gt;naver/splade_v2_max model page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/package_reference/sparse_encoder/index.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/sparse_encoder/training_overview.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder training overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://sbert.net/docs/sparse_encoder/usage/efficiency.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder inference efficiency&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="sparse-vectors-and-the-splade-model"&gt;Sparse Vectors and the SPLADE Model
+&lt;/h1&gt;&lt;p&gt;In RAG systems, dense vectors have become the most common retrieval method. They map text into a continuous vector space and are good at capturing semantically similar expressions, such as &amp;ldquo;employee resignation process&amp;rdquo; and &amp;ldquo;personnel exit procedure&amp;rdquo;. However, dense vectors also have clear weaknesses: they are not always good at exact matching for entities, IDs, terminology, error codes, product models, table field names, and code snippets.&lt;/p&gt;
+&lt;p&gt;This is where sparse vectors become valuable. They are more like a neural-network-enhanced inverted index: text is still represented as sparse weights over term dimensions, but these weights are not calculated by pure statistical methods like BM25. Instead, they are predicted by a model.&lt;/p&gt;
+&lt;p&gt;In short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dense vectors handle semantic similarity.&lt;/li&gt;
+&lt;li&gt;BM25 handles exact lexical matching.&lt;/li&gt;
+&lt;li&gt;SPLADE sparse vectors handle weighted matching after neural term expansion.&lt;/li&gt;
+&lt;li&gt;Hybrid Search merges dense and sparse retrieval results.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="paper-model"&gt;Paper model
+&lt;/h2&gt;&lt;p&gt;SPLADE maps a piece of text into vocabulary space based on the logits of a Masked Language Model. Suppose the vocabulary contains 30522 WordPiece tokens. Each text can eventually be represented as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a sparse vector. Most token weights are 0, and only a small number of tokens that the model considers important have non-zero weights.&lt;/p&gt;
+&lt;p&gt;The biggest difference from ordinary embeddings is that each dimension in a dense embedding is usually not interpretable, while each dimension in a sparse vector is a vocabulary token. A token activated by the model can be understood as &amp;ldquo;this text is related to this term&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;For example, a document may not explicitly contain the word &amp;ldquo;reimbursement&amp;rdquo;, but it may contain &amp;ldquo;travel expense&amp;rdquo;, &amp;ldquo;invoice&amp;rdquo;, and &amp;ldquo;approval form&amp;rdquo;. SPLADE may activate tokens related to &amp;ldquo;reimbursement&amp;rdquo;. Then, when the query is &amp;ldquo;reimbursement process&amp;rdquo;, the document may still be retrieved even if it does not exactly match the original term.&lt;/p&gt;
+&lt;p&gt;More specifically, SPLADE uses the logits from the Masked Language Model layer to predict the importance of each term in the BERT WordPiece vocabulary. Suppose the tokenized input text is:&lt;/p&gt;
+$$
+t=(t_{1},t_{2},...,t_{N})
+$$&lt;p&gt;and the corresponding contextual representations are:&lt;/p&gt;
+$$
+(h_{1},h_{2},...,h_{N})
+$$&lt;p&gt;For the $i$-th token in the input, the model calculates its importance for the $j$-th token in the vocabulary:&lt;/p&gt;
+$$
+w_{ij}=transform(h_{i})^{T}E_{j}+b_{j}, \quad j\in\{1,...,|V|\}
+$$&lt;p&gt;Here, $E_j$ is the BERT input embedding of vocabulary ${token}_j$, and $b_j$ is the token-level bias. &lt;code&gt;transform(.)&lt;/code&gt; is usually a linear transformation with GeLU and LayerNorm. Intuitively, this step asks: for this position in the input, how related is it to each term in the vocabulary?&lt;/p&gt;
+&lt;p&gt;However, retrieval does not need &amp;ldquo;the score of a term at one position&amp;rdquo;. It needs &amp;ldquo;the score of a term for the whole text&amp;rdquo;. Therefore, SPLADE aggregates activations from different positions into a sparse representation for the whole text:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;There are three meanings in this formula:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ReLU&lt;/code&gt; sets negative scores to zero and keeps only positively related terms.&lt;/li&gt;
+&lt;li&gt;$log(1+x)$ performs logarithmic saturation, preventing scores of frequent or repeated words from growing without bound.&lt;/li&gt;
+&lt;li&gt;$\sum$ accumulates activations from different positions for the same vocabulary token, producing the term weight for the whole text.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally, the text becomes a high-dimensional but sparse vector:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After both the query and document are mapped into the same vocabulary space, the retrieval score is the dot product of sparse vectors:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;This is also why SPLADE can be connected to inverted indexes or sparse vector indexes.&lt;/p&gt;
+&lt;h3 id="ranking-loss"&gt;Ranking loss
+&lt;/h3&gt;&lt;p&gt;During training, SPLADE needs to make relevant documents score higher and irrelevant documents score lower. Given a query $q_i$, a positive document $d_i^+$, a hard negative document $d_i^-$, and a group of in-batch negative documents ${d_{i,j}^{-}}$, a contrastive ranking loss similar to the following can be used:&lt;/p&gt;
+$$
+\mathcal{L}_{rank-IBN} =
+-\log
+\frac{e^{s(q_i,d_i^+)}}
+{e^{s(q_i,d_i^+)} + e^{s(q_i,d_i^-)} + \sum e^{s(q_i,d_{i,j}^{-})}}
+$$&lt;p&gt;Its goal is direct: make the probability of the positive document as large as possible within the candidate set. From an engineering perspective, the model keeps learning which term expansions help it rank the correct document higher.&lt;/p&gt;
+&lt;h3 id="flops-sparsity-regularization"&gt;FLOPS sparsity regularization
+&lt;/h3&gt;&lt;p&gt;If only ranking quality is optimized, the model may activate too many tokens. This may improve recall, but the inverted index becomes larger, and queries need to access more posting lists.&lt;/p&gt;
+&lt;p&gt;Therefore, SPLADE introduces FLOPS regularization to control sparsity. For a batch of documents, first estimate the average activation of vocabulary token (j) in this batch:&lt;/p&gt;
+$$
+\overline{a}_{j}=\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)}
+$$&lt;p&gt;Then square and sum the average activations:&lt;/p&gt;
+$$
+l_{FLOPS}=\sum_{j\in V}\overline{a}_{j}^{2}
+=\sum_{j\in V}(\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)})^{2}
+$$&lt;p&gt;This regularization term is not simply controlling &amp;ldquo;vector dimensionality&amp;rdquo;. It controls the number and distribution of non-zero tokens. It tries to prevent the model from binding many documents to a few high-frequency words, and also prevents every document from activating too many terms.&lt;/p&gt;
+&lt;p&gt;Therefore, the sparsity weight can be understood as a knob between recall quality and retrieval cost:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Larger weight: shorter sparse vectors, smaller index, faster retrieval, but possibly lower recall.&lt;/li&gt;
+&lt;li&gt;Smaller weight: longer sparse vectors and richer expansion, but higher index and retrieval cost.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="overall-loss"&gt;Overall loss
+&lt;/h3&gt;&lt;p&gt;Finally, SPLADE trains ranking loss and sparsity regularization together:&lt;/p&gt;
+$$
+\mathcal{L}=\mathcal{L}_{rank-IBN}
++\lambda_q\mathcal{L}_{reg}^{q}
++\lambda_d\mathcal{L}_{reg}^{d}
+$$&lt;p&gt;Here, (\lambda_q) controls query-side sparsity, and (\lambda_d) controls document-side sparsity. Query-side sparsity is usually very important because queries are more sensitive to latency. Document-side vectors can be computed offline, so slightly higher compute cost is often acceptable, but index size still needs to be controlled.&lt;/p&gt;
+&lt;h3 id="from-sum-pooling-to-max-pooling"&gt;From sum pooling to max pooling
+&lt;/h3&gt;&lt;p&gt;The original SPLADE aggregates term predictions from every input position:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;The more common later SPLADE-max uses max pooling:&lt;/p&gt;
+$$
+w_{j}=\max_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;This does not mean the whole text only keeps one token. Instead, it takes the maximum activation separately for each vocabulary dimension. This can reduce amplification from long text or repeated words, making the representation focus more on whether a semantic term is strongly activated, rather than simply depending on occurrence count.&lt;/p&gt;
+&lt;h3 id="splade-doc-and-distillation-training"&gt;SPLADE-doc and distillation training
+&lt;/h3&gt;&lt;p&gt;Standard SPLADE encodes both query and document. In other words, both query-side and document-side representations may produce neural expansion terms. Retrieval calculates:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;SPLADE-doc is more focused on engineering efficiency. It only applies SPLADE encoding on the document side, while the query side usually uses only the original query tokens. The document score can be written as:&lt;/p&gt;
+$$
+s(q,d)=\sum_{j\in q}w_j^d
+$$&lt;p&gt;This means document-side expansion can be precomputed offline, and the query side does not need to run a SPLADE encoder, reducing latency. The tradeoff is that the query side has no neural expansion ability and can only use &amp;ldquo;document-side expansion&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;In addition, many strong SPLADE models use knowledge distillation and hard negatives. A common approach is to first train a first-stage retriever and a cross-encoder reranker, then continue training with harder negatives and reranker scores. In engineering practice, we do not have to reproduce this whole training pipeline to use public models. But understanding it helps explain why words like &lt;code&gt;distil&lt;/code&gt;, &lt;code&gt;ensemble&lt;/code&gt;, and &lt;code&gt;cocondenser&lt;/code&gt; appear in model names.&lt;/p&gt;
+&lt;h3 id="why-sparsity-matters"&gt;Why sparsity matters
+&lt;/h3&gt;&lt;p&gt;If the model activates many tokens, recall may improve, but the index becomes larger and retrieval becomes slower. SPLADE uses FLOPS regularization to control the number and distribution of non-zero tokens.&lt;/p&gt;
+&lt;p&gt;From an engineering perspective, sparse vectors are not better just because they are longer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Too few non-zero tokens: the index is small and retrieval is fast, but recall may be insufficient.&lt;/li&gt;
+&lt;li&gt;Too many non-zero tokens: recall may be better, but the index expands and retrieval cost increases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, secondary pruning is often applied, such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Keeping only the top_k tokens.&lt;/li&gt;
+&lt;li&gt;Filtering tokens whose weight is below a threshold.&lt;/li&gt;
+&lt;li&gt;Limiting the maximum number of sparse dimensions for a single chunk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These parameters often affect online cost more than the model itself.&lt;/p&gt;
+&lt;h2 id="model-selection"&gt;Model selection
+&lt;/h2&gt;&lt;p&gt;SPLADE is more like a family of sparse neural retrieval methods than a single model. The official Naver repository also notes that different regularization strengths produce models ranging from &amp;ldquo;very sparse&amp;rdquo; to &amp;ldquo;strong query/doc expansion&amp;rdquo;. Their effectiveness, index size, and latency all differ.&lt;/p&gt;
+&lt;p&gt;If the goal is only to quickly validate engineering feasibility, &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt; is a good starting point. It is a common strong model in the official SPLADE++ series. The Naver repository reports its MS MARCO dev MRR@10 as 38.3, higher than &lt;code&gt;splade_v2_max&lt;/code&gt; at 34.0 and &lt;code&gt;splade_v2_distil&lt;/code&gt; at 36.8. It is suitable for first checking whether sparse retrieval can fill the keyword, entity, and terminology recall gaps of dense retrieval.&lt;/p&gt;
+&lt;p&gt;If inference cost matters more, consider &lt;code&gt;naver/splade_v2_max&lt;/code&gt; or the efficient SPLADE series. &lt;code&gt;splade_v2_max&lt;/code&gt; is structurally simple. Its Hugging Face model page marks it as DistilBERT base, with a 512-token maximum length, 30522-dimensional output, and dot-product similarity. The efficient SPLADE series further separates document encoder and query encoder, aiming to reduce query-side latency.&lt;/p&gt;
+&lt;p&gt;A practical selection order is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First choose a strong public model for offline evaluation, such as &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If offline evaluation is effective, then measure average non-zero token count, index size, document-side encoding throughput, and query-side P95 latency.&lt;/li&gt;
+&lt;li&gt;If query-side latency is too high, first try query caching, ONNX/OpenVINO, quantization, or efficient SPLADE.&lt;/li&gt;
+&lt;li&gt;If the index is too large, first reduce top-k, increase the minimum weight threshold, or choose a model with stronger regularization and higher sparsity.&lt;/li&gt;
+&lt;li&gt;If business data differs greatly from public English retrieval datasets, consider fine-tuning with domain data instead of directly trusting public leaderboards.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Do not choose a model only by MRR. SPLADE model selection should consider at least five things at the same time: retrieval quality, average non-zero dimensions, index size, query latency, and deployment complexity.&lt;/p&gt;
+&lt;p&gt;Sentence Transformers now provides &lt;code&gt;SparseEncoder&lt;/code&gt;, which can directly load SPLADE models:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sentence_transformers&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;naver/splade-cocondenser-ensembledistil&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;embeddings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;example query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;It also provides &lt;code&gt;encode_query()&lt;/code&gt;, &lt;code&gt;encode_document()&lt;/code&gt;, sparsity statistics, Qdrant/Elasticsearch/OpenSearch integration, and deployment capabilities related to ONNX/OpenVINO/quantization. For engineering prototypes, this route can be used first, and then the implementation can be moved to a custom inference service depending on performance bottlenecks.&lt;/p&gt;
+&lt;h2 id="differences-between-splade-and-bm25"&gt;Differences between SPLADE and BM25
+&lt;/h2&gt;&lt;p&gt;BM25 and SPLADE can both use inverted indexes for retrieval, but their weights come from different sources.&lt;/p&gt;
+&lt;p&gt;BM25 weights come from statistics, such as TF, IDF, and document length normalization. It mainly depends on exact matching between query terms and document terms.&lt;/p&gt;
+&lt;p&gt;SPLADE weights come from neural model predictions. It can not only preserve tokens that appear in the original text, but may also activate semantically related tokens that do not appear in the original text.&lt;/p&gt;
+&lt;p&gt;So it can be roughly understood as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;BM25 = statistical matching of original terms
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SPLADE = weighted matching of neural expansion terms
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;In enterprise knowledge bases, technical documentation, customer-service FAQs, code documentation, policies, and regulations, both BM25 and SPLADE are valuable. BM25 is lighter, while SPLADE is stronger but more expensive.&lt;/p&gt;</description></item></channel></rss>

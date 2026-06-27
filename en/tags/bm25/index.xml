@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BM25 on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/bm25/</link><description>Recent content in BM25 on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/bm25/index.xml" rel="self" type="application/rss+xml"/><item><title>Practical BM25</title><link>https://ottercoconut.github.io/en/p/practical-bm25/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/practical-bm25/</guid><description>&lt;h3 id="references"&gt;References
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-1-how-shards-affect-relevance-scoring-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 1: How Shards Affect Relevance Scoring in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 2: The BM25 Algorithm and its Variables | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-3-considerations-for-picking-b-and-k1-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 3: Considerations for Picking b and k1 in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf" target="_blank" rel="noopener"
+ &gt;tf-idf - Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="background"&gt;Background
+&lt;/h2&gt;&lt;p&gt;In Elasticsearch 5.0, the default similarity algorithm was changed to Okapi BM25, which is used to score the relevance between search results and a query. This post focuses on the practical side of BM25, including its available parameters and the factors that affect scoring.&lt;/p&gt;
+&lt;h3 id="understanding-how-shards-affect-scoring"&gt;Understanding How Shards Affect Scoring
+&lt;/h3&gt;&lt;p&gt;Before learning BM25, it is necessary to understand that an Elasticsearch index can be split into multiple shards, which are physical partitions of the index. This matters because BM25 relevance scores are not naturally calculated from global statistics across the entire index. By default, they may be calculated separately inside each shard. The more shards there are, and the less data each shard contains, the easier it is for scoring bias to appear.&lt;/p&gt;
+&lt;p&gt;Below, we follow the example from the reference article. The goal is to create an Elasticsearch index named &lt;code&gt;people&lt;/code&gt;, insert a few test documents, and repeatedly search for the same query term &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt; to observe how BM25 relevance scores change with document count and shard distribution.&lt;/p&gt;
+&lt;p&gt;The author creates an index named &lt;code&gt;people&lt;/code&gt;, sets it to have 5 primary shards, and uses BM25 as the default similarity algorithm:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;people&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;number_of_shards&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;index&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;similarity&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;default&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;BM25&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The author uses his own name as the example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The search looks for documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, so it naturally matches &lt;code&gt;/people/_doc/1&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane C&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane P Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then the same search is run again:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;At this point there are 4 &amp;ldquo;documents&amp;rdquo;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Shane&lt;/li&gt;
+&lt;li&gt;Shane C&lt;/li&gt;
+&lt;li&gt;Shane Connelly&lt;/li&gt;
+&lt;li&gt;Shane P Connelly&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The search finds documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;. Although all titles contain &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, their BM25 scores are not the same. The result is that &lt;code&gt;doc1&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; both score 0.2876821, while &lt;code&gt;doc2&lt;/code&gt; scores 0.19856805 and &lt;code&gt;doc4&lt;/code&gt; scores 0.16853254.&lt;/p&gt;
+&lt;p&gt;Although &lt;code&gt;doc2&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; look similar, their scores differ a lot. This is not mainly caused by the difference between &lt;code&gt;&amp;quot;C&amp;quot;&lt;/code&gt; and &lt;code&gt;&amp;quot;Connelly&amp;quot;&lt;/code&gt;, but by how documents are distributed across shards. So how can the scores become more consistent?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;The larger the dataset, the smaller the statistical difference between shards.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Reducing the number of shards can reduce scoring bias.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you want BM25 scores under multiple shards to be closer to &amp;ldquo;global statistics&amp;rdquo;, you can add &lt;code&gt;?search_type=dfs_query_then_fetch&lt;/code&gt; when querying. It collects term-frequency statistics from all shards first, then calculates scores in a unified way, so the result will be close to, or even the same as, the result when &lt;code&gt;number_of_shards=1&lt;/code&gt;.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;dfs_query_then_fetch&lt;/code&gt; first aggregates term-frequency statistics across shards and then calculates BM25 scores, making multi-shard scoring closer to single-shard global scoring. However, it adds one extra communication round, so it is only worth using when the dataset is small, there are many shards, the data distribution is uneven, and relevance scores matter a lot.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="algorithm-and-its-variables"&gt;Algorithm and its variables
+&lt;/h2&gt;&lt;p&gt;BM25 model:&lt;/p&gt;
+$$
+\sum_{i}^{n} IDF(q_i) \frac{f(q_i, D) * (k_1 + 1)}{f(q_i, D) + k_1 * (1 - b + b * \frac{fieldLen}{avgFieldLen})}
+$$&lt;ul&gt;
+&lt;li&gt;$q_i$: the $i$-th keyword in the query.&lt;/li&gt;
+&lt;li&gt;$IDF(q_i)$: the inverse document frequency of keyword $q_i$.&lt;/li&gt;
+&lt;li&gt;$f(q_i, D)$: the term frequency of keyword $q_i$ in document $D$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$fieldLen$&lt;/strong&gt;: the length of the current document field.&lt;/li&gt;
+&lt;li&gt;$avgFieldLen$: the average field length across all documents in the index.&lt;/li&gt;
+&lt;li&gt;$k_1$ and $b$: tunable parameters. Usually $k1 \in [1.2, 2.0]$, and $b = 0.75$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In simple terms, BM25 is a TF-IDF model that introduces nonlinearity and handles the frequency saturation problem. The TF-IDF model is:&lt;/p&gt;
+$$
+\text{Score} = f(q_i, D) \times \log\left(\frac{N}{n(q_i)}\right)
+$$&lt;h4 id=""&gt;$q_i$
+&lt;/h4&gt;&lt;p&gt;For example, if I search for &amp;ldquo;shane&amp;rdquo;, there is only one query term, so $q_0$ is &amp;ldquo;shane&amp;rdquo;. If I search for &amp;ldquo;shane connelly&amp;rdquo; in English, Elasticsearch recognizes the space and tokenizes the query into two terms: $q_0$ is &amp;ldquo;shane&amp;rdquo;, and $q_1$ is &amp;ldquo;connelly&amp;rdquo;. These query terms are substituted into the other parts of the formula, and the final results are summed.&lt;/p&gt;
+&lt;h4 id=""&gt;$IDF(q_i)$
+&lt;/h4&gt;&lt;p&gt;The &lt;strong&gt;IDF (Inverse Document Frequency)&lt;/strong&gt; part of the formula measures how frequently a term appears across all documents. It &amp;ldquo;penalizes&amp;rdquo; common terms by lowering their weight. In the Lucene/BM25 algorithm, the actual formula is:&lt;/p&gt;
+$$
+\ln \left( 1 + \frac{(docCount - f(q_i) + 0.5)}{f(q_i) + 0.5} \right)
+$$&lt;p&gt;Here, $docCount$ is the total number of documents in this shard that contain a value for this field. If the &lt;code&gt;search_type=dfs_query_then_fetch&lt;/code&gt; parameter is used, it is the count across all shards. $f(q_i)$ is the number of documents containing the $i$-th query term. In the example, the term &amp;ldquo;shane&amp;rdquo; appears in all 4 documents, so the inverse document frequency $IDF(\text{"shane"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 4 + 0.5)}{4 + 0.5}\right) = \ln\left(1 + \frac{0.5}{4.5}\right) = 0.105360515657826
+$$&lt;p&gt;$IDF(\text{"connelly"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 2 + 0.5)}{2 + 0.5}\right) = \ln\left(1 + \frac{2.5}{2.5}\right) = 0.693147180559945
+$$&lt;p&gt;We can see that queries containing rarer terms have a higher multiplier. In this 4-document corpus, &amp;ldquo;connelly&amp;rdquo; is rarer than &amp;ldquo;shane&amp;rdquo;, so it contributes more to the final score. This matches intuition: the word &amp;ldquo;the&amp;rdquo; may appear in almost every English document, so when a user searches for something like &amp;ldquo;the elephant&amp;rdquo;, &amp;ldquo;elephant&amp;rdquo; is clearly more important than &amp;ldquo;the&amp;rdquo;, and we also expect it to contribute more to the search score.&lt;/p&gt;
+&lt;h4 id=""&gt;$fieldLen/avgFieldLen$
+&lt;/h4&gt;&lt;p&gt;The more terms a document contains, at least terms that do not match the query, the lower the document score tends to be. This also matches intuition: if a 300-page document mentions my name only once, it is probably less relevant than a short tweet that also mentions my name once.&lt;/p&gt;
+&lt;h4 id=""&gt;$b$
+&lt;/h4&gt;&lt;p&gt;The larger the value of $b$, the more the document length ratio affects the score. To understand this, imagine setting $b$ to 0. In that case, the length ratio has no effect at all, and the score is only affected by term frequency. Document length does not affect scoring. If $b$ is set to 1, the score is affected only by the length ratio and not by frequency.&lt;/p&gt;
+&lt;h4 id=""&gt;$f(q_i, D)$
+&lt;/h4&gt;&lt;p&gt;This value corresponds to TF, or Term Frequency.&lt;/p&gt;
+&lt;p&gt;$f(q_i, D)$ means: how many times does the $i$-th query term appear in document $D$? In all of the example documents, $f(\text{"shane"}, D)$ is 1, but $f(\text{"connelly"}, D)$ differs: it is 1 in documents 3 and 4, and 0 in documents 1 and 2. If there were a 5th document whose text was &amp;ldquo;shane shane&amp;rdquo;, then $f(\text{"shane"}, D)$ would be 2. We can see that $f(q_i, D)$ appears in both the numerator and denominator, together with a special factor called &amp;ldquo;$k_1$&amp;rdquo;, which is discussed below. The basic intuition is that the more often a query term appears in a document, the higher the score becomes. A document that mentions our name multiple times is more likely to be relevant than one that mentions it only once.&lt;/p&gt;
+&lt;h4 id=""&gt;$k_1$
+&lt;/h4&gt;&lt;p&gt;In BM25, $k_1$ is the core parameter controlling term frequency saturation. It sets an asymptotic upper bound for the contribution of $f(q_i, D)$ to the relevance score, making the marginal gain decrease nonlinearly as term frequency increases. Compared with the almost linear weight growth in traditional TF-IDF, this mechanism effectively suppresses excessive ranking influence from high-frequency terms, such as keyword stuffing. The value of $k_1$ directly determines how quickly the score approaches saturation: a smaller $k_1$ makes term frequency contribution hit the bottleneck quickly, while a larger $k_1$ allows term frequency to maintain meaningful weight gains over a wider range.&lt;/p&gt;
+&lt;p&gt;If $k_1$ is set to 0, the score becomes fixed at 1. If $k_1$ is set to a very large value, such as 10000, the formula approximately degenerates into $\frac{TF \times k_1}{k_1} = TF$, becoming term frequency itself.&lt;/p&gt;
+&lt;h2 id="picking--and"&gt;Picking $b$ and $k_1$
+&lt;/h2&gt;&lt;p&gt;Regarding the values of $b$ and $k_1$, the Elasticsearch article also points out that the current defaults are empirical values that work for most cases, but &lt;strong&gt;there is no globally optimal b and k1. They must be evaluated together with the corpus and queries.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Also, when retrieval performance is not good enough, the following should be optimized before tuning $b$ and $k_1$:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Boost exact phrase matches.&lt;/li&gt;
+&lt;li&gt;Use synonyms to expand expressions that users may care about.&lt;/li&gt;
+&lt;li&gt;Use analysis components such as fuzziness, typeahead, phonetic matching, and stemming to handle spelling mistakes, language differences, and word-form variations.&lt;/li&gt;
+&lt;li&gt;Use function score to adjust document scores based on publish time, geographical distance, or business features.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As for the Explain API in the later part of the Elasticsearch article, I will not expand on it here.&lt;/p&gt;</description></item></channel></rss>

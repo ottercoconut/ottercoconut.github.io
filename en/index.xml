@@ -1,4 +1,1291 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/</link><description>Recent content in Home on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 16 Feb 2026 11:12:15 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/index.xml" rel="self" type="application/rss+xml"/><item><title>Synology NAS Proxy and Emby Configuration</title><link>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</link><pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</guid><description>&lt;p&gt;Recently, when using v2rayA on my Synology NAS, I encountered an issue where incorrect time synchronization caused it to stop working properly, which in turn prevented Emby from scraping metadata. Although I don&amp;rsquo;t know the exact reason, it&amp;rsquo;s an old problem. The version was very old, and I was using a Docker image from a third-party application store; currently, Docker can&amp;rsquo;t pull images via direct connection either. Here is my experience with solving this:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/</link><description>Recent content in Home on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/index.xml" rel="self" type="application/rss+xml"/><item><title>CS224N</title><link>https://ottercoconut.github.io/en/p/cs224n/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/cs224n/</guid><description>&lt;h2 id="intro"&gt;Intro
+&lt;/h2&gt;&lt;p&gt;These are my study notes for &lt;a class="link" href="https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/" target="_blank" rel="noopener"
+ &gt;Stanford CS 224N: Natural Language Processing with Deep Learning, Spring 2024&lt;/a&gt;. The course covers word vectors, neural networks, dependency parsing, RNNs, LSTMs, Seq2Seq models, machine translation, attention, Transformers, and related NLP topics.&lt;/p&gt;
+&lt;h3 id="what-is-this-course-about"&gt;What is this course about?
+&lt;/h3&gt;&lt;p&gt;Natural language processing is one of the most important technologies in the information age. Search, advertising, email, customer service, translation, virtual agents, medical reports, and many other systems all depend on language understanding. CS224N introduces both the foundations of deep learning for NLP and newer research around large language models, with assignments and projects implemented in PyTorch.&lt;/p&gt;
+&lt;h2 id="word-vectors"&gt;Word Vectors
+&lt;/h2&gt;&lt;p&gt;$ vector("King") - vector("Man") + vector("Woman") $&lt;/p&gt;
+&lt;p&gt;This operation produces a vector close to the representation of &lt;code&gt;Queen&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="how-do-we-have-usable-meaning-in-a-computer"&gt;How do we have usable meaning in a computer?
+&lt;/h3&gt;&lt;p&gt;The slides introduce several ways to represent meaning:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;WordNet&lt;/li&gt;
+&lt;li&gt;one-hot vectors&lt;/li&gt;
+&lt;li&gt;word vectors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first two are useful, but they also have obvious limitations.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;WordNet relies on synonym sets and hypernym sets to define relationships between words. It is manually constructed, complex to maintain, and slow to absorb new words.&lt;/li&gt;
+&lt;li&gt;One-hot vectors assign a symbol to every word. Even though the symbol is numeric, mathematically similar words are unrelated because their dot product is 0.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This leads to the famous distributional idea: &lt;em&gt;You shall know a word by the company it keeps.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Word vectors normalize words into continuous vectors. Although a word may have multiple senses, its learned vector is often close to an average of its contextual usages. Dot products can then be used to measure relatedness between word vectors.&lt;/p&gt;
+&lt;h3 id="word2vec"&gt;Word2vec
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://arxiv.org/pdf/1301.3781" target="_blank" rel="noopener"
+ &gt;Original word2vec paper&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Word2vec&lt;/code&gt; captures the word-vector idea well: it compares a center word with nearby context words and learns a probability distribution from their similarity.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We have a large corpus of text: a long list of words.&lt;/li&gt;
+&lt;li&gt;Every word in a fixed vocabulary is represented by a &lt;strong&gt;vector&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;We go through each position $t$ in the text, where there is a center word $c$ and context, or outside, words $o$.&lt;/li&gt;
+&lt;li&gt;We use the &lt;strong&gt;similarity between the vectors of $c$ and $o$ to calculate the probability&lt;/strong&gt; of $o$ given $c$, or vice versa.&lt;/li&gt;
+&lt;li&gt;We &lt;strong&gt;keep adjusting the word vectors&lt;/strong&gt; to maximize this probability.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/Word2Vec-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h4 id="objective-function"&gt;Objective Function
+&lt;/h4&gt;&lt;p&gt;For each position $t=1,\ldots,T$, the model predicts context words within a fixed window of size $m$, given the center word $w_t$. The data likelihood is:&lt;/p&gt;
+$$
+L(\theta) = \prod_{t=1}^{T} \prod_{\substack{-m \le j \le m \\ j \neq 0}} P(w_{t+j} \mid w_t; \theta)
+$$&lt;p&gt;For easier optimization and computation, this is converted into the average negative log likelihood:&lt;/p&gt;
+$$
+J(\theta) = -\frac{1}{T} \log L(\theta) = -\frac{1}{T} \sum_{t=1}^{T} \sum_{\substack{-m \le j \le m \\ j \neq 0}} \log P(w_{t+j} \mid w_t; \theta)
+$$&lt;p&gt;&lt;strong&gt;Minimizing $J(\theta)$&lt;/strong&gt; is equivalent to &lt;strong&gt;maximizing prediction accuracy&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="prediction-function"&gt;Prediction Function
+&lt;/h4&gt;$$
+P(o \mid c) = \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)}
+$$&lt;ol&gt;
+&lt;li&gt;$u_o^T v_c$: the larger the dot product, the closer the two words are in vector space, so the higher their semantic relatedness. Dot product compares the similarity of $o$ and $c$: $u^T v = u \cdot v = \sum_{i=1}^{n} u_i v_i$. A larger dot product means a larger probability.&lt;/li&gt;
+&lt;li&gt;$\exp()$: maps any real number to a positive number. Because the exponential function grows quickly, it amplifies larger dot products and gives highly related words larger weights.&lt;/li&gt;
+&lt;li&gt;$\sum_{w \in V} \exp(u_w^T v_c)$: the denominator sums over all possible words in vocabulary $V$. This ensures the probabilities over all possible outputs sum to &lt;strong&gt;1&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is an application of the softmax function:&lt;/p&gt;
+$$
+\text{softmax}(x_i) = \frac{\exp(x_i)}{\sum_{j=1}^{n} \exp(x_j)} = p_i
+$$&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Softmax maps arbitrary values $x_i$ into a probability distribution $p_i$.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Max&amp;rdquo;: it amplifies the probability corresponding to the largest $x_i$.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Soft&amp;rdquo;: it still assigns some probability to smaller $x_i$ values.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="to-train-the-model"&gt;To Train the Model
+&lt;/h4&gt;&lt;p&gt;To train a model, we gradually adjust parameters to minimize a loss.&lt;/p&gt;
+$$
+\theta = \begin{bmatrix}
+v_{aardvark} \\ v_a \\ \vdots \\ v_{zebra} \\ u_{aardvark} \\ u_a \\ \vdots \\ u_{zebra}
+\end{bmatrix} \in \mathbb{R}^{2dV}
+$$&lt;ul&gt;
+&lt;li&gt;If the word-vector dimension is $d$ and the vocabulary size is $V$, the &lt;strong&gt;total number of parameters&lt;/strong&gt; is $2dV$.&lt;/li&gt;
+&lt;li&gt;Each word has two vectors. $\theta$ contains both representations for every word in the vocabulary: the center-word vector $v$ and the outside-word vector $u$.&lt;/li&gt;
+&lt;li&gt;The model computes gradients for all parameters and updates them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The gradient formula comes from differentiating the softmax loss. The math process is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Initial loss function&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For a center word $c$ and an outside word $o$, the negative log likelihood is:&lt;/p&gt;
+$$
+ \text{Loss} = -\log P(o \mid c)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Expand using the softmax definition&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Substitute the formula for $P(o|c)$ and use log properties:&lt;/p&gt;
+$$
+ \text{Loss} = -\log \left( \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)} \right) = -u_o^T v_c + \log \sum_{w \in V} \exp(u_w^T v_c)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Derivative of the first part&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Differentiate the dot-product term with respect to the center-word vector $v_c$:&lt;/p&gt;
+$$
+ \frac{\partial}{\partial v_c} (u_o^T v_c) = u_o
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Derivative of the second part&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Apply the chain rule to the $\log \sum \exp(\dots)$ term:&lt;/p&gt;
+$$
+ \frac{\partial}{\partial v_c} \log \sum_{w \in V} \exp(u_w^T v_c) = \frac{1}{\sum_{w \in V} \exp(u_w^T v_c)} \cdot \sum_{x \in V} \left[ \exp(u_x^T v_c) \cdot u_x \right]
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Rewrite it as an expectation under the probability distribution&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Extract the original probability term $P(x|c)$:&lt;/p&gt;
+$$
+ \sum_{x \in V} \left[ \frac{\exp(u_x^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)} \right] u_x = \sum_{x \in V} P(x \mid c) u_x
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Final gradient&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Combining both parts gives the gradient used to update $v_c$:&lt;/p&gt;
+$$
+ \frac{\partial \text{Loss}}{\partial v_c} = -u_o + \sum_{x \in V} P(x \mid c) u_x
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="gradient-descent"&gt;Gradient Descent
+&lt;/h4&gt;&lt;p&gt;Gradient descent update rule in matrix form:&lt;/p&gt;
+$$
+\theta^{new} = \theta^{old} - \alpha \nabla_{\theta} J(\theta)
+$$&lt;p&gt;For a single parameter:&lt;/p&gt;
+$$
+\theta_j^{new} = \theta_j^{old} - \alpha \frac{\partial}{\partial \theta_j^{old}} J(\theta)
+$$&lt;ul&gt;
+&lt;li&gt;$\alpha$: step size or learning rate.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, however, we usually use &lt;strong&gt;Stochastic Gradient Descent (SGD)&lt;/strong&gt; instead.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The objective function $J(\theta)$ is defined over &lt;strong&gt;all&lt;/strong&gt; windows in the corpus. If every update required calculating the gradient $\nabla_{\theta} J(\theta)$ over the whole corpus, the computation would be extremely expensive.&lt;/li&gt;
+&lt;li&gt;SGD does not compute the whole corpus each time. It repeatedly samples windows and updates parameters after each single window, or each small batch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="skip-gram-model-with-negative-sampling"&gt;Skip-gram Model with Negative Sampling
+&lt;/h4&gt;&lt;p&gt;&lt;a class="link" href="https://proceedings.neurips.cc/paper_files/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf" target="_blank" rel="noopener"
+ &gt;Negative sampling paper&lt;/a&gt;&lt;/p&gt;
+$$
+P(o\mid c)=\frac{\exp(u_x^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)}
+$$&lt;p&gt;If we calculate probabilities with the traditional softmax, the &lt;strong&gt;denominator&lt;/strong&gt; sums over all words, which is too expensive.&lt;/p&gt;
+&lt;p&gt;Skip-gram with Negative Sampling avoids calculating all possible words. Instead, it trains several logistic regression classifiers that prefer real context pairs over random context pairs. In practice, it samples $K$ negative examples, reducing the computation to $O(K)$:&lt;/p&gt;
+$$
+J_{neg-sample}(u_o, v_c, U) = -\log \sigma(u_o^T v_c) - \sum_{k \in \{K \text{ sampled indices}\}} \log \sigma(-u_k^T v_c)
+$$&lt;p&gt;Here, $\sigma(x)=\frac{1}{1+e^{-x}}$ is the sigmoid function. It pushes positive pairs toward probability 1 and negative pairs toward probability 0.&lt;/p&gt;
+&lt;p&gt;However, this can make low-frequency words such as &amp;ldquo;zebra&amp;rdquo; too unlikely, while words like &amp;ldquo;the&amp;rdquo; are sampled too often. Therefore, the sampling distribution is adjusted with the $3/4$ power:&lt;/p&gt;
+$$
+P(W)=U(W)^{3/4}/Z
+$$&lt;p&gt;This increases the relative probability of low-frequency words.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="glove"&gt;GloVe
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank" rel="noopener"
+ &gt;Original GloVe paper&lt;/a&gt;: Global Vectors for Word Representation&lt;/p&gt;
+&lt;h4 id="co-occurrence-matrix"&gt;Co-occurrence Matrix
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/co-occurrence.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Building a co-occurrence matrix is straightforward: first set a window size, then count the frequency of words that co-occur within that window. The figure above shows a simple example with window size 1, counting only neighboring words. However:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;dimension&lt;/strong&gt; of word vectors grows greatly as the vocabulary grows. This increases storage cost, makes the matrix very &lt;strong&gt;sparse&lt;/strong&gt;, and makes models based on it less robust.&lt;/li&gt;
+&lt;li&gt;Function words appear extremely often but provide little information.&lt;/li&gt;
+&lt;li&gt;It does not reflect the relationship between word distance and word relatedness.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;How can we reduce dimensionality? A classic method is SVD matrix factorization. I still do not fully understand the theory after asking AI, but in Assignment 1 a single &lt;code&gt;sklearn&lt;/code&gt; function solves it.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/SVD.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+$$
+X = U \Sigma V^T
+$$&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$X$ (co-occurrence matrix)&lt;/strong&gt;: size $|V| \times |V|$. Each element $X_{ij}$ represents how many times word $i$ and word $j$ co-occur in the corpus.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$U$ and $V$ (orthogonal matrices)&lt;/strong&gt;: their column vectors are orthonormal. In NLP, each row of $U$ is often treated as the original embedding of a word.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\Sigma$ (diagonal matrix)&lt;/strong&gt;: the diagonal values $\sigma_1, \sigma_2, \dots$ are called &lt;strong&gt;singular values&lt;/strong&gt;. They are sorted from large to small and represent the importance, variance, or information carried by each dimension.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Dimensionality reduction means compressing a word vector of length $V$ from the co-occurrence matrix into a vector of length $K$.&lt;/p&gt;
+&lt;p&gt;The key insight is that &lt;strong&gt;semantic meaning is not encoded by co-occurrence probabilities themselves, but by ratios of co-occurrence probabilities&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Ratios of co-occurrence probabilities can encode semantic components, and we want to capture these as linear semantic components in the word-vector space.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{solid}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{gas}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{water}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{fashion}$&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$P(x\mid\text{ice})$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.9 \times 10^{-4}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$6.6 \times 10^{-5}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$3.0 \times 10^{-3}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.7 \times 10^{-5}$&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$P(x\mid\text{steam})$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$2.2 \times 10^{-5}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$7.8 \times 10^{-4}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$2.2 \times 10^{-3}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.8 \times 10^{-5}$&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$\dfrac{P(x\mid\text{ice})}{P(x\mid\text{steam})}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$8.9$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$8.5 \times 10^{-2}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.36$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$0.96$&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="analogies"&gt;Analogies
+&lt;/h4&gt;&lt;p&gt;Word vectors are mathematically powerful, but their analogy behavior has many practical problems.&lt;/p&gt;
+&lt;p&gt;In the following example, the question is $woman + grandfather - man = ?$. The obvious and most likely result is &lt;code&gt;grandmother&lt;/code&gt;. But why do other words such as &lt;code&gt;granddaughter&lt;/code&gt; and &lt;code&gt;mother&lt;/code&gt; also receive almost equally high scores?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Run this cell to answer the analogy -- man : grandfather :: woman : x&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wv_from_bin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;most_similar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;woman&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;grandfather&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;negative&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;man&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandmother&amp;#39;&lt;/span&gt;, 0.7608445286750793&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;granddaughter&amp;#39;&lt;/span&gt;, 0.7200808525085449&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;daughter&amp;#39;&lt;/span&gt;, 0.7168302536010742&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;mother&amp;#39;&lt;/span&gt;, 0.7151536345481873&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;niece&amp;#39;&lt;/span&gt;, 0.7005682587623596&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;father&amp;#39;&lt;/span&gt;, 0.6659888029098511&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;aunt&amp;#39;&lt;/span&gt;, 0.6623409390449524&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandson&amp;#39;&lt;/span&gt;, 0.6618767976760864&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandparents&amp;#39;&lt;/span&gt;, 0.644661009311676&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;wife&amp;#39;&lt;/span&gt;, 0.6445354223251343&lt;span class="o"&gt;)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Although the assignment does not give a standard answer, this can be understood through semantic clustering.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Semantic neighborhood effect&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;In vector space, logically similar words often cluster together. When we calculate $\vec{w} + \vec{g} - \vec{m}$, we are actually locating a coordinate point in the space.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;granddaughter&lt;/code&gt; also has features such as &amp;ldquo;female&amp;rdquo; and &amp;ldquo;relative&amp;rdquo;, and often appears in contexts similar to &lt;code&gt;grandfather&lt;/code&gt; or &lt;code&gt;grandmother&lt;/code&gt;. Along the &amp;ldquo;family relation&amp;rdquo; dimension, these words are very close.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Overlapping dimensions&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Word vectors usually have hundreds of dimensions. Although we subtract &lt;code&gt;man&lt;/code&gt; and add &lt;code&gt;grandfather&lt;/code&gt;, this does not completely erase similarity along other dimensions.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;daughter&lt;/code&gt;, &lt;code&gt;mother&lt;/code&gt;, and &lt;code&gt;grandmother&lt;/code&gt; share many dimensions such as &lt;code&gt;[+female]&lt;/code&gt;, &lt;code&gt;[+human]&lt;/code&gt;, and &lt;code&gt;[+relative]&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The next example is an incorrect analogy. The expected answer should be something like &lt;code&gt;socks&lt;/code&gt;, but why does the model ignore &lt;code&gt;glove&lt;/code&gt; and &lt;code&gt;hand&lt;/code&gt; and output many &lt;code&gt;square&lt;/code&gt;-related terms? Clearly this is not about &lt;code&gt;foot&lt;/code&gt; as a body part, but about &lt;code&gt;foot&lt;/code&gt; as a unit of length.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wv_from_bin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;most_similar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;foot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;glove&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;negative&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hand&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;45,000-square&amp;#39;&lt;/span&gt;, 0.4922032654285431&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;15,000-square&amp;#39;&lt;/span&gt;, 0.4649604558944702&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10,000-square&amp;#39;&lt;/span&gt;, 0.4544755816459656&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;6,000-square&amp;#39;&lt;/span&gt;, 0.44975775480270386&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3,500-square&amp;#39;&lt;/span&gt;, 0.444133460521698&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;700-square&amp;#39;&lt;/span&gt;, 0.44257497787475586&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;50,000-square&amp;#39;&lt;/span&gt;, 0.4356396794319153&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3,000-square&amp;#39;&lt;/span&gt;, 0.43486514687538147&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;30,000-square&amp;#39;&lt;/span&gt;, 0.4330596923828125&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;footed&amp;#39;&lt;/span&gt;, 0.43236875534057617&lt;span class="o"&gt;)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Interference from polysemy&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;As mentioned above, &lt;code&gt;foot&lt;/code&gt; is also a unit of length, and it often combines with &lt;code&gt;square&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Training corpus bias&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Since &lt;code&gt;foot&lt;/code&gt; has multiple meanings but the output is almost entirely about the unit sense, the training corpus may contain many &lt;code&gt;...square foot&lt;/code&gt; contexts.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Word choice&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Even though all outputs are &lt;code&gt;...square&lt;/code&gt; terms, their scores are only around 0.5. This suggests the model did not find a strongly related word and probably did not understand the relationship among &lt;code&gt;glove&lt;/code&gt;, &lt;code&gt;hand&lt;/code&gt;, and &lt;code&gt;foot&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="neural-network"&gt;Neural Network
+&lt;/h2&gt;&lt;p&gt;&lt;em&gt;A neural network = running several logistic regressions at the same time.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://cs231n.github.io/neural-networks-1/" target="_blank" rel="noopener"
+ &gt;CS231n Deep Learning on Network Architectures&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://cs231n.github.io/optimization-2/" target="_blank" rel="noopener"
+ &gt;CS231n Deep Learning for Computer Vision on Backprop&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="structure"&gt;Structure
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="non-linearities"&gt;Non-linearities
+&lt;/h3&gt;&lt;p&gt;Why do neural networks need non-linearities?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Core idea: neural networks perform function approximation, such as regression or classification.
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Without non-linearity&lt;/strong&gt;: a deep neural network can only perform &lt;strong&gt;linear transformations&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;More layers do not help&lt;/strong&gt;: extra linear layers collapse into a single linear transformation: $W_1 W_2 x = Wx$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;With non-linearity&lt;/strong&gt;: a multi-layer structure with non-linear functions can approximate more complex functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Bottom-left figures&lt;/strong&gt;: the left figure shows linear classification, which can only draw a straight line and cannot separate complex red/green point distributions. The right figure shows non-linear classification, which can draw curves and separate the data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Three wave figures on the right&lt;/strong&gt;: as function complexity increases, only non-linear models can fit the oscillating observed data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The common non-linear activation functions were already covered in my Intelligent Computing Systems course, so I will not expand on them here.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="gradients"&gt;Gradients
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://cs231n.stanford.edu/handouts/derivatives.pdf" target="_blank" rel="noopener"
+ &gt;derivatives.pdf&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;At a simple level, a gradient is a derivative with respect to a variable. For example:&lt;/p&gt;
+$$
+f(x)=x^3
+$$&lt;p&gt;Its derivative is:&lt;/p&gt;
+$$
+\frac{df}{dx}=3x^2
+$$&lt;p&gt;Of course, this is only a very simple example. In practice, neural networks involve large-scale &lt;strong&gt;chain rule&lt;/strong&gt; calculations and gradients of matrices, or Jacobian matrices.&lt;/p&gt;
+&lt;h4 id="chain-rule"&gt;Chain Rule
+&lt;/h4&gt;&lt;p&gt;In single-variable calculus, if $y = f(u)$ and $u = g(x)$, then:&lt;/p&gt;
+$$
+\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}
+$$&lt;p&gt;In neural networks, each layer is usually a vector, such as $\mathbf{h}, \mathbf{z} \in \mathbb{R}^n$. When this logic is extended to vectors, multiplication becomes &lt;strong&gt;matrix multiplication&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;For multiple variables, we multiply &lt;strong&gt;Jacobian matrices&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Suppose $\mathbf h= f(z)$ and $\mathbf z=Wx+b$. The partial derivatives below form Jacobian matrices:&lt;/p&gt;
+$$
+\frac{\partial \mathbf{h}}{\partial \mathbf{x}} = \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \frac{\partial \mathbf{z}}{\partial \mathbf{x}}
+$$&lt;h4 id="matrix-calculus"&gt;Matrix Calculus
+&lt;/h4&gt;&lt;p&gt;From the following expression, the Jacobian has non-zero values only on the diagonal:&lt;/p&gt;
+$$
+\begin{aligned} \left( \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \right)_{ij} &amp;= \frac{\partial h_i}{\partial z_j} = \frac{\partial}{\partial z_j} f(z_i) \quad &amp;&amp; \text{definition of Jacobian} \\ &amp;= \begin{cases} f'(z_i) &amp; \text{if } i = j \\ 0 &amp; \text{if otherwise} \end{cases} \quad &amp;&amp; \text{regular 1-variable derivative} \end{aligned}
+$$$$
+\frac{\partial \mathbf h}{\partial \mathbf z} =
+\begin{pmatrix}
+f'(z_1) &amp; 0 &amp; \cdots &amp; 0 \\
+0 &amp; f'(z_2) &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; f'(z_n)
+\end{pmatrix}
+= \operatorname{diag}(f'(\mathbf z))
+$$&lt;p&gt;Another common Jacobian is:&lt;/p&gt;
+$$
+\frac{\partial}{\partial \mathbf{u}}(\mathbf{u}^T \mathbf{h})=\mathbf h^T
+$$&lt;p&gt;Suppose $\mathbf{u}$ and $\mathbf{h}$ are both $n$-dimensional column vectors:&lt;/p&gt;
+$$
+\mathbf{u} = \begin{bmatrix} u_1 \\ u_2 \\ \vdots \\ u_n \end{bmatrix}, \quad \mathbf{h} = \begin{bmatrix} h_1 \\ h_2 \\ \vdots \\ h_n \end{bmatrix}
+$$&lt;p&gt;Their inner product is a &lt;strong&gt;scalar&lt;/strong&gt;:&lt;/p&gt;
+$$
+f = \mathbf{u}^T \mathbf{h} = u_1 h_1 + u_2 h_2 + \dots + u_n h_n = \sum_{i=1}^n u_i h_i
+$$&lt;p&gt;We want to differentiate with respect to vector $\mathbf{u}$. According to the definition of a Jacobian, we differentiate with respect to each element $u_k$:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial u_k} = \frac{\partial}{\partial u_k} (u_1 h_1 + \dots + u_k h_k + \dots + u_n h_n)
+$$&lt;p&gt;All terms except $u_k h_k$ do not contain $u_k$, so their derivatives are 0:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial u_k} = h_k
+$$&lt;p&gt;By the usual Jacobian convention, the derivative of a scalar with respect to a column vector is a row vector:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial \mathbf{u}} = \begin{bmatrix} \frac{\partial f}{\partial u_1} &amp; \frac{\partial f}{\partial u_2} &amp; \dots &amp; \frac{\partial f}{\partial u_n} \end{bmatrix} = \begin{bmatrix} h_1 &amp; h_2 &amp; \dots &amp; h_n \end{bmatrix} = \mathbf{h}^T
+$$&lt;h5 id="write-out-the-jacobians"&gt;Write out the Jacobians
+&lt;/h5&gt;$$
+\begin{aligned} \frac{\partial s}{\partial \mathbf{b}} &amp;= \frac{\partial s}{\partial \mathbf{h}} \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \frac{\partial \mathbf{z}}{\partial \mathbf{b}} \\ &amp;= \mathbf{u}^T \text{diag}(f'(\mathbf{z})) \mathbf{I} \\ &amp;= \mathbf{u}^T \odot f'(\mathbf{z}) \end{aligned}
+$$&lt;p&gt;$\odot$ = Hadamard product = element-wise multiplication of two vectors to produce a vector.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Variable&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning in neural networks&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Note&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$s$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Loss/score&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The final scalar output, such as cross-entropy loss. We want to know how it changes with parameters.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{b}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Bias vector&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;A learnable parameter in the current layer.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{z}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Logits/pre-activation&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The result of the linear combination: $\mathbf{z} = \mathbf{W}\mathbf{x} + \mathbf{b}$.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{h}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Activation/hidden state&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The output after applying a non-linear activation: $\mathbf{h} = f(\mathbf{z})$.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{u}^T$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Upstream gradient $\frac{\partial s}{\partial \mathbf{h}}$&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The signal propagated backward from higher layers.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$f'(\mathbf{z})$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Derivative of the activation function&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;For example, the derivative of ReLU or sigmoid. It determines which neurons are active.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{I}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Identity matrix&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Since $\mathbf{z} = \dots + \mathbf{b}$, the derivative of $\mathbf{z}$ with respect to $\mathbf{b}$ is 1, represented as the identity matrix.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h5 id="re-using-computation"&gt;Re-using Computation
+&lt;/h5&gt;&lt;p&gt;The upstream error signal $\boldsymbol{\delta}$ is:&lt;/p&gt;
+$$
+\boldsymbol{\delta} = \frac{\partial s}{\partial \mathbf{h}} \frac{\partial \mathbf{h}}{\partial \mathbf{z}} = \mathbf{u}^T \circ f'(\mathbf{z})
+$$&lt;p&gt;After computing $\boldsymbol{\delta}$ first, later calculations become simpler:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Gradient of the weight matrix $W$:&lt;/p&gt;
+$$
+ \frac{\partial s}{\partial \mathbf{W}} = \boldsymbol{\delta} \frac{\partial \mathbf{z}}{\partial \mathbf{W}}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Gradient of the bias vector $\mathbf{b}$:&lt;/p&gt;
+$$
+ \frac{\partial s}{\partial \mathbf{b}} = \boldsymbol{\delta} \frac{\partial \mathbf{z}}{\partial \mathbf{b}} = \boldsymbol{\delta}
+ $$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="shape-convention"&gt;Shape Convention
+&lt;/h4&gt;&lt;p&gt;Suppose the weight matrix is $\mathbf{W} \in \mathbb{R}^{n \times m}$ and the output is a scalar $s$, such as a loss. By the pure mathematical definition, $\frac{\partial s}{\partial \mathbf{W}}$ should be a $1 \times nm$ row vector, a Jacobian. But if we use this form directly, the gradient update rule $\theta^{new} = \theta^{old} - \alpha \nabla_{\theta} J(\theta)$ cannot subtract tensors because the shapes do not match.&lt;/p&gt;
+&lt;p&gt;For convenience in computation, we use the convention that &lt;strong&gt;the gradient shape should match the parameter shape&lt;/strong&gt;. Therefore, $\frac{\partial s}{\partial \mathbf{W}}$ is also an $n \times m$ matrix:&lt;/p&gt;
+$$
+\frac{\partial s}{\partial \mathbf{W}} = \begin{bmatrix} \frac{\partial s}{\partial W_{11}} &amp; \dots &amp; \frac{\partial s}{\partial W_{1m}} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial s}{\partial W_{n1}} &amp; \dots &amp; \frac{\partial s}{\partial W_{nm}} \end{bmatrix}
+$$$$
+\frac{\partial s}{\partial \mathbf{W}} = \boldsymbol{\delta}^T \mathbf{x}^T
+$$&lt;p&gt;So what shape should a derivative result take?&lt;/p&gt;
+&lt;p&gt;The practical answer is to follow the &lt;strong&gt;shape convention&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method&lt;/strong&gt;: do not get stuck on the strict Jacobian definition. Always watch the variable dimensions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Core trick&lt;/strong&gt;: use dimensional analysis to decide when to transpose a term or adjust multiplication order, so each layer&amp;rsquo;s gradient has exactly the same shape as the corresponding parameter.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Important conclusion about $\boldsymbol{\delta}$&lt;/strong&gt;: the error signal propagated to a hidden layer should have the same dimension as the number of neurons in that hidden layer, or the dimension of its activation vector.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="backpropagation"&gt;Backpropagation
+&lt;/h3&gt;&lt;p&gt;Computing each function step by step from input to output is &lt;strong&gt;forward propagation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;For a single node in backpropagation:&lt;/p&gt;
+$$
+downstream\ gradient = upstream\ gradient \times local\ gradient
+$$&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;For a node with multiple inputs, the upstream gradient remains the same, but each input has a different local gradient. The formula is unchanged.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Here is a concrete example with multiple inputs:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Based on this example, suppose the input value $y$ changes to 2.1. Then $a=x+y=3.1$, $b=max(y+z)=y=2.1$, and $a\times b=6.51$.&lt;/p&gt;
+&lt;p&gt;So a change of 0.1 in $y$ causes a change of 0.51 in the result. The gradient is:&lt;/p&gt;
+$$
+\frac{\Delta f}{\Delta y}=5.1
+$$&lt;h4 id="implementations"&gt;Implementations
+&lt;/h4&gt;&lt;p&gt;In theory, once the symbolic computation of forward propagation is known, a computer can automatically derive the result of backpropagation. But in modern frameworks, users or framework authors still define local derivative rules. This is more efficient and stable than a fully automatic symbolic approach.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MultiplyGate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;forward&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="c1"&gt;# must keep these around!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;backward&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt; &lt;span class="c1"&gt;# [dz/dx * dL/dz]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt; &lt;span class="c1"&gt;# [dz/dy * dL/dz]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dy&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id="numeric-gradient-checking"&gt;Numeric Gradient Checking
+&lt;/h5&gt;&lt;p&gt;When manually deriving and implementing backpropagation, numeric gradient checking is the standard way to verify that the math and code are correct:&lt;/p&gt;
+$$
+f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}
+$$&lt;ul&gt;
+&lt;li&gt;It only needs the forward function $f(x)$, so it does not require complex mathematical derivation and is less likely to be wrong.&lt;/li&gt;
+&lt;li&gt;It must run two forward passes for &lt;strong&gt;each parameter&lt;/strong&gt;, one with $+h$ and one with $-h$, so it is inefficient.&lt;/li&gt;
+&lt;li&gt;It is suitable for local tests, not for validating a large whole network. Use it for a specific layer or a small parameter tensor, such as a $3 \times 3$ matrix.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="dependency-parsing"&gt;Dependency Parsing
+&lt;/h2&gt;&lt;h3 id="syntactic-structure"&gt;Syntactic Structure
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Phrase structure&lt;/strong&gt; organizes words into nested constituents.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can define grammar rules for phrases ourselves. For example, a noun phrase can be &amp;ldquo;determiner + adjective + noun&amp;rdquo; or &amp;ldquo;determiner + noun + prepositional phrase&amp;rdquo;; a prepositional phrase can be &amp;ldquo;preposition + noun&amp;rdquo;, and so on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dependency structure&lt;/strong&gt; shows which words depend on, modify, attach to, or act as arguments of other words.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ambiguity is common in language, and prepositional phrases create even more ambiguity in English. For example:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Scientists count whales from space&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This can be understood as &lt;code&gt;Scientists [count] [whales from space]&lt;/code&gt;, or &lt;code&gt;Scientists [count whales] [from space]&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h3 id="dependency-grammar-and-treebanks"&gt;Dependency Grammar and Treebanks
+&lt;/h3&gt;&lt;p&gt;Dependency syntax assumes that syntactic structure consists of relations between lexical items, usually binary asymmetric relations called dependencies.&lt;/p&gt;
+&lt;p&gt;The figure below is an older example of a dependency structure.&lt;/p&gt;
+&lt;p&gt;An arrow connects a head, also called governor, superior, or regent, with a dependent, also called modifier, inferior, or subordinate.&lt;/p&gt;
+&lt;p&gt;Usually, dependencies form a tree: a connected, acyclic, single-root graph.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h4 id="annotated-data"&gt;Annotated Data
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;At first, building a treebank may look slower than manually writing grammar rules, and perhaps less useful. Manual annotation is indeed troublesome, but it has several major advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reusability: one annotated dataset can be used to train many parsers and POS taggers.&lt;/li&gt;
+&lt;li&gt;Broad coverage: hand-written rules often cover only a few intuitive examples, while annotated real corpora cover the complexity of language in actual use.&lt;/li&gt;
+&lt;li&gt;Frequencies and distributional information: a treebank tells the model which structures are more common, helping probabilistic models make better decisions.&lt;/li&gt;
+&lt;li&gt;A way to evaluate NLP systems: without this kind of gold standard, we cannot measure parser accuracy through metrics such as LAS and UAS.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The dependency labels in the example figure can be roughly understood as:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Label&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Simple understanding&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;nsubj&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Nominal subject&lt;/td&gt;
+					&lt;td&gt;The doer of the action, as in &lt;strong&gt;I&lt;/strong&gt; think.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;nsubjpass&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Passive subject&lt;/td&gt;
+					&lt;td&gt;The subject in passive voice, as in &lt;strong&gt;city&lt;/strong&gt; called.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;ccomp&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Clausal complement&lt;/td&gt;
+					&lt;td&gt;A clause after a verb, as in think &lt;strong&gt;&amp;hellip;&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;advmod&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Adverbial modifier&lt;/td&gt;
+					&lt;td&gt;Modifies degree, question words, or verbs, as in &lt;strong&gt;Why&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;amod&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Adjectival modifier&lt;/td&gt;
+					&lt;td&gt;An adjective modifying a noun, as in &lt;strong&gt;famous&lt;/strong&gt; goat.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;compound&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Compound modifier&lt;/td&gt;
+					&lt;td&gt;A noun modifying another noun, as in &lt;strong&gt;goat&lt;/strong&gt; trainer.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;det&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Determiner&lt;/td&gt;
+					&lt;td&gt;Points to words like a, the, any.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;case&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Case marker&lt;/td&gt;
+					&lt;td&gt;Points to prepositions such as in, at.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;conj&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Conjunction&lt;/td&gt;
+					&lt;td&gt;Words connected by or, and, as in trainer or &lt;strong&gt;something&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="dependency-conditioning-preferences"&gt;Dependency Conditioning Preferences
+&lt;/h4&gt;&lt;p&gt;During parsing, the model uses dependency conditioning preferences to judge whether two words are likely to have a dependency relation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Bilexical affinities: whether a dependency such as &lt;code&gt;[discussion -&amp;gt; issues]&lt;/code&gt; is reasonable.&lt;/li&gt;
+&lt;li&gt;Dependency distance: most, but not all, dependencies occur between nearby words.&lt;/li&gt;
+&lt;li&gt;Intervening material: dependencies rarely cross intervening verbs or punctuation.&lt;/li&gt;
+&lt;li&gt;Valency of heads: for a head word, how many dependents does it usually have on each side?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="projectivity"&gt;Projectivity
+&lt;/h4&gt;&lt;p&gt;If the words of a sentence are arranged in linear order and all dependency arcs are drawn above the words, a parse is &lt;strong&gt;projective&lt;/strong&gt; when no two arcs cross. If arcs cross, the parse is non-projective, which usually indicates long-distance movement or overlapping structure.&lt;/p&gt;
+&lt;p&gt;Non-projective examples are common in real language, such as:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Who did Bill buy the coffee from yesterday&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h3 id="transition-based-dependency-parser"&gt;Transition-Based Dependency Parser
+&lt;/h3&gt;&lt;p&gt;A transition-based dependency parser has a stack, a buffer, and three operations.&lt;/p&gt;
+&lt;p&gt;Start: $\sigma = [ROOT], \beta = w_1, ..., w_n, A = \emptyset$&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Shift: $\sigma, w_i | \beta, A \Rightarrow \sigma | w_i, \beta, A $&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Left-$Arc_r$: $\sigma | w_i | w_j, \beta, A \Rightarrow \sigma | w_j, \beta, A \cup \{r(w_j, w_i)\} $&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Right-$Arc_r$: $\sigma | w_i | w_j, \beta, A \Rightarrow \sigma | w_j, \beta, A \cup \{r(w_i, w_j)\}$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Finish: $\sigma = [w], \beta = \emptyset$&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$\sigma$&lt;/strong&gt; represents the &lt;strong&gt;stack&lt;/strong&gt;, storing words currently being processed or waiting for dependency relations.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\beta$&lt;/strong&gt; represents the &lt;strong&gt;buffer&lt;/strong&gt;, storing the input words that have not yet been processed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$A$&lt;/strong&gt; represents the &lt;strong&gt;set of dependency arcs&lt;/strong&gt;, storing dependency relations already created.&lt;/li&gt;
+&lt;li&gt;Left-$Arc_r$ and Right-$Arc_r$ are two reduction operations that establish whether one word depends on another, with left or right direction.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now consider the example: analysis of &lt;code&gt;I ate fish&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-5.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The &lt;strong&gt;Left Arc&lt;/strong&gt; operation creates an arc from the stack top toward the second element, establishing that &lt;code&gt;ate&lt;/code&gt; is the head and &lt;code&gt;I&lt;/code&gt; depends on &lt;code&gt;ate&lt;/code&gt;. Then &lt;code&gt;I&lt;/code&gt; is removed from the stack.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Shift&lt;/strong&gt; operation moves &lt;code&gt;fish&lt;/code&gt; from the buffer into the stack.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Right Arc&lt;/strong&gt; operation creates an arc from the second element to the stack top, establishing that &lt;code&gt;ate&lt;/code&gt; is the head and &lt;code&gt;fish&lt;/code&gt; depends on &lt;code&gt;ate&lt;/code&gt;. Then &lt;code&gt;fish&lt;/code&gt; is removed from the stack.&lt;/li&gt;
+&lt;li&gt;The final &lt;strong&gt;Right Arc&lt;/strong&gt; operation makes &lt;code&gt;[root]&lt;/code&gt; point to &lt;code&gt;ate&lt;/code&gt;. After &lt;code&gt;ate&lt;/code&gt; is popped, only the root node remains and parsing is complete.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="evaluation-of-dependency-parsing"&gt;Evaluation of Dependency Parsing
+&lt;/h4&gt;&lt;p&gt;Dependency parsing is evaluated with &lt;strong&gt;UAS&lt;/strong&gt; (Unlabeled Attachment Score) and &lt;strong&gt;LAS&lt;/strong&gt; (Labeled Attachment Score). The following example uses &lt;code&gt;[ROOT] She saw the video lecture.&lt;/code&gt;; &lt;code&gt;Gold&lt;/code&gt; is the standard answer and &lt;code&gt;Parsed&lt;/code&gt; is the parser output.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-6.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;UAS checks whether the &lt;code&gt;Head&lt;/code&gt; is correct. In this example, the third word &lt;code&gt;the&lt;/code&gt; has a different head from the gold parse.&lt;/li&gt;
+&lt;li&gt;LAS checks whether both the &lt;code&gt;Head&lt;/code&gt; and the relation label are correct. In this example, only the relation between &lt;code&gt;She&lt;/code&gt; and &lt;code&gt;saw&lt;/code&gt; matches the gold parse.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="neural-dependency-parsing"&gt;Neural dependency parsing
+&lt;/h3&gt;&lt;p&gt;More than 95% of parsing time is consumed by feature computation.&lt;/p&gt;
+&lt;p&gt;Therefore, neural networks can be used to accelerate feature extraction. The method is still based on the transition-based dependency parser above, but it uses vectorization and non-linear neural network modeling. This led to the first neural-network-based dependency parser in 2014.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-7.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h2 id="recurrent-neural-networks"&gt;Recurrent Neural Networks
+&lt;/h2&gt;&lt;h3 id="language-modeling"&gt;Language Modeling
+&lt;/h3&gt;&lt;p&gt;In simple terms, a language model takes text, or tokens, as input and outputs probabilities.&lt;/p&gt;
+$$
+\begin{aligned}
+P(\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}) &amp;= P(\boldsymbol{x}^{(1)}) \times P(\boldsymbol{x}^{(2)} | \boldsymbol{x}^{(1)}) \times \dots \times P(\boldsymbol{x}^{(T)} | \boldsymbol{x}^{(T-1)}, \dots, \boldsymbol{x}^{(1)}) \\
+&amp;= \prod_{t=1}^{T} \underbrace{P(\boldsymbol{x}^{(t)} | \boldsymbol{x}^{(t-1)}, \dots, \boldsymbol{x}^{(1)})}_{\text{This is what our LM provides}}
+\end{aligned}
+$$&lt;p&gt;$P(\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)})$ is the probability of an entire sequence, such as a sentence. By decomposing the joint probability into a product of conditional probabilities using the chain rule, we can calculate the probability of the sequence. The core task of a language model is to use the previous context $\boldsymbol{x}^{(t-1)}, \dots, \boldsymbol{x}^{(1)}$ to &lt;strong&gt;predict&lt;/strong&gt; the probability of the next token $\boldsymbol{x}^{(t)}$.&lt;/p&gt;
+&lt;h3 id="n-gram-language-models"&gt;n-gram Language Models
+&lt;/h3&gt;&lt;p&gt;An n-gram is a chunk of $n$ consecutive words. Here, $n$ means how many words form one unit. To build an n-gram language model:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First, make a &lt;strong&gt;Markov assumption&lt;/strong&gt;: the word $x^{(t+1)}$ depends only on the previous $n-1$ words.&lt;/p&gt;
+$$
+ P(x^{(t+1)} | x^{(t)}, \dots, x^{(1)}) = P(x^{(t+1)} | \underbrace{x^{(t)}, \dots, x^{(t-n+2)}}_{n-1 \text{ words}}) \quad \text{(assumption)}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Using the definition of conditional probability, the above formula can be written as the ratio between an n-gram probability and an $(n-1)$-gram probability:&lt;/p&gt;
+$$
+ = \frac{P(x^{(t+1)}, x^{(t)}, \dots, x^{(t-n+2)}) \leftarrow \text{prob of a n-gram}}{P(x^{(t)}, \dots, x^{(t-n+2)}) \leftarrow \text{prob of a (n-1)-gram}} \quad \text{(definition of conditional prob)}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We approximate these probabilities by &lt;strong&gt;counting&lt;/strong&gt; n-gram frequencies in a large text corpus:&lt;/p&gt;
+$$
+ \approx \frac{\text{count}(x^{(t+1)}, x^{(t)}, \dots, x^{(t-n+2)})}{\text{count}(x^{(t)}, \dots, x^{(t-n+2)})} \quad \text{(statistical approximation)}
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For example, suppose we have a 4-gram language model and want to predict the last blank:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;as the proctor started the clock, the students opened their ......&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We only use the last three words, &lt;code&gt;students opened their&lt;/code&gt;:&lt;/p&gt;
+$$
+P(w\mid students\ opened\ their)=\frac{count(students\ opened\ their\ w)}{count(students\ opened\ their)}
+$$&lt;p&gt;According to the corpus, &lt;code&gt;students opened their books&lt;/code&gt; may appear most often, while the more contextually appropriate &lt;code&gt;students opened their exams&lt;/code&gt; may appear less often.&lt;/p&gt;
+&lt;h4 id="problems-with-n-gram-language-models"&gt;Problems with n-gram Language Models
+&lt;/h4&gt;&lt;p&gt;When using counting to estimate probabilities, we face &lt;strong&gt;sparsity problems&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;If the phrase &lt;code&gt;students opened their $w$&lt;/code&gt; never appears in the training data, then the probability for any such $w$ becomes &lt;strong&gt;0&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This can be handled by adding a small value $\delta$ to the count of each word $w \in V$, which is smoothing.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If the prefix &lt;code&gt;students opened their&lt;/code&gt; never appears in the training data, then we cannot calculate the probability of any $w$ because the denominator is 0.&lt;/p&gt;
+&lt;p&gt;In this case, we back off to a shorter context, such as &lt;code&gt;opened their&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;There is also a &lt;strong&gt;storage&lt;/strong&gt; problem:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We need to store counts for all observed n-grams in the corpus.&lt;/li&gt;
+&lt;li&gt;If $n$ increases, the required corpus size and storage grow greatly.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="a-fixed-window-neural-language-model"&gt;A Fixed-window Neural Language Model
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/RNN-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Input layer (words / one-hot vectors)&lt;/strong&gt;: the inputs are one-hot vectors of words $\boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \boldsymbol{x}^{(3)}, \boldsymbol{x}^{(4)}$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Embedding layer (concatenated word embeddings)&lt;/strong&gt;: words are converted into dense embeddings and concatenated:&lt;/p&gt;
+$$
+ \boldsymbol{e} = [\boldsymbol{e}^{(1)}; \boldsymbol{e}^{(2)}; \boldsymbol{e}^{(3)}; \boldsymbol{e}^{(4)}]
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Hidden layer&lt;/strong&gt;: apply a linear transformation with weight matrix $W$ and bias $b_1$, then pass through an activation function $f$, usually tanh or ReLU:&lt;/p&gt;
+$$
+ \boldsymbol{h} = f(W\boldsymbol{e} + \boldsymbol{b}_1)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Output distribution&lt;/strong&gt;: apply weight matrix $U$ and bias $b_2$, then use &lt;strong&gt;softmax&lt;/strong&gt; to produce a probability distribution over vocabulary $V$:&lt;/p&gt;
+$$
+ \hat{\boldsymbol{y}} = \text{softmax}(U\boldsymbol{h} + \boldsymbol{b}_2) \in \mathbb{R}^{|V|}
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Compared with n-gram methods, this improves:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Sparsity problem&lt;/strong&gt;: it no longer relies on exact counts, and can generalize unseen word groups through vector-space similarity.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: it does not need to store frequencies for all observed n-grams, only model parameters.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;But some problems remain:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fixed-window limitation&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;The fixed context window is usually too small.&lt;/li&gt;
+&lt;li&gt;Increasing the window size linearly increases the number of parameters in weight matrix $W$.&lt;/li&gt;
+&lt;li&gt;No matter how large the window is, it cannot capture long-range dependencies outside the window.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lack of symmetry&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Inputs $\boldsymbol{x}^{(1)}$ and $\boldsymbol{x}^{(2)}$ are multiplied by completely different parts of $W$, so the model does not process each input position consistently.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="rnn-language-model"&gt;RNN Language Model
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/" target="_blank" rel="noopener"
+ &gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/RNN-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages of RNNs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;They can process input of &lt;strong&gt;any length&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In theory, computation at step $t$ can use information from &lt;strong&gt;many steps earlier&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fixed model size&lt;/strong&gt;: increasing input length does not increase the number of model parameters.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Symmetry&lt;/strong&gt;: the same weights are applied at every step, so input positions are processed consistently.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Disadvantages of RNNs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Slow computation&lt;/strong&gt;: because computation is recurrent, it cannot be fully parallelized.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Practical difficulty&lt;/strong&gt;: in practice, it is hard to use information from &lt;strong&gt;many steps earlier&lt;/strong&gt;, because of vanishing or exploding gradients.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="train-an-rnn-language-model"&gt;Train an RNN Language Model
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Obtain a large text corpus consisting of a word sequence $\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Feed the sequence into the RNN-LM and compute the output distribution $\hat{\boldsymbol{y}}^{(t)}$ for &lt;strong&gt;every time step $t$&lt;/strong&gt;. This means the model predicts the probability distribution over possible next words at each position, given the words seen so far.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The model produces a loss at every time step. At step $t$, the loss is the &lt;strong&gt;cross entropy&lt;/strong&gt; between the predicted distribution $\hat{\boldsymbol{y}}^{(t)}$ and the true next word $\boldsymbol{y}^{(t)}$, which is the one-hot vector of $\boldsymbol{x}^{(t+1)}$:&lt;/p&gt;
+$$
+ J^{(t)}(\theta) = CE(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}) = - \sum_{w \in V} \boldsymbol{y}^{(t)}_w \log \hat{\boldsymbol{y}}^{(t)}_w = - \log \hat{\boldsymbol{y}}^{(t)}_{\boldsymbol{x}_{t+1}}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To get the loss over the whole training sequence, average the loss over all steps:&lt;/p&gt;
+$$
+ J(\theta) = \frac{1}{T} \sum_{t=1}^{T} J^{(t)}(\theta) = \frac{1}{T} \sum_{t=1}^{T} - \log \hat{\boldsymbol{y}}^{(t)}_{\boldsymbol{x}_{t+1}}
+ $$&lt;p&gt;This uses the idea of &lt;strong&gt;teacher forcing&lt;/strong&gt;: when calculating loss, the model does not feed its own previous prediction into the next step. It directly uses the correct word from the corpus.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Computing the loss and gradients over the entire corpus $\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}$ at once is extremely expensive in memory. In practice, we treat the sequence as sentences or documents, use SGD to compute loss and gradients over a &lt;strong&gt;small chunk of data&lt;/strong&gt;, and update parameters immediately.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="backpropagation-for-rnn"&gt;Backpropagation for RNN
+&lt;/h4&gt;&lt;p&gt;RNN parameters are trained with backpropagation through time. The backward pass runs along time steps $i=t,\dots,0$ and accumulates gradients.&lt;/p&gt;
+&lt;p&gt;Because $\boldsymbol{W}_h$ is shared at every time step, the total gradient is the sum of gradients produced at each step:&lt;/p&gt;
+$$
+\frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} = \sum_{i=1}^{t} \left. \frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} \right|_{(i)} \frac{\partial \boldsymbol{W}_h|_{(i)}}{\partial \boldsymbol{W}_h} = \sum_{i=1}^{t} \left. \frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} \right|_{(i)}
+$$&lt;p&gt;As the sequence grows longer, full backpropagation becomes very expensive and is prone to vanishing or exploding gradients. In practice, training is often truncated after about &lt;strong&gt;20 time steps&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="exploding-gradient"&gt;Exploding Gradient
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;Exploding gradients&lt;/strong&gt; occur when:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The eigenvalues of $W_h$, roughly the magnitude of the weights, are greater than 1.&lt;/li&gt;
+&lt;li&gt;As time step $T$ increases, gradients grow &lt;strong&gt;exponentially&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Model weights are updated too aggressively, making the network unstable. Parameters may overflow into NaN and training collapses.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the &lt;strong&gt;norm&lt;/strong&gt; of the gradient exceeds a preset &lt;strong&gt;threshold&lt;/strong&gt; before updating model parameters, we scale it down proportionally. If $\|\hat{\boldsymbol{g}}\| \ge threshold$, we apply &lt;strong&gt;gradient clipping&lt;/strong&gt;:&lt;/p&gt;
+$$
+\hat{\boldsymbol{g}} \leftarrow \frac{threshold}{\|\hat{\boldsymbol{g}}\|} \hat{\boldsymbol{g}}
+$$&lt;p&gt;Gradient clipping keeps the update in the same direction, but takes a smaller step.&lt;/p&gt;
+&lt;h4 id="vanishing-gradient"&gt;Vanishing Gradient
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;Vanishing gradients&lt;/strong&gt; occur when:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The eigenvalues of $W_h$ are less than 1, or the derivatives of activation functions such as $f$ or tanh are less than 1.&lt;/li&gt;
+&lt;li&gt;Gradients shrink &lt;strong&gt;exponentially&lt;/strong&gt; as the number of backward steps increases.&lt;/li&gt;
+&lt;li&gt;This corresponds to the RNN limitation mentioned earlier: &lt;strong&gt;in practice, it is hard to access information from many steps earlier&lt;/strong&gt;. When gradients become extremely small, far-away weights are barely updated, and the model &amp;ldquo;forgets&amp;rdquo; long-term context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For a vanilla RNN, learning to &lt;strong&gt;preserve information&lt;/strong&gt; across many time steps is difficult because the hidden state $\boldsymbol{h}^{(t)}$ is constantly rewritten:&lt;/p&gt;
+$$
+\boldsymbol{h}^{(t)} = \sigma(\boldsymbol{W}_h \boldsymbol{h}^{(t-1)} + \boldsymbol{W}_x \boldsymbol{x}^{(t)} + \boldsymbol{b})
+$$&lt;p&gt;Therefore, we introduce independent memory, such as LSTMs, or build more direct connections, such as attention mechanisms.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="long-short-term-memory"&gt;Long Short-Term Memory
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener"
+ &gt;Understanding LSTM Networks &amp;ndash; colah&amp;rsquo;s blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Forget gate&lt;/strong&gt;: controls what to keep and what to forget from the previous cell state.&lt;/p&gt;
+$$
+\boldsymbol{f}^{(t)} = \sigma (\boldsymbol{W}_f \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_f \boldsymbol{x}^{(t)} + \boldsymbol{b}_f)
+$$&lt;p&gt;&lt;strong&gt;Input gate&lt;/strong&gt;: controls which parts of the new cell content are written into the cell.&lt;/p&gt;
+$$
+\boldsymbol{i}^{(t)} = \sigma (\boldsymbol{W}_i \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_i \boldsymbol{x}^{(t)} + \boldsymbol{b}_i)
+$$&lt;p&gt;&lt;strong&gt;Output gate&lt;/strong&gt;: controls which parts of the cell are output to the hidden state.&lt;/p&gt;
+$$
+\boldsymbol{o}^{(t)} = \sigma (\boldsymbol{W}_o \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_o \boldsymbol{x}^{(t)} + \boldsymbol{b}_o)
+$$&lt;p&gt;&lt;strong&gt;New cell content&lt;/strong&gt;: the new content to be written into the cell, also known as candidate content.&lt;/p&gt;
+$$
+\tilde{\boldsymbol{c}}^{(t)} = \tanh (\boldsymbol{W}_c \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_c \boldsymbol{x}^{(t)} + \boldsymbol{b}_c)
+$$&lt;p&gt;&lt;strong&gt;Cell state&lt;/strong&gt;: erase, or forget, parts of the previous cell state and write in new cell content.&lt;/p&gt;
+$$
+\boldsymbol{c}^{(t)} = \boldsymbol{f}^{(t)} \odot \boldsymbol{c}^{(t-1)} + \boldsymbol{i}^{(t)} \odot \tilde{\boldsymbol{c}}^{(t)}
+$$&lt;p&gt;&lt;strong&gt;Hidden state&lt;/strong&gt;: read, or output, some content from the cell.&lt;/p&gt;
+$$
+\boldsymbol{h}^{(t)} = \boldsymbol{o}^{(t)} \odot \tanh \boldsymbol{c}^{(t)}
+$$&lt;h4 id="step-by-step-lstm-walk-through"&gt;Step-by-Step LSTM Walk Through
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-chain.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the figure above, each line carries a complete vector from one node&amp;rsquo;s output to other nodes&amp;rsquo; inputs. Pink circles represent pointwise operations such as vector addition, and yellow boxes represent learned neural network layers. Merged lines represent concatenation, and forked lines mean the content is copied and sent to different places.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-C-line.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The key to LSTM is the cell state, the horizontal line running through the top of the diagram.&lt;/p&gt;
+&lt;p&gt;The cell state is like a conveyor belt. It runs straight through the chain with only minor linear interactions. Information can flow along it relatively unchanged.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LSTMs can add or remove information from the cell state. This is carefully controlled by structures called gates.&lt;/p&gt;
+&lt;p&gt;A gate is a way to selectively allow information through. It consists of a sigmoid neural network layer and a pointwise multiplication operation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-f.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The first step of an LSTM is to decide what information to discard from the cell state. This decision is made by the forget gate layer, a sigmoid layer. It receives $h_{t-1}$ and $x_t$, and outputs a value between 0 and 1 for each number in the previous cell state $C_{t-1}$. A value of 1 means &amp;ldquo;keep completely&amp;rdquo;; 0 means &amp;ldquo;discard completely&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;Returning to the language-model example, the cell state may contain the gender of the current subject, so the model can use the correct pronoun. When a new subject appears, we want to forget the gender of the old subject.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-i.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The next step is to decide what new information to store in the cell state. This has two parts. First, an input gate layer decides which values to update. Then a $\tanh$ layer creates a vector of new candidate values $\tilde{C}_t$ that can be added to the state. In the next step, these two parts are combined to update the state.&lt;/li&gt;
+&lt;li&gt;In the language-model example, we want to add the gender of the new subject into the cell state, replacing the old gender information we are forgetting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-C.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Now it is time to update the old cell state $C_{t-1}$ into the new cell state $C_t$. The previous steps already decided what to do; now we execute it.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We multiply the old state by $f_t$ to forget the information we decided to forget. Then we add $i_t * \tilde{C}_t$. These are the new candidate values, scaled by how much we decided to update each state value.&lt;/p&gt;
+&lt;p&gt;In the language-model example, this is where we actually remove the old subject-gender information and add the new information.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-o.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, we need to decide what to output. This output is based on the cell state, but it is a filtered version.&lt;/p&gt;
+&lt;p&gt;First, we run a sigmoid layer to decide which parts of the cell state to output. Then we pass the cell state through $\tanh$, pushing values into the range -1 to 1, and multiply it by the sigmoid gate output. In this way, we only output the parts we decided to output.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In a language-model example, after processing a subject, the model may want to output information related to the upcoming verb, such as whether the subject is singular or plural.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="how-does-lstm-solve-vanishing-gradients"&gt;How does LSTM solve vanishing gradients
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The LSTM architecture makes it easier for an RNN to preserve information over multiple time steps. For example, if the forget gate of a cell dimension is set to 1 and the input gate is set to 0, that information can be kept indefinitely.&lt;/p&gt;
+&lt;p&gt;In contrast, a vanilla RNN must learn a recurrent weight matrix $W_h$ that preserves information in the hidden state, which is much harder.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Although vanishing and exploding gradients cannot be completely avoided, models can create more direct and more linear paths for long-distance dependencies. ResNet and DenseNet are examples of architectures that create direct connections between modules or layers.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="bidirectional-rnns"&gt;Bidirectional RNNs
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Traditional one-way RNNs or LSTMs have an obvious limitation: when processing a sequence, they can only &amp;ldquo;look left&amp;rdquo;, meaning they only use past context. However, in many NLP tasks such as sentiment classification, named entity recognition, or sentence-level understanding, the meaning of the current word may also depend on the &amp;ldquo;right side&amp;rdquo;, or future context.&lt;/li&gt;
+&lt;li&gt;To solve this, researchers introduced bidirectional architectures, often implemented with LSTMs:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Forward RNN&lt;/strong&gt;: processes the input sequence from left to right and computes hidden states $\overrightarrow{h}_t$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Backward RNN&lt;/strong&gt;: processes the same input sequence from right to left and computes hidden states $\overleftarrow{h}_t$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Concatenated state&lt;/strong&gt;: at each time step $t$, concatenate the forward and backward hidden states to form the final representation at that position: $h_t = [\overrightarrow{h}_t; \overleftarrow{h}_t]$. Each word representation therefore contains both left and right context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Bidirectional LSTMs are powerful feature extractors, but they are only suitable for tasks where the complete input sequence is available at once, such as text classification or encoding the source sentence in translation. They &lt;strong&gt;cannot&lt;/strong&gt; be used for traditional language modeling, because language modeling predicts the next word. If the model can see future words on the right, it violates the autoregressive prediction setup.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="neural-machine-translation"&gt;Neural Machine Translation
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Neural machine translation was one of the first major successes of deep learning in NLP. NMT is mainly based on the &lt;strong&gt;Sequence-to-Sequence (Seq2Seq)&lt;/strong&gt; architecture, whose core consists of two RNNs, usually LSTMs: an &lt;strong&gt;encoder&lt;/strong&gt; and a &lt;strong&gt;decoder&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;The encoder reads the source-language sentence. While reading, it does not produce the translation directly; it continuously updates its hidden state. After the encoder processes the final word, its &lt;strong&gt;final hidden state&lt;/strong&gt; is treated as a compressed semantic representation of the whole sentence. This acts as an &amp;ldquo;information bottleneck&amp;rdquo;, because all complex meanings of the source sentence must be compressed into one fixed-dimensional vector.&lt;/li&gt;
+&lt;li&gt;The decoder-side LSTM is essentially a &lt;strong&gt;conditional language model&lt;/strong&gt;. Its initial hidden state is not random or all zero; it is set to the bottleneck vector output by the encoder. This means every generation step of the decoder is conditioned on the semantic vector of the source sentence.
+At each time step, it outputs the word with the highest probability according to the current hidden state, then feeds the last generated word into the next step until it produces the end-of-sentence token &lt;code&gt;&amp;lt;EOS&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Practical BM25</title><link>https://ottercoconut.github.io/en/p/practical-bm25/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/practical-bm25/</guid><description>&lt;h3 id="references"&gt;References
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-1-how-shards-affect-relevance-scoring-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 1: How Shards Affect Relevance Scoring in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 2: The BM25 Algorithm and its Variables | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/blog/practical-bm25-part-3-considerations-for-picking-b-and-k1-in-elasticsearch" target="_blank" rel="noopener"
+ &gt;Practical BM25 - Part 3: Considerations for Picking b and k1 in Elasticsearch | Elastic Blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf" target="_blank" rel="noopener"
+ &gt;tf-idf - Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="background"&gt;Background
+&lt;/h2&gt;&lt;p&gt;In Elasticsearch 5.0, the default similarity algorithm was changed to Okapi BM25, which is used to score the relevance between search results and a query. This post focuses on the practical side of BM25, including its available parameters and the factors that affect scoring.&lt;/p&gt;
+&lt;h3 id="understanding-how-shards-affect-scoring"&gt;Understanding How Shards Affect Scoring
+&lt;/h3&gt;&lt;p&gt;Before learning BM25, it is necessary to understand that an Elasticsearch index can be split into multiple shards, which are physical partitions of the index. This matters because BM25 relevance scores are not naturally calculated from global statistics across the entire index. By default, they may be calculated separately inside each shard. The more shards there are, and the less data each shard contains, the easier it is for scoring bias to appear.&lt;/p&gt;
+&lt;p&gt;Below, we follow the example from the reference article. The goal is to create an Elasticsearch index named &lt;code&gt;people&lt;/code&gt;, insert a few test documents, and repeatedly search for the same query term &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt; to observe how BM25 relevance scores change with document count and shard distribution.&lt;/p&gt;
+&lt;p&gt;The author creates an index named &lt;code&gt;people&lt;/code&gt;, sets it to have 5 primary shards, and uses BM25 as the default similarity algorithm:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;people&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;number_of_shards&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;index&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;similarity&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;default&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;BM25&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The author uses his own name as the example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The search looks for documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, so it naturally matches &lt;code&gt;/people/_doc/1&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane C&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane P Connelly&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then the same search is run again:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/people/_doc/_search&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;match&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;title&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Shane&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;At this point there are 4 &amp;ldquo;documents&amp;rdquo;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Shane&lt;/li&gt;
+&lt;li&gt;Shane C&lt;/li&gt;
+&lt;li&gt;Shane Connelly&lt;/li&gt;
+&lt;li&gt;Shane P Connelly&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The search finds documents whose &lt;code&gt;title&lt;/code&gt; field matches &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;. Although all titles contain &lt;code&gt;&amp;quot;Shane&amp;quot;&lt;/code&gt;, their BM25 scores are not the same. The result is that &lt;code&gt;doc1&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; both score 0.2876821, while &lt;code&gt;doc2&lt;/code&gt; scores 0.19856805 and &lt;code&gt;doc4&lt;/code&gt; scores 0.16853254.&lt;/p&gt;
+&lt;p&gt;Although &lt;code&gt;doc2&lt;/code&gt; and &lt;code&gt;doc3&lt;/code&gt; look similar, their scores differ a lot. This is not mainly caused by the difference between &lt;code&gt;&amp;quot;C&amp;quot;&lt;/code&gt; and &lt;code&gt;&amp;quot;Connelly&amp;quot;&lt;/code&gt;, but by how documents are distributed across shards. So how can the scores become more consistent?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;The larger the dataset, the smaller the statistical difference between shards.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Reducing the number of shards can reduce scoring bias.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you want BM25 scores under multiple shards to be closer to &amp;ldquo;global statistics&amp;rdquo;, you can add &lt;code&gt;?search_type=dfs_query_then_fetch&lt;/code&gt; when querying. It collects term-frequency statistics from all shards first, then calculates scores in a unified way, so the result will be close to, or even the same as, the result when &lt;code&gt;number_of_shards=1&lt;/code&gt;.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;dfs_query_then_fetch&lt;/code&gt; first aggregates term-frequency statistics across shards and then calculates BM25 scores, making multi-shard scoring closer to single-shard global scoring. However, it adds one extra communication round, so it is only worth using when the dataset is small, there are many shards, the data distribution is uneven, and relevance scores matter a lot.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="algorithm-and-its-variables"&gt;Algorithm and its variables
+&lt;/h2&gt;&lt;p&gt;BM25 model:&lt;/p&gt;
+$$
+\sum_{i}^{n} IDF(q_i) \frac{f(q_i, D) * (k_1 + 1)}{f(q_i, D) + k_1 * (1 - b + b * \frac{fieldLen}{avgFieldLen})}
+$$&lt;ul&gt;
+&lt;li&gt;$q_i$: the $i$-th keyword in the query.&lt;/li&gt;
+&lt;li&gt;$IDF(q_i)$: the inverse document frequency of keyword $q_i$.&lt;/li&gt;
+&lt;li&gt;$f(q_i, D)$: the term frequency of keyword $q_i$ in document $D$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$fieldLen$&lt;/strong&gt;: the length of the current document field.&lt;/li&gt;
+&lt;li&gt;$avgFieldLen$: the average field length across all documents in the index.&lt;/li&gt;
+&lt;li&gt;$k_1$ and $b$: tunable parameters. Usually $k1 \in [1.2, 2.0]$, and $b = 0.75$.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In simple terms, BM25 is a TF-IDF model that introduces nonlinearity and handles the frequency saturation problem. The TF-IDF model is:&lt;/p&gt;
+$$
+\text{Score} = f(q_i, D) \times \log\left(\frac{N}{n(q_i)}\right)
+$$&lt;h4 id=""&gt;$q_i$
+&lt;/h4&gt;&lt;p&gt;For example, if I search for &amp;ldquo;shane&amp;rdquo;, there is only one query term, so $q_0$ is &amp;ldquo;shane&amp;rdquo;. If I search for &amp;ldquo;shane connelly&amp;rdquo; in English, Elasticsearch recognizes the space and tokenizes the query into two terms: $q_0$ is &amp;ldquo;shane&amp;rdquo;, and $q_1$ is &amp;ldquo;connelly&amp;rdquo;. These query terms are substituted into the other parts of the formula, and the final results are summed.&lt;/p&gt;
+&lt;h4 id=""&gt;$IDF(q_i)$
+&lt;/h4&gt;&lt;p&gt;The &lt;strong&gt;IDF (Inverse Document Frequency)&lt;/strong&gt; part of the formula measures how frequently a term appears across all documents. It &amp;ldquo;penalizes&amp;rdquo; common terms by lowering their weight. In the Lucene/BM25 algorithm, the actual formula is:&lt;/p&gt;
+$$
+\ln \left( 1 + \frac{(docCount - f(q_i) + 0.5)}{f(q_i) + 0.5} \right)
+$$&lt;p&gt;Here, $docCount$ is the total number of documents in this shard that contain a value for this field. If the &lt;code&gt;search_type=dfs_query_then_fetch&lt;/code&gt; parameter is used, it is the count across all shards. $f(q_i)$ is the number of documents containing the $i$-th query term. In the example, the term &amp;ldquo;shane&amp;rdquo; appears in all 4 documents, so the inverse document frequency $IDF(\text{"shane"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 4 + 0.5)}{4 + 0.5}\right) = \ln\left(1 + \frac{0.5}{4.5}\right) = 0.105360515657826
+$$&lt;p&gt;$IDF(\text{"connelly"})$ is:&lt;/p&gt;
+$$
+\ln\left(1 + \frac{(4 - 2 + 0.5)}{2 + 0.5}\right) = \ln\left(1 + \frac{2.5}{2.5}\right) = 0.693147180559945
+$$&lt;p&gt;We can see that queries containing rarer terms have a higher multiplier. In this 4-document corpus, &amp;ldquo;connelly&amp;rdquo; is rarer than &amp;ldquo;shane&amp;rdquo;, so it contributes more to the final score. This matches intuition: the word &amp;ldquo;the&amp;rdquo; may appear in almost every English document, so when a user searches for something like &amp;ldquo;the elephant&amp;rdquo;, &amp;ldquo;elephant&amp;rdquo; is clearly more important than &amp;ldquo;the&amp;rdquo;, and we also expect it to contribute more to the search score.&lt;/p&gt;
+&lt;h4 id=""&gt;$fieldLen/avgFieldLen$
+&lt;/h4&gt;&lt;p&gt;The more terms a document contains, at least terms that do not match the query, the lower the document score tends to be. This also matches intuition: if a 300-page document mentions my name only once, it is probably less relevant than a short tweet that also mentions my name once.&lt;/p&gt;
+&lt;h4 id=""&gt;$b$
+&lt;/h4&gt;&lt;p&gt;The larger the value of $b$, the more the document length ratio affects the score. To understand this, imagine setting $b$ to 0. In that case, the length ratio has no effect at all, and the score is only affected by term frequency. Document length does not affect scoring. If $b$ is set to 1, the score is affected only by the length ratio and not by frequency.&lt;/p&gt;
+&lt;h4 id=""&gt;$f(q_i, D)$
+&lt;/h4&gt;&lt;p&gt;This value corresponds to TF, or Term Frequency.&lt;/p&gt;
+&lt;p&gt;$f(q_i, D)$ means: how many times does the $i$-th query term appear in document $D$? In all of the example documents, $f(\text{"shane"}, D)$ is 1, but $f(\text{"connelly"}, D)$ differs: it is 1 in documents 3 and 4, and 0 in documents 1 and 2. If there were a 5th document whose text was &amp;ldquo;shane shane&amp;rdquo;, then $f(\text{"shane"}, D)$ would be 2. We can see that $f(q_i, D)$ appears in both the numerator and denominator, together with a special factor called &amp;ldquo;$k_1$&amp;rdquo;, which is discussed below. The basic intuition is that the more often a query term appears in a document, the higher the score becomes. A document that mentions our name multiple times is more likely to be relevant than one that mentions it only once.&lt;/p&gt;
+&lt;h4 id=""&gt;$k_1$
+&lt;/h4&gt;&lt;p&gt;In BM25, $k_1$ is the core parameter controlling term frequency saturation. It sets an asymptotic upper bound for the contribution of $f(q_i, D)$ to the relevance score, making the marginal gain decrease nonlinearly as term frequency increases. Compared with the almost linear weight growth in traditional TF-IDF, this mechanism effectively suppresses excessive ranking influence from high-frequency terms, such as keyword stuffing. The value of $k_1$ directly determines how quickly the score approaches saturation: a smaller $k_1$ makes term frequency contribution hit the bottleneck quickly, while a larger $k_1$ allows term frequency to maintain meaningful weight gains over a wider range.&lt;/p&gt;
+&lt;p&gt;If $k_1$ is set to 0, the score becomes fixed at 1. If $k_1$ is set to a very large value, such as 10000, the formula approximately degenerates into $\frac{TF \times k_1}{k_1} = TF$, becoming term frequency itself.&lt;/p&gt;
+&lt;h2 id="picking--and"&gt;Picking $b$ and $k_1$
+&lt;/h2&gt;&lt;p&gt;Regarding the values of $b$ and $k_1$, the Elasticsearch article also points out that the current defaults are empirical values that work for most cases, but &lt;strong&gt;there is no globally optimal b and k1. They must be evaluated together with the corpus and queries.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Also, when retrieval performance is not good enough, the following should be optimized before tuning $b$ and $k_1$:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Boost exact phrase matches.&lt;/li&gt;
+&lt;li&gt;Use synonyms to expand expressions that users may care about.&lt;/li&gt;
+&lt;li&gt;Use analysis components such as fuzziness, typeahead, phonetic matching, and stemming to handle spelling mistakes, language differences, and word-form variations.&lt;/li&gt;
+&lt;li&gt;Use function score to adjust document scores based on publish time, geographical distance, or business features.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As for the Explain API in the later part of the Elasticsearch article, I will not expand on it here.&lt;/p&gt;</description></item><item><title>Sparse Vectors and the SPLADE Model</title><link>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</guid><description>&lt;h2 id="references"&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/naver/splade" target="_blank" rel="noopener"
+ &gt;Naver SPLADE official repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://huggingface.co/naver/splade_v2_max" target="_blank" rel="noopener"
+ &gt;naver/splade_v2_max model page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/package_reference/sparse_encoder/index.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/sparse_encoder/training_overview.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder training overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://sbert.net/docs/sparse_encoder/usage/efficiency.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder inference efficiency&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="sparse-vectors-and-the-splade-model"&gt;Sparse Vectors and the SPLADE Model
+&lt;/h1&gt;&lt;p&gt;In RAG systems, dense vectors have become the most common retrieval method. They map text into a continuous vector space and are good at capturing semantically similar expressions, such as &amp;ldquo;employee resignation process&amp;rdquo; and &amp;ldquo;personnel exit procedure&amp;rdquo;. However, dense vectors also have clear weaknesses: they are not always good at exact matching for entities, IDs, terminology, error codes, product models, table field names, and code snippets.&lt;/p&gt;
+&lt;p&gt;This is where sparse vectors become valuable. They are more like a neural-network-enhanced inverted index: text is still represented as sparse weights over term dimensions, but these weights are not calculated by pure statistical methods like BM25. Instead, they are predicted by a model.&lt;/p&gt;
+&lt;p&gt;In short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dense vectors handle semantic similarity.&lt;/li&gt;
+&lt;li&gt;BM25 handles exact lexical matching.&lt;/li&gt;
+&lt;li&gt;SPLADE sparse vectors handle weighted matching after neural term expansion.&lt;/li&gt;
+&lt;li&gt;Hybrid Search merges dense and sparse retrieval results.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="paper-model"&gt;Paper model
+&lt;/h2&gt;&lt;p&gt;SPLADE maps a piece of text into vocabulary space based on the logits of a Masked Language Model. Suppose the vocabulary contains 30522 WordPiece tokens. Each text can eventually be represented as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a sparse vector. Most token weights are 0, and only a small number of tokens that the model considers important have non-zero weights.&lt;/p&gt;
+&lt;p&gt;The biggest difference from ordinary embeddings is that each dimension in a dense embedding is usually not interpretable, while each dimension in a sparse vector is a vocabulary token. A token activated by the model can be understood as &amp;ldquo;this text is related to this term&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;For example, a document may not explicitly contain the word &amp;ldquo;reimbursement&amp;rdquo;, but it may contain &amp;ldquo;travel expense&amp;rdquo;, &amp;ldquo;invoice&amp;rdquo;, and &amp;ldquo;approval form&amp;rdquo;. SPLADE may activate tokens related to &amp;ldquo;reimbursement&amp;rdquo;. Then, when the query is &amp;ldquo;reimbursement process&amp;rdquo;, the document may still be retrieved even if it does not exactly match the original term.&lt;/p&gt;
+&lt;p&gt;More specifically, SPLADE uses the logits from the Masked Language Model layer to predict the importance of each term in the BERT WordPiece vocabulary. Suppose the tokenized input text is:&lt;/p&gt;
+$$
+t=(t_{1},t_{2},...,t_{N})
+$$&lt;p&gt;and the corresponding contextual representations are:&lt;/p&gt;
+$$
+(h_{1},h_{2},...,h_{N})
+$$&lt;p&gt;For the $i$-th token in the input, the model calculates its importance for the $j$-th token in the vocabulary:&lt;/p&gt;
+$$
+w_{ij}=transform(h_{i})^{T}E_{j}+b_{j}, \quad j\in\{1,...,|V|\}
+$$&lt;p&gt;Here, $E_j$ is the BERT input embedding of vocabulary ${token}_j$, and $b_j$ is the token-level bias. &lt;code&gt;transform(.)&lt;/code&gt; is usually a linear transformation with GeLU and LayerNorm. Intuitively, this step asks: for this position in the input, how related is it to each term in the vocabulary?&lt;/p&gt;
+&lt;p&gt;However, retrieval does not need &amp;ldquo;the score of a term at one position&amp;rdquo;. It needs &amp;ldquo;the score of a term for the whole text&amp;rdquo;. Therefore, SPLADE aggregates activations from different positions into a sparse representation for the whole text:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;There are three meanings in this formula:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ReLU&lt;/code&gt; sets negative scores to zero and keeps only positively related terms.&lt;/li&gt;
+&lt;li&gt;$log(1+x)$ performs logarithmic saturation, preventing scores of frequent or repeated words from growing without bound.&lt;/li&gt;
+&lt;li&gt;$\sum$ accumulates activations from different positions for the same vocabulary token, producing the term weight for the whole text.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally, the text becomes a high-dimensional but sparse vector:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After both the query and document are mapped into the same vocabulary space, the retrieval score is the dot product of sparse vectors:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;This is also why SPLADE can be connected to inverted indexes or sparse vector indexes.&lt;/p&gt;
+&lt;h3 id="ranking-loss"&gt;Ranking loss
+&lt;/h3&gt;&lt;p&gt;During training, SPLADE needs to make relevant documents score higher and irrelevant documents score lower. Given a query $q_i$, a positive document $d_i^+$, a hard negative document $d_i^-$, and a group of in-batch negative documents ${d_{i,j}^{-}}$, a contrastive ranking loss similar to the following can be used:&lt;/p&gt;
+$$
+\mathcal{L}_{rank-IBN} =
+-\log
+\frac{e^{s(q_i,d_i^+)}}
+{e^{s(q_i,d_i^+)} + e^{s(q_i,d_i^-)} + \sum e^{s(q_i,d_{i,j}^{-})}}
+$$&lt;p&gt;Its goal is direct: make the probability of the positive document as large as possible within the candidate set. From an engineering perspective, the model keeps learning which term expansions help it rank the correct document higher.&lt;/p&gt;
+&lt;h3 id="flops-sparsity-regularization"&gt;FLOPS sparsity regularization
+&lt;/h3&gt;&lt;p&gt;If only ranking quality is optimized, the model may activate too many tokens. This may improve recall, but the inverted index becomes larger, and queries need to access more posting lists.&lt;/p&gt;
+&lt;p&gt;Therefore, SPLADE introduces FLOPS regularization to control sparsity. For a batch of documents, first estimate the average activation of vocabulary token (j) in this batch:&lt;/p&gt;
+$$
+\overline{a}_{j}=\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)}
+$$&lt;p&gt;Then square and sum the average activations:&lt;/p&gt;
+$$
+l_{FLOPS}=\sum_{j\in V}\overline{a}_{j}^{2}
+=\sum_{j\in V}(\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)})^{2}
+$$&lt;p&gt;This regularization term is not simply controlling &amp;ldquo;vector dimensionality&amp;rdquo;. It controls the number and distribution of non-zero tokens. It tries to prevent the model from binding many documents to a few high-frequency words, and also prevents every document from activating too many terms.&lt;/p&gt;
+&lt;p&gt;Therefore, the sparsity weight can be understood as a knob between recall quality and retrieval cost:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Larger weight: shorter sparse vectors, smaller index, faster retrieval, but possibly lower recall.&lt;/li&gt;
+&lt;li&gt;Smaller weight: longer sparse vectors and richer expansion, but higher index and retrieval cost.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="overall-loss"&gt;Overall loss
+&lt;/h3&gt;&lt;p&gt;Finally, SPLADE trains ranking loss and sparsity regularization together:&lt;/p&gt;
+$$
+\mathcal{L}=\mathcal{L}_{rank-IBN}
++\lambda_q\mathcal{L}_{reg}^{q}
++\lambda_d\mathcal{L}_{reg}^{d}
+$$&lt;p&gt;Here, (\lambda_q) controls query-side sparsity, and (\lambda_d) controls document-side sparsity. Query-side sparsity is usually very important because queries are more sensitive to latency. Document-side vectors can be computed offline, so slightly higher compute cost is often acceptable, but index size still needs to be controlled.&lt;/p&gt;
+&lt;h3 id="from-sum-pooling-to-max-pooling"&gt;From sum pooling to max pooling
+&lt;/h3&gt;&lt;p&gt;The original SPLADE aggregates term predictions from every input position:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;The more common later SPLADE-max uses max pooling:&lt;/p&gt;
+$$
+w_{j}=\max_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;This does not mean the whole text only keeps one token. Instead, it takes the maximum activation separately for each vocabulary dimension. This can reduce amplification from long text or repeated words, making the representation focus more on whether a semantic term is strongly activated, rather than simply depending on occurrence count.&lt;/p&gt;
+&lt;h3 id="splade-doc-and-distillation-training"&gt;SPLADE-doc and distillation training
+&lt;/h3&gt;&lt;p&gt;Standard SPLADE encodes both query and document. In other words, both query-side and document-side representations may produce neural expansion terms. Retrieval calculates:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;SPLADE-doc is more focused on engineering efficiency. It only applies SPLADE encoding on the document side, while the query side usually uses only the original query tokens. The document score can be written as:&lt;/p&gt;
+$$
+s(q,d)=\sum_{j\in q}w_j^d
+$$&lt;p&gt;This means document-side expansion can be precomputed offline, and the query side does not need to run a SPLADE encoder, reducing latency. The tradeoff is that the query side has no neural expansion ability and can only use &amp;ldquo;document-side expansion&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;In addition, many strong SPLADE models use knowledge distillation and hard negatives. A common approach is to first train a first-stage retriever and a cross-encoder reranker, then continue training with harder negatives and reranker scores. In engineering practice, we do not have to reproduce this whole training pipeline to use public models. But understanding it helps explain why words like &lt;code&gt;distil&lt;/code&gt;, &lt;code&gt;ensemble&lt;/code&gt;, and &lt;code&gt;cocondenser&lt;/code&gt; appear in model names.&lt;/p&gt;
+&lt;h3 id="why-sparsity-matters"&gt;Why sparsity matters
+&lt;/h3&gt;&lt;p&gt;If the model activates many tokens, recall may improve, but the index becomes larger and retrieval becomes slower. SPLADE uses FLOPS regularization to control the number and distribution of non-zero tokens.&lt;/p&gt;
+&lt;p&gt;From an engineering perspective, sparse vectors are not better just because they are longer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Too few non-zero tokens: the index is small and retrieval is fast, but recall may be insufficient.&lt;/li&gt;
+&lt;li&gt;Too many non-zero tokens: recall may be better, but the index expands and retrieval cost increases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, secondary pruning is often applied, such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Keeping only the top_k tokens.&lt;/li&gt;
+&lt;li&gt;Filtering tokens whose weight is below a threshold.&lt;/li&gt;
+&lt;li&gt;Limiting the maximum number of sparse dimensions for a single chunk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These parameters often affect online cost more than the model itself.&lt;/p&gt;
+&lt;h2 id="model-selection"&gt;Model selection
+&lt;/h2&gt;&lt;p&gt;SPLADE is more like a family of sparse neural retrieval methods than a single model. The official Naver repository also notes that different regularization strengths produce models ranging from &amp;ldquo;very sparse&amp;rdquo; to &amp;ldquo;strong query/doc expansion&amp;rdquo;. Their effectiveness, index size, and latency all differ.&lt;/p&gt;
+&lt;p&gt;If the goal is only to quickly validate engineering feasibility, &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt; is a good starting point. It is a common strong model in the official SPLADE++ series. The Naver repository reports its MS MARCO dev MRR@10 as 38.3, higher than &lt;code&gt;splade_v2_max&lt;/code&gt; at 34.0 and &lt;code&gt;splade_v2_distil&lt;/code&gt; at 36.8. It is suitable for first checking whether sparse retrieval can fill the keyword, entity, and terminology recall gaps of dense retrieval.&lt;/p&gt;
+&lt;p&gt;If inference cost matters more, consider &lt;code&gt;naver/splade_v2_max&lt;/code&gt; or the efficient SPLADE series. &lt;code&gt;splade_v2_max&lt;/code&gt; is structurally simple. Its Hugging Face model page marks it as DistilBERT base, with a 512-token maximum length, 30522-dimensional output, and dot-product similarity. The efficient SPLADE series further separates document encoder and query encoder, aiming to reduce query-side latency.&lt;/p&gt;
+&lt;p&gt;A practical selection order is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First choose a strong public model for offline evaluation, such as &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If offline evaluation is effective, then measure average non-zero token count, index size, document-side encoding throughput, and query-side P95 latency.&lt;/li&gt;
+&lt;li&gt;If query-side latency is too high, first try query caching, ONNX/OpenVINO, quantization, or efficient SPLADE.&lt;/li&gt;
+&lt;li&gt;If the index is too large, first reduce top-k, increase the minimum weight threshold, or choose a model with stronger regularization and higher sparsity.&lt;/li&gt;
+&lt;li&gt;If business data differs greatly from public English retrieval datasets, consider fine-tuning with domain data instead of directly trusting public leaderboards.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Do not choose a model only by MRR. SPLADE model selection should consider at least five things at the same time: retrieval quality, average non-zero dimensions, index size, query latency, and deployment complexity.&lt;/p&gt;
+&lt;p&gt;Sentence Transformers now provides &lt;code&gt;SparseEncoder&lt;/code&gt;, which can directly load SPLADE models:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sentence_transformers&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;naver/splade-cocondenser-ensembledistil&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;embeddings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;example query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;It also provides &lt;code&gt;encode_query()&lt;/code&gt;, &lt;code&gt;encode_document()&lt;/code&gt;, sparsity statistics, Qdrant/Elasticsearch/OpenSearch integration, and deployment capabilities related to ONNX/OpenVINO/quantization. For engineering prototypes, this route can be used first, and then the implementation can be moved to a custom inference service depending on performance bottlenecks.&lt;/p&gt;
+&lt;h2 id="differences-between-splade-and-bm25"&gt;Differences between SPLADE and BM25
+&lt;/h2&gt;&lt;p&gt;BM25 and SPLADE can both use inverted indexes for retrieval, but their weights come from different sources.&lt;/p&gt;
+&lt;p&gt;BM25 weights come from statistics, such as TF, IDF, and document length normalization. It mainly depends on exact matching between query terms and document terms.&lt;/p&gt;
+&lt;p&gt;SPLADE weights come from neural model predictions. It can not only preserve tokens that appear in the original text, but may also activate semantically related tokens that do not appear in the original text.&lt;/p&gt;
+&lt;p&gt;So it can be roughly understood as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;BM25 = statistical matching of original terms
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SPLADE = weighted matching of neural expansion terms
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;In enterprise knowledge bases, technical documentation, customer-service FAQs, code documentation, policies, and regulations, both BM25 and SPLADE are valuable. BM25 is lighter, while SPLADE is stronger but more expensive.&lt;/p&gt;</description></item><item><title>Synology NAS Proxy and Emby Configuration</title><link>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</link><pubDate>Mon, 16 Feb 2026 11:12:15 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/synology-nas-proxy-and-emby-configuration/</guid><description>&lt;p&gt;Recently, when using v2rayA on my Synology NAS, I encountered an issue where incorrect time synchronization caused it to stop working properly, which in turn prevented Emby from scraping metadata. Although I don&amp;rsquo;t know the exact reason, it&amp;rsquo;s an old problem. The version was very old, and I was using a Docker image from a third-party application store; currently, Docker can&amp;rsquo;t pull images via direct connection either. Here is my experience with solving this:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Reinstall v2rayA&lt;/li&gt;
 &lt;li&gt;Configure the Docker version of Emby.&lt;/li&gt;
@@ -126,59 +1413,59 @@
 &lt;li&gt;
 &lt;p&gt;Activate Transparent Proxy&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;arch&lt;/th&gt;
- &lt;th&gt;kernel&lt;/th&gt;
- &lt;th&gt;iptables version&lt;/th&gt;
- &lt;th&gt;system model&lt;/th&gt;
- &lt;th&gt;platform version&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;apollolake&lt;/td&gt;
- &lt;td&gt;4.4.180+&lt;/td&gt;
- &lt;td&gt;v1.8.3&lt;/td&gt;
- &lt;td&gt;DS918+&lt;/td&gt;
- &lt;td&gt;7.0.1-42218&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;apollolake&lt;/td&gt;
- &lt;td&gt;4.4.59+&lt;/td&gt;
- &lt;td&gt;v1.6.0&lt;/td&gt;
- &lt;td&gt;DS918+&lt;/td&gt;
- &lt;td&gt;6.2.3-25426&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;broadwell&lt;/td&gt;
- &lt;td&gt;3.10.105&lt;/td&gt;
- &lt;td&gt;v1.6.0&lt;/td&gt;
- &lt;td&gt;DS3617xs&lt;/td&gt;
- &lt;td&gt;6.2.3-25426&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;bromolow&lt;/td&gt;
- &lt;td&gt;3.10.105&lt;/td&gt;
- &lt;td&gt;v1.6.0&lt;/td&gt;
- &lt;td&gt;DS3615xs&lt;/td&gt;
- &lt;td&gt;6.2.3-25426&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;geminilake&lt;/td&gt;
- &lt;td&gt;4.4.180+&lt;/td&gt;
- &lt;td&gt;v1.8.3&lt;/td&gt;
- &lt;td&gt;DS920+&lt;/td&gt;
- &lt;td&gt;7.1-42661&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;geminilake&lt;/td&gt;
- &lt;td&gt;4.4.302+&lt;/td&gt;
- &lt;td&gt;v1.8.3&lt;/td&gt;
- &lt;td&gt;DS220+&lt;/td&gt;
- &lt;td&gt;7.2-64570&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;arch&lt;/th&gt;
+					&lt;th&gt;kernel&lt;/th&gt;
+					&lt;th&gt;iptables version&lt;/th&gt;
+					&lt;th&gt;system model&lt;/th&gt;
+					&lt;th&gt;platform version&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;apollolake&lt;/td&gt;
+					&lt;td&gt;4.4.180+&lt;/td&gt;
+					&lt;td&gt;v1.8.3&lt;/td&gt;
+					&lt;td&gt;DS918+&lt;/td&gt;
+					&lt;td&gt;7.0.1-42218&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;apollolake&lt;/td&gt;
+					&lt;td&gt;4.4.59+&lt;/td&gt;
+					&lt;td&gt;v1.6.0&lt;/td&gt;
+					&lt;td&gt;DS918+&lt;/td&gt;
+					&lt;td&gt;6.2.3-25426&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;broadwell&lt;/td&gt;
+					&lt;td&gt;3.10.105&lt;/td&gt;
+					&lt;td&gt;v1.6.0&lt;/td&gt;
+					&lt;td&gt;DS3617xs&lt;/td&gt;
+					&lt;td&gt;6.2.3-25426&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;bromolow&lt;/td&gt;
+					&lt;td&gt;3.10.105&lt;/td&gt;
+					&lt;td&gt;v1.6.0&lt;/td&gt;
+					&lt;td&gt;DS3615xs&lt;/td&gt;
+					&lt;td&gt;6.2.3-25426&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;geminilake&lt;/td&gt;
+					&lt;td&gt;4.4.180+&lt;/td&gt;
+					&lt;td&gt;v1.8.3&lt;/td&gt;
+					&lt;td&gt;DS920+&lt;/td&gt;
+					&lt;td&gt;7.1-42661&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;geminilake&lt;/td&gt;
+					&lt;td&gt;4.4.302+&lt;/td&gt;
+					&lt;td&gt;v1.8.3&lt;/td&gt;
+					&lt;td&gt;DS220+&lt;/td&gt;
+					&lt;td&gt;7.2-64570&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Due to the characteristics of the Synology system, first determine the architecture based on your model, then select the appropriate files for your machine from the downloaded modules from the GitHub repository (for example, my DS224 is geminilake).&lt;/p&gt;
 &lt;p&gt;Upload the corresponding ko modules to &lt;code&gt;/lib/modules/&lt;/code&gt;, and upload the corresponding so modules to &lt;code&gt;/usr/lib/iptables/&lt;/code&gt;, and that&amp;rsquo;s it.&lt;/p&gt;
@@ -863,45 +2150,45 @@ $$&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Parallel Computing:&lt;/strong&gt; Leverages multi-core CPUs to pre-prepare proceeding batches of data, letting GPUs avoid idle time waiting.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Common Values&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;dataset&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Custom Dataset&lt;/td&gt;
- &lt;td&gt;Required. Tells DataLoader which &amp;ldquo;warehouse&amp;rdquo; to fetch data from.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;batch_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;16, 32, 64&amp;hellip;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Number of samples loaded per batch.&lt;/strong&gt; The larger it is, the faster the training, but it consumes more VRAM. In FER emotion recognition, 32 or 64 are common values.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;shuffle&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Whether to shuffle the order.&lt;/strong&gt; Training sets are usually set to &lt;code&gt;True&lt;/code&gt; (adding randomness); test sets are usually set to &lt;code&gt;False&lt;/code&gt;.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;num_workers&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;0, 2, 4, 8&amp;hellip;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Multi-process loading.&lt;/strong&gt; &lt;code&gt;0&lt;/code&gt; means only the main process is used (slow). Increasing the value speeds up read times. &lt;strong&gt;Recommendation:&lt;/strong&gt; Set to half of your CPU cores.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;drop_last&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Drop the last incomplete batch.&lt;/strong&gt; E.g., if there are 100 images and &lt;code&gt;batch_size=32&lt;/code&gt;. The remaining 4 images aren&amp;rsquo;t enough for a batch. Setting this to &lt;code&gt;True&lt;/code&gt; discards these 4, ensuring each Batch size is consistent.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;pin_memory&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Page-locked memory.&lt;/strong&gt; If training on a GPU, setting to &lt;code&gt;True&lt;/code&gt; accelerates data transfer speeds from RAM to VRAM.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Common Values&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;dataset&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Custom Dataset&lt;/td&gt;
+					&lt;td&gt;Required. Tells DataLoader which &amp;ldquo;warehouse&amp;rdquo; to fetch data from.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;batch_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;16, 32, 64&amp;hellip;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Number of samples loaded per batch.&lt;/strong&gt; The larger it is, the faster the training, but it consumes more VRAM. In FER emotion recognition, 32 or 64 are common values.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;shuffle&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Whether to shuffle the order.&lt;/strong&gt; Training sets are usually set to &lt;code&gt;True&lt;/code&gt; (adding randomness); test sets are usually set to &lt;code&gt;False&lt;/code&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;num_workers&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;0, 2, 4, 8&amp;hellip;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Multi-process loading.&lt;/strong&gt; &lt;code&gt;0&lt;/code&gt; means only the main process is used (slow). Increasing the value speeds up read times. &lt;strong&gt;Recommendation:&lt;/strong&gt; Set to half of your CPU cores.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;drop_last&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Drop the last incomplete batch.&lt;/strong&gt; E.g., if there are 100 images and &lt;code&gt;batch_size=32&lt;/code&gt;. The remaining 4 images aren&amp;rsquo;t enough for a batch. Setting this to &lt;code&gt;True&lt;/code&gt; discards these 4, ensuring each Batch size is consistent.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;pin_memory&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Page-locked memory.&lt;/strong&gt; If training on a GPU, setting to &lt;code&gt;True&lt;/code&gt; accelerates data transfer speeds from RAM to VRAM.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;For example, we use &lt;code&gt;DataLoader&lt;/code&gt; to process data from CIFAR10.&lt;/li&gt;
@@ -1005,50 +2292,50 @@ $$&lt;ul&gt;
  &gt;conv_arithmetic/README.md at master · vdumoulin/conv_arithmetic&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Function&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;in_channels&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Input Channels&lt;/td&gt;
- &lt;td&gt;Usually 3 (RGB) for color images, and 1 for grayscale images.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;out_channels&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Output Channels&lt;/td&gt;
- &lt;td&gt;Number of convolution kernels. The number of kernels determines the number of layers in the output feature map.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Kernel Size&lt;/td&gt;
- &lt;td&gt;The size of the &amp;ldquo;window&amp;rdquo; used to extract features. Commonly 3 or 5 (VGG usually defaults to 3).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Stride&lt;/td&gt;
- &lt;td&gt;The span at which the window slides. Defaults to 1. The larger the stride, the smaller the output image.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Padding&lt;/td&gt;
- &lt;td&gt;Pads with 0s around the image. &lt;code&gt;'same'&lt;/code&gt; keeps the size unchanged, while &lt;code&gt;'valid'&lt;/code&gt; applies no padding.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;dilation&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Dilated Convolution&lt;/td&gt;
- &lt;td&gt;The spacing between points in the convolution kernel. Used to increase the receptive field (without increasing the number of parameters).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;bias&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Bias&lt;/td&gt;
- &lt;td&gt;Whether to add a constant offset to the result. Enabled by default.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Function&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;in_channels&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Input Channels&lt;/td&gt;
+					&lt;td&gt;Usually 3 (RGB) for color images, and 1 for grayscale images.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;out_channels&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Output Channels&lt;/td&gt;
+					&lt;td&gt;Number of convolution kernels. The number of kernels determines the number of layers in the output feature map.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Kernel Size&lt;/td&gt;
+					&lt;td&gt;The size of the &amp;ldquo;window&amp;rdquo; used to extract features. Commonly 3 or 5 (VGG usually defaults to 3).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Stride&lt;/td&gt;
+					&lt;td&gt;The span at which the window slides. Defaults to 1. The larger the stride, the smaller the output image.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Padding&lt;/td&gt;
+					&lt;td&gt;Pads with 0s around the image. &lt;code&gt;'same'&lt;/code&gt; keeps the size unchanged, while &lt;code&gt;'valid'&lt;/code&gt; applies no padding.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;dilation&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Dilated Convolution&lt;/td&gt;
+					&lt;td&gt;The spacing between points in the convolution kernel. Used to increase the receptive field (without increasing the number of parameters).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;bias&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Bias&lt;/td&gt;
+					&lt;td&gt;Whether to add a constant offset to the result. Enabled by default.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;The Padding parameter of convolution is very important. If zeros are not padded around it, the convolution will cause the image size to become smaller and smaller.&lt;/li&gt;
@@ -1123,30 +2410,30 @@ $$&lt;p&gt;$W_{out}$ calculations follow a similar approach.&lt;/p&gt;
 &lt;li&gt;It preserves input features while simultaneously reducing data volume, speeding up training.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Unique Features&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Window size. Typically &lt;code&gt;2&lt;/code&gt; (meaning merging a $2 \times 2$ region).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Default value equals kernel_size!&lt;/strong&gt; This differs from convolution. If &lt;code&gt;kernel_size=2&lt;/code&gt;, the stride defaults to &lt;code&gt;2&lt;/code&gt;, so the windows do not overlap.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;ceil_mode&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Very important.&lt;/strong&gt; The default is &lt;code&gt;False&lt;/code&gt; (floor). If set to &lt;code&gt;True&lt;/code&gt; (ceiling), when the window exceeds boundaries, as long as there is data in the window, the result will be retained instead of discarded.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Padding. Note that pooling pads with &lt;strong&gt;negative infinity ($-\infty$)&lt;/strong&gt;, ensuring padded spots are not selected as the maximum value.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Unique Features&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Window size. Typically &lt;code&gt;2&lt;/code&gt; (meaning merging a $2 \times 2$ region).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Default value equals kernel_size!&lt;/strong&gt; This differs from convolution. If &lt;code&gt;kernel_size=2&lt;/code&gt;, the stride defaults to &lt;code&gt;2&lt;/code&gt;, so the windows do not overlap.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;ceil_mode&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Very important.&lt;/strong&gt; The default is &lt;code&gt;False&lt;/code&gt; (floor). If set to &lt;code&gt;True&lt;/code&gt; (ceiling), when the window exceeds boundaries, as long as there is data in the window, the result will be retained instead of discarded.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Padding. Note that pooling pads with &lt;strong&gt;negative infinity ($-\infty$)&lt;/strong&gt;, ensuring padded spots are not selected as the maximum value.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1536,30 +2823,30 @@ $$&lt;p&gt;$W_{out}$ calculations follow a similar approach.&lt;/p&gt;
 &lt;p&gt;In the K-means clustering algorithm, the K value represents the number of clusters the user expects the dataset to be partitioned into.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;What algorithms exist for decision trees? What criteria do they mainly base their feature selection for partitioning on, and analyze the shortcomings of each criterion.&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Algorithm&lt;/th&gt;
- &lt;th&gt;Criterion&lt;/th&gt;
- &lt;th&gt;Shortcoming&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;ID3&lt;/td&gt;
- &lt;td&gt;Information Gain&lt;/td&gt;
- &lt;td&gt;Strongly prefers multi-valued features, prone to overfitting&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;C4.5&lt;/td&gt;
- &lt;td&gt;Information Gain Ratio&lt;/td&gt;
- &lt;td&gt;Computation is more complex, might prefer features with fewer values&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;CART&lt;/td&gt;
- &lt;td&gt;Gini Index&lt;/td&gt;
- &lt;td&gt;Has a slight preference for multi-valued features, tends towards unbalanced splits&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Algorithm&lt;/th&gt;
+					&lt;th&gt;Criterion&lt;/th&gt;
+					&lt;th&gt;Shortcoming&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;ID3&lt;/td&gt;
+					&lt;td&gt;Information Gain&lt;/td&gt;
+					&lt;td&gt;Strongly prefers multi-valued features, prone to overfitting&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C4.5&lt;/td&gt;
+					&lt;td&gt;Information Gain Ratio&lt;/td&gt;
+					&lt;td&gt;Computation is more complex, might prefer features with fewer values&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CART&lt;/td&gt;
+					&lt;td&gt;Gini Index&lt;/td&gt;
+					&lt;td&gt;Has a slight preference for multi-valued features, tends towards unbalanced splits&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Given a simple text classification training set used to determine whether an email is &amp;ldquo;Spam&amp;rdquo;. The dictionary contains the following 5 words:&lt;/strong&gt;
 &lt;code&gt;[&amp;quot;deal&amp;quot;, &amp;quot;money&amp;quot;, &amp;quot;urgent&amp;quot;, &amp;quot;meeting&amp;quot;, &amp;quot;free&amp;quot;]&lt;/code&gt;&lt;/p&gt;
@@ -1673,45 +2960,45 @@ $P(H|d) = \frac{0.003292}{0.002624 + 0.003292} \approx 0.556$&lt;/p&gt;
 &lt;h4 id="214-types-of-attributes"&gt;2.1.4 Types of Attributes
 &lt;/h4&gt;&lt;p&gt;Nominal, Ordinal, Interval, Ratio&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Attribute Type&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Examples&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Operations&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;Categorical (Qualitative)&lt;/td&gt;
- &lt;td&gt;Nominal&lt;/td&gt;
- &lt;td&gt;The values of a nominal attribute are just different names, meaning nominal values only provide enough information to distinguish objects (=, ≠)&lt;/td&gt;
- &lt;td&gt;Zip code, employee ID number, gender&lt;/td&gt;
- &lt;td&gt;Mode, entropy, contingency correlation, chi-square test&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;Ordinal&lt;/td&gt;
- &lt;td&gt;The values of an ordinal attribute provide enough information to determine the order of objects (&amp;lt;, &amp;gt;)&lt;/td&gt;
- &lt;td&gt;Ore hardness {good, average}, grade levels, street numbers&lt;/td&gt;
- &lt;td&gt;Median, percentiles, rank correlation, run test, sign test&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;Numeric (Quantitative)&lt;/td&gt;
- &lt;td&gt;Interval&lt;/td&gt;
- &lt;td&gt;For interval attributes, the differences between values are meaningful, meaning a unit of measurement exists (+, -)&lt;/td&gt;
- &lt;td&gt;Calendar dates, Celsius or Fahrenheit temperatures&lt;/td&gt;
- &lt;td&gt;Mean, standard deviation, Pearson correlation coefficient, t and F tests&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;Ratio&lt;/td&gt;
- &lt;td&gt;For ratio attributes, both differences and ratios are meaningful (+, -, *, /)&lt;/td&gt;
- &lt;td&gt;Absolute temperature, monetary amounts, counts, age, mass, length, electrical current&lt;/td&gt;
- &lt;td&gt;Geometric mean, harmonic mean, percent variation&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Attribute Type&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Examples&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Operations&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Categorical (Qualitative)&lt;/td&gt;
+					&lt;td&gt;Nominal&lt;/td&gt;
+					&lt;td&gt;The values of a nominal attribute are just different names, meaning nominal values only provide enough information to distinguish objects (=, ≠)&lt;/td&gt;
+					&lt;td&gt;Zip code, employee ID number, gender&lt;/td&gt;
+					&lt;td&gt;Mode, entropy, contingency correlation, chi-square test&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;Ordinal&lt;/td&gt;
+					&lt;td&gt;The values of an ordinal attribute provide enough information to determine the order of objects (&amp;lt;, &amp;gt;)&lt;/td&gt;
+					&lt;td&gt;Ore hardness {good, average}, grade levels, street numbers&lt;/td&gt;
+					&lt;td&gt;Median, percentiles, rank correlation, run test, sign test&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Numeric (Quantitative)&lt;/td&gt;
+					&lt;td&gt;Interval&lt;/td&gt;
+					&lt;td&gt;For interval attributes, the differences between values are meaningful, meaning a unit of measurement exists (+, -)&lt;/td&gt;
+					&lt;td&gt;Calendar dates, Celsius or Fahrenheit temperatures&lt;/td&gt;
+					&lt;td&gt;Mean, standard deviation, Pearson correlation coefficient, t and F tests&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;Ratio&lt;/td&gt;
+					&lt;td&gt;For ratio attributes, both differences and ratios are meaningful (+, -, *, /)&lt;/td&gt;
+					&lt;td&gt;Absolute temperature, monetary amounts, counts, age, mass, length, electrical current&lt;/td&gt;
+					&lt;td&gt;Geometric mean, harmonic mean, percent variation&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h4 id="221-measures-of-central-tendency"&gt;2.2.1 Measures of Central Tendency
 &lt;/h4&gt;&lt;p&gt;Mean, median, and mode&lt;/p&gt;
@@ -1966,25 +3253,25 @@ $$
 &lt;h4 id="61-confusion-matrix"&gt;6.1 Confusion Matrix
 &lt;/h4&gt;&lt;p&gt;Confusion Matrix&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Actual Class \ Predicted Class&lt;/th&gt;
- &lt;th&gt;Class=Yes&lt;/th&gt;
- &lt;th&gt;Class=No&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;Class=Yes&lt;/td&gt;
- &lt;td&gt;a (TP)&lt;/td&gt;
- &lt;td&gt;b (FN)&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;Class=No&lt;/td&gt;
- &lt;td&gt;c (FP)&lt;/td&gt;
- &lt;td&gt;d (TN)&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Actual Class \ Predicted Class&lt;/th&gt;
+					&lt;th&gt;Class=Yes&lt;/th&gt;
+					&lt;th&gt;Class=No&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Class=Yes&lt;/td&gt;
+					&lt;td&gt;a (TP)&lt;/td&gt;
+					&lt;td&gt;b (FN)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Class=No&lt;/td&gt;
+					&lt;td&gt;c (FP)&lt;/td&gt;
+					&lt;td&gt;d (TN)&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;$a+d$ represents the number of correctly classified samples among all samples&lt;/li&gt;
@@ -2289,35 +3576,35 @@ $$
 &lt;h3 id="dependency-relationships"&gt;Dependency Relationships
 &lt;/h3&gt;&lt;p&gt;Maven defines several dependency relationships, namely &lt;code&gt;compile&lt;/code&gt;, &lt;code&gt;test&lt;/code&gt;, &lt;code&gt;runtime&lt;/code&gt;, and &lt;code&gt;provided&lt;/code&gt;:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;scope&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;th&gt;Example&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;compile&lt;/td&gt;
- &lt;td&gt;This jar package is needed during compilation (default)&lt;/td&gt;
- &lt;td&gt;commons-logging&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;test&lt;/td&gt;
- &lt;td&gt;This jar package is needed when compiling tests&lt;/td&gt;
- &lt;td&gt;junit&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;runtime&lt;/td&gt;
- &lt;td&gt;Not needed during compilation, but required at runtime&lt;/td&gt;
- &lt;td&gt;mysql&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;provided&lt;/td&gt;
- &lt;td&gt;Needed during compilation, but provided by JDK or a server at runtime&lt;/td&gt;
- &lt;td&gt;servlet-api&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;scope&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+					&lt;th&gt;Example&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;compile&lt;/td&gt;
+					&lt;td&gt;This jar package is needed during compilation (default)&lt;/td&gt;
+					&lt;td&gt;commons-logging&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;test&lt;/td&gt;
+					&lt;td&gt;This jar package is needed when compiling tests&lt;/td&gt;
+					&lt;td&gt;junit&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;runtime&lt;/td&gt;
+					&lt;td&gt;Not needed during compilation, but required at runtime&lt;/td&gt;
+					&lt;td&gt;mysql&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;provided&lt;/td&gt;
+					&lt;td&gt;Needed during compilation, but provided by JDK or a server at runtime&lt;/td&gt;
+					&lt;td&gt;servlet-api&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Among them, the default &lt;code&gt;compile&lt;/code&gt; is the most commonly used, and Maven will place dependencies of this type directly into the classpath.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;test&lt;/code&gt; dependencies indicate they are only used during testing and are not needed during normal execution. The most common &lt;code&gt;test&lt;/code&gt; dependency is JUnit:&lt;/p&gt;
@@ -2551,22 +3838,22 @@ $$
 &lt;h4 id="goal"&gt;Goal
 &lt;/h4&gt;&lt;p&gt;Executing a phase subsequently triggers one or multiple goals:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Executed Phase&lt;/th&gt;
- &lt;th&gt;Corresponding Executed Goal&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;compile&lt;/td&gt;
- &lt;td&gt;compiler:compile&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;test&lt;/td&gt;
- &lt;td&gt;compiler:testCompile surefire:test&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Executed Phase&lt;/th&gt;
+					&lt;th&gt;Corresponding Executed Goal&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;compile&lt;/td&gt;
+					&lt;td&gt;compiler:compile&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;test&lt;/td&gt;
+					&lt;td&gt;compiler:testCompile surefire:test&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;The naming of a goal always takes the format of &lt;code&gt;abc:xyz&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Actually, if we draw an analogy, it becomes clear:&lt;/p&gt;
@@ -3322,98 +4609,98 @@ $$
 &lt;/ul&gt;
 &lt;h4 id="core-methods-in-the-thread-class"&gt;Core Methods in the Thread Class
 &lt;/h4&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Method Name&lt;/th&gt;
- &lt;th&gt;Is Static&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;start()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Starts the thread, entering the ready state to await the CPU allocating a time slice.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;run()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;The method overriding the Runnable interface, representing the specific logic executed when the thread receives a CPU time slice.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;yield()&lt;/td&gt;
- &lt;td&gt;Yes&lt;/td&gt;
- &lt;td&gt;Thread concession. Forces the thread holding the CPU time slice to enter the ready state to recompete for a time slice.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;sleep(time)&lt;/td&gt;
- &lt;td&gt;Yes&lt;/td&gt;
- &lt;td&gt;The thread sleeps for a fixed period and enters a blocked state. Once the sleep duration completes, it recompetes for a time slice. Sleeping can be interrupted.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;join()/join(time)&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Calling the &lt;code&gt;join&lt;/code&gt; method on a thread object forces the calling thread into a blocked state. It waits until the thread object finishes executing or reaches the designated time limit before recovering and re-contending for a time slice.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;isInterrupted()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Retrieves the thread&amp;rsquo;s interruption flag: true for interrupted, false for uninterrupted. Calling this will not modify the interruption flag.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;interrupt()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Interrupts the thread. Methods throwing an &lt;code&gt;InterruptedException&lt;/code&gt; can all be interrupted; however, after interruption, the flag will not be modified. If a normally executing thread is interrupted, the interruption flag will be modified.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;interrupted()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Fetches the thread&amp;rsquo;s interrupted flag. Calling this clears the interruption flag.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;stop()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Stops thread execution (Not recommended).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;suspend()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Suspends thread (Not recommended).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;resume()&lt;/td&gt;
- &lt;td&gt;No&lt;/td&gt;
- &lt;td&gt;Resumes thread execution (Not recommended).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;currentThread()&lt;/td&gt;
- &lt;td&gt;Yes&lt;/td&gt;
- &lt;td&gt;Acquires the current thread.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Method Name&lt;/th&gt;
+					&lt;th&gt;Is Static&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;start()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Starts the thread, entering the ready state to await the CPU allocating a time slice.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;run()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;The method overriding the Runnable interface, representing the specific logic executed when the thread receives a CPU time slice.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;yield()&lt;/td&gt;
+					&lt;td&gt;Yes&lt;/td&gt;
+					&lt;td&gt;Thread concession. Forces the thread holding the CPU time slice to enter the ready state to recompete for a time slice.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;sleep(time)&lt;/td&gt;
+					&lt;td&gt;Yes&lt;/td&gt;
+					&lt;td&gt;The thread sleeps for a fixed period and enters a blocked state. Once the sleep duration completes, it recompetes for a time slice. Sleeping can be interrupted.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;join()/join(time)&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Calling the &lt;code&gt;join&lt;/code&gt; method on a thread object forces the calling thread into a blocked state. It waits until the thread object finishes executing or reaches the designated time limit before recovering and re-contending for a time slice.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;isInterrupted()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Retrieves the thread&amp;rsquo;s interruption flag: true for interrupted, false for uninterrupted. Calling this will not modify the interruption flag.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;interrupt()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Interrupts the thread. Methods throwing an &lt;code&gt;InterruptedException&lt;/code&gt; can all be interrupted; however, after interruption, the flag will not be modified. If a normally executing thread is interrupted, the interruption flag will be modified.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;interrupted()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Fetches the thread&amp;rsquo;s interrupted flag. Calling this clears the interruption flag.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;stop()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Stops thread execution (Not recommended).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;suspend()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Suspends thread (Not recommended).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;resume()&lt;/td&gt;
+					&lt;td&gt;No&lt;/td&gt;
+					&lt;td&gt;Resumes thread execution (Not recommended).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;currentThread()&lt;/td&gt;
+					&lt;td&gt;Yes&lt;/td&gt;
+					&lt;td&gt;Acquires the current thread.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Thread-related methods in Object&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Method Name&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;wait()/wait(long timeout)&lt;/td&gt;
- &lt;td&gt;Makes the thread that has acquired the lock enter a blocked state.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;notify()&lt;/td&gt;
- &lt;td&gt;Randomly wakes up one thread that has been &lt;code&gt;wait()&lt;/code&gt;-ed.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;notifyAll();&lt;/td&gt;
- &lt;td&gt;Wakes up all threads that have been &lt;code&gt;wait()&lt;/code&gt;-ed so they can recompete for time slices.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Method Name&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;wait()/wait(long timeout)&lt;/td&gt;
+					&lt;td&gt;Makes the thread that has acquired the lock enter a blocked state.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;notify()&lt;/td&gt;
+					&lt;td&gt;Randomly wakes up one thread that has been &lt;code&gt;wait()&lt;/code&gt;-ed.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;notifyAll();&lt;/td&gt;
+					&lt;td&gt;Wakes up all threads that have been &lt;code&gt;wait()&lt;/code&gt;-ed so they can recompete for time slices.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;hr&gt;
 &lt;h3 id="daemon-threads"&gt;Daemon Threads
@@ -4144,35 +5431,35 @@ $$
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Therefore, deeply understanding multithreading requires comprehending variable storage in the stack, as primitive types and reference types are stored differently.&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th style="text-align: left"&gt;Scenario&lt;/th&gt;
- &lt;th style="text-align: left"&gt;Requires Sync&lt;/th&gt;
- &lt;th style="text-align: left"&gt;Reason&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td style="text-align: left"&gt;Immutable object (e.g., &lt;code&gt;List.of()&lt;/code&gt;)&lt;/td&gt;
- &lt;td style="text-align: left"&gt;No&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Object immutable, multi-thread read-only, no race conditions.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: left"&gt;Local variable (e.g., &lt;code&gt;step&lt;/code&gt;)&lt;/td&gt;
- &lt;td style="text-align: left"&gt;No&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Thread private, confined to stack.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: left"&gt;Member variable assignment (e.g., &lt;code&gt;this.names&lt;/code&gt;)&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Yes&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Reference could be modified simultaneously; needs sync or &lt;code&gt;volatile&lt;/code&gt;.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: left"&gt;Compound ops (e.g., &lt;code&gt;x += step&lt;/code&gt;)&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Yes&lt;/td&gt;
- &lt;td style="text-align: left"&gt;Non-atomic operations (read-modify-write); needs sync.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;Scenario&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;Requires Sync&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;Reason&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;Immutable object (e.g., &lt;code&gt;List.of()&lt;/code&gt;)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;No&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Object immutable, multi-thread read-only, no race conditions.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;Local variable (e.g., &lt;code&gt;step&lt;/code&gt;)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;No&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Thread private, confined to stack.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;Member variable assignment (e.g., &lt;code&gt;this.names&lt;/code&gt;)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Yes&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Reference could be modified simultaneously; needs sync or &lt;code&gt;volatile&lt;/code&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;Compound ops (e.g., &lt;code&gt;x += step&lt;/code&gt;)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Yes&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;Non-atomic operations (read-modify-write); needs sync.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h4 id="summary-4"&gt;Summary
 &lt;/h4&gt;&lt;p&gt;When multiple threads concurrently read and write shared variables, logical errors may occur; therefore, synchronization via &lt;code&gt;synchronized&lt;/code&gt; is required.&lt;/p&gt;
@@ -6795,31 +8082,31 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;h3 id="primary-key"&gt;Primary Key
 &lt;/h3&gt;&lt;p&gt;In a relational database, each row of data in a table is called a record. A record is composed of multiple fields. For example, two records in the &lt;code&gt;students&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;class id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;th&gt;gender&lt;/th&gt;
- &lt;th&gt;score&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaoming&lt;/td&gt;
- &lt;td&gt;M&lt;/td&gt;
- &lt;td&gt;90&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaohong&lt;/td&gt;
- &lt;td&gt;F&lt;/td&gt;
- &lt;td&gt;95&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;class id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+					&lt;th&gt;gender&lt;/th&gt;
+					&lt;th&gt;score&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaoming&lt;/td&gt;
+					&lt;td&gt;M&lt;/td&gt;
+					&lt;td&gt;90&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaohong&lt;/td&gt;
+					&lt;td&gt;F&lt;/td&gt;
+					&lt;td&gt;95&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;For a relational table, there is a very important constraint: &lt;strong&gt;any two records cannot be duplicated&lt;/strong&gt;. Non-duplication doesn&amp;rsquo;t mean two records are not entirely identical, but rather that &lt;strong&gt;different records can be uniquely distinguished by a certain field&lt;/strong&gt;, and this field is called the &lt;em&gt;&lt;strong&gt;primary key&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;For example, assuming we use the &lt;code&gt;name&lt;/code&gt; field as the primary key, then we can uniquely identify a record through the name &lt;code&gt;Xiaoming&lt;/code&gt; or &lt;code&gt;Xiaohong&lt;/code&gt;. However, with this setup, we couldn&amp;rsquo;t store students with the same name, because &lt;strong&gt;inserting two records with the same primary key is not allowed&lt;/strong&gt;.&lt;/p&gt;
@@ -6844,80 +8131,80 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;h3 id="foreign-key"&gt;Foreign Key
 &lt;/h3&gt;&lt;p&gt;When we uniquely identify records using a primary key, we can determine any student&amp;rsquo;s record in the &lt;code&gt;students&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaoming&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;Xiaohong&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+					&lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaoming&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Xiaohong&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;We can also determine any class record in the &lt;code&gt;classes&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Class 1&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;Class 2&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+					&lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Class 1&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Class 2&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;But how do we determine which class a record in the &lt;code&gt;students&lt;/code&gt; table belongs to, for example, Xiaoming with &lt;code&gt;id=1&lt;/code&gt;?&lt;/p&gt;
 &lt;p&gt;Since one class can have multiple students, in the relational model, the relationship between these two tables can be called &amp;ldquo;one-to-many&amp;rdquo;, meaning one record in the &lt;code&gt;classes&lt;/code&gt; table can correspond to multiple records in the &lt;code&gt;students&lt;/code&gt; table.&lt;/p&gt;
 &lt;p&gt;To express this one-to-many relationship, we need to add a &lt;code&gt;class_id&lt;/code&gt; column to the &lt;code&gt;students&lt;/code&gt; table, letting its value correspond to a specific record in the &lt;code&gt;classes&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;class_id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaoming&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaohong&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;5&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;Xiaobai&lt;/td&gt;
- &lt;td&gt;&amp;hellip;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;class_id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+					&lt;th&gt;other columns&amp;hellip;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaoming&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaohong&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Xiaobai&lt;/td&gt;
+					&lt;td&gt;&amp;hellip;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;This way, we can directly locate which record in the &lt;code&gt;classes&lt;/code&gt; table a &lt;code&gt;students&lt;/code&gt; table record should correspond to based on the &lt;code&gt;class_id&lt;/code&gt; column.&lt;/p&gt;
 &lt;ul&gt;
@@ -6961,91 +8248,91 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;p&gt;A many-to-many relationship is actually implemented through two one-to-many relationships. That is, by using an intermediate table to connect two one-to-many relationships, a many-to-many relationship is formed:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;teachers&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Mr. Zhang&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;Mr. Wang&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;3&lt;/td&gt;
- &lt;td&gt;Mr. Li&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;4&lt;/td&gt;
- &lt;td&gt;Mr. Zhao&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Mr. Zhang&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Mr. Wang&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;Mr. Li&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;Mr. Zhao&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;code&gt;classes&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Class 1&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;Class 2&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Class 1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Class 2&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Intermediate table &lt;code&gt;teacher_class&lt;/code&gt; connecting two one-to-many relationships:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;teacher_id&lt;/th&gt;
- &lt;th&gt;class_id&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;3&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;4&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;5&lt;/td&gt;
- &lt;td&gt;3&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;6&lt;/td&gt;
- &lt;td&gt;4&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;teacher_id&lt;/th&gt;
+					&lt;th&gt;class_id&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;6&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Through the intermediate table &lt;code&gt;teacher_class&lt;/code&gt;, we can know the relationship from &lt;code&gt;teachers&lt;/code&gt; to &lt;code&gt;classes&lt;/code&gt;:&lt;/p&gt;
 &lt;ul&gt;
@@ -7064,30 +8351,30 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;/h4&gt;&lt;p&gt;A one-to-one relationship means that a record in one table corresponds to a single, unique record in another table.&lt;/p&gt;
 &lt;p&gt;For instance, every student in the &lt;code&gt;students&lt;/code&gt; table can have their own contact information. If we store the contact details in another table &lt;code&gt;contacts&lt;/code&gt;, we can obtain a &amp;ldquo;one-to-one&amp;rdquo; relationship:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;student_id&lt;/th&gt;
- &lt;th&gt;mobile&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;135xxxx6300&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;138xxxx2209&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;3&lt;/td&gt;
- &lt;td&gt;5&lt;/td&gt;
- &lt;td&gt;139xxxx8086&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;student_id&lt;/th&gt;
+					&lt;th&gt;mobile&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;135xxxx6300&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;138xxxx2209&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;139xxxx8086&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Some attentive readers might ask, since it&amp;rsquo;s a one-to-one relationship, why not just add a &lt;code&gt;mobile&lt;/code&gt; column to the &lt;code&gt;students&lt;/code&gt; table so they can be merged into one?&lt;/p&gt;
 &lt;p&gt;If the business logic allows, combining the two tables into one is entirely possible. However, sometimes if a student doesn&amp;rsquo;t have a mobile number, a corresponding record wouldn&amp;rsquo;t exist in the &lt;code&gt;contacts&lt;/code&gt; table. In fact, a one-to-one relationship, strictly speaking, is the &lt;code&gt;contacts&lt;/code&gt; table having a one-to-one correspondence with the &lt;code&gt;students&lt;/code&gt; table.&lt;/p&gt;
@@ -7099,38 +8386,38 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;p&gt;An index is a strictly pre-sorted data structure in a relational database for the values of one or multiple columns. By utilizing indexes, the database system doesn&amp;rsquo;t have to scan the entire table, but directly pinpoints the records that meet the criteria, greatly speeding up queries.&lt;/p&gt;
 &lt;p&gt;For example, for the &lt;code&gt;students&lt;/code&gt; table:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;id&lt;/th&gt;
- &lt;th&gt;class_id&lt;/th&gt;
- &lt;th&gt;name&lt;/th&gt;
- &lt;th&gt;gender&lt;/th&gt;
- &lt;th&gt;score&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaoming&lt;/td&gt;
- &lt;td&gt;M&lt;/td&gt;
- &lt;td&gt;90&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;2&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaohong&lt;/td&gt;
- &lt;td&gt;F&lt;/td&gt;
- &lt;td&gt;95&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;3&lt;/td&gt;
- &lt;td&gt;1&lt;/td&gt;
- &lt;td&gt;Xiaojun&lt;/td&gt;
- &lt;td&gt;M&lt;/td&gt;
- &lt;td&gt;88&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;id&lt;/th&gt;
+					&lt;th&gt;class_id&lt;/th&gt;
+					&lt;th&gt;name&lt;/th&gt;
+					&lt;th&gt;gender&lt;/th&gt;
+					&lt;th&gt;score&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaoming&lt;/td&gt;
+					&lt;td&gt;M&lt;/td&gt;
+					&lt;td&gt;90&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaohong&lt;/td&gt;
+					&lt;td&gt;F&lt;/td&gt;
+					&lt;td&gt;95&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Xiaojun&lt;/td&gt;
+					&lt;td&gt;M&lt;/td&gt;
+					&lt;td&gt;88&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;If you frequently query based on the &lt;code&gt;score&lt;/code&gt; column, you can create an index on the &lt;code&gt;score&lt;/code&gt; column:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -7213,82 +8500,82 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="filtering-numeric-attribute-columns"&gt;&lt;strong&gt;Filtering Numeric Attribute Columns&lt;/strong&gt;
 &lt;/h3&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Keyword&lt;/th&gt;
- &lt;th&gt;&lt;/th&gt;
- &lt;th&gt;Example&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;=, !=, &amp;lt; &amp;lt;=, &amp;gt;, ≥&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;col_name != 4&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;BETWEEN … AND …&lt;/td&gt;
- &lt;td&gt;Between two numbers&lt;/td&gt;
- &lt;td&gt;col_name BETWEEN 1.5 AND 10.5&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;NOT BETWEEN … AND …&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;col_name NOT BETWEEN 1 AND 10&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;IN (…)&lt;/td&gt;
- &lt;td&gt;In a list&lt;/td&gt;
- &lt;td&gt;col_name IN (2, 4, 6)&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;NOT IN (…)&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;col_name NOT IN (1, 3, 5)&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Keyword&lt;/th&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;Example&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;=, !=, &amp;lt; &amp;lt;=, &amp;gt;, ≥&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;col_name != 4&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;BETWEEN … AND …&lt;/td&gt;
+					&lt;td&gt;Between two numbers&lt;/td&gt;
+					&lt;td&gt;col_name BETWEEN 1.5 AND 10.5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;NOT BETWEEN … AND …&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;col_name NOT BETWEEN 1 AND 10&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;IN (…)&lt;/td&gt;
+					&lt;td&gt;In a list&lt;/td&gt;
+					&lt;td&gt;col_name IN (2, 4, 6)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;NOT IN (…)&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;col_name NOT IN (1, 3, 5)&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="filtering-string-attribute-columns"&gt;&lt;strong&gt;Filtering String Attribute Columns&lt;/strong&gt;
 &lt;/h3&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;/th&gt;
- &lt;th&gt;&lt;/th&gt;
- &lt;th&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;=&lt;/td&gt;
- &lt;td&gt;Exactly equals&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;!= or &amp;lt;&amp;gt;&lt;/td&gt;
- &lt;td&gt;Does not equal&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;LIKE&lt;/td&gt;
- &lt;td&gt;Equivalent to = without wildcards&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;NOT LIKE&lt;/td&gt;
- &lt;td&gt;Equivalent to != without wildcards&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;%&lt;/td&gt;
- &lt;td&gt;Wildcard&lt;/td&gt;
- &lt;td&gt;col_name LIKE &amp;ldquo;%AT%&amp;rdquo;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;_(Underscore)&lt;/td&gt;
- &lt;td&gt;&lt;/td&gt;
- &lt;td&gt;col_name LIKE &amp;ldquo;AN_&amp;rdquo;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;=&lt;/td&gt;
+					&lt;td&gt;Exactly equals&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;!= or &amp;lt;&amp;gt;&lt;/td&gt;
+					&lt;td&gt;Does not equal&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;LIKE&lt;/td&gt;
+					&lt;td&gt;Equivalent to = without wildcards&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;NOT LIKE&lt;/td&gt;
+					&lt;td&gt;Equivalent to != without wildcards&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;%&lt;/td&gt;
+					&lt;td&gt;Wildcard&lt;/td&gt;
+					&lt;td&gt;col_name LIKE &amp;ldquo;%AT%&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;_(Underscore)&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;col_name LIKE &amp;ldquo;AN_&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -7411,34 +8698,34 @@ The underlying storage of sorted_set is still based on the set structure. Theref
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Common statistical functions:&lt;/p&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Function&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;COUNT(*) COUNT(column)&lt;/td&gt;
- &lt;td&gt;Counting! COUNT(*) counts the number of data rows, COUNT(column) counts the number of non-NULL rows in the column&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;MIN(column)&lt;/td&gt;
- &lt;td&gt;Finds the row with the smallest column value&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;MAX(column)&lt;/td&gt;
- &lt;td&gt;Finds the row with the largest column value&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;AVG(column)&lt;/td&gt;
- &lt;td&gt;Takes the average of the column for all rows&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;SUM(column)&lt;/td&gt;
- &lt;td&gt;Sums the column for all rows&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Function&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;COUNT(*) COUNT(column)&lt;/td&gt;
+					&lt;td&gt;Counting! COUNT(*) counts the number of data rows, COUNT(column) counts the number of non-NULL rows in the column&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MIN(column)&lt;/td&gt;
+					&lt;td&gt;Finds the row with the smallest column value&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MAX(column)&lt;/td&gt;
+					&lt;td&gt;Finds the row with the largest column value&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;AVG(column)&lt;/td&gt;
+					&lt;td&gt;Takes the average of the column for all rows&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;SUM(column)&lt;/td&gt;
+					&lt;td&gt;Sums the column for all rows&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;hr&gt;
 &lt;h3 id="grouped-statistics"&gt;Grouped Statistics

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sparse Vector on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/sparse-vector/</link><description>Recent content in Sparse Vector on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/sparse-vector/index.xml" rel="self" type="application/rss+xml"/><item><title>Sparse Vectors and the SPLADE Model</title><link>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/sparse-vectors-and-the-splade-model/</guid><description>&lt;h2 id="references"&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/naver/splade" target="_blank" rel="noopener"
+ &gt;Naver SPLADE official repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://huggingface.co/naver/splade_v2_max" target="_blank" rel="noopener"
+ &gt;naver/splade_v2_max model page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/package_reference/sparse_encoder/index.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.sbert.net/docs/sparse_encoder/training_overview.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder training overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://sbert.net/docs/sparse_encoder/usage/efficiency.html" target="_blank" rel="noopener"
+ &gt;Sentence Transformers Sparse Encoder inference efficiency&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="sparse-vectors-and-the-splade-model"&gt;Sparse Vectors and the SPLADE Model
+&lt;/h1&gt;&lt;p&gt;In RAG systems, dense vectors have become the most common retrieval method. They map text into a continuous vector space and are good at capturing semantically similar expressions, such as &amp;ldquo;employee resignation process&amp;rdquo; and &amp;ldquo;personnel exit procedure&amp;rdquo;. However, dense vectors also have clear weaknesses: they are not always good at exact matching for entities, IDs, terminology, error codes, product models, table field names, and code snippets.&lt;/p&gt;
+&lt;p&gt;This is where sparse vectors become valuable. They are more like a neural-network-enhanced inverted index: text is still represented as sparse weights over term dimensions, but these weights are not calculated by pure statistical methods like BM25. Instead, they are predicted by a model.&lt;/p&gt;
+&lt;p&gt;In short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dense vectors handle semantic similarity.&lt;/li&gt;
+&lt;li&gt;BM25 handles exact lexical matching.&lt;/li&gt;
+&lt;li&gt;SPLADE sparse vectors handle weighted matching after neural term expansion.&lt;/li&gt;
+&lt;li&gt;Hybrid Search merges dense and sparse retrieval results.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="paper-model"&gt;Paper model
+&lt;/h2&gt;&lt;p&gt;SPLADE maps a piece of text into vocabulary space based on the logits of a Masked Language Model. Suppose the vocabulary contains 30522 WordPiece tokens. Each text can eventually be represented as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a sparse vector. Most token weights are 0, and only a small number of tokens that the model considers important have non-zero weights.&lt;/p&gt;
+&lt;p&gt;The biggest difference from ordinary embeddings is that each dimension in a dense embedding is usually not interpretable, while each dimension in a sparse vector is a vocabulary token. A token activated by the model can be understood as &amp;ldquo;this text is related to this term&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;For example, a document may not explicitly contain the word &amp;ldquo;reimbursement&amp;rdquo;, but it may contain &amp;ldquo;travel expense&amp;rdquo;, &amp;ldquo;invoice&amp;rdquo;, and &amp;ldquo;approval form&amp;rdquo;. SPLADE may activate tokens related to &amp;ldquo;reimbursement&amp;rdquo;. Then, when the query is &amp;ldquo;reimbursement process&amp;rdquo;, the document may still be retrieved even if it does not exactly match the original term.&lt;/p&gt;
+&lt;p&gt;More specifically, SPLADE uses the logits from the Masked Language Model layer to predict the importance of each term in the BERT WordPiece vocabulary. Suppose the tokenized input text is:&lt;/p&gt;
+$$
+t=(t_{1},t_{2},...,t_{N})
+$$&lt;p&gt;and the corresponding contextual representations are:&lt;/p&gt;
+$$
+(h_{1},h_{2},...,h_{N})
+$$&lt;p&gt;For the $i$-th token in the input, the model calculates its importance for the $j$-th token in the vocabulary:&lt;/p&gt;
+$$
+w_{ij}=transform(h_{i})^{T}E_{j}+b_{j}, \quad j\in\{1,...,|V|\}
+$$&lt;p&gt;Here, $E_j$ is the BERT input embedding of vocabulary ${token}_j$, and $b_j$ is the token-level bias. &lt;code&gt;transform(.)&lt;/code&gt; is usually a linear transformation with GeLU and LayerNorm. Intuitively, this step asks: for this position in the input, how related is it to each term in the vocabulary?&lt;/p&gt;
+&lt;p&gt;However, retrieval does not need &amp;ldquo;the score of a term at one position&amp;rdquo;. It needs &amp;ldquo;the score of a term for the whole text&amp;rdquo;. Therefore, SPLADE aggregates activations from different positions into a sparse representation for the whole text:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;There are three meanings in this formula:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ReLU&lt;/code&gt; sets negative scores to zero and keeps only positively related terms.&lt;/li&gt;
+&lt;li&gt;$log(1+x)$ performs logarithmic saturation, preventing scores of frequent or repeated words from growing without bound.&lt;/li&gt;
+&lt;li&gt;$\sum$ accumulates activations from different positions for the same vocabulary token, producing the term weight for the whole text.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally, the text becomes a high-dimensional but sparse vector:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;token_id -&amp;gt; weight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After both the query and document are mapped into the same vocabulary space, the retrieval score is the dot product of sparse vectors:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;This is also why SPLADE can be connected to inverted indexes or sparse vector indexes.&lt;/p&gt;
+&lt;h3 id="ranking-loss"&gt;Ranking loss
+&lt;/h3&gt;&lt;p&gt;During training, SPLADE needs to make relevant documents score higher and irrelevant documents score lower. Given a query $q_i$, a positive document $d_i^+$, a hard negative document $d_i^-$, and a group of in-batch negative documents ${d_{i,j}^{-}}$, a contrastive ranking loss similar to the following can be used:&lt;/p&gt;
+$$
+\mathcal{L}_{rank-IBN} =
+-\log
+\frac{e^{s(q_i,d_i^+)}}
+{e^{s(q_i,d_i^+)} + e^{s(q_i,d_i^-)} + \sum e^{s(q_i,d_{i,j}^{-})}}
+$$&lt;p&gt;Its goal is direct: make the probability of the positive document as large as possible within the candidate set. From an engineering perspective, the model keeps learning which term expansions help it rank the correct document higher.&lt;/p&gt;
+&lt;h3 id="flops-sparsity-regularization"&gt;FLOPS sparsity regularization
+&lt;/h3&gt;&lt;p&gt;If only ranking quality is optimized, the model may activate too many tokens. This may improve recall, but the inverted index becomes larger, and queries need to access more posting lists.&lt;/p&gt;
+&lt;p&gt;Therefore, SPLADE introduces FLOPS regularization to control sparsity. For a batch of documents, first estimate the average activation of vocabulary token (j) in this batch:&lt;/p&gt;
+$$
+\overline{a}_{j}=\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)}
+$$&lt;p&gt;Then square and sum the average activations:&lt;/p&gt;
+$$
+l_{FLOPS}=\sum_{j\in V}\overline{a}_{j}^{2}
+=\sum_{j\in V}(\frac{1}{N}\sum_{i=1}^{N}w_{j}^{(d_i)})^{2}
+$$&lt;p&gt;This regularization term is not simply controlling &amp;ldquo;vector dimensionality&amp;rdquo;. It controls the number and distribution of non-zero tokens. It tries to prevent the model from binding many documents to a few high-frequency words, and also prevents every document from activating too many terms.&lt;/p&gt;
+&lt;p&gt;Therefore, the sparsity weight can be understood as a knob between recall quality and retrieval cost:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Larger weight: shorter sparse vectors, smaller index, faster retrieval, but possibly lower recall.&lt;/li&gt;
+&lt;li&gt;Smaller weight: longer sparse vectors and richer expansion, but higher index and retrieval cost.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="overall-loss"&gt;Overall loss
+&lt;/h3&gt;&lt;p&gt;Finally, SPLADE trains ranking loss and sparsity regularization together:&lt;/p&gt;
+$$
+\mathcal{L}=\mathcal{L}_{rank-IBN}
++\lambda_q\mathcal{L}_{reg}^{q}
++\lambda_d\mathcal{L}_{reg}^{d}
+$$&lt;p&gt;Here, (\lambda_q) controls query-side sparsity, and (\lambda_d) controls document-side sparsity. Query-side sparsity is usually very important because queries are more sensitive to latency. Document-side vectors can be computed offline, so slightly higher compute cost is often acceptable, but index size still needs to be controlled.&lt;/p&gt;
+&lt;h3 id="from-sum-pooling-to-max-pooling"&gt;From sum pooling to max pooling
+&lt;/h3&gt;&lt;p&gt;The original SPLADE aggregates term predictions from every input position:&lt;/p&gt;
+$$
+w_{j}=\sum_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;The more common later SPLADE-max uses max pooling:&lt;/p&gt;
+$$
+w_{j}=\max_{i\in t}\log(1+ReLU(w_{ij}))
+$$&lt;p&gt;This does not mean the whole text only keeps one token. Instead, it takes the maximum activation separately for each vocabulary dimension. This can reduce amplification from long text or repeated words, making the representation focus more on whether a semantic term is strongly activated, rather than simply depending on occurrence count.&lt;/p&gt;
+&lt;h3 id="splade-doc-and-distillation-training"&gt;SPLADE-doc and distillation training
+&lt;/h3&gt;&lt;p&gt;Standard SPLADE encodes both query and document. In other words, both query-side and document-side representations may produce neural expansion terms. Retrieval calculates:&lt;/p&gt;
+$$
+s(q,d)=\sum_j w_j^q w_j^d
+$$&lt;p&gt;SPLADE-doc is more focused on engineering efficiency. It only applies SPLADE encoding on the document side, while the query side usually uses only the original query tokens. The document score can be written as:&lt;/p&gt;
+$$
+s(q,d)=\sum_{j\in q}w_j^d
+$$&lt;p&gt;This means document-side expansion can be precomputed offline, and the query side does not need to run a SPLADE encoder, reducing latency. The tradeoff is that the query side has no neural expansion ability and can only use &amp;ldquo;document-side expansion&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;In addition, many strong SPLADE models use knowledge distillation and hard negatives. A common approach is to first train a first-stage retriever and a cross-encoder reranker, then continue training with harder negatives and reranker scores. In engineering practice, we do not have to reproduce this whole training pipeline to use public models. But understanding it helps explain why words like &lt;code&gt;distil&lt;/code&gt;, &lt;code&gt;ensemble&lt;/code&gt;, and &lt;code&gt;cocondenser&lt;/code&gt; appear in model names.&lt;/p&gt;
+&lt;h3 id="why-sparsity-matters"&gt;Why sparsity matters
+&lt;/h3&gt;&lt;p&gt;If the model activates many tokens, recall may improve, but the index becomes larger and retrieval becomes slower. SPLADE uses FLOPS regularization to control the number and distribution of non-zero tokens.&lt;/p&gt;
+&lt;p&gt;From an engineering perspective, sparse vectors are not better just because they are longer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Too few non-zero tokens: the index is small and retrieval is fast, but recall may be insufficient.&lt;/li&gt;
+&lt;li&gt;Too many non-zero tokens: recall may be better, but the index expands and retrieval cost increases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, secondary pruning is often applied, such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Keeping only the top_k tokens.&lt;/li&gt;
+&lt;li&gt;Filtering tokens whose weight is below a threshold.&lt;/li&gt;
+&lt;li&gt;Limiting the maximum number of sparse dimensions for a single chunk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These parameters often affect online cost more than the model itself.&lt;/p&gt;
+&lt;h2 id="model-selection"&gt;Model selection
+&lt;/h2&gt;&lt;p&gt;SPLADE is more like a family of sparse neural retrieval methods than a single model. The official Naver repository also notes that different regularization strengths produce models ranging from &amp;ldquo;very sparse&amp;rdquo; to &amp;ldquo;strong query/doc expansion&amp;rdquo;. Their effectiveness, index size, and latency all differ.&lt;/p&gt;
+&lt;p&gt;If the goal is only to quickly validate engineering feasibility, &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt; is a good starting point. It is a common strong model in the official SPLADE++ series. The Naver repository reports its MS MARCO dev MRR@10 as 38.3, higher than &lt;code&gt;splade_v2_max&lt;/code&gt; at 34.0 and &lt;code&gt;splade_v2_distil&lt;/code&gt; at 36.8. It is suitable for first checking whether sparse retrieval can fill the keyword, entity, and terminology recall gaps of dense retrieval.&lt;/p&gt;
+&lt;p&gt;If inference cost matters more, consider &lt;code&gt;naver/splade_v2_max&lt;/code&gt; or the efficient SPLADE series. &lt;code&gt;splade_v2_max&lt;/code&gt; is structurally simple. Its Hugging Face model page marks it as DistilBERT base, with a 512-token maximum length, 30522-dimensional output, and dot-product similarity. The efficient SPLADE series further separates document encoder and query encoder, aiming to reduce query-side latency.&lt;/p&gt;
+&lt;p&gt;A practical selection order is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First choose a strong public model for offline evaluation, such as &lt;code&gt;naver/splade-cocondenser-ensembledistil&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If offline evaluation is effective, then measure average non-zero token count, index size, document-side encoding throughput, and query-side P95 latency.&lt;/li&gt;
+&lt;li&gt;If query-side latency is too high, first try query caching, ONNX/OpenVINO, quantization, or efficient SPLADE.&lt;/li&gt;
+&lt;li&gt;If the index is too large, first reduce top-k, increase the minimum weight threshold, or choose a model with stronger regularization and higher sparsity.&lt;/li&gt;
+&lt;li&gt;If business data differs greatly from public English retrieval datasets, consider fine-tuning with domain data instead of directly trusting public leaderboards.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Do not choose a model only by MRR. SPLADE model selection should consider at least five things at the same time: retrieval quality, average non-zero dimensions, index size, query latency, and deployment complexity.&lt;/p&gt;
+&lt;p&gt;Sentence Transformers now provides &lt;code&gt;SparseEncoder&lt;/code&gt;, which can directly load SPLADE models:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sentence_transformers&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SparseEncoder&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;naver/splade-cocondenser-ensembledistil&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;embeddings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;example query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;It also provides &lt;code&gt;encode_query()&lt;/code&gt;, &lt;code&gt;encode_document()&lt;/code&gt;, sparsity statistics, Qdrant/Elasticsearch/OpenSearch integration, and deployment capabilities related to ONNX/OpenVINO/quantization. For engineering prototypes, this route can be used first, and then the implementation can be moved to a custom inference service depending on performance bottlenecks.&lt;/p&gt;
+&lt;h2 id="differences-between-splade-and-bm25"&gt;Differences between SPLADE and BM25
+&lt;/h2&gt;&lt;p&gt;BM25 and SPLADE can both use inverted indexes for retrieval, but their weights come from different sources.&lt;/p&gt;
+&lt;p&gt;BM25 weights come from statistics, such as TF, IDF, and document length normalization. It mainly depends on exact matching between query terms and document terms.&lt;/p&gt;
+&lt;p&gt;SPLADE weights come from neural model predictions. It can not only preserve tokens that appear in the original text, but may also activate semantically related tokens that do not appear in the original text.&lt;/p&gt;
+&lt;p&gt;So it can be roughly understood as:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;BM25 = statistical matching of original terms
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SPLADE = weighted matching of neural expansion terms
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;In enterprise knowledge bases, technical documentation, customer-service FAQs, code documentation, policies, and regulations, both BM25 and SPLADE are valuable. BM25 is lighter, while SPLADE is stronger but more expensive.&lt;/p&gt;</description></item></channel></rss>

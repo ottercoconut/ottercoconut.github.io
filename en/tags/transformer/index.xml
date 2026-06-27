@@ -1,4 +1,914 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Transformer on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/transformer/</link><description>Recent content in Transformer on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Thu, 22 Jan 2026 10:49:28 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/transformer/index.xml" rel="self" type="application/rss+xml"/><item><title>PyTorch Basics</title><link>https://ottercoconut.github.io/en/p/pytorch-basics/</link><pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/pytorch-basics/</guid><description>&lt;p&gt;This post covers the learning of basic PyTorch usage, primarily based on Bilibili Xiaotudui&amp;rsquo;s &lt;a class="link" href="https://www.bilibili.com/video/BV1hE411t7RN/" target="_blank" rel="noopener"
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Transformer on ottercoconut's Blog</title><link>https://ottercoconut.github.io/en/tags/transformer/</link><description>Recent content in Transformer on ottercoconut's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 27 Jun 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://ottercoconut.github.io/en/tags/transformer/index.xml" rel="self" type="application/rss+xml"/><item><title>CS224N</title><link>https://ottercoconut.github.io/en/p/cs224n/</link><pubDate>Sat, 27 Jun 2026 00:00:00 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/cs224n/</guid><description>&lt;h2 id="intro"&gt;Intro
+&lt;/h2&gt;&lt;p&gt;These are my study notes for &lt;a class="link" href="https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1246/" target="_blank" rel="noopener"
+ &gt;Stanford CS 224N: Natural Language Processing with Deep Learning, Spring 2024&lt;/a&gt;. The course covers word vectors, neural networks, dependency parsing, RNNs, LSTMs, Seq2Seq models, machine translation, attention, Transformers, and related NLP topics.&lt;/p&gt;
+&lt;h3 id="what-is-this-course-about"&gt;What is this course about?
+&lt;/h3&gt;&lt;p&gt;Natural language processing is one of the most important technologies in the information age. Search, advertising, email, customer service, translation, virtual agents, medical reports, and many other systems all depend on language understanding. CS224N introduces both the foundations of deep learning for NLP and newer research around large language models, with assignments and projects implemented in PyTorch.&lt;/p&gt;
+&lt;h2 id="word-vectors"&gt;Word Vectors
+&lt;/h2&gt;&lt;p&gt;$ vector("King") - vector("Man") + vector("Woman") $&lt;/p&gt;
+&lt;p&gt;This operation produces a vector close to the representation of &lt;code&gt;Queen&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="how-do-we-have-usable-meaning-in-a-computer"&gt;How do we have usable meaning in a computer?
+&lt;/h3&gt;&lt;p&gt;The slides introduce several ways to represent meaning:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;WordNet&lt;/li&gt;
+&lt;li&gt;one-hot vectors&lt;/li&gt;
+&lt;li&gt;word vectors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first two are useful, but they also have obvious limitations.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;WordNet relies on synonym sets and hypernym sets to define relationships between words. It is manually constructed, complex to maintain, and slow to absorb new words.&lt;/li&gt;
+&lt;li&gt;One-hot vectors assign a symbol to every word. Even though the symbol is numeric, mathematically similar words are unrelated because their dot product is 0.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This leads to the famous distributional idea: &lt;em&gt;You shall know a word by the company it keeps.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Word vectors normalize words into continuous vectors. Although a word may have multiple senses, its learned vector is often close to an average of its contextual usages. Dot products can then be used to measure relatedness between word vectors.&lt;/p&gt;
+&lt;h3 id="word2vec"&gt;Word2vec
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://arxiv.org/pdf/1301.3781" target="_blank" rel="noopener"
+ &gt;Original word2vec paper&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Word2vec&lt;/code&gt; captures the word-vector idea well: it compares a center word with nearby context words and learns a probability distribution from their similarity.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We have a large corpus of text: a long list of words.&lt;/li&gt;
+&lt;li&gt;Every word in a fixed vocabulary is represented by a &lt;strong&gt;vector&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;We go through each position $t$ in the text, where there is a center word $c$ and context, or outside, words $o$.&lt;/li&gt;
+&lt;li&gt;We use the &lt;strong&gt;similarity between the vectors of $c$ and $o$ to calculate the probability&lt;/strong&gt; of $o$ given $c$, or vice versa.&lt;/li&gt;
+&lt;li&gt;We &lt;strong&gt;keep adjusting the word vectors&lt;/strong&gt; to maximize this probability.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/Word2Vec-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h4 id="objective-function"&gt;Objective Function
+&lt;/h4&gt;&lt;p&gt;For each position $t=1,\ldots,T$, the model predicts context words within a fixed window of size $m$, given the center word $w_t$. The data likelihood is:&lt;/p&gt;
+$$
+L(\theta) = \prod_{t=1}^{T} \prod_{\substack{-m \le j \le m \\ j \neq 0}} P(w_{t+j} \mid w_t; \theta)
+$$&lt;p&gt;For easier optimization and computation, this is converted into the average negative log likelihood:&lt;/p&gt;
+$$
+J(\theta) = -\frac{1}{T} \log L(\theta) = -\frac{1}{T} \sum_{t=1}^{T} \sum_{\substack{-m \le j \le m \\ j \neq 0}} \log P(w_{t+j} \mid w_t; \theta)
+$$&lt;p&gt;&lt;strong&gt;Minimizing $J(\theta)$&lt;/strong&gt; is equivalent to &lt;strong&gt;maximizing prediction accuracy&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="prediction-function"&gt;Prediction Function
+&lt;/h4&gt;$$
+P(o \mid c) = \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)}
+$$&lt;ol&gt;
+&lt;li&gt;$u_o^T v_c$: the larger the dot product, the closer the two words are in vector space, so the higher their semantic relatedness. Dot product compares the similarity of $o$ and $c$: $u^T v = u \cdot v = \sum_{i=1}^{n} u_i v_i$. A larger dot product means a larger probability.&lt;/li&gt;
+&lt;li&gt;$\exp()$: maps any real number to a positive number. Because the exponential function grows quickly, it amplifies larger dot products and gives highly related words larger weights.&lt;/li&gt;
+&lt;li&gt;$\sum_{w \in V} \exp(u_w^T v_c)$: the denominator sums over all possible words in vocabulary $V$. This ensures the probabilities over all possible outputs sum to &lt;strong&gt;1&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is an application of the softmax function:&lt;/p&gt;
+$$
+\text{softmax}(x_i) = \frac{\exp(x_i)}{\sum_{j=1}^{n} \exp(x_j)} = p_i
+$$&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Softmax maps arbitrary values $x_i$ into a probability distribution $p_i$.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Max&amp;rdquo;: it amplifies the probability corresponding to the largest $x_i$.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Soft&amp;rdquo;: it still assigns some probability to smaller $x_i$ values.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="to-train-the-model"&gt;To Train the Model
+&lt;/h4&gt;&lt;p&gt;To train a model, we gradually adjust parameters to minimize a loss.&lt;/p&gt;
+$$
+\theta = \begin{bmatrix}
+v_{aardvark} \\ v_a \\ \vdots \\ v_{zebra} \\ u_{aardvark} \\ u_a \\ \vdots \\ u_{zebra}
+\end{bmatrix} \in \mathbb{R}^{2dV}
+$$&lt;ul&gt;
+&lt;li&gt;If the word-vector dimension is $d$ and the vocabulary size is $V$, the &lt;strong&gt;total number of parameters&lt;/strong&gt; is $2dV$.&lt;/li&gt;
+&lt;li&gt;Each word has two vectors. $\theta$ contains both representations for every word in the vocabulary: the center-word vector $v$ and the outside-word vector $u$.&lt;/li&gt;
+&lt;li&gt;The model computes gradients for all parameters and updates them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The gradient formula comes from differentiating the softmax loss. The math process is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Initial loss function&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;For a center word $c$ and an outside word $o$, the negative log likelihood is:&lt;/p&gt;
+$$
+ \text{Loss} = -\log P(o \mid c)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Expand using the softmax definition&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Substitute the formula for $P(o|c)$ and use log properties:&lt;/p&gt;
+$$
+ \text{Loss} = -\log \left( \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)} \right) = -u_o^T v_c + \log \sum_{w \in V} \exp(u_w^T v_c)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Derivative of the first part&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Differentiate the dot-product term with respect to the center-word vector $v_c$:&lt;/p&gt;
+$$
+ \frac{\partial}{\partial v_c} (u_o^T v_c) = u_o
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Derivative of the second part&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Apply the chain rule to the $\log \sum \exp(\dots)$ term:&lt;/p&gt;
+$$
+ \frac{\partial}{\partial v_c} \log \sum_{w \in V} \exp(u_w^T v_c) = \frac{1}{\sum_{w \in V} \exp(u_w^T v_c)} \cdot \sum_{x \in V} \left[ \exp(u_x^T v_c) \cdot u_x \right]
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Rewrite it as an expectation under the probability distribution&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Extract the original probability term $P(x|c)$:&lt;/p&gt;
+$$
+ \sum_{x \in V} \left[ \frac{\exp(u_x^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)} \right] u_x = \sum_{x \in V} P(x \mid c) u_x
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Final gradient&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Combining both parts gives the gradient used to update $v_c$:&lt;/p&gt;
+$$
+ \frac{\partial \text{Loss}}{\partial v_c} = -u_o + \sum_{x \in V} P(x \mid c) u_x
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="gradient-descent"&gt;Gradient Descent
+&lt;/h4&gt;&lt;p&gt;Gradient descent update rule in matrix form:&lt;/p&gt;
+$$
+\theta^{new} = \theta^{old} - \alpha \nabla_{\theta} J(\theta)
+$$&lt;p&gt;For a single parameter:&lt;/p&gt;
+$$
+\theta_j^{new} = \theta_j^{old} - \alpha \frac{\partial}{\partial \theta_j^{old}} J(\theta)
+$$&lt;ul&gt;
+&lt;li&gt;$\alpha$: step size or learning rate.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, however, we usually use &lt;strong&gt;Stochastic Gradient Descent (SGD)&lt;/strong&gt; instead.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The objective function $J(\theta)$ is defined over &lt;strong&gt;all&lt;/strong&gt; windows in the corpus. If every update required calculating the gradient $\nabla_{\theta} J(\theta)$ over the whole corpus, the computation would be extremely expensive.&lt;/li&gt;
+&lt;li&gt;SGD does not compute the whole corpus each time. It repeatedly samples windows and updates parameters after each single window, or each small batch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="skip-gram-model-with-negative-sampling"&gt;Skip-gram Model with Negative Sampling
+&lt;/h4&gt;&lt;p&gt;&lt;a class="link" href="https://proceedings.neurips.cc/paper_files/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf" target="_blank" rel="noopener"
+ &gt;Negative sampling paper&lt;/a&gt;&lt;/p&gt;
+$$
+P(o\mid c)=\frac{\exp(u_x^T v_c)}{\sum_{w \in V} \exp(u_w^T v_c)}
+$$&lt;p&gt;If we calculate probabilities with the traditional softmax, the &lt;strong&gt;denominator&lt;/strong&gt; sums over all words, which is too expensive.&lt;/p&gt;
+&lt;p&gt;Skip-gram with Negative Sampling avoids calculating all possible words. Instead, it trains several logistic regression classifiers that prefer real context pairs over random context pairs. In practice, it samples $K$ negative examples, reducing the computation to $O(K)$:&lt;/p&gt;
+$$
+J_{neg-sample}(u_o, v_c, U) = -\log \sigma(u_o^T v_c) - \sum_{k \in \{K \text{ sampled indices}\}} \log \sigma(-u_k^T v_c)
+$$&lt;p&gt;Here, $\sigma(x)=\frac{1}{1+e^{-x}}$ is the sigmoid function. It pushes positive pairs toward probability 1 and negative pairs toward probability 0.&lt;/p&gt;
+&lt;p&gt;However, this can make low-frequency words such as &amp;ldquo;zebra&amp;rdquo; too unlikely, while words like &amp;ldquo;the&amp;rdquo; are sampled too often. Therefore, the sampling distribution is adjusted with the $3/4$ power:&lt;/p&gt;
+$$
+P(W)=U(W)^{3/4}/Z
+$$&lt;p&gt;This increases the relative probability of low-frequency words.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="glove"&gt;GloVe
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank" rel="noopener"
+ &gt;Original GloVe paper&lt;/a&gt;: Global Vectors for Word Representation&lt;/p&gt;
+&lt;h4 id="co-occurrence-matrix"&gt;Co-occurrence Matrix
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/co-occurrence.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Building a co-occurrence matrix is straightforward: first set a window size, then count the frequency of words that co-occur within that window. The figure above shows a simple example with window size 1, counting only neighboring words. However:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;dimension&lt;/strong&gt; of word vectors grows greatly as the vocabulary grows. This increases storage cost, makes the matrix very &lt;strong&gt;sparse&lt;/strong&gt;, and makes models based on it less robust.&lt;/li&gt;
+&lt;li&gt;Function words appear extremely often but provide little information.&lt;/li&gt;
+&lt;li&gt;It does not reflect the relationship between word distance and word relatedness.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;How can we reduce dimensionality? A classic method is SVD matrix factorization. I still do not fully understand the theory after asking AI, but in Assignment 1 a single &lt;code&gt;sklearn&lt;/code&gt; function solves it.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/SVD.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+$$
+X = U \Sigma V^T
+$$&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$X$ (co-occurrence matrix)&lt;/strong&gt;: size $|V| \times |V|$. Each element $X_{ij}$ represents how many times word $i$ and word $j$ co-occur in the corpus.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$U$ and $V$ (orthogonal matrices)&lt;/strong&gt;: their column vectors are orthonormal. In NLP, each row of $U$ is often treated as the original embedding of a word.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\Sigma$ (diagonal matrix)&lt;/strong&gt;: the diagonal values $\sigma_1, \sigma_2, \dots$ are called &lt;strong&gt;singular values&lt;/strong&gt;. They are sorted from large to small and represent the importance, variance, or information carried by each dimension.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Dimensionality reduction means compressing a word vector of length $V$ from the co-occurrence matrix into a vector of length $K$.&lt;/p&gt;
+&lt;p&gt;The key insight is that &lt;strong&gt;semantic meaning is not encoded by co-occurrence probabilities themselves, but by ratios of co-occurrence probabilities&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Ratios of co-occurrence probabilities can encode semantic components, and we want to capture these as linear semantic components in the word-vector space.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{solid}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{gas}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{water}$&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;$x = \text{fashion}$&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$P(x\mid\text{ice})$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.9 \times 10^{-4}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$6.6 \times 10^{-5}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$3.0 \times 10^{-3}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.7 \times 10^{-5}$&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$P(x\mid\text{steam})$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$2.2 \times 10^{-5}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$7.8 \times 10^{-4}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$2.2 \times 10^{-3}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.8 \times 10^{-5}$&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;$\dfrac{P(x\mid\text{ice})}{P(x\mid\text{steam})}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$8.9$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$8.5 \times 10^{-2}$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$1.36$&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;$0.96$&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="analogies"&gt;Analogies
+&lt;/h4&gt;&lt;p&gt;Word vectors are mathematically powerful, but their analogy behavior has many practical problems.&lt;/p&gt;
+&lt;p&gt;In the following example, the question is $woman + grandfather - man = ?$. The obvious and most likely result is &lt;code&gt;grandmother&lt;/code&gt;. But why do other words such as &lt;code&gt;granddaughter&lt;/code&gt; and &lt;code&gt;mother&lt;/code&gt; also receive almost equally high scores?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Run this cell to answer the analogy -- man : grandfather :: woman : x&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wv_from_bin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;most_similar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;woman&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;grandfather&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;negative&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;man&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandmother&amp;#39;&lt;/span&gt;, 0.7608445286750793&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;granddaughter&amp;#39;&lt;/span&gt;, 0.7200808525085449&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;daughter&amp;#39;&lt;/span&gt;, 0.7168302536010742&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;mother&amp;#39;&lt;/span&gt;, 0.7151536345481873&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;niece&amp;#39;&lt;/span&gt;, 0.7005682587623596&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;father&amp;#39;&lt;/span&gt;, 0.6659888029098511&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;aunt&amp;#39;&lt;/span&gt;, 0.6623409390449524&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandson&amp;#39;&lt;/span&gt;, 0.6618767976760864&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grandparents&amp;#39;&lt;/span&gt;, 0.644661009311676&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;wife&amp;#39;&lt;/span&gt;, 0.6445354223251343&lt;span class="o"&gt;)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Although the assignment does not give a standard answer, this can be understood through semantic clustering.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Semantic neighborhood effect&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;In vector space, logically similar words often cluster together. When we calculate $\vec{w} + \vec{g} - \vec{m}$, we are actually locating a coordinate point in the space.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;granddaughter&lt;/code&gt; also has features such as &amp;ldquo;female&amp;rdquo; and &amp;ldquo;relative&amp;rdquo;, and often appears in contexts similar to &lt;code&gt;grandfather&lt;/code&gt; or &lt;code&gt;grandmother&lt;/code&gt;. Along the &amp;ldquo;family relation&amp;rdquo; dimension, these words are very close.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Overlapping dimensions&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Word vectors usually have hundreds of dimensions. Although we subtract &lt;code&gt;man&lt;/code&gt; and add &lt;code&gt;grandfather&lt;/code&gt;, this does not completely erase similarity along other dimensions.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;daughter&lt;/code&gt;, &lt;code&gt;mother&lt;/code&gt;, and &lt;code&gt;grandmother&lt;/code&gt; share many dimensions such as &lt;code&gt;[+female]&lt;/code&gt;, &lt;code&gt;[+human]&lt;/code&gt;, and &lt;code&gt;[+relative]&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The next example is an incorrect analogy. The expected answer should be something like &lt;code&gt;socks&lt;/code&gt;, but why does the model ignore &lt;code&gt;glove&lt;/code&gt; and &lt;code&gt;hand&lt;/code&gt; and output many &lt;code&gt;square&lt;/code&gt;-related terms? Clearly this is not about &lt;code&gt;foot&lt;/code&gt; as a body part, but about &lt;code&gt;foot&lt;/code&gt; as a unit of length.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wv_from_bin&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;most_similar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;foot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;glove&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;negative&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hand&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;45,000-square&amp;#39;&lt;/span&gt;, 0.4922032654285431&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;15,000-square&amp;#39;&lt;/span&gt;, 0.4649604558944702&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10,000-square&amp;#39;&lt;/span&gt;, 0.4544755816459656&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;6,000-square&amp;#39;&lt;/span&gt;, 0.44975775480270386&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3,500-square&amp;#39;&lt;/span&gt;, 0.444133460521698&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;700-square&amp;#39;&lt;/span&gt;, 0.44257497787475586&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;50,000-square&amp;#39;&lt;/span&gt;, 0.4356396794319153&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3,000-square&amp;#39;&lt;/span&gt;, 0.43486514687538147&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;30,000-square&amp;#39;&lt;/span&gt;, 0.4330596923828125&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;footed&amp;#39;&lt;/span&gt;, 0.43236875534057617&lt;span class="o"&gt;)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Interference from polysemy&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;As mentioned above, &lt;code&gt;foot&lt;/code&gt; is also a unit of length, and it often combines with &lt;code&gt;square&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Training corpus bias&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Since &lt;code&gt;foot&lt;/code&gt; has multiple meanings but the output is almost entirely about the unit sense, the training corpus may contain many &lt;code&gt;...square foot&lt;/code&gt; contexts.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Word choice&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Even though all outputs are &lt;code&gt;...square&lt;/code&gt; terms, their scores are only around 0.5. This suggests the model did not find a strongly related word and probably did not understand the relationship among &lt;code&gt;glove&lt;/code&gt;, &lt;code&gt;hand&lt;/code&gt;, and &lt;code&gt;foot&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="neural-network"&gt;Neural Network
+&lt;/h2&gt;&lt;p&gt;&lt;em&gt;A neural network = running several logistic regressions at the same time.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://cs231n.github.io/neural-networks-1/" target="_blank" rel="noopener"
+ &gt;CS231n Deep Learning on Network Architectures&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://cs231n.github.io/optimization-2/" target="_blank" rel="noopener"
+ &gt;CS231n Deep Learning for Computer Vision on Backprop&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="structure"&gt;Structure
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="non-linearities"&gt;Non-linearities
+&lt;/h3&gt;&lt;p&gt;Why do neural networks need non-linearities?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Core idea: neural networks perform function approximation, such as regression or classification.
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Without non-linearity&lt;/strong&gt;: a deep neural network can only perform &lt;strong&gt;linear transformations&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;More layers do not help&lt;/strong&gt;: extra linear layers collapse into a single linear transformation: $W_1 W_2 x = Wx$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;With non-linearity&lt;/strong&gt;: a multi-layer structure with non-linear functions can approximate more complex functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Bottom-left figures&lt;/strong&gt;: the left figure shows linear classification, which can only draw a straight line and cannot separate complex red/green point distributions. The right figure shows non-linear classification, which can draw curves and separate the data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Three wave figures on the right&lt;/strong&gt;: as function complexity increases, only non-linear models can fit the oscillating observed data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The common non-linear activation functions were already covered in my Intelligent Computing Systems course, so I will not expand on them here.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/neural-network-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="gradients"&gt;Gradients
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://cs231n.stanford.edu/handouts/derivatives.pdf" target="_blank" rel="noopener"
+ &gt;derivatives.pdf&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;At a simple level, a gradient is a derivative with respect to a variable. For example:&lt;/p&gt;
+$$
+f(x)=x^3
+$$&lt;p&gt;Its derivative is:&lt;/p&gt;
+$$
+\frac{df}{dx}=3x^2
+$$&lt;p&gt;Of course, this is only a very simple example. In practice, neural networks involve large-scale &lt;strong&gt;chain rule&lt;/strong&gt; calculations and gradients of matrices, or Jacobian matrices.&lt;/p&gt;
+&lt;h4 id="chain-rule"&gt;Chain Rule
+&lt;/h4&gt;&lt;p&gt;In single-variable calculus, if $y = f(u)$ and $u = g(x)$, then:&lt;/p&gt;
+$$
+\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}
+$$&lt;p&gt;In neural networks, each layer is usually a vector, such as $\mathbf{h}, \mathbf{z} \in \mathbb{R}^n$. When this logic is extended to vectors, multiplication becomes &lt;strong&gt;matrix multiplication&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;For multiple variables, we multiply &lt;strong&gt;Jacobian matrices&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Suppose $\mathbf h= f(z)$ and $\mathbf z=Wx+b$. The partial derivatives below form Jacobian matrices:&lt;/p&gt;
+$$
+\frac{\partial \mathbf{h}}{\partial \mathbf{x}} = \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \frac{\partial \mathbf{z}}{\partial \mathbf{x}}
+$$&lt;h4 id="matrix-calculus"&gt;Matrix Calculus
+&lt;/h4&gt;&lt;p&gt;From the following expression, the Jacobian has non-zero values only on the diagonal:&lt;/p&gt;
+$$
+\begin{aligned} \left( \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \right)_{ij} &amp;= \frac{\partial h_i}{\partial z_j} = \frac{\partial}{\partial z_j} f(z_i) \quad &amp;&amp; \text{definition of Jacobian} \\ &amp;= \begin{cases} f'(z_i) &amp; \text{if } i = j \\ 0 &amp; \text{if otherwise} \end{cases} \quad &amp;&amp; \text{regular 1-variable derivative} \end{aligned}
+$$$$
+\frac{\partial \mathbf h}{\partial \mathbf z} =
+\begin{pmatrix}
+f'(z_1) &amp; 0 &amp; \cdots &amp; 0 \\
+0 &amp; f'(z_2) &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; f'(z_n)
+\end{pmatrix}
+= \operatorname{diag}(f'(\mathbf z))
+$$&lt;p&gt;Another common Jacobian is:&lt;/p&gt;
+$$
+\frac{\partial}{\partial \mathbf{u}}(\mathbf{u}^T \mathbf{h})=\mathbf h^T
+$$&lt;p&gt;Suppose $\mathbf{u}$ and $\mathbf{h}$ are both $n$-dimensional column vectors:&lt;/p&gt;
+$$
+\mathbf{u} = \begin{bmatrix} u_1 \\ u_2 \\ \vdots \\ u_n \end{bmatrix}, \quad \mathbf{h} = \begin{bmatrix} h_1 \\ h_2 \\ \vdots \\ h_n \end{bmatrix}
+$$&lt;p&gt;Their inner product is a &lt;strong&gt;scalar&lt;/strong&gt;:&lt;/p&gt;
+$$
+f = \mathbf{u}^T \mathbf{h} = u_1 h_1 + u_2 h_2 + \dots + u_n h_n = \sum_{i=1}^n u_i h_i
+$$&lt;p&gt;We want to differentiate with respect to vector $\mathbf{u}$. According to the definition of a Jacobian, we differentiate with respect to each element $u_k$:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial u_k} = \frac{\partial}{\partial u_k} (u_1 h_1 + \dots + u_k h_k + \dots + u_n h_n)
+$$&lt;p&gt;All terms except $u_k h_k$ do not contain $u_k$, so their derivatives are 0:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial u_k} = h_k
+$$&lt;p&gt;By the usual Jacobian convention, the derivative of a scalar with respect to a column vector is a row vector:&lt;/p&gt;
+$$
+\frac{\partial f}{\partial \mathbf{u}} = \begin{bmatrix} \frac{\partial f}{\partial u_1} &amp; \frac{\partial f}{\partial u_2} &amp; \dots &amp; \frac{\partial f}{\partial u_n} \end{bmatrix} = \begin{bmatrix} h_1 &amp; h_2 &amp; \dots &amp; h_n \end{bmatrix} = \mathbf{h}^T
+$$&lt;h5 id="write-out-the-jacobians"&gt;Write out the Jacobians
+&lt;/h5&gt;$$
+\begin{aligned} \frac{\partial s}{\partial \mathbf{b}} &amp;= \frac{\partial s}{\partial \mathbf{h}} \frac{\partial \mathbf{h}}{\partial \mathbf{z}} \frac{\partial \mathbf{z}}{\partial \mathbf{b}} \\ &amp;= \mathbf{u}^T \text{diag}(f'(\mathbf{z})) \mathbf{I} \\ &amp;= \mathbf{u}^T \odot f'(\mathbf{z}) \end{aligned}
+$$&lt;p&gt;$\odot$ = Hadamard product = element-wise multiplication of two vectors to produce a vector.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Variable&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning in neural networks&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Note&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$s$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Loss/score&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The final scalar output, such as cross-entropy loss. We want to know how it changes with parameters.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{b}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Bias vector&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;A learnable parameter in the current layer.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{z}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Logits/pre-activation&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The result of the linear combination: $\mathbf{z} = \mathbf{W}\mathbf{x} + \mathbf{b}$.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{h}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Activation/hidden state&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The output after applying a non-linear activation: $\mathbf{h} = f(\mathbf{z})$.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{u}^T$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Upstream gradient $\frac{\partial s}{\partial \mathbf{h}}$&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The signal propagated backward from higher layers.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$f'(\mathbf{z})$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Derivative of the activation function&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;For example, the derivative of ReLU or sigmoid. It determines which neurons are active.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;$\mathbf{I}$&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Identity matrix&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Since $\mathbf{z} = \dots + \mathbf{b}$, the derivative of $\mathbf{z}$ with respect to $\mathbf{b}$ is 1, represented as the identity matrix.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h5 id="re-using-computation"&gt;Re-using Computation
+&lt;/h5&gt;&lt;p&gt;The upstream error signal $\boldsymbol{\delta}$ is:&lt;/p&gt;
+$$
+\boldsymbol{\delta} = \frac{\partial s}{\partial \mathbf{h}} \frac{\partial \mathbf{h}}{\partial \mathbf{z}} = \mathbf{u}^T \circ f'(\mathbf{z})
+$$&lt;p&gt;After computing $\boldsymbol{\delta}$ first, later calculations become simpler:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Gradient of the weight matrix $W$:&lt;/p&gt;
+$$
+ \frac{\partial s}{\partial \mathbf{W}} = \boldsymbol{\delta} \frac{\partial \mathbf{z}}{\partial \mathbf{W}}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Gradient of the bias vector $\mathbf{b}$:&lt;/p&gt;
+$$
+ \frac{\partial s}{\partial \mathbf{b}} = \boldsymbol{\delta} \frac{\partial \mathbf{z}}{\partial \mathbf{b}} = \boldsymbol{\delta}
+ $$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="shape-convention"&gt;Shape Convention
+&lt;/h4&gt;&lt;p&gt;Suppose the weight matrix is $\mathbf{W} \in \mathbb{R}^{n \times m}$ and the output is a scalar $s$, such as a loss. By the pure mathematical definition, $\frac{\partial s}{\partial \mathbf{W}}$ should be a $1 \times nm$ row vector, a Jacobian. But if we use this form directly, the gradient update rule $\theta^{new} = \theta^{old} - \alpha \nabla_{\theta} J(\theta)$ cannot subtract tensors because the shapes do not match.&lt;/p&gt;
+&lt;p&gt;For convenience in computation, we use the convention that &lt;strong&gt;the gradient shape should match the parameter shape&lt;/strong&gt;. Therefore, $\frac{\partial s}{\partial \mathbf{W}}$ is also an $n \times m$ matrix:&lt;/p&gt;
+$$
+\frac{\partial s}{\partial \mathbf{W}} = \begin{bmatrix} \frac{\partial s}{\partial W_{11}} &amp; \dots &amp; \frac{\partial s}{\partial W_{1m}} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial s}{\partial W_{n1}} &amp; \dots &amp; \frac{\partial s}{\partial W_{nm}} \end{bmatrix}
+$$$$
+\frac{\partial s}{\partial \mathbf{W}} = \boldsymbol{\delta}^T \mathbf{x}^T
+$$&lt;p&gt;So what shape should a derivative result take?&lt;/p&gt;
+&lt;p&gt;The practical answer is to follow the &lt;strong&gt;shape convention&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Method&lt;/strong&gt;: do not get stuck on the strict Jacobian definition. Always watch the variable dimensions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Core trick&lt;/strong&gt;: use dimensional analysis to decide when to transpose a term or adjust multiplication order, so each layer&amp;rsquo;s gradient has exactly the same shape as the corresponding parameter.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Important conclusion about $\boldsymbol{\delta}$&lt;/strong&gt;: the error signal propagated to a hidden layer should have the same dimension as the number of neurons in that hidden layer, or the dimension of its activation vector.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="backpropagation"&gt;Backpropagation
+&lt;/h3&gt;&lt;p&gt;Computing each function step by step from input to output is &lt;strong&gt;forward propagation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;For a single node in backpropagation:&lt;/p&gt;
+$$
+downstream\ gradient = upstream\ gradient \times local\ gradient
+$$&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;For a node with multiple inputs, the upstream gradient remains the same, but each input has a different local gradient. The formula is unchanged.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Here is a concrete example with multiple inputs:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/backpropagation-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;Based on this example, suppose the input value $y$ changes to 2.1. Then $a=x+y=3.1$, $b=max(y+z)=y=2.1$, and $a\times b=6.51$.&lt;/p&gt;
+&lt;p&gt;So a change of 0.1 in $y$ causes a change of 0.51 in the result. The gradient is:&lt;/p&gt;
+$$
+\frac{\Delta f}{\Delta y}=5.1
+$$&lt;h4 id="implementations"&gt;Implementations
+&lt;/h4&gt;&lt;p&gt;In theory, once the symbolic computation of forward propagation is known, a computer can automatically derive the result of backpropagation. But in modern frameworks, users or framework authors still define local derivative rules. This is more efficient and stable than a fully automatic symbolic approach.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MultiplyGate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;forward&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="c1"&gt;# must keep these around!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;backward&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt; &lt;span class="c1"&gt;# [dz/dx * dL/dz]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;dz&lt;/span&gt; &lt;span class="c1"&gt;# [dz/dy * dL/dz]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dy&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h5 id="numeric-gradient-checking"&gt;Numeric Gradient Checking
+&lt;/h5&gt;&lt;p&gt;When manually deriving and implementing backpropagation, numeric gradient checking is the standard way to verify that the math and code are correct:&lt;/p&gt;
+$$
+f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}
+$$&lt;ul&gt;
+&lt;li&gt;It only needs the forward function $f(x)$, so it does not require complex mathematical derivation and is less likely to be wrong.&lt;/li&gt;
+&lt;li&gt;It must run two forward passes for &lt;strong&gt;each parameter&lt;/strong&gt;, one with $+h$ and one with $-h$, so it is inefficient.&lt;/li&gt;
+&lt;li&gt;It is suitable for local tests, not for validating a large whole network. Use it for a specific layer or a small parameter tensor, such as a $3 \times 3$ matrix.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="dependency-parsing"&gt;Dependency Parsing
+&lt;/h2&gt;&lt;h3 id="syntactic-structure"&gt;Syntactic Structure
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Phrase structure&lt;/strong&gt; organizes words into nested constituents.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can define grammar rules for phrases ourselves. For example, a noun phrase can be &amp;ldquo;determiner + adjective + noun&amp;rdquo; or &amp;ldquo;determiner + noun + prepositional phrase&amp;rdquo;; a prepositional phrase can be &amp;ldquo;preposition + noun&amp;rdquo;, and so on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dependency structure&lt;/strong&gt; shows which words depend on, modify, attach to, or act as arguments of other words.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ambiguity is common in language, and prepositional phrases create even more ambiguity in English. For example:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Scientists count whales from space&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This can be understood as &lt;code&gt;Scientists [count] [whales from space]&lt;/code&gt;, or &lt;code&gt;Scientists [count whales] [from space]&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h3 id="dependency-grammar-and-treebanks"&gt;Dependency Grammar and Treebanks
+&lt;/h3&gt;&lt;p&gt;Dependency syntax assumes that syntactic structure consists of relations between lexical items, usually binary asymmetric relations called dependencies.&lt;/p&gt;
+&lt;p&gt;The figure below is an older example of a dependency structure.&lt;/p&gt;
+&lt;p&gt;An arrow connects a head, also called governor, superior, or regent, with a dependent, also called modifier, inferior, or subordinate.&lt;/p&gt;
+&lt;p&gt;Usually, dependencies form a tree: a connected, acyclic, single-root graph.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h4 id="annotated-data"&gt;Annotated Data
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-3.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;At first, building a treebank may look slower than manually writing grammar rules, and perhaps less useful. Manual annotation is indeed troublesome, but it has several major advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reusability: one annotated dataset can be used to train many parsers and POS taggers.&lt;/li&gt;
+&lt;li&gt;Broad coverage: hand-written rules often cover only a few intuitive examples, while annotated real corpora cover the complexity of language in actual use.&lt;/li&gt;
+&lt;li&gt;Frequencies and distributional information: a treebank tells the model which structures are more common, helping probabilistic models make better decisions.&lt;/li&gt;
+&lt;li&gt;A way to evaluate NLP systems: without this kind of gold standard, we cannot measure parser accuracy through metrics such as LAS and UAS.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The dependency labels in the example figure can be roughly understood as:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Label&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Simple understanding&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;nsubj&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Nominal subject&lt;/td&gt;
+					&lt;td&gt;The doer of the action, as in &lt;strong&gt;I&lt;/strong&gt; think.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;nsubjpass&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Passive subject&lt;/td&gt;
+					&lt;td&gt;The subject in passive voice, as in &lt;strong&gt;city&lt;/strong&gt; called.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;ccomp&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Clausal complement&lt;/td&gt;
+					&lt;td&gt;A clause after a verb, as in think &lt;strong&gt;&amp;hellip;&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;advmod&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Adverbial modifier&lt;/td&gt;
+					&lt;td&gt;Modifies degree, question words, or verbs, as in &lt;strong&gt;Why&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;amod&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Adjectival modifier&lt;/td&gt;
+					&lt;td&gt;An adjective modifying a noun, as in &lt;strong&gt;famous&lt;/strong&gt; goat.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;compound&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Compound modifier&lt;/td&gt;
+					&lt;td&gt;A noun modifying another noun, as in &lt;strong&gt;goat&lt;/strong&gt; trainer.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;det&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Determiner&lt;/td&gt;
+					&lt;td&gt;Points to words like a, the, any.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;case&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Case marker&lt;/td&gt;
+					&lt;td&gt;Points to prepositions such as in, at.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;conj&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Conjunction&lt;/td&gt;
+					&lt;td&gt;Words connected by or, and, as in trainer or &lt;strong&gt;something&lt;/strong&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="dependency-conditioning-preferences"&gt;Dependency Conditioning Preferences
+&lt;/h4&gt;&lt;p&gt;During parsing, the model uses dependency conditioning preferences to judge whether two words are likely to have a dependency relation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Bilexical affinities: whether a dependency such as &lt;code&gt;[discussion -&amp;gt; issues]&lt;/code&gt; is reasonable.&lt;/li&gt;
+&lt;li&gt;Dependency distance: most, but not all, dependencies occur between nearby words.&lt;/li&gt;
+&lt;li&gt;Intervening material: dependencies rarely cross intervening verbs or punctuation.&lt;/li&gt;
+&lt;li&gt;Valency of heads: for a head word, how many dependents does it usually have on each side?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="projectivity"&gt;Projectivity
+&lt;/h4&gt;&lt;p&gt;If the words of a sentence are arranged in linear order and all dependency arcs are drawn above the words, a parse is &lt;strong&gt;projective&lt;/strong&gt; when no two arcs cross. If arcs cross, the parse is non-projective, which usually indicates long-distance movement or overlapping structure.&lt;/p&gt;
+&lt;p&gt;Non-projective examples are common in real language, such as:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Who did Bill buy the coffee from yesterday&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-4.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h3 id="transition-based-dependency-parser"&gt;Transition-Based Dependency Parser
+&lt;/h3&gt;&lt;p&gt;A transition-based dependency parser has a stack, a buffer, and three operations.&lt;/p&gt;
+&lt;p&gt;Start: $\sigma = [ROOT], \beta = w_1, ..., w_n, A = \emptyset$&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Shift: $\sigma, w_i | \beta, A \Rightarrow \sigma | w_i, \beta, A $&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Left-$Arc_r$: $\sigma | w_i | w_j, \beta, A \Rightarrow \sigma | w_j, \beta, A \cup \{r(w_j, w_i)\} $&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Right-$Arc_r$: $\sigma | w_i | w_j, \beta, A \Rightarrow \sigma | w_j, \beta, A \cup \{r(w_i, w_j)\}$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Finish: $\sigma = [w], \beta = \emptyset$&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$\sigma$&lt;/strong&gt; represents the &lt;strong&gt;stack&lt;/strong&gt;, storing words currently being processed or waiting for dependency relations.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\beta$&lt;/strong&gt; represents the &lt;strong&gt;buffer&lt;/strong&gt;, storing the input words that have not yet been processed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$A$&lt;/strong&gt; represents the &lt;strong&gt;set of dependency arcs&lt;/strong&gt;, storing dependency relations already created.&lt;/li&gt;
+&lt;li&gt;Left-$Arc_r$ and Right-$Arc_r$ are two reduction operations that establish whether one word depends on another, with left or right direction.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now consider the example: analysis of &lt;code&gt;I ate fish&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-5.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The &lt;strong&gt;Left Arc&lt;/strong&gt; operation creates an arc from the stack top toward the second element, establishing that &lt;code&gt;ate&lt;/code&gt; is the head and &lt;code&gt;I&lt;/code&gt; depends on &lt;code&gt;ate&lt;/code&gt;. Then &lt;code&gt;I&lt;/code&gt; is removed from the stack.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Shift&lt;/strong&gt; operation moves &lt;code&gt;fish&lt;/code&gt; from the buffer into the stack.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Right Arc&lt;/strong&gt; operation creates an arc from the second element to the stack top, establishing that &lt;code&gt;ate&lt;/code&gt; is the head and &lt;code&gt;fish&lt;/code&gt; depends on &lt;code&gt;ate&lt;/code&gt;. Then &lt;code&gt;fish&lt;/code&gt; is removed from the stack.&lt;/li&gt;
+&lt;li&gt;The final &lt;strong&gt;Right Arc&lt;/strong&gt; operation makes &lt;code&gt;[root]&lt;/code&gt; point to &lt;code&gt;ate&lt;/code&gt;. After &lt;code&gt;ate&lt;/code&gt; is popped, only the root node remains and parsing is complete.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="evaluation-of-dependency-parsing"&gt;Evaluation of Dependency Parsing
+&lt;/h4&gt;&lt;p&gt;Dependency parsing is evaluated with &lt;strong&gt;UAS&lt;/strong&gt; (Unlabeled Attachment Score) and &lt;strong&gt;LAS&lt;/strong&gt; (Labeled Attachment Score). The following example uses &lt;code&gt;[ROOT] She saw the video lecture.&lt;/code&gt;; &lt;code&gt;Gold&lt;/code&gt; is the standard answer and &lt;code&gt;Parsed&lt;/code&gt; is the parser output.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-6.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;UAS checks whether the &lt;code&gt;Head&lt;/code&gt; is correct. In this example, the third word &lt;code&gt;the&lt;/code&gt; has a different head from the gold parse.&lt;/li&gt;
+&lt;li&gt;LAS checks whether both the &lt;code&gt;Head&lt;/code&gt; and the relation label are correct. In this example, only the relation between &lt;code&gt;She&lt;/code&gt; and &lt;code&gt;saw&lt;/code&gt; matches the gold parse.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="neural-dependency-parsing"&gt;Neural dependency parsing
+&lt;/h3&gt;&lt;p&gt;More than 95% of parsing time is consumed by feature computation.&lt;/p&gt;
+&lt;p&gt;Therefore, neural networks can be used to accelerate feature extraction. The method is still based on the transition-based dependency parser above, but it uses vectorization and non-linear neural network modeling. This led to the first neural-network-based dependency parser in 2014.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/dependency-7.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;h2 id="recurrent-neural-networks"&gt;Recurrent Neural Networks
+&lt;/h2&gt;&lt;h3 id="language-modeling"&gt;Language Modeling
+&lt;/h3&gt;&lt;p&gt;In simple terms, a language model takes text, or tokens, as input and outputs probabilities.&lt;/p&gt;
+$$
+\begin{aligned}
+P(\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}) &amp;= P(\boldsymbol{x}^{(1)}) \times P(\boldsymbol{x}^{(2)} | \boldsymbol{x}^{(1)}) \times \dots \times P(\boldsymbol{x}^{(T)} | \boldsymbol{x}^{(T-1)}, \dots, \boldsymbol{x}^{(1)}) \\
+&amp;= \prod_{t=1}^{T} \underbrace{P(\boldsymbol{x}^{(t)} | \boldsymbol{x}^{(t-1)}, \dots, \boldsymbol{x}^{(1)})}_{\text{This is what our LM provides}}
+\end{aligned}
+$$&lt;p&gt;$P(\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)})$ is the probability of an entire sequence, such as a sentence. By decomposing the joint probability into a product of conditional probabilities using the chain rule, we can calculate the probability of the sequence. The core task of a language model is to use the previous context $\boldsymbol{x}^{(t-1)}, \dots, \boldsymbol{x}^{(1)}$ to &lt;strong&gt;predict&lt;/strong&gt; the probability of the next token $\boldsymbol{x}^{(t)}$.&lt;/p&gt;
+&lt;h3 id="n-gram-language-models"&gt;n-gram Language Models
+&lt;/h3&gt;&lt;p&gt;An n-gram is a chunk of $n$ consecutive words. Here, $n$ means how many words form one unit. To build an n-gram language model:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First, make a &lt;strong&gt;Markov assumption&lt;/strong&gt;: the word $x^{(t+1)}$ depends only on the previous $n-1$ words.&lt;/p&gt;
+$$
+ P(x^{(t+1)} | x^{(t)}, \dots, x^{(1)}) = P(x^{(t+1)} | \underbrace{x^{(t)}, \dots, x^{(t-n+2)}}_{n-1 \text{ words}}) \quad \text{(assumption)}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Using the definition of conditional probability, the above formula can be written as the ratio between an n-gram probability and an $(n-1)$-gram probability:&lt;/p&gt;
+$$
+ = \frac{P(x^{(t+1)}, x^{(t)}, \dots, x^{(t-n+2)}) \leftarrow \text{prob of a n-gram}}{P(x^{(t)}, \dots, x^{(t-n+2)}) \leftarrow \text{prob of a (n-1)-gram}} \quad \text{(definition of conditional prob)}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We approximate these probabilities by &lt;strong&gt;counting&lt;/strong&gt; n-gram frequencies in a large text corpus:&lt;/p&gt;
+$$
+ \approx \frac{\text{count}(x^{(t+1)}, x^{(t)}, \dots, x^{(t-n+2)})}{\text{count}(x^{(t)}, \dots, x^{(t-n+2)})} \quad \text{(statistical approximation)}
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For example, suppose we have a 4-gram language model and want to predict the last blank:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;as the proctor started the clock, the students opened their ......&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We only use the last three words, &lt;code&gt;students opened their&lt;/code&gt;:&lt;/p&gt;
+$$
+P(w\mid students\ opened\ their)=\frac{count(students\ opened\ their\ w)}{count(students\ opened\ their)}
+$$&lt;p&gt;According to the corpus, &lt;code&gt;students opened their books&lt;/code&gt; may appear most often, while the more contextually appropriate &lt;code&gt;students opened their exams&lt;/code&gt; may appear less often.&lt;/p&gt;
+&lt;h4 id="problems-with-n-gram-language-models"&gt;Problems with n-gram Language Models
+&lt;/h4&gt;&lt;p&gt;When using counting to estimate probabilities, we face &lt;strong&gt;sparsity problems&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;If the phrase &lt;code&gt;students opened their $w$&lt;/code&gt; never appears in the training data, then the probability for any such $w$ becomes &lt;strong&gt;0&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This can be handled by adding a small value $\delta$ to the count of each word $w \in V$, which is smoothing.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If the prefix &lt;code&gt;students opened their&lt;/code&gt; never appears in the training data, then we cannot calculate the probability of any $w$ because the denominator is 0.&lt;/p&gt;
+&lt;p&gt;In this case, we back off to a shorter context, such as &lt;code&gt;opened their&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;There is also a &lt;strong&gt;storage&lt;/strong&gt; problem:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We need to store counts for all observed n-grams in the corpus.&lt;/li&gt;
+&lt;li&gt;If $n$ increases, the required corpus size and storage grow greatly.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="a-fixed-window-neural-language-model"&gt;A Fixed-window Neural Language Model
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/RNN-1.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Input layer (words / one-hot vectors)&lt;/strong&gt;: the inputs are one-hot vectors of words $\boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \boldsymbol{x}^{(3)}, \boldsymbol{x}^{(4)}$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Embedding layer (concatenated word embeddings)&lt;/strong&gt;: words are converted into dense embeddings and concatenated:&lt;/p&gt;
+$$
+ \boldsymbol{e} = [\boldsymbol{e}^{(1)}; \boldsymbol{e}^{(2)}; \boldsymbol{e}^{(3)}; \boldsymbol{e}^{(4)}]
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Hidden layer&lt;/strong&gt;: apply a linear transformation with weight matrix $W$ and bias $b_1$, then pass through an activation function $f$, usually tanh or ReLU:&lt;/p&gt;
+$$
+ \boldsymbol{h} = f(W\boldsymbol{e} + \boldsymbol{b}_1)
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Output distribution&lt;/strong&gt;: apply weight matrix $U$ and bias $b_2$, then use &lt;strong&gt;softmax&lt;/strong&gt; to produce a probability distribution over vocabulary $V$:&lt;/p&gt;
+$$
+ \hat{\boldsymbol{y}} = \text{softmax}(U\boldsymbol{h} + \boldsymbol{b}_2) \in \mathbb{R}^{|V|}
+ $$&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Compared with n-gram methods, this improves:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Sparsity problem&lt;/strong&gt;: it no longer relies on exact counts, and can generalize unseen word groups through vector-space similarity.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: it does not need to store frequencies for all observed n-grams, only model parameters.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;But some problems remain:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fixed-window limitation&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;The fixed context window is usually too small.&lt;/li&gt;
+&lt;li&gt;Increasing the window size linearly increases the number of parameters in weight matrix $W$.&lt;/li&gt;
+&lt;li&gt;No matter how large the window is, it cannot capture long-range dependencies outside the window.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lack of symmetry&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Inputs $\boldsymbol{x}^{(1)}$ and $\boldsymbol{x}^{(2)}$ are multiplied by completely different parts of $W$, so the model does not process each input position consistently.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="rnn-language-model"&gt;RNN Language Model
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/" target="_blank" rel="noopener"
+ &gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/RNN-2.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages of RNNs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;They can process input of &lt;strong&gt;any length&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In theory, computation at step $t$ can use information from &lt;strong&gt;many steps earlier&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fixed model size&lt;/strong&gt;: increasing input length does not increase the number of model parameters.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Symmetry&lt;/strong&gt;: the same weights are applied at every step, so input positions are processed consistently.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Disadvantages of RNNs&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Slow computation&lt;/strong&gt;: because computation is recurrent, it cannot be fully parallelized.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Practical difficulty&lt;/strong&gt;: in practice, it is hard to use information from &lt;strong&gt;many steps earlier&lt;/strong&gt;, because of vanishing or exploding gradients.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="train-an-rnn-language-model"&gt;Train an RNN Language Model
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Obtain a large text corpus consisting of a word sequence $\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}$.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Feed the sequence into the RNN-LM and compute the output distribution $\hat{\boldsymbol{y}}^{(t)}$ for &lt;strong&gt;every time step $t$&lt;/strong&gt;. This means the model predicts the probability distribution over possible next words at each position, given the words seen so far.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The model produces a loss at every time step. At step $t$, the loss is the &lt;strong&gt;cross entropy&lt;/strong&gt; between the predicted distribution $\hat{\boldsymbol{y}}^{(t)}$ and the true next word $\boldsymbol{y}^{(t)}$, which is the one-hot vector of $\boldsymbol{x}^{(t+1)}$:&lt;/p&gt;
+$$
+ J^{(t)}(\theta) = CE(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}) = - \sum_{w \in V} \boldsymbol{y}^{(t)}_w \log \hat{\boldsymbol{y}}^{(t)}_w = - \log \hat{\boldsymbol{y}}^{(t)}_{\boldsymbol{x}_{t+1}}
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To get the loss over the whole training sequence, average the loss over all steps:&lt;/p&gt;
+$$
+ J(\theta) = \frac{1}{T} \sum_{t=1}^{T} J^{(t)}(\theta) = \frac{1}{T} \sum_{t=1}^{T} - \log \hat{\boldsymbol{y}}^{(t)}_{\boldsymbol{x}_{t+1}}
+ $$&lt;p&gt;This uses the idea of &lt;strong&gt;teacher forcing&lt;/strong&gt;: when calculating loss, the model does not feed its own previous prediction into the next step. It directly uses the correct word from the corpus.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Computing the loss and gradients over the entire corpus $\boldsymbol{x}^{(1)}, \dots, \boldsymbol{x}^{(T)}$ at once is extremely expensive in memory. In practice, we treat the sequence as sentences or documents, use SGD to compute loss and gradients over a &lt;strong&gt;small chunk of data&lt;/strong&gt;, and update parameters immediately.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="backpropagation-for-rnn"&gt;Backpropagation for RNN
+&lt;/h4&gt;&lt;p&gt;RNN parameters are trained with backpropagation through time. The backward pass runs along time steps $i=t,\dots,0$ and accumulates gradients.&lt;/p&gt;
+&lt;p&gt;Because $\boldsymbol{W}_h$ is shared at every time step, the total gradient is the sum of gradients produced at each step:&lt;/p&gt;
+$$
+\frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} = \sum_{i=1}^{t} \left. \frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} \right|_{(i)} \frac{\partial \boldsymbol{W}_h|_{(i)}}{\partial \boldsymbol{W}_h} = \sum_{i=1}^{t} \left. \frac{\partial J^{(t)}}{\partial \boldsymbol{W}_h} \right|_{(i)}
+$$&lt;p&gt;As the sequence grows longer, full backpropagation becomes very expensive and is prone to vanishing or exploding gradients. In practice, training is often truncated after about &lt;strong&gt;20 time steps&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="exploding-gradient"&gt;Exploding Gradient
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;Exploding gradients&lt;/strong&gt; occur when:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The eigenvalues of $W_h$, roughly the magnitude of the weights, are greater than 1.&lt;/li&gt;
+&lt;li&gt;As time step $T$ increases, gradients grow &lt;strong&gt;exponentially&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Model weights are updated too aggressively, making the network unstable. Parameters may overflow into NaN and training collapses.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the &lt;strong&gt;norm&lt;/strong&gt; of the gradient exceeds a preset &lt;strong&gt;threshold&lt;/strong&gt; before updating model parameters, we scale it down proportionally. If $\|\hat{\boldsymbol{g}}\| \ge threshold$, we apply &lt;strong&gt;gradient clipping&lt;/strong&gt;:&lt;/p&gt;
+$$
+\hat{\boldsymbol{g}} \leftarrow \frac{threshold}{\|\hat{\boldsymbol{g}}\|} \hat{\boldsymbol{g}}
+$$&lt;p&gt;Gradient clipping keeps the update in the same direction, but takes a smaller step.&lt;/p&gt;
+&lt;h4 id="vanishing-gradient"&gt;Vanishing Gradient
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;Vanishing gradients&lt;/strong&gt; occur when:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The eigenvalues of $W_h$ are less than 1, or the derivatives of activation functions such as $f$ or tanh are less than 1.&lt;/li&gt;
+&lt;li&gt;Gradients shrink &lt;strong&gt;exponentially&lt;/strong&gt; as the number of backward steps increases.&lt;/li&gt;
+&lt;li&gt;This corresponds to the RNN limitation mentioned earlier: &lt;strong&gt;in practice, it is hard to access information from many steps earlier&lt;/strong&gt;. When gradients become extremely small, far-away weights are barely updated, and the model &amp;ldquo;forgets&amp;rdquo; long-term context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For a vanilla RNN, learning to &lt;strong&gt;preserve information&lt;/strong&gt; across many time steps is difficult because the hidden state $\boldsymbol{h}^{(t)}$ is constantly rewritten:&lt;/p&gt;
+$$
+\boldsymbol{h}^{(t)} = \sigma(\boldsymbol{W}_h \boldsymbol{h}^{(t-1)} + \boldsymbol{W}_x \boldsymbol{x}^{(t)} + \boldsymbol{b})
+$$&lt;p&gt;Therefore, we introduce independent memory, such as LSTMs, or build more direct connections, such as attention mechanisms.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="long-short-term-memory"&gt;Long Short-Term Memory
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener"
+ &gt;Understanding LSTM Networks &amp;ndash; colah&amp;rsquo;s blog&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Forget gate&lt;/strong&gt;: controls what to keep and what to forget from the previous cell state.&lt;/p&gt;
+$$
+\boldsymbol{f}^{(t)} = \sigma (\boldsymbol{W}_f \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_f \boldsymbol{x}^{(t)} + \boldsymbol{b}_f)
+$$&lt;p&gt;&lt;strong&gt;Input gate&lt;/strong&gt;: controls which parts of the new cell content are written into the cell.&lt;/p&gt;
+$$
+\boldsymbol{i}^{(t)} = \sigma (\boldsymbol{W}_i \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_i \boldsymbol{x}^{(t)} + \boldsymbol{b}_i)
+$$&lt;p&gt;&lt;strong&gt;Output gate&lt;/strong&gt;: controls which parts of the cell are output to the hidden state.&lt;/p&gt;
+$$
+\boldsymbol{o}^{(t)} = \sigma (\boldsymbol{W}_o \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_o \boldsymbol{x}^{(t)} + \boldsymbol{b}_o)
+$$&lt;p&gt;&lt;strong&gt;New cell content&lt;/strong&gt;: the new content to be written into the cell, also known as candidate content.&lt;/p&gt;
+$$
+\tilde{\boldsymbol{c}}^{(t)} = \tanh (\boldsymbol{W}_c \boldsymbol{h}^{(t-1)} + \boldsymbol{U}_c \boldsymbol{x}^{(t)} + \boldsymbol{b}_c)
+$$&lt;p&gt;&lt;strong&gt;Cell state&lt;/strong&gt;: erase, or forget, parts of the previous cell state and write in new cell content.&lt;/p&gt;
+$$
+\boldsymbol{c}^{(t)} = \boldsymbol{f}^{(t)} \odot \boldsymbol{c}^{(t-1)} + \boldsymbol{i}^{(t)} \odot \tilde{\boldsymbol{c}}^{(t)}
+$$&lt;p&gt;&lt;strong&gt;Hidden state&lt;/strong&gt;: read, or output, some content from the cell.&lt;/p&gt;
+$$
+\boldsymbol{h}^{(t)} = \boldsymbol{o}^{(t)} \odot \tanh \boldsymbol{c}^{(t)}
+$$&lt;h4 id="step-by-step-lstm-walk-through"&gt;Step-by-Step LSTM Walk Through
+&lt;/h4&gt;&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-chain.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the figure above, each line carries a complete vector from one node&amp;rsquo;s output to other nodes&amp;rsquo; inputs. Pink circles represent pointwise operations such as vector addition, and yellow boxes represent learned neural network layers. Merged lines represent concatenation, and forked lines mean the content is copied and sent to different places.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-C-line.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The key to LSTM is the cell state, the horizontal line running through the top of the diagram.&lt;/p&gt;
+&lt;p&gt;The cell state is like a conveyor belt. It runs straight through the chain with only minor linear interactions. Information can flow along it relatively unchanged.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LSTMs can add or remove information from the cell state. This is carefully controlled by structures called gates.&lt;/p&gt;
+&lt;p&gt;A gate is a way to selectively allow information through. It consists of a sigmoid neural network layer and a pointwise multiplication operation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-f.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The first step of an LSTM is to decide what information to discard from the cell state. This decision is made by the forget gate layer, a sigmoid layer. It receives $h_{t-1}$ and $x_t$, and outputs a value between 0 and 1 for each number in the previous cell state $C_{t-1}$. A value of 1 means &amp;ldquo;keep completely&amp;rdquo;; 0 means &amp;ldquo;discard completely&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;Returning to the language-model example, the cell state may contain the gender of the current subject, so the model can use the correct pronoun. When a new subject appears, we want to forget the gender of the old subject.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-i.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The next step is to decide what new information to store in the cell state. This has two parts. First, an input gate layer decides which values to update. Then a $\tanh$ layer creates a vector of new candidate values $\tilde{C}_t$ that can be added to the state. In the next step, these two parts are combined to update the state.&lt;/li&gt;
+&lt;li&gt;In the language-model example, we want to add the gender of the new subject into the cell state, replacing the old gender information we are forgetting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-C.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Now it is time to update the old cell state $C_{t-1}$ into the new cell state $C_t$. The previous steps already decided what to do; now we execute it.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We multiply the old state by $f_t$ to forget the information we decided to forget. Then we add $i_t * \tilde{C}_t$. These are the new candidate values, scaled by how much we decided to update each state value.&lt;/p&gt;
+&lt;p&gt;In the language-model example, this is where we actually remove the old subject-gender information and add the new information.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://ottercoconut.github.io/uploads/posts/cs224n/LSTM3-focus-o.png" alt="" loading="lazy" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, we need to decide what to output. This output is based on the cell state, but it is a filtered version.&lt;/p&gt;
+&lt;p&gt;First, we run a sigmoid layer to decide which parts of the cell state to output. Then we pass the cell state through $\tanh$, pushing values into the range -1 to 1, and multiply it by the sigmoid gate output. In this way, we only output the parts we decided to output.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In a language-model example, after processing a subject, the model may want to output information related to the upcoming verb, such as whether the subject is singular or plural.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="how-does-lstm-solve-vanishing-gradients"&gt;How does LSTM solve vanishing gradients
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The LSTM architecture makes it easier for an RNN to preserve information over multiple time steps. For example, if the forget gate of a cell dimension is set to 1 and the input gate is set to 0, that information can be kept indefinitely.&lt;/p&gt;
+&lt;p&gt;In contrast, a vanilla RNN must learn a recurrent weight matrix $W_h$ that preserves information in the hidden state, which is much harder.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Although vanishing and exploding gradients cannot be completely avoided, models can create more direct and more linear paths for long-distance dependencies. ResNet and DenseNet are examples of architectures that create direct connections between modules or layers.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="bidirectional-rnns"&gt;Bidirectional RNNs
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Traditional one-way RNNs or LSTMs have an obvious limitation: when processing a sequence, they can only &amp;ldquo;look left&amp;rdquo;, meaning they only use past context. However, in many NLP tasks such as sentiment classification, named entity recognition, or sentence-level understanding, the meaning of the current word may also depend on the &amp;ldquo;right side&amp;rdquo;, or future context.&lt;/li&gt;
+&lt;li&gt;To solve this, researchers introduced bidirectional architectures, often implemented with LSTMs:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Forward RNN&lt;/strong&gt;: processes the input sequence from left to right and computes hidden states $\overrightarrow{h}_t$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Backward RNN&lt;/strong&gt;: processes the same input sequence from right to left and computes hidden states $\overleftarrow{h}_t$.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Concatenated state&lt;/strong&gt;: at each time step $t$, concatenate the forward and backward hidden states to form the final representation at that position: $h_t = [\overrightarrow{h}_t; \overleftarrow{h}_t]$. Each word representation therefore contains both left and right context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Bidirectional LSTMs are powerful feature extractors, but they are only suitable for tasks where the complete input sequence is available at once, such as text classification or encoding the source sentence in translation. They &lt;strong&gt;cannot&lt;/strong&gt; be used for traditional language modeling, because language modeling predicts the next word. If the model can see future words on the right, it violates the autoregressive prediction setup.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="neural-machine-translation"&gt;Neural Machine Translation
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Neural machine translation was one of the first major successes of deep learning in NLP. NMT is mainly based on the &lt;strong&gt;Sequence-to-Sequence (Seq2Seq)&lt;/strong&gt; architecture, whose core consists of two RNNs, usually LSTMs: an &lt;strong&gt;encoder&lt;/strong&gt; and a &lt;strong&gt;decoder&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;The encoder reads the source-language sentence. While reading, it does not produce the translation directly; it continuously updates its hidden state. After the encoder processes the final word, its &lt;strong&gt;final hidden state&lt;/strong&gt; is treated as a compressed semantic representation of the whole sentence. This acts as an &amp;ldquo;information bottleneck&amp;rdquo;, because all complex meanings of the source sentence must be compressed into one fixed-dimensional vector.&lt;/li&gt;
+&lt;li&gt;The decoder-side LSTM is essentially a &lt;strong&gt;conditional language model&lt;/strong&gt;. Its initial hidden state is not random or all zero; it is set to the bottleneck vector output by the encoder. This means every generation step of the decoder is conditioned on the semantic vector of the source sentence.
+At each time step, it outputs the word with the highest probability according to the current hidden state, then feeds the last generated word into the next step until it produces the end-of-sentence token &lt;code&gt;&amp;lt;EOS&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>PyTorch Basics</title><link>https://ottercoconut.github.io/en/p/pytorch-basics/</link><pubDate>Thu, 22 Jan 2026 10:49:28 +0800</pubDate><guid>https://ottercoconut.github.io/en/p/pytorch-basics/</guid><description>&lt;p&gt;This post covers the learning of basic PyTorch usage, primarily based on Bilibili Xiaotudui&amp;rsquo;s &lt;a class="link" href="https://www.bilibili.com/video/BV1hE411t7RN/" target="_blank" rel="noopener"
  &gt;https://www.bilibili.com/video/BV1hE411t7RN/&lt;/a&gt; and with the help of Gemini. In addition to practical applications, it also includes the principles of some deep learning models.&lt;/p&gt;
 &lt;h2 id="dataset"&gt;Dataset
 &lt;/h2&gt;&lt;p&gt;An abstract class representing a &lt;code&gt;Dataset&lt;/code&gt;.&lt;/p&gt;
@@ -388,45 +1298,45 @@ $$&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Parallel Computing:&lt;/strong&gt; Leverages multi-core CPUs to pre-prepare proceeding batches of data, letting GPUs avoid idle time waiting.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Common Values&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;dataset&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Custom Dataset&lt;/td&gt;
- &lt;td&gt;Required. Tells DataLoader which &amp;ldquo;warehouse&amp;rdquo; to fetch data from.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;batch_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;16, 32, 64&amp;hellip;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Number of samples loaded per batch.&lt;/strong&gt; The larger it is, the faster the training, but it consumes more VRAM. In FER emotion recognition, 32 or 64 are common values.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;shuffle&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Whether to shuffle the order.&lt;/strong&gt; Training sets are usually set to &lt;code&gt;True&lt;/code&gt; (adding randomness); test sets are usually set to &lt;code&gt;False&lt;/code&gt;.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;num_workers&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;0, 2, 4, 8&amp;hellip;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Multi-process loading.&lt;/strong&gt; &lt;code&gt;0&lt;/code&gt; means only the main process is used (slow). Increasing the value speeds up read times. &lt;strong&gt;Recommendation:&lt;/strong&gt; Set to half of your CPU cores.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;drop_last&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Drop the last incomplete batch.&lt;/strong&gt; E.g., if there are 100 images and &lt;code&gt;batch_size=32&lt;/code&gt;. The remaining 4 images aren&amp;rsquo;t enough for a batch. Setting this to &lt;code&gt;True&lt;/code&gt; discards these 4, ensuring each Batch size is consistent.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;pin_memory&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Page-locked memory.&lt;/strong&gt; If training on a GPU, setting to &lt;code&gt;True&lt;/code&gt; accelerates data transfer speeds from RAM to VRAM.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Common Values&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;dataset&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Custom Dataset&lt;/td&gt;
+					&lt;td&gt;Required. Tells DataLoader which &amp;ldquo;warehouse&amp;rdquo; to fetch data from.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;batch_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;16, 32, 64&amp;hellip;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Number of samples loaded per batch.&lt;/strong&gt; The larger it is, the faster the training, but it consumes more VRAM. In FER emotion recognition, 32 or 64 are common values.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;shuffle&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Whether to shuffle the order.&lt;/strong&gt; Training sets are usually set to &lt;code&gt;True&lt;/code&gt; (adding randomness); test sets are usually set to &lt;code&gt;False&lt;/code&gt;.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;num_workers&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;0, 2, 4, 8&amp;hellip;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Multi-process loading.&lt;/strong&gt; &lt;code&gt;0&lt;/code&gt; means only the main process is used (slow). Increasing the value speeds up read times. &lt;strong&gt;Recommendation:&lt;/strong&gt; Set to half of your CPU cores.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;drop_last&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt; / &lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Drop the last incomplete batch.&lt;/strong&gt; E.g., if there are 100 images and &lt;code&gt;batch_size=32&lt;/code&gt;. The remaining 4 images aren&amp;rsquo;t enough for a batch. Setting this to &lt;code&gt;True&lt;/code&gt; discards these 4, ensuring each Batch size is consistent.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;pin_memory&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Page-locked memory.&lt;/strong&gt; If training on a GPU, setting to &lt;code&gt;True&lt;/code&gt; accelerates data transfer speeds from RAM to VRAM.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;For example, we use &lt;code&gt;DataLoader&lt;/code&gt; to process data from CIFAR10.&lt;/li&gt;
@@ -530,50 +1440,50 @@ $$&lt;ul&gt;
  &gt;conv_arithmetic/README.md at master · vdumoulin/conv_arithmetic&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Function&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;in_channels&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Input Channels&lt;/td&gt;
- &lt;td&gt;Usually 3 (RGB) for color images, and 1 for grayscale images.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;out_channels&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Output Channels&lt;/td&gt;
- &lt;td&gt;Number of convolution kernels. The number of kernels determines the number of layers in the output feature map.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Kernel Size&lt;/td&gt;
- &lt;td&gt;The size of the &amp;ldquo;window&amp;rdquo; used to extract features. Commonly 3 or 5 (VGG usually defaults to 3).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Stride&lt;/td&gt;
- &lt;td&gt;The span at which the window slides. Defaults to 1. The larger the stride, the smaller the output image.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Padding&lt;/td&gt;
- &lt;td&gt;Pads with 0s around the image. &lt;code&gt;'same'&lt;/code&gt; keeps the size unchanged, while &lt;code&gt;'valid'&lt;/code&gt; applies no padding.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;dilation&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Dilated Convolution&lt;/td&gt;
- &lt;td&gt;The spacing between points in the convolution kernel. Used to increase the receptive field (without increasing the number of parameters).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;bias&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Bias&lt;/td&gt;
- &lt;td&gt;Whether to add a constant offset to the result. Enabled by default.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Meaning&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Function&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;in_channels&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Input Channels&lt;/td&gt;
+					&lt;td&gt;Usually 3 (RGB) for color images, and 1 for grayscale images.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;out_channels&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Output Channels&lt;/td&gt;
+					&lt;td&gt;Number of convolution kernels. The number of kernels determines the number of layers in the output feature map.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Kernel Size&lt;/td&gt;
+					&lt;td&gt;The size of the &amp;ldquo;window&amp;rdquo; used to extract features. Commonly 3 or 5 (VGG usually defaults to 3).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Stride&lt;/td&gt;
+					&lt;td&gt;The span at which the window slides. Defaults to 1. The larger the stride, the smaller the output image.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Padding&lt;/td&gt;
+					&lt;td&gt;Pads with 0s around the image. &lt;code&gt;'same'&lt;/code&gt; keeps the size unchanged, while &lt;code&gt;'valid'&lt;/code&gt; applies no padding.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;dilation&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Dilated Convolution&lt;/td&gt;
+					&lt;td&gt;The spacing between points in the convolution kernel. Used to increase the receptive field (without increasing the number of parameters).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;bias&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Bias&lt;/td&gt;
+					&lt;td&gt;Whether to add a constant offset to the result. Enabled by default.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;ul&gt;
 &lt;li&gt;The Padding parameter of convolution is very important. If zeros are not padded around it, the convolution will cause the image size to become smaller and smaller.&lt;/li&gt;
@@ -648,30 +1558,30 @@ $$&lt;p&gt;$W_{out}$ calculations follow a similar approach.&lt;/p&gt;
 &lt;li&gt;It preserves input features while simultaneously reducing data volume, speeding up training.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
- &lt;th&gt;&lt;strong&gt;Unique Features&lt;/strong&gt;&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Window size. Typically &lt;code&gt;2&lt;/code&gt; (meaning merging a $2 \times 2$ region).&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Default value equals kernel_size!&lt;/strong&gt; This differs from convolution. If &lt;code&gt;kernel_size=2&lt;/code&gt;, the stride defaults to &lt;code&gt;2&lt;/code&gt;, so the windows do not overlap.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;ceil_mode&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;&lt;strong&gt;Very important.&lt;/strong&gt; The default is &lt;code&gt;False&lt;/code&gt; (floor). If set to &lt;code&gt;True&lt;/code&gt; (ceiling), when the window exceeds boundaries, as long as there is data in the window, the result will be retained instead of discarded.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Padding. Note that pooling pads with &lt;strong&gt;negative infinity ($-\infty$)&lt;/strong&gt;, ensuring padded spots are not selected as the maximum value.&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;Unique Features&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;kernel_size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Window size. Typically &lt;code&gt;2&lt;/code&gt; (meaning merging a $2 \times 2$ region).&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;stride&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Default value equals kernel_size!&lt;/strong&gt; This differs from convolution. If &lt;code&gt;kernel_size=2&lt;/code&gt;, the stride defaults to &lt;code&gt;2&lt;/code&gt;, so the windows do not overlap.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;ceil_mode&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Very important.&lt;/strong&gt; The default is &lt;code&gt;False&lt;/code&gt; (floor). If set to &lt;code&gt;True&lt;/code&gt; (ceiling), when the window exceeds boundaries, as long as there is data in the window, the result will be retained instead of discarded.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;padding&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Padding. Note that pooling pads with &lt;strong&gt;negative infinity ($-\infty$)&lt;/strong&gt;, ensuring padded spots are not selected as the maximum value.&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
