@@ -4,6 +4,7 @@
 {{- $description := partial "data/description" . -}}
 <meta name='description' {{ printf "content=%q" $description | safeHTMLAttr }}>
 {{ with .Params.Keywords }}<meta name="keywords" content="{{ delimit . ", " }}">{{ end }}
+{{ with .Site.Params.googleSiteVerification }}<meta name="google-site-verification" content="{{ . }}">{{ end }}
 
 {{- $title := partial "data/title" . -}}
 <title>{{ $title }}</title>
