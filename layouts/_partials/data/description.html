@@ -1,0 +1,82 @@
+{{- $isEnglish := eq .Site.Language.Lang "en" -}}
+{{- $siteTitle := .Site.Title -}}
+{{- $description := .Site.Params.sidebar.subtitle -}}
+
+{{- with .Site.Params.description -}}
+    {{- $description = . -}}
+{{- end -}}
+
+{{- if .Description -}}
+    {{- $description = .Description -}}
+{{- else if .IsPage -}}
+    {{- $description = .Summary -}}
+{{- else if .IsHome -}}
+    {{- if $isEnglish -}}
+        {{- $description = printf "%s home page, featuring notes on programming, backend development, deep learning, information retrieval, productivity, and English learning." $siteTitle -}}
+    {{- else -}}
+        {{- $description = printf "%s首页，收录编程、后端开发、深度学习、信息检索、实用技术与英语学习等主题文章。" $siteTitle -}}
+    {{- end -}}
+{{- else if eq .Kind "taxonomy" -}}
+    {{- if eq .Type "categories" -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "%s category index, grouping posts by backend development, deep learning, practical technology, theory, and learning topics." $siteTitle -}}
+        {{- else -}}
+            {{- $description = printf "%s分类目录，按技术、后端开发、深度学习、理论、英语和实用技术等主题整理文章。" $siteTitle -}}
+        {{- end -}}
+    {{- else if eq .Type "tags" -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "%s tag index, collecting article tags for programming, databases, retrieval, AI, systems, and learning notes." $siteTitle -}}
+        {{- else -}}
+            {{- $description = printf "%s标签目录，汇总编程、数据库、检索、人工智能、系统知识和学习笔记等文章标签。" $siteTitle -}}
+        {{- end -}}
+    {{- else -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "%s %s index page, collecting related posts and topic archives." $siteTitle .Title -}}
+        {{- else -}}
+            {{- $description = printf "%s的%s索引页，整理相关主题文章与归档内容。" $siteTitle .Title -}}
+        {{- end -}}
+    {{- end -}}
+{{- else if eq .Kind "term" -}}
+    {{- if eq .Type "categories" -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "Posts in the %s category on %s, collecting related technical notes, tutorials, and learning records." .Title $siteTitle -}}
+        {{- else -}}
+            {{- $description = printf "%s分类下的文章列表，汇总%s中相关的技术笔记、教程记录和学习内容。" .Title $siteTitle -}}
+        {{- end -}}
+    {{- else if eq .Type "tags" -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "Posts tagged %s on %s, including related notes, examples, tutorials, and practical references." .Title $siteTitle -}}
+        {{- else -}}
+            {{- $description = printf "%s标签下的文章列表，汇总%s中相关的笔记、示例、教程和实践参考。" .Title $siteTitle -}}
+        {{- end -}}
+    {{- else -}}
+        {{- if $isEnglish -}}
+            {{- $description = printf "%s page on %s, collecting related posts and topic archives." .Title $siteTitle -}}
+        {{- else -}}
+            {{- $description = printf "%s页面，整理%s中相关主题文章与归档内容。" .Title $siteTitle -}}
+        {{- end -}}
+    {{- end -}}
+{{- else if .Title -}}
+    {{- if $isEnglish -}}
+        {{- $description = printf "%s page on %s, collecting posts, notes, and related archive entries." .Title $siteTitle -}}
+    {{- else -}}
+        {{- $description = printf "%s页面，整理%s中的文章、笔记和相关归档内容。" .Title $siteTitle -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $pageNumber := 1 -}}
+{{- if in (slice "home" "section" "taxonomy" "term") .Kind -}}
+    {{- with partial "helper/paginator.html" . -}}
+        {{- $pageNumber = .PageNumber -}}
+    {{- end -}}
+{{- end -}}
+
+{{- if gt $pageNumber 1 -}}
+    {{- if $isEnglish -}}
+        {{- $description = printf "%s Page %d." $description $pageNumber -}}
+    {{- else -}}
+        {{- $description = printf "%s 第%d页。" $description $pageNumber -}}
+    {{- end -}}
+{{- end -}}
+
+{{- return (replaceRE "\n" " " $description | plainify) -}}

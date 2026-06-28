@@ -1,5 +1,7 @@
 ---
-title: Links
+title: 友链
+slug: links
+description: 边个濑椰的博客友链页面，整理相关网站、工具、开源平台和常用技术资源入口。
 links:
   - title: GitHub
     description: GitHub is the world's largest software development platform.
@@ -13,21 +15,3 @@ menu:
 
 comments: false
 ---
-
-To use this feature, add `links` section to frontmatter.
-
-This page's frontmatter:
-
-```yaml
-links:
-  - title: GitHub
-    description: GitHub is the world's largest software development platform.
-    website: https://github.com
-    image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-  - title: TypeScript
-    description: TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.
-    website: https://www.typescriptlang.org
-    image: ts-logo-128.jpg
-```
-
-`image` field accepts both local and external images.

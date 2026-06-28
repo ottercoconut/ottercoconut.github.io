@@ -1,5 +1,6 @@
 ---
 title: "搜索"
+description: 边个濑椰的博客搜索页面，用于查找技术笔记、后端开发、深度学习、英语学习和实用工具相关文章。
 slug: "search"
 layout: "search"
 outputs:
