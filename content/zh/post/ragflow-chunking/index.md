@@ -11,17 +11,17 @@ toc = true
 
 +++
 
-# RAGFlow 切片策略解析
+## RAGFlow 切片策略解析
 
 众所周知RAGFlow是较早成熟且开源的RAG项目之一，近日笔者正在学习构建一个RAG项目，所以从RAGFlow的源码下手。首先学习的是它对markdown文件的解析方法和切片策略。
 
-## `rag/app/naive.py`
+### `rag/app/naive.py`
 
 `naive.py` 中支持很多文件的类型，比如`PDF`, `DOCX`, `Markdown`......
 
 那么我们要学习的`markdown`类，主入口是`__call__()`，这是核心方法，编排了整个 Markdown 解析流程。
 
-### `__call()__`
+#### `__call()__`
 
 ```python
 def __call__(self, filename, binary=None, separate_tables=True, delimiter=None, return_section_images=False):
@@ -181,7 +181,7 @@ class MarkdownElementExtractor:
 - `_extract_blockquote()` : 持续吞入">"开头的行或内部的空行
 - `_extract_text_block()` : 处理不属于上面几种类型的普通文本"text_block"，直到符合上面类型的元素再次出现
 
-### `extract_image_urls_with_lines()`
+#### `extract_image_urls_with_lines()`
 
 这个方法用于找出 Markdown 文本中所有图片引用及其所在行号。行号用于后续将图片关联到对应的 section。
 
@@ -219,7 +219,7 @@ class MarkdownElementExtractor:
 ]
 ```
 
-### `load_images_from_urls()`
+#### `load_images_from_urls()`
 
 ```python
 def load_images_from_urls(self, urls, cache=None):
@@ -243,7 +243,7 @@ def load_images_from_urls(self, urls, cache=None):
 
 也就是说，RAGFlow 在 Markdown 中并不是把每一张图片都单独当成一个 chunk，而是先尝试把**同一个 section 内的图片聚合**起来，再与文本一起进入后续流程。
 
-### `urls_in_section = [...]`
+#### `urls_in_section = [...]`
 
 在 `Markdown.__call__()` 中，真正把文本 section 和图片联系起来的代码是这一段：
 
@@ -266,7 +266,8 @@ for element in element_sections:
 例如下面这段 Markdown：
 
 ```markdown
-## 模型结构
+
+### 模型结构
 
 这里介绍整体流程。
 
@@ -310,7 +311,7 @@ extractor = MarkdownElementExtractor(txt)
 
 这样做可能带来一定冗余，但也提高了检索时命中表格信息的概率。
 
-## `chunk()`
+### `chunk()`
 
 看到这里，其实还只是完成了解析和预处理。真正决定最终 chunk 长什么样的，不在 `Markdown.__call__()`，而在 `rag/app/naive.py` 下面的 `chunk()` 函数里。
 
@@ -373,7 +374,7 @@ for idx, (section_text, _) in enumerate(sections):
 - 输入图片是前面已经聚合好的 `section_images[idx]`
 - 输出不是新的 chunk，而是把图片描述文本直接追加回原 `section_text`
 
-### `VisionFigureParser`
+#### `VisionFigureParser`
 
 该类定义在 `deepdoc/parser/figure_parser.py` 中：
 
@@ -401,7 +402,7 @@ Markdown 分支给它传入的 `figures_data` 形式是：
 
 也就是说，每次只处理当前 section 对应的一张聚合图，原始描述先放一个占位值 `"markdown image"`，位置则放一个 dummy tuple。
 
-### `_extract_figures_info()`
+#### `_extract_figures_info()`
 
 这个方法负责把 `figures_data` 拆成内部使用的三个列表：
 
@@ -437,7 +438,7 @@ if len(item) == 2 and isinstance(item[0], tuple) and len(item[0]) == 2:
 
 这里的 `ensure_pil_image()` 负责把输入统一成 `PIL.Image` 对象，因此前面无论传入的是普通图片对象还是惰性图片对象，到了这里都会被标准化。
 
-### `__call__()`
+#### `__call__()`
 
 `VisionFigureParser.__call__()` 才是真正执行视觉增强的入口：
 
@@ -491,7 +492,7 @@ return self.assembled
 - 没有显式传入 `figure_contexts`，因此默认使用 `vision_llm_figure_describe_prompt()`
 - 回填时会把模型输出和原始描述拼在一起，因此最终描述中理论上可能保留 `"markdown image"` 这个占位文本
 
-### `picture_vision_llm_chunk()`
+#### `picture_vision_llm_chunk()`
 
 `process()` 里真正调用视觉模型的函数是 `rag/app/picture.py` 中的：
 
@@ -527,7 +528,7 @@ with io.BytesIO() as img_binary:
 
 因此这个函数返回的是一段纯文本，而不是结构化对象。
 
-### `vision_llm_figure_describe_prompt()`
+#### `vision_llm_figure_describe_prompt()`
 
 在 `VisionFigureParser.__call__()` 中，无上下文情况下使用的是：
 
@@ -553,7 +554,7 @@ prompt = vision_llm_figure_describe_prompt_with_context(
 
 也就是说，这一步生成的不是泛化摘要，而是偏向**检索友好**的图片文本表示。
 
-### `sections[idx] = (...)`
+#### `sections[idx] = (...)`
 
 最终在 `rag/app/naive.py` 中，增强结果是这样写回 section 的：
 
@@ -660,7 +661,7 @@ else:
 2. 携带图片的多模态 chunk
 3. 表格对象
 
-## 小结
+### 小结
 
 至此，RAGFlow 对 Markdown 的“切片”逻辑就比较清楚了。它并不是简单地按固定长度裁文本，而是分成了几层：
 
