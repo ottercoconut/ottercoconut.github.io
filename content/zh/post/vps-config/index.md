@@ -48,3 +48,54 @@ toc = true
 通常这里会有最为重要的，VPS 的 IP 信息，以及一些基本的管理功能。
 
 ## 安全性配置
+
+开机后，第一步就是基本的安全性配置，避免被恶意攻击。
+笔者在前几天遭遇了一次，原因是因为偷懒没有禁用密码登录，fail2ban的规则也没设置好，于是在被攻击了长达1个小时后，IP也被封了（可能是巧合）。这还是 IP 被封了以后，发现 CPU 利用率在一段时间内竟是 100% 发现的。
+
+首先，通过 SSH 和提供的最初的 root 账户连接到 VPS 上（使用提供商的 VNC console 也可以），执行下面的命令进行软件的更新，以及必要的 `ufw` 和 `fail2ban` 的安装：
+
+```bash
+apt update && apt full-upgrade -y
+apt install -y sudo curl wget vim git ufw fail2ban
+```
+
+### SSH登录
+
+出于历史教训，应尽早关闭密码登录，仅保留 SSH 密钥登录方法。笔者是用了 VPS 官方控制台的 openSSH，它会自动生成好密钥文件到 VPS 中，并关闭密码登录，我需要做的只是把密钥文件配置到客户端的机器上，以便于访问。
+
+切换到客户端机器的用户目录下，找到（或者创建）`.ssh` 目录，存放生成的密钥文件，文件名随意。
+之后再创建（或编辑）一个名为 `config` 的文件，需要新增内容样式如下：
+
+```plain text
+Host vps
+    HostName 1.2.3.4
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+```
+
+字段解释如下：
+
+```plain text
+Host            : 本地别名（以后 ssh vps）
+HostName        : VPS 的 IP 或域名
+User            : 登录用户名（root / deploy）
+IdentityFile    : 私钥路径
+IdentitiesOnly  : 强制只用该密钥，避免 SSH 自动尝试其他 key
+```
+
+如果要自己生成密钥文件的话，那么顺序不同，且 VPS 上也要进行对应操作。首先，在客户端机器上生成一个随机密钥：
+
+```bash
+ssh-keygen -t ed25519
+```
+
+把密钥复制到 VPS 上：
+
+```bash
+mkdir -p ~/.ssh
+nano ~/.ssh/authorized_keys # 把生成好的密钥复制进去
+chmod 600 ~/.ssh/authorized_keys
+chmod 700 ~/.ssh
+```
+
