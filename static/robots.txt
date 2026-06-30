@@ -10,4 +10,4 @@ Allow: /
 User-agent: GPTBot
 Disallow: /
 
-Sitemap: https://ottercoconut.github.io/sitemap.xml
+Sitemap: https://blog.kawausococo.top/sitemap.xml

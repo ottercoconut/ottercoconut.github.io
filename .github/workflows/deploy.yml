@@ -147,6 +147,6 @@ jobs:
       - name: Submit changed URLs to IndexNow
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-          INDEXNOW_HOST: ottercoconut.github.io
+          INDEXNOW_HOST: blog.kawausococo.top
         run: |
           python3 scripts/submit_indexnow.py indexnow-urls.txt
