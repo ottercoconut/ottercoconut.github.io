@@ -18,15 +18,6 @@ disqusShortname = "hugo-theme-stack"
 [pagination]
     pagerSize = 5
 
-[outputFormats.GoogleSitemap]
-    mediaType = "application/xml"
-    baseName = "google-sitemap"
-    isPlainText = true
-    notAlternative = true
-
-[outputs]
-    home = ["HTML", "RSS", "GoogleSitemap"]
-
 [taxonomies]
 category = "categories"
 tag = "tags"
