@@ -2,6 +2,7 @@
 
 title = "稀疏向量与 SPLADE 模型"
 date = 2026-05-12T16:17:17+08:00
+lastmod = 2026-06-27T00:58:00+08:00
 translationKey = "splade-hybrid-search"
 tags = ["稀疏向量", "SPLADE", "RAG"]
 categories = ["技术"]

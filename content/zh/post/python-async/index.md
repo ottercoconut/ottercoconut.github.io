@@ -2,6 +2,7 @@
 
 title = "Python asyncio：协程与任务"
 date = 2026-04-23T16:08:00+08:00
+lastmod = 2026-06-27T00:58:00+08:00
 translationKey = "python-async"
 tags = ["Python", "asyncio"]
 categories = ["后端开发"]
@@ -799,4 +800,3 @@ for task in asyncio.all_tasks():
 ```
 
 这些函数适合在排查任务泄漏、定位后台任务状态、编写异步框架时使用。对于普通应用代码来说，知道它们存在即可。
-

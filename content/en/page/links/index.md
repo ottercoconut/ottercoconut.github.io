@@ -1,6 +1,7 @@
 ---
 title: Links
 description: Links page on ottercoconut's Blog, collecting useful websites, developer resources, open-source platforms, and reference tools.
+lastmod: 2026-06-28T16:08:07+08:00
 links:
   - title: GitHub
     description: GitHub is the world's largest software development platform.

@@ -1,6 +1,7 @@
 +++
 title = "TOEFL Writing"
 date = 2026-06-24T11:02:00+08:00
+lastmod = 2026-06-27T17:15:13+08:00
 translationKey = "toefl-writing"
 tags = []
 categories = ["英语"]

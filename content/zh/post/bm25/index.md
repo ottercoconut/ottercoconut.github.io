@@ -2,6 +2,7 @@
 
 title = "Practical BM25"
 date = 2026-05-09T13:30:00+08:00
+lastmod = 2026-06-27T15:33:46+08:00
 translationKey = "bm25"
 tags = ["BM25", "RAG"]
 categories = ["技术"]

@@ -2,6 +2,7 @@
 title: 友链
 slug: links
 description: 边个濑椰的博客友链页面，整理相关网站、工具、开源平台和常用技术资源入口。
+lastmod: 2026-06-28T16:08:07+08:00
 links:
   - title: GitHub
     description: GitHub is the world's largest software development platform.

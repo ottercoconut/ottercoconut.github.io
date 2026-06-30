@@ -1,6 +1,7 @@
 +++
 title = "Sparse Vectors and the SPLADE Model"
 date = 2026-06-27T00:00:00+08:00
+lastmod = 2026-06-27T01:14:18+08:00
 translationKey = "splade-hybrid-search"
 tags = ["Sparse Vector", "SPLADE", "RAG"]
 categories = ["Tech"]

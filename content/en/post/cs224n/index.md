@@ -1,6 +1,7 @@
 +++
 title = "CS224N"
 date = 2026-06-27T00:00:00+08:00
+lastmod = 2026-06-27T01:14:18+08:00
 translationKey = "cs224n"
 tags = ["Word Vectors", "Transformer", "Seq2Seq"]
 categories = ["Tech", "Deep Learning"]

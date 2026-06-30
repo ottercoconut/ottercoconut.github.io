@@ -1,6 +1,7 @@
 +++
 title = "TOEFL学习经验"
 date = 2025-11-02T15:54:54+08:00
+lastmod = 2026-06-27T17:12:54+08:00
 translationKey = "toefl-experience"
 tags = []
 categories = ["英语"]
@@ -1746,4 +1747,3 @@ To be more specific, space research often acts as an incubator for civilian inno
 While Kelly argues that the exorbitant costs make space funding controversial, I believe this is a short-sighted view. Although the initial capital outlay is massive, the subsequent **economic dividends**—from job creation in high-tech sectors to the birth of entirely new industries—far outweigh the costs, making it a vital investment for any visionary government.
 
 ---
-
