@@ -1,4 +1,4 @@
-{{- $title := partialCached "data/title" . .RelPermalink -}}
+{{- $title := partial "data/title" . -}}
 {{- $description := partial "data/description" . -}}
 
 <meta property='og:title' {{ printf "content=%q" $title | safeHTMLAttr }}>
